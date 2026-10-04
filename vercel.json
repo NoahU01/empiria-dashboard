@@ -1,0 +1,8 @@
+{
+  "redirects": [
+    { "source": "/", "destination": "/strategie/zielbild.html", "permanent": false },
+    { "source": "/zielbild", "destination": "/strategie/zielbild.html", "permanent": false },
+    { "source": "/meilensteine", "destination": "/strategie/meilensteine.html", "permanent": false },
+    { "source": "/oekosystem", "destination": "/strategie/oekosystem.html", "permanent": false }
+  ]
+}

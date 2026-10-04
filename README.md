@@ -41,13 +41,32 @@ python3 -m http.server 8000
 # dann http://localhost:8000/strategie/zielbild.html
 ```
 
+## Deployment
+
+Liegt als eigenes Vercel-Projekt der empiria GmbH:
+<https://empiria-dashboard.vercel.app/>
+
+`vercel.json` setzt vier Weiterleitungen, damit kurze Links funktionieren:
+
+| Aufruf | landet auf |
+| --- | --- |
+| `/` | `/strategie/zielbild.html` |
+| `/zielbild` | `/strategie/zielbild.html` |
+| `/meilensteine` | `/strategie/meilensteine.html` |
+| `/oekosystem` | `/strategie/oekosystem.html` |
+
+Bewusst **Weiterleitung statt Rewrite**: die drei Seiten verlinken
+untereinander relativ (`meilensteine.html`). Bei einem Rewrite bliebe die
+Adresszeile auf `/` stehen und diese Links würden ins Leere laufen. Die
+Weiterleitungen sind temporär (307), nicht dauerhaft – so lässt sich `/`
+später ohne Browser-Cache-Probleme auf eine echte Übersichtsseite legen.
+
 ## Offene Punkte
 
-- **Kein `index.html`** – der Aufruf von `/` läuft ins Leere.
-  Einstieg ist `/strategie/zielbild.html`.
+- **Keine Übersichtsseite** – `/` leitet auf die erste der drei Seiten
+  weiter. Eine echte Startseite, die alle drei auflistet, gibt es nicht.
 - **Kopfnavigation, Footer und Entwicklungsmenü sind mitkopiert** und
   verweisen auf rund 70 Seiten der Gesamt-Website, die hier nicht
   liegen (u. a. `/workshops`, `/impressum.html`, die Dashboard-Seiten).
   Diese Links laufen ins Leere, solange die Navigation nicht gekürzt wird.
-- **Keine Deployment-Konfiguration** – eine `vercel.json` o. ä. ist
-  bewusst nicht enthalten.
+- **Das Repository ist öffentlich.**
