@@ -1,0 +1,1338 @@
+/* ===== Projekt- und Strategieseiten =========================================
+   Dieselbe Bildsprache wie Startseite und Strategiehandwerk: heller Grund,
+   Serifen-Ueberschrift mit einer gelben Hervorhebung. Die Seiten bauen auf
+   den Bausteinen des Hauses auf - Problemkasten, Icon-Karten, Akkordeon,
+   dunkles Zahlenband, Modellkasten. Eigene Regeln gibt es nur fuer das, was
+   es dort noch nicht gibt: Steckbrief, helle Pills und die Ablage.
+   Liegt als eigene Datei, weil alle diese Seiten sie teilen; so laeuft die
+   Gestaltung nicht auseinander, sobald ein zweites Projekt dazukommt. */
+
+/* ---- Kopf ---------------------------------------------------------------- */
+/* Der Aufmacher folgt .hero aus dem Grundlayout, nur linksbuendig statt
+   rechtsbuendig wie auf den Leistungsseiten. */
+.pj-hero { padding-top: clamp(56px,7vw,104px); padding-bottom: clamp(40px,5vw,72px); }
+.pj-hero .hero-head { width: auto; max-width: none; }
+.pj-hero .kicker { margin-bottom: .7rem; }
+/* Die gelbe Markierung ist so hoch wie die Schriftbox, also 1,29em. Bei
+   engerem Zeilenabstand legt sich das Band der zweiten Zeile ueber die
+   Unterlaengen der ersten - das kleine p in "Workshop" verschwand darin.
+   1.34 laesst beiden Zeilen ihren Platz. Dieselbe Ursache hatte Noah auf
+   den Produktseiten (dort 1.06 -> 1.2). */
+.pj-hero h1 { font-family: var(--font-serif); font-weight: 500; line-height: 1.34;
+              letter-spacing: -.015em; font-size: clamp(2.1rem,4.2vw,3.4rem); margin: 0; }
+/* Links Text, rechts der Steckbrief. Die linke Spalte traegt etwas mehr,
+   damit die Ueberschrift nicht in zu schmale Zeilen faellt. */
+.pj-hero-grid { display: grid; grid-template-columns: 1.15fr .85fr;
+                gap: clamp(32px,5vw,76px); align-items: start; }
+.pj-hero-text h1 { margin: 0 0 1.3rem; }
+.pj-hero-text .lead { max-width: 54ch; margin: 0; }
+/* Dasselbe Zeichen wie im Aufmacher der Startseite - es steht fuer die
+   Richtung, um die es in diesem Projekt geht. */
+.pj-hero-arrow { margin-top: clamp(24px,3vw,40px); color: var(--ink); }
+.pj-hero-arrow svg { width: clamp(64px,6vw,88px); height: auto; display: block;
+                     fill: currentColor; }
+
+/* ---- Die Rakete ---------------------------------------------------------
+   Dasselbe Bild wie im Aufmacher der SV-Akademie-Startseite. Es steht fuer
+   den Antrieb, der schon da ist - die Ueberschrift daneben fuer das Ziel,
+   auf das er zufliegt. */
+.pj-rakete { display: flex; justify-content: center; align-items: center; }
+.pj-rakete img { display: block; width: auto; max-width: 100%;
+                 height: clamp(260px,32vw,420px); }
+
+/* ---- Pills --------------------------------------------------------------
+   Dieselbe Form wie .produkt-pill, nur fuer hellen Grund: .produkt-pill ist
+   weiss auf dunkel und waere hier unsichtbar. */
+.pj-pills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 1.4rem; }
+.pj-pill { display: inline-flex; align-items: center; padding: 7px 16px; border-radius: 999px;
+           background: #fff; border: 1px solid #d9d5d1; color: var(--ink);
+           font-family: var(--font-sans); font-weight: 600; font-size: .78rem;
+           letter-spacing: .02em; }
+/* Im Akkordeon ist der Grund schon hellgrau - dort traegt Weiss die Form. */
+.pj-pills--dunkel { margin: 0 0 1.3rem; }
+.pj-pills--dunkel .pj-pill { background: #fff; border-color: #e0dbd6; }
+
+/* ---- Vorgehen: die drei Karten unter dem Modellkasten -------------------- */
+/* .cards-3col ist dreispaltig. Neben dem Modellkasten steht nur eine Spalte
+   zur Verfuegung, die Karten laufen deshalb untereinander. */
+.pj-cards-1col { grid-template-columns: 1fr; gap: clamp(26px,3.2vw,40px); }
+/* Auf der Startseite haengt das Zeichen um 50px ueber die Karte hinaus, weil
+   es dort in eine Reihe von drei Karten greift. Untereinander wuerde es in
+   die Karte darueber ragen - deshalb steht es hier auf seiner Zeile. */
+.pj-cards-1col .lcard-icon { transform: none; }
+
+@media (max-width: 900px) {
+  .pj-hero-grid { grid-template-columns: 1fr; }
+  .loesung-modell { max-width: 460px; }
+}
+.pj-zurueck { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 1.4rem;
+              font-size: .88rem; color: var(--grey-50); text-decoration: none;
+              border-bottom: 0; transition: color .2s ease; }
+.pj-zurueck:hover { color: var(--ink); }
+
+/* ---- Abschnittskopf -----------------------------------------------------
+   Genau die Masse von .formate-head im Grundlayout: dieselbe Groesse, dasselbe
+   Gewicht, dieselbe Zeilenhoehe. Ohne diese Regel faellt das h2 auf den
+   Browser-Standard von 24px zurueck - .h-serif setzt nur die Schriftfamilie. */
+.pj-kopfzeile { margin-bottom: clamp(26px,3.2vw,42px); }
+.pj-kopfzeile .kicker { margin-bottom: 1.1rem; }
+.pj-kopfzeile h2 { font-size: clamp(1.9rem,3.5vw,3rem); font-weight: 600;
+                   line-height: 1.32; margin: 0 0 1.2rem; max-width: 24ch; }
+.pj-kopfzeile .lead { max-width: 62ch; margin: 0; }
+@media (max-width: 900px) { .pj-kopfzeile h2 { font-size: clamp(2.3rem,9.5vw,2.9rem); } }
+
+/* ---- Ablage -------------------------------------------------------------- */
+.pj-dok { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.pj-dok li { display: flex; align-items: center; gap: 14px; padding: 15px 17px;
+             background: #fff; border: 1px solid #e4e1dd; border-radius: 14px; }
+/* Der Textblock muss wachsen, sonst klebt der Link am Titel statt rechts. */
+.pj-dok li > div { flex: 1 1 auto; min-width: 0; }
+.pj-dok-ic { flex: 0 0 34px; height: 34px; border-radius: 9px; background: var(--ink);
+             color: var(--hl); display: grid; place-items: center; font-size: .66rem; font-weight: 700; }
+.pj-dok b { font-weight: 600; font-size: .96rem; }
+.pj-dok small { display: block; font-size: .82rem; color: var(--grey-50); margin-top: 1px; }
+.pj-leer { padding: clamp(22px,3vw,34px); border: 1px dashed #cfccc8;
+           border-radius: var(--radius-card); background: #fff; color: var(--grey-70);
+           font-size: .96rem; line-height: 1.72; max-width: 66ch; }
+.pj-leer b { color: var(--ink); font-weight: 600; }
+
+
+/* ---- Die Homepage im Browserfenster --------------------------------------
+   Dasselbe Fenster wie beim Perspektivwechsel auf "Strategie in den Alltag
+   ueberfuehren" - nur steht darin jetzt eine Antwort statt fuenf Fragen.
+   .pb-page hat Innenabstand fuer die Skizze; fuer ein Bild muss er weg. */
+.pj-browser-grid { display: grid; grid-template-columns: 1.1fr .9fr;
+                   gap: clamp(32px,4.5vw,64px); align-items: center; }
+/* Die Meilenstein-Vorschau ist ein Absprung, keine Buehne - sie zeigt den
+   Kopf des Plans, nicht den ganzen. */
+.pj-browser-btn--plan .pj-browser-seite { max-height: 300px; overflow: hidden; }
+.pj-browser-btn--plan { position: relative; }
+.pj-browser-btn--plan::after { content: ""; position: absolute; left: 1px; right: 1px; bottom: 1px;
+                               height: 90px; border-radius: 0 0 17px 17px;
+                               background: linear-gradient(rgba(255,255,255,0), #fff); }
+.pj-browser-btn { appearance: none; -webkit-appearance: none; border: 0; margin: 0;
+                  padding: 0; background: transparent; width: 100%; display: block;
+                  cursor: pointer; text-align: left;
+                  transition: transform .22s ease; }
+.pj-browser-btn:hover { transform: translateY(-4px); }
+.pj-browser-btn .perspektive-browser { display: block; }
+.pj-browser-btn .pb-bar { display: flex; }
+.pj-browser-seite { padding: 0; display: block; }
+.pj-browser-seite img { display: block; width: 100%; height: auto; }
+.pj-tag { font-size: .72rem; letter-spacing: .12em; text-transform: uppercase;
+          font-weight: 600; color: var(--grey-50); margin: 0 0 .7rem; }
+.pj-exp { font-family: var(--font-serif); font-weight: 500; font-size: clamp(1.2rem,1.9vw,1.5rem);
+          line-height: 1.34; color: var(--ink); margin: 0 0 1.1rem; }
+.pj-browser-text p { color: var(--grey-70); line-height: 1.72; margin: 0 0 1rem; max-width: 52ch; }
+.pj-browser-aktionen { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; margin-top: 1.6rem; }
+.pj-hinweis { font-size: .82rem; color: var(--grey-50); }
+/* Im Pop-up steht das Dokument in ganzer Hoehe, nicht zum Scrollen -
+   sonst sieht man wieder nur einen Ausschnitt. */
+.modal.modal--structure { display: flex; flex-direction: column; overflow: hidden; }
+.modal--structure .modal-structure-head,
+.modal--structure .pj-modal-fuss { flex: 0 0 auto; }
+.pj-modal-bild { flex: 1 1 auto; min-height: 0; display: flex; justify-content: center;
+                 align-items: center; }
+/* 86vh ist die Hoehe des Pop-ups, die 300 px sind Kopf, Fuss und Innenabstand.
+   Eine Prozenthoehe greift hier nicht, weil das Flex-Element keine feste
+   Hoehe hat - mit dieser Rechnung passt das Dokument immer ganz hinein. */
+.pj-modal-bild img { display: block; max-height: calc(86vh - 300px); min-height: 180px;
+                     width: auto; max-width: 100%; height: auto; border-radius: 10px; }
+@media (max-width: 900px) { .pj-browser-grid { grid-template-columns: 1fr; } }
+
+/* ---- Dokumentvorschau ----------------------------------------------------
+   Das Selbstverstaendnis ist ein hohes, mehrseitiges Dokument. Die Vorschau
+   zeigt deshalb nur den Anfang und schneidet weich ab - wer mehr will,
+   oeffnet die Vorschau. */
+.pj-dok-grid { display: grid; grid-template-columns: .68fr 1fr;
+               gap: clamp(32px,4.5vw,64px); align-items: center; }
+.pj-dok-vorschau { appearance: none; -webkit-appearance: none; border: 1px solid #e4e1dd;
+                   margin: 0; padding: 0; background: #fff; cursor: pointer; display: block;
+                   border-radius: var(--radius-card); overflow: hidden; max-height: 460px;
+                   position: relative; box-shadow: 0 24px 60px rgba(0,0,0,.10);
+                   transition: transform .22s ease, box-shadow .22s ease; }
+.pj-dok-vorschau:hover { transform: translateY(-4px); box-shadow: 0 32px 74px rgba(0,0,0,.14); }
+.pj-dok-vorschau img { display: block; width: 100%; height: auto; }
+.pj-dok-vorschau::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0;
+                          height: 120px; background: linear-gradient(rgba(255,255,255,0), #fff); }
+.pj-dok-text p { color: var(--grey-70); line-height: 1.72; margin: 0 0 1rem; max-width: 52ch; }
+.pj-hinweis--link { color: var(--grey-70); text-decoration: underline; border-bottom: 0; }
+.pj-hinweis--link:hover { color: var(--ink); }
+.pj-modal-fuss { margin-top: 18px; display: flex; justify-content: center; }
+@media (max-width: 900px) { .pj-dok-grid { grid-template-columns: 1fr; } }
+
+/* ---- Status --------------------------------------------------------------
+   Drei Zustaende, mehr braucht die Projektarbeit nicht. Gelb fuer das, was
+   gerade laeuft - dieselbe Logik wie im Steckbrief. */
+
+/* ---- Themenfelder: der Arbeitsbereich ------------------------------------
+   Nebeneinander, gleich hoch, direkt anklickbar. Das ist die Hauptaktion der
+   Seite - alles andere ordnet sich unter. Subgrid haelt Frage, Name, Text,
+   Liste und Fusszeile in allen drei Karten auf einer Hoehe. */
+.pj-felder { display: grid; grid-template-columns: repeat(3, 1fr);
+             grid-template-rows: repeat(6, auto);
+             gap: clamp(14px,1.8vw,22px); margin-top: clamp(26px,3.2vw,40px); }
+.pj-feld { grid-row: span 6; display: grid; grid-template-rows: subgrid; row-gap: 0;
+           position: relative; padding: clamp(22px,2.4vw,30px);
+           background: #fff; border: 1px solid #e4e1dd; border-radius: var(--radius-card);
+           text-decoration: none; color: var(--ink);
+           transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease; }
+.pj-feld:hover { border-color: var(--ink); transform: translateY(-3px);
+                 box-shadow: 0 16px 34px rgba(0,0,0,.08); }
+.pj-feld > * { margin: 0; }
+.pj-feld-nr { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+              background: var(--ink); color: var(--hl); font-family: var(--font-serif);
+              font-weight: 700; font-size: .9rem; }
+.pj-feld-frage { padding-top: 14px; font-size: .78rem; letter-spacing: .08em;
+                 text-transform: uppercase; font-weight: 600; color: var(--grey-50); line-height: 1.4; }
+.pj-feld h3 { padding-top: 6px; font-family: var(--font-serif); font-weight: 700;
+              font-size: 1.3rem; line-height: 1.24; }
+.pj-feld p { padding-top: 10px; font-size: .94rem; line-height: 1.62; color: var(--grey-70); }
+.pj-feld ul { list-style: none; padding: 16px 0 0; display: grid; gap: 6px; }
+.pj-feld li { position: relative; padding-left: 18px; font-size: .86rem; line-height: 1.5;
+              color: var(--grey-70); }
+.pj-feld li::before { content: ""; position: absolute; left: 0; top: .52em; width: 7px; height: 7px;
+                      border-radius: 50%; background: var(--hl); }
+.pj-feld-fuss { padding-top: 20px; display: flex; align-items: center;
+                justify-content: space-between; gap: 10px; align-self: end; }
+.pj-pfeil { font-size: 1.2rem; line-height: 1; color: var(--grey-50); }
+.pj-feld:hover .pj-pfeil { color: var(--ink); }
+/* Das Modell steht als Zeile unter den Feldern - es erklaert sie, es ist
+   nicht selbst eine Aufgabe. */
+.pj-modell-zeile { display: flex; align-items: center; justify-content: space-between;
+                   flex-wrap: wrap; gap: 16px; margin-top: clamp(22px,2.6vw,32px);
+                   padding: clamp(16px,1.8vw,22px) clamp(20px,2.2vw,28px);
+                   background: #faf9f7; border-radius: var(--radius-card); }
+.pj-modell-zeile p { margin: 0; color: var(--grey-70); font-size: .95rem; }
+
+/* ---- Unterseiten: die Arbeitsflaeche -------------------------------------
+   Diese Seiten werden bearbeitet, nicht praesentiert. Darum zuerst die
+   Orientierung (wo bin ich, welches Feld von dreien), dann die Bausteine als
+   sichtbare Kaesten - jeder mit Status, damit man auf einen Blick sieht, was
+   schon steht und was noch fehlt. */
+.pj-wo { display: flex; align-items: center; flex-wrap: wrap; gap: 10px;
+         margin-bottom: 1.1rem; font-size: .84rem; color: var(--grey-50); }
+.pj-wo a { color: var(--grey-50); text-decoration: none; border-bottom: 0; }
+.pj-wo a:hover { color: var(--ink); }
+
+/* 250 statt 330: vier Bausteine passen damit in eine Reihe, drei bleiben
+   drei. Vorher stand der vierte allein in der zweiten Zeile. */
+.pj-bausteine { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+                gap: clamp(14px,1.8vw,22px); margin-top: clamp(26px,3.2vw,40px); }
+.pj-baustein { border: 1px solid #e4e1dd; border-radius: var(--radius-card); background: #fff;
+               padding: clamp(20px,2.2vw,28px); display: flex; flex-direction: column; gap: 10px; }
+/* Titel und Status untereinander: nebeneinander draengt ein langer Titel
+   die Marke aus dem Kasten. */
+.pj-baustein-kopf { display: flex; flex-direction: column; align-items: flex-start;
+                    gap: 9px; }
+.pj-baustein h3 { font-family: var(--font-serif); font-weight: 700; font-size: 1.18rem;
+                  line-height: 1.26; margin: 0; }
+.pj-baustein p { margin: 0; font-size: .95rem; line-height: 1.68; color: var(--grey-70); }
+.pj-baustein p.pj-offen { color: var(--grey-50); font-style: italic; }
+.pj-baustein-fuss { margin-top: auto; padding-top: 14px; }
+.pj-baustein-link { font-size: .9rem; font-weight: 600; color: var(--ink);
+                    text-decoration: underline; border-bottom: 0; }
+/* Ein Baustein, der schon Material hat, bekommt die Vorschau direkt hinein -
+   damit das Dokument dort liegt, wo es hingehoert. */
+.pj-baustein--breit { grid-column: 1 / -1; }
+.pj-baustein-dok { display: grid; grid-template-columns: 150px 1fr; gap: clamp(18px,2.4vw,30px);
+                   align-items: center; margin-top: 6px; }
+.pj-baustein-dok .pj-dok-vorschau { max-height: 210px; box-shadow: 0 14px 34px rgba(0,0,0,.10); }
+@media (max-width: 620px) { .pj-baustein-dok { grid-template-columns: 1fr; } }
+
+/* ---- Projekt-Scope -------------------------------------------------------
+   Kurz halten: drei Saetze, was am Ende steht. Details zur Ausgangslage
+   liegen im Pop-up, damit die Seite nicht mit Vorgeschichte anfaengt. */
+.pj-ziele { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px,1fr));
+            gap: clamp(14px,1.8vw,22px); margin-top: clamp(26px,3.2vw,40px); }
+/* Keine Ziffern: die 1-2-3 der Themenfelder kommt aus dem Strategiemodell
+   und steht fuer eine Reihenfolge. Haette der Scope daneben auch Ziffern,
+   laegen zwei Zaehlungen uebereinander, die nichts miteinander zu tun haben.
+   Das Zeichen steht ueber dem Text, beide an derselben linken Kante. */
+.pj-ziel { display: flex; flex-direction: column; align-items: flex-start; gap: 14px;
+           padding: clamp(20px,2.2vw,26px); border: 1px solid #e4e1dd;
+           border-radius: var(--radius-card); background: #fff; }
+.pj-ziel-ic { width: 40px; height: 40px; border-radius: 12px; display: grid;
+              place-items: center; background: var(--ink); color: var(--hl); }
+.pj-ziel-ic svg { width: 21px; height: 21px; display: block; }
+.pj-ziel h3 { margin: 0; font-family: var(--font-serif); font-weight: 700;
+              font-size: 1.08rem; line-height: 1.34; }
+.pj-scope-fuss { display: flex; flex-wrap: wrap; gap: 14px;
+                 margin-top: clamp(24px,2.8vw,34px); }
+.pj-modal-text p { color: var(--grey-70); line-height: 1.72; margin: 0 0 1rem; }
+.pj-modal-text ul { margin: 0 0 1rem; padding-left: 20px; display: grid; gap: 8px; }
+.pj-modal-text li { color: var(--grey-70); line-height: 1.7; }
+
+/* ---- Kleine Vorschau des Modells ----------------------------------------
+   Bewusst klein: das Modell erklaert die Reihenfolge der Felder, es ist
+   nicht selbst eine Aufgabe. Ein Klick macht es gross. */
+.pj-modell-mini { appearance: none; -webkit-appearance: none; border: 1px solid #d9d5d1;
+                  margin: 0; padding: 0; background: var(--black); cursor: pointer;
+                  border-radius: 10px; overflow: hidden; flex: 0 0 auto; width: 74px;
+                  line-height: 0; transition: transform .2s ease, border-color .2s ease; }
+.pj-modell-mini:hover { transform: translateY(-2px); border-color: var(--ink); }
+.pj-modell-mini img { display: block; width: 100%; height: auto; }
+.pj-modell-zeile p { flex: 1 1 320px; }
+
+/* ---- Arbeitsstufen -------------------------------------------------------
+   Steht im selben Kasten wie das Leitbild, nur als nummerierte Folge: wie
+   das Ergebnis zustande gekommen ist, nicht was es sagt. */
+.pj-stufen { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 16px;
+             counter-reset: stufe; }
+.pj-stufen li { display: flex; align-items: flex-start; gap: 16px; }
+.pj-stufe-nr { flex: 0 0 30px; height: 30px; border-radius: 50%; display: grid;
+               place-items: center; background: var(--grey-bg); color: var(--grey-70);
+               font-family: var(--font-serif); font-weight: 700; font-size: .9rem; }
+.pj-stufen b { display: block; font-weight: 600; font-size: 1rem; color: var(--ink);
+               margin-bottom: 3px; }
+.pj-stufen p { margin: 0; font-size: .94rem; line-height: 1.66; color: var(--grey-70); }
+
+/* ---- Die fuenf Fragen ----------------------------------------------------
+   Links die Fragen, rechts, warum sie zur Homepage fuehren. Nummeriert,
+   weil die Reihenfolge Teil der Methode ist. */
+.pj-fuenf { display: grid; grid-template-columns: 1fr .9fr;
+            gap: clamp(32px,4.5vw,64px); align-items: start;
+            margin-top: clamp(26px,3.2vw,40px); }
+.pj-fuenf ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.pj-fuenf li { display: flex; align-items: baseline; gap: 16px;
+               padding: 14px 0; border-bottom: 1px solid #ebe8e5;
+               font-family: var(--font-serif); font-weight: 500;
+               font-size: clamp(1.02rem,1.4vw,1.16rem); line-height: 1.4; color: var(--ink); }
+.pj-fuenf li:last-child { border-bottom: 0; }
+.pj-fuenf li span { flex: 0 0 auto; font-size: .78rem; font-weight: 700;
+                    color: var(--grey-50); font-family: var(--font-sans); }
+.pj-fuenf-text p { color: var(--grey-70); line-height: 1.72; margin: 0 0 1rem; max-width: 46ch; }
+.pj-fuenf-text .pj-exp { color: var(--ink); }
+
+/* Auf der Vision-Seite steht die Homepage allein und gross - sie ist dort
+   das Ergebnis, nicht eine Illustration daneben. */
+.pj-browser-btn--gross { max-width: 980px; margin: clamp(26px,3.2vw,40px) auto 0; }
+.pj-browser-aktionen--mitte { justify-content: center; margin-top: clamp(20px,2.4vw,28px); }
+
+@media (max-width: 860px) { .pj-fuenf { grid-template-columns: 1fr; } }
+
+/* ---- Die Strecke von heute zur Vision ------------------------------------ */
+/* ---- Der Weg von heute zur Vision ---------------------------------------
+   Zwei gleich grosse, gleich gewichtete Kaesten. Beide fuehren auf eine
+   Unterseite, auf der mehr erklaert wird - hier steht nur, worum es geht.
+   Die Vision wird darunter nur angedeutet, sie ist ein eigenes Themenfeld. */
+.pj-weg { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(14px,1.8vw,22px);
+          margin-top: clamp(26px,3.2vw,40px); align-items: stretch; }
+.pj-weg-karte { display: flex; flex-direction: column; text-decoration: none; color: var(--ink);
+                padding: clamp(22px,2.4vw,30px); background: #fff;
+                border: 1px solid #e4e1dd; border-radius: var(--radius-card);
+                transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease; }
+.pj-weg-karte:hover { border-color: var(--ink); transform: translateY(-3px);
+                      box-shadow: 0 16px 34px rgba(0,0,0,.08); }
+.pj-weg-karte h3 { margin: 0 0 .6rem; font-family: var(--font-serif); font-weight: 700;
+                   font-size: 1.42rem; line-height: 1.22; }
+.pj-weg-karte p { margin: 0; font-size: .96rem; line-height: 1.68; color: var(--grey-70); }
+/* Der Hinweis auf die Methode steht als Zeile in der Aufzaehlung, nicht als
+   graue Pille. Zwei Pillenformen in einem Kasten wirken unaufgeraeumt. */
+.pj-weg-fuss { margin-top: auto; padding-top: 22px; display: flex; align-items: center;
+               justify-content: space-between; gap: 10px; }
+.pj-weg-karte:hover .pj-pfeil { color: var(--ink); }
+
+.pj-weg-ziel { display: flex; align-items: center; gap: clamp(14px,1.8vw,20px);
+               margin-top: clamp(16px,1.8vw,22px);
+               padding: clamp(14px,1.6vw,18px) clamp(18px,2.2vw,26px);
+               background: #faf9f7; border-radius: var(--radius-card);
+               text-decoration: none; color: var(--ink);
+               transition: background .2s ease; }
+.pj-weg-ziel:hover { background: #f1efec; }
+.pj-weg-ziel-pfeil { color: var(--grey-50); font-size: 1.2rem; flex: 0 0 auto; }
+.pj-weg-ziel-text { flex: 1 1 auto; font-size: .94rem; line-height: 1.62; color: var(--grey-70); }
+.pj-weg-ziel-text b { color: var(--ink); font-weight: 600; }
+@media (max-width: 820px) { .pj-weg { grid-template-columns: 1fr; } }
+
+.pj-strecke { display: flex; align-items: stretch; gap: clamp(10px,1.4vw,18px);
+              margin-top: clamp(26px,3.2vw,40px); flex-wrap: wrap; }
+.pj-strecke-punkt { flex: 1 1 240px; padding: clamp(18px,2vw,24px);
+                    border: 1px solid #e4e1dd; border-radius: var(--radius-card); background: #fff; }
+.pj-strecke-punkt--mitte { border-color: var(--ink); }
+.pj-strecke-tag { display: block; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase;
+                  font-weight: 600; color: var(--grey-50); margin-bottom: .55rem; }
+.pj-strecke-punkt b { display: block; font-family: var(--font-serif); font-weight: 700;
+                      font-size: 1.14rem; margin-bottom: .4rem; }
+.pj-strecke-punkt p { margin: 0; font-size: .92rem; line-height: 1.6; color: var(--grey-70); }
+.pj-strecke-pfeil { align-self: center; color: var(--grey-50); font-size: 1.3rem; }
+
+/* ---- SWOT ---------------------------------------------------------------
+   Zwei Achsen, vier Felder. Die Farbkante sagt, worum es geht: innen oder
+   aussen, hilfreich oder hinderlich. */
+.pj-swot { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(12px,1.6vw,18px);
+           max-width: 680px; margin-top: clamp(26px,3.2vw,40px); }
+.pj-swot-feld { padding: clamp(18px,2vw,24px); border: 1px solid #e4e1dd;
+                border-left: 4px solid var(--kante, var(--grey-50));
+                border-radius: var(--radius-card); background: #fff; }
+.pj-swot-feld span { display: block; font-family: var(--font-serif); font-weight: 700;
+                     font-size: 1.5rem; color: var(--kante); line-height: 1; margin-bottom: .5rem; }
+.pj-swot-feld b { display: block; font-weight: 600; font-size: 1.02rem; margin-bottom: 2px; }
+.pj-swot-feld small { font-size: .82rem; color: var(--grey-50); }
+.pj-swot-feld--s { --kante: #059669; }
+.pj-swot-feld--w { --kante: #C51F5D; }
+.pj-swot-feld--o { --kante: #0B9FBD; }
+.pj-swot-feld--t { --kante: #8613A1; }
+.pj-swot-fuss { display: flex; align-items: center; flex-wrap: wrap; gap: 16px;
+                margin-top: clamp(22px,2.6vw,30px); }
+
+/* ---- Die drei Straenge des Meilensteinplans ------------------------------ */
+.pj-straenge { list-style: none; margin: 0 0 1.2rem; padding: 0; display: grid; gap: 10px; }
+.pj-strang { padding-left: 14px; border-left: 4px solid var(--kante); }
+.pj-strang b { display: block; font-weight: 600; font-size: .98rem; }
+.pj-strang small { font-size: .84rem; color: var(--grey-50); }
+.pj-strang--1 { --kante: #C51F5D; }
+.pj-strang--2 { --kante: #8613A1; }
+.pj-strang--3 { --kante: #0B9FBD; }
+
+/* ---- Hinweiskasten ------------------------------------------------------- */
+.pj-hinweiskasten { display: flex; align-items: flex-start; justify-content: space-between;
+                    gap: 20px; padding: clamp(20px,2.2vw,28px); background: #faf9f7;
+                    border-radius: var(--radius-card); margin-top: clamp(24px,2.8vw,34px); }
+.pj-hinweiskasten b { display: block; font-weight: 600; margin-bottom: .4rem; }
+.pj-hinweiskasten p { margin: 0; color: var(--grey-70); line-height: 1.66; font-size: .95rem; }
+
+@media (max-width: 560px) { .pj-swot { grid-template-columns: 1fr; } }
+
+/* ---- Leitbild: Text links, Dokument im Kasten rechts --------------------
+   Aufbau wie auf der Seite "Ueber uns" der SV-Akademie: ein umrandeter
+   Kasten, in dem das Dokument vollstaendig zu sehen ist, daneben Titel,
+   Kurztext und der eine Knopf. Beide Spalten gleich hoch - deshalb
+   align-items: stretch und das Bild auf die Kastenhoehe statt auf eine
+   feste Pixelzahl. */
+.pj-leitbild { display: grid; grid-template-columns: 1fr .82fr;
+               gap: clamp(32px,4.5vw,60px); align-items: stretch;
+               margin-top: clamp(26px,3.2vw,40px); }
+.pj-leitbild-text p { color: var(--grey-70); line-height: 1.74; margin: 0 0 1.1rem; max-width: 54ch; }
+.pj-leitbild-text p:last-child { margin-bottom: 0; }
+.pj-leitbild-text .pj-exp { color: var(--ink); margin-bottom: 1.3rem; }
+
+.pj-leitbild-kasten { display: grid; grid-template-columns: clamp(132px,13.5vw,190px) 1fr;
+                      gap: clamp(18px,2.4vw,28px); align-items: stretch;
+                      padding: clamp(18px,2.2vw,26px);
+                      border: 1px solid #ddd9d4; border-radius: var(--radius-card);
+                      background: #fff; }
+/* Das Dokument ist ein hoher Streifen aller Seiten. Es wird auf die Hoehe
+   des Kastens gebracht, nicht beschnitten - man soll sehen, was drinsteht. */
+/* Kein Rahmen im Rahmen: das Dokument steht frei im umrandeten Kasten.
+   Es liegt absolut, damit seine Eigenhoehe (1400 px) nicht in die Zeilenhoehe
+   eingeht - der Kasten bleibt so hoch wie der Text links, und
+   object-fit: contain zeigt das Dokument trotzdem vollstaendig. */
+.pj-kasten-bild { appearance: none; -webkit-appearance: none; border: 0;
+                  margin: 0; padding: 0; background: none; cursor: pointer; display: block;
+                  line-height: 0; align-self: stretch;
+                  position: relative; min-height: 240px;
+                  transition: opacity .2s ease; }
+.pj-kasten-bild:hover { opacity: .88; }
+.pj-kasten-bild img { position: absolute; inset: 0; width: 100%; height: 100%;
+                      max-width: none; object-fit: contain; object-position: center; }
+.pj-kasten-text { align-self: stretch; display: flex; flex-direction: column;
+                  padding-top: clamp(14px,1.8vw,26px); }
+.pj-kasten-text b { display: block; font-family: var(--font-serif); font-weight: 700;
+                    font-size: 1.14rem; line-height: 1.26; margin-bottom: .45rem; }
+.pj-kasten-text small { display: block; font-size: .92rem; line-height: 1.6;
+                        color: var(--grey-70); margin-bottom: 1.1rem; }
+.pj-kasten-text .btn { margin-top: auto; align-self: flex-start; }
+
+/* ---- Methodenkasten -----------------------------------------------------
+   Ein Baustein, der ueberall gleich aussieht: wo er auftaucht, steckt eine
+   Methode dahinter, die sich wiederverwenden laesst. Darum eigene Form -
+   staerker gerundet als die uebrigen Kaesten - und immer dasselbe Zeichen
+   oben links plus das Wort "Methode". */
+.mk { appearance: none; -webkit-appearance: none; text-align: left; font: inherit;
+      display: flex; flex-direction: column; gap: 8px; cursor: pointer;
+      padding: clamp(20px,2.2vw,26px); background: #fff;
+      border: 1px solid #ddd9d4; border-radius: 22px; color: var(--ink);
+      transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease; }
+.mk:hover { border-color: var(--ink); transform: translateY(-3px);
+            box-shadow: 0 16px 34px rgba(0,0,0,.08); }
+/* Auf den Unterseiten steht eine Methode zwischen lauter Inhaltskaesten.
+   Ein kleines Icon reicht dort nicht - man sieht nicht auf den ersten Blick,
+   dass es sich um ein Werkzeug handelt und nicht um ein Ergebnis. Deshalb
+   zwei eindeutige Zeichen: eine graue Flaeche statt weiss und ein schwarzes
+   Schild "Methode", das auf der Oberkante sitzt. Die kleinen Zeilen im
+   Werkzeugkasten der Projektseite bleiben, wie sie sind. */
+.mk:not(.mk--klein) { position: relative; background: #faf9f7;
+                      padding-top: clamp(28px,3vw,34px); }
+.mk:not(.mk--klein)::before {
+  content: "Methode"; position: absolute; top: 0; left: clamp(20px,2.2vw,26px);
+  transform: translateY(-50%); padding: 5px 13px; border-radius: 999px;
+  background: var(--ink); color: var(--hl);
+  font-family: var(--font-sans); font-size: .66rem; font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase; }
+.mk:not(.mk--klein) .mk-tag { display: none; }
+.mk:not(.mk--klein):hover { background: #fff; }
+.pj-werkzeug .mk:not(.mk--klein) { background: #fff; }
+
+.mk-kopf { display: flex; align-items: center; gap: 10px; }
+.mk-ic { width: 34px; height: 34px; border-radius: 11px; background: var(--ink); color: var(--hl);
+         display: grid; place-items: center; flex: 0 0 auto; }
+.mk-ic svg { width: 18px; height: 18px; display: block; }
+.mk-tag { font-size: .68rem; letter-spacing: .14em; text-transform: uppercase;
+          font-weight: 700; color: var(--grey-50); }
+.mk b { font-family: var(--font-serif); font-weight: 700; font-size: 1.14rem; line-height: 1.26; }
+.mk small { font-size: .9rem; line-height: 1.6; color: var(--grey-70); }
+.mk-mehr { margin-top: auto; padding-top: 12px; font-size: .88rem; font-weight: 600; color: var(--ink); }
+.mk:hover .mk-mehr { text-decoration: underline; }
+
+/* Der Werkzeugkasten hebt sich vom Rest ab: hier geht es nicht um dieses
+   Projekt, sondern um das, was sich mitnehmen laesst. */
+.pj-werkzeug { background: #faf9f7; }
+.pj-werkzeug-gitter { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+                      gap: clamp(14px,1.8vw,22px); margin-top: clamp(26px,3.2vw,40px); }
+.pj-werkzeug .mk { background: #fff; }
+.mk--leer { border-style: dashed; cursor: default; background: transparent; }
+.mk--leer:hover { transform: none; box-shadow: none; border-color: #ddd9d4; }
+.mk--leer .mk-ic { background: var(--grey-bg); color: var(--grey-50); }
+.mk--leer b, .mk--leer small { color: var(--grey-50); }
+
+/* ---- Protokoll: wie wir dorthin gekommen sind --------------------------- */
+.pj-protokoll { display: grid; gap: clamp(16px,2vw,22px); margin-top: clamp(26px,3.2vw,40px); }
+/* Die Methode steht NEBEN dem Schritt, nicht darin. Ein umrandeter Kasten
+   im umrandeten Kasten wirkt abgekastelt - deshalb zwei Geschwister in einer
+   Zeile, gleich hoch, der Schritt etwas breiter als die Methode. */
+/* Die Methode steht jetzt im aufgeklappten Kasten, nicht mehr daneben -
+   deshalb nur noch zwei Spalten: Nummer und Kasten ueber die volle Breite.
+   Sonst waeren die Kaesten mit Methode schmaler als die ohne. */
+.pj-schritt { display: grid; grid-template-columns: 54px 1fr; gap: clamp(16px,2vw,24px);
+              align-items: start; }
+.mk--neben { border-radius: var(--radius-card); align-self: start; }
+@media (max-width: 900px) {
+  .pj-schritt { grid-template-columns: 54px 1fr; }
+  .mk--neben { grid-column: 2; }
+}
+/* Das Zeichen sitzt mittig zur Kopfzeile des Kastens daneben. Zugeklappt
+   ist die Kopfzeile der ganze Kasten - dann steht es mittig zu ihm. Die
+   Rechnung: Polster oben und unten plus Titelzeile, davon die Hoehe des
+   Zeichens abgezogen, halbiert. */
+.pj-schritt-nr { align-self: start;
+                 margin-top: calc((clamp(16px,1.9vw,21px) * 2 + 1.44rem - 44px) / 2 + 1px);
+                 width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+                 background: var(--ink); color: var(--hl); font-family: var(--font-serif);
+                 font-weight: 700; font-size: 1.02rem; }
+.pj-schritt-inhalt { border: 1px solid #e4e1dd; border-radius: var(--radius-card);
+                     background: #fff; padding: clamp(20px,2.2vw,28px); }
+.pj-schritt-inhalt > h3 { margin: 0 0 .5rem; font-family: var(--font-serif); font-weight: 700;
+                          font-size: 1.18rem; line-height: 1.26; }
+.pj-schritt-inhalt > p { margin: 0; color: var(--grey-70); line-height: 1.72; font-size: .98rem; }
+.pj-schritt-inhalt > p + p { margin-top: .95rem; }
+.pj-schritt-inhalt > ul + p, .pj-schritt-inhalt > p + ul { margin-top: .95rem; }
+/* Weiterhin fuer freistehende Methodenreihen (Vision, Strategie). */
+.pj-schritt-methoden { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+                       gap: 14px; margin-top: 18px; }
+
+@media (max-width: 900px) { .pj-leitbild { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .pj-schritt { grid-template-columns: 1fr; } }
+
+/* ---- Wo wir stehen: eine Zeile, kein Abschnitt --------------------------
+   Auf der Projektseite reicht das Signal "es gibt einen Plan" plus der
+   Absprung. Die ausfuehrliche Darstellung steht auf der Strategie-Seite,
+   deshalb hier bewusst flach - drei Striche in den Strangfarben statt
+   einer Vorschau. */
+.pj-standzeile { display: flex; align-items: center; gap: clamp(20px,3vw,44px);
+                 padding: clamp(18px,2vw,24px) clamp(20px,2.4vw,30px);
+                 border: 1px solid #e4e1dd; border-radius: var(--radius-card);
+                 background: #fff; text-decoration: none; color: var(--ink);
+                 transition: border-color .2s ease, box-shadow .2s ease; }
+.pj-standzeile:hover { border-color: var(--ink); box-shadow: 0 12px 28px rgba(0,0,0,.07); }
+.pj-standzeile-text { flex: 1 1 auto; min-width: 0; }
+.pj-standzeile-text .pj-tag { margin-bottom: .4rem; }
+.pj-standzeile-text b { display: block; font-family: var(--font-serif); font-weight: 700;
+                        font-size: 1.1rem; line-height: 1.3; margin-bottom: .25rem; }
+.pj-standzeile-text small { font-size: .88rem; line-height: 1.55; color: var(--grey-70); }
+.pj-standzeile-balken { display: flex; flex-direction: column; gap: 7px; flex: 0 0 140px; }
+.pj-standbalken { display: block; height: 7px; border-radius: 4px; background: var(--kante); }
+.pj-standbalken--1 { --kante: #C51F5D; width: 100%; }
+.pj-standbalken--2 { --kante: #8613A1; width: 72%; }
+.pj-standbalken--3 { --kante: #0B9FBD; width: 86%; }
+.pj-standzeile-pfeil { flex: 0 0 auto; font-size: 1.25rem; color: var(--grey-50); }
+.pj-standzeile:hover .pj-standzeile-pfeil { color: var(--ink); }
+@media (max-width: 620px) {
+  .pj-standzeile { flex-wrap: wrap; gap: 16px; }
+  .pj-standzeile-balken { flex-basis: 100%; flex-direction: row; align-items: center; }
+  .pj-standbalken { height: 7px; }
+  .pj-standbalken--1 { width: 40%; } .pj-standbalken--2 { width: 28%; } .pj-standbalken--3 { width: 32%; }
+}
+
+/* ---- Werkzeugkasten zweispaltig -----------------------------------------
+   Links, was vorliegt - rechts, womit es erarbeitet wurde. Beides gehoert
+   zusammen: das eine ist das Ergebnis, das andere der Weg dorthin.
+   Auf den Unterseiten stehen die Methoden gross (.mk); hier reicht die
+   schmale Zeile, sonst erschlaegt der Werkzeugkasten die Ergebnisse. */
+.pj-kasten-grid { display: grid; grid-template-columns: 1fr 1fr;
+                  gap: clamp(26px,3.6vw,56px); margin-top: clamp(26px,3.2vw,40px);
+                  align-items: start; }
+.pj-kasten-spalte .pj-tag { margin-bottom: 1rem; }
+.pj-methodenliste { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+/* Ergebnisse und Methoden teilen sich diese Zeile - gleiche Hoehe, gleiche
+   Schriftgroessen, rechts immer nur der Pfeil. Ein Befehlswort auf der einen
+   und keines auf der anderen Seite liesse die Spalten auseinanderfallen. */
+.mk--klein { flex-direction: row; align-items: center; gap: 14px; width: 100%;
+             padding: 14px 16px; border-radius: 16px; min-height: 70px;
+             text-decoration: none; }
+.mk--klein:hover { transform: none; box-shadow: 0 10px 24px rgba(0,0,0,.07); }
+.mk--klein .mk-ic { width: 30px; height: 30px; border-radius: 9px; }
+.mk--klein .mk-ic svg { width: 16px; height: 16px; }
+.mk-text { flex: 1 1 auto; min-width: 0; }
+.mk--klein .mk-text b { display: block; font-family: var(--font-sans); font-weight: 600;
+                        font-size: .95rem; line-height: 1.3; }
+.mk--klein .mk-text small { display: block; font-size: .82rem; line-height: 1.45;
+                            color: var(--grey-50); margin-top: 1px; }
+.mk-pfeil { flex: 0 0 auto; color: var(--grey-50); font-size: 1.05rem; }
+.mk--klein:hover .mk-pfeil { color: var(--ink); }
+.pj-kasten-spalte .pj-hinweis { display: block; margin-top: 14px; line-height: 1.6; }
+@media (max-width: 860px) { .pj-kasten-grid { grid-template-columns: 1fr; } }
+
+/* ==========================================================================
+   Abstimmungstermin: Ziele, Dramaturgie, Skizzen
+   Aufbau wie das Storyboard im MSP-Projekt: links eine durchgehende Spur,
+   rechts auf gleicher Hoehe der Inhalt. Nur ist die Spur hier keine
+   Bildschirmskizze, sondern die Zeitachse - jeder Block ist so hoch, wie er
+   lang ist (--min), damit man die zwei Stunden sieht und nicht nur liest.
+   ========================================================================== */
+.ab-ziele { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(14px,1.8vw,22px);
+            margin-top: clamp(26px,3.2vw,40px); }
+.ab-ziel { padding: clamp(20px,2.2vw,28px); background: #fff; border: 1px solid #e4e1dd;
+           border-radius: var(--radius-card); }
+.ab-ziel-nr { display: block; font-family: var(--font-serif); font-weight: 700;
+              font-size: 1.1rem; color: var(--grey-50); margin-bottom: .7rem; }
+.ab-ziel h3 { margin: 0 0 .5rem; font-family: var(--font-serif); font-weight: 700;
+              font-size: 1.16rem; line-height: 1.26; }
+.ab-ziel p { margin: 0; font-size: .95rem; line-height: 1.66; color: var(--grey-70); }
+
+.ab-gefuehl { margin: clamp(18px,2.2vw,26px) 0 0; padding: clamp(24px,3vw,38px);
+              background: var(--ink); border-radius: var(--radius-card); }
+.ab-gefuehl blockquote { margin: 0; font-family: var(--font-serif); font-weight: 500;
+                         font-size: clamp(1.2rem,2vw,1.6rem); line-height: 1.42; color: #fff;
+                         max-width: 46ch; }
+.ab-gefuehl blockquote::before { content: "„"; }
+.ab-gefuehl blockquote::after { content: "“"; }
+.ab-gefuehl figcaption { margin-top: 1.1rem; font-size: .84rem; letter-spacing: .1em;
+                         text-transform: uppercase; font-weight: 600; color: var(--hl); }
+
+.ab-abgrenzung { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 18px;
+                 margin-top: clamp(16px,1.8vw,22px);
+                 padding: clamp(16px,1.9vw,22px) clamp(20px,2.2vw,28px);
+                 background: #faf9f7; border-radius: var(--radius-card); }
+.ab-abgrenzung-tag { font-size: .72rem; letter-spacing: .12em; text-transform: uppercase;
+                     font-weight: 700; color: var(--ink); flex: 0 0 auto; }
+.ab-abgrenzung p { margin: 0; flex: 1 1 320px; font-size: .95rem; line-height: 1.66;
+                   color: var(--grey-70); }
+
+/* ---- Ablauf: Spur links, Inhalt rechts ---------------------------------- */
+.ab-ablauf { margin-top: clamp(26px,3.2vw,40px); }
+.ab-block { display: grid; grid-template-columns: minmax(0,214px) 1fr;
+            gap: clamp(20px,3vw,52px); align-items: stretch; }
+
+.ab-inhalt { padding: clamp(18px,2vw,26px) 0 clamp(26px,3vw,40px); }
+.ab-marke { display: flex; align-items: center; gap: 12px; margin: 0 0 1.1rem;
+            font-weight: 600; font-size: 1.04rem; color: var(--ink); }
+/* Die Blocknummer traegt den Akzent mit. */
+.ab-nr { font-family: var(--font-serif); font-weight: 700; color: var(--ak); }
+.ab-felder { margin: 0; display: grid; gap: 14px; }
+.ab-feld { display: grid; grid-template-columns: 7.5rem 1fr; gap: 4px 20px; }
+/* Zugeklappt steht nur ein Feld da - eine Beschriftung "Ergebnis" erklaert
+   dann nichts und schiebt den Satz nach rechts. Beides weg. */
+.ab-block:not(.is-offen) .ab-feld { grid-template-columns: 1fr; }
+.ab-block:not(.is-offen) .ab-feld dt { display: none; }
+.ab-feld dt { font-size: .82rem; letter-spacing: .06em; text-transform: uppercase;
+              font-weight: 600; color: var(--grey-50); padding-top: 2px; }
+.ab-feld dd { margin: 0; font-size: .96rem; line-height: 1.7; color: var(--grey-70); }
+.ab-liste, .ab-fragen, .ab-kette, .ab-unterkette { margin: 0; padding: 0; list-style: none;
+                                                   display: grid; gap: 6px; }
+.ab-liste li, .ab-kette li { position: relative; padding-left: 17px; }
+.ab-liste li::before { content: ""; position: absolute; left: 0; top: .78em; width: 11px;
+                       height: 2px; border-radius: 2px; background: var(--ak); }
+.ab-kette { counter-reset: kette; gap: 7px; }
+.ab-kette > li { padding-left: 26px; counter-increment: kette; }
+/* Die Ziffern tragen den Akzent. Der dritte Punkt ist Reserve - Ziffer und
+   Text stehen in Grau, damit der Blick auf 1 und 2 bleibt. */
+.ab-kette > li::before { content: counter(kette); position: absolute; left: 0; top: 0;
+                         font-size: .78rem; font-weight: 700; color: var(--ak); }
+.ab-kette > li.ist-reserve, .ab-kette > li.ist-reserve b { color: #a8a29b; }
+.ab-kette > li.ist-reserve::before { color: #c4beb7; }
+.ab-unterkette { margin-top: 6px; gap: 4px; }
+.ab-unterkette li { position: relative; padding-left: 15px; font-size: .92rem;
+                    color: var(--grey-50); }
+.ab-unterkette li::before { content: ""; position: absolute; left: 0; top: .68em; width: 6px;
+                            height: 1.5px; background: var(--grey-50); }
+.ab-fragen li { padding-left: 16px; border-left: 2px solid var(--ak); font-style: italic;
+                color: var(--ink); }
+.ab-warnung { color: var(--ink); font-weight: 500; }
+.ab-rollen { display: grid; gap: 10px; }
+.ab-rolle { padding: 12px 16px; background: #faf9f7; border-radius: 14px; }
+.ab-rolle b { display: block; font-weight: 600; font-size: .95rem; color: var(--ink); }
+.ab-rolle small { display: block; margin-top: 2px; font-size: .88rem; line-height: 1.55;
+                  color: var(--grey-70); }
+
+@media (max-width: 900px) {
+  .ab-ziele { grid-template-columns: 1fr; }
+  .ab-block { grid-template-columns: 1fr; gap: 14px; }
+  .ab-spur { flex-direction: row; align-items: center; gap: 22px; min-height: 0;
+             border: 1px solid #e4e1dd; border-radius: var(--radius-card); }
+  .ab-block + .ab-block .ab-spur { border-top: 1px solid #e4e1dd; }
+  .ab-spur--erste, .ab-spur--letzte { border-radius: var(--radius-card); }
+  .ab-inhalt { padding-top: 4px; }
+  .ab-feld { grid-template-columns: 1fr; gap: 2px; }
+}
+
+/* ---- Der Ablauf -------------------------------------------------------
+   Eine Darstellung: links die Dauer als Ziffer mit dem mitlaufenden Balken,
+   rechts der Block. Zugeklappt steht nur das Ergebnis da, offen kommen
+   Vorgehen und Leitfragen dazu. Offen ist immer nur ein Block.
+   Die Akzentfarbe steckt in --ak und faerbt vier Dinge: die Blocknummer,
+   die markierte Strecke im Balken, die Striche der Aufzaehlung und die
+   Linien an den Leitfragen. */
+.ab-ablauf { --ak: #0B9FBD; margin-top: clamp(26px,3.2vw,40px); }
+
+.ab-block { display: grid; grid-template-columns: minmax(0,214px) 1fr;
+            gap: clamp(20px,3vw,52px); align-items: stretch; }
+
+.ab-inhalt { padding: clamp(18px,2vw,26px) 0 clamp(26px,3vw,40px); }
+.ab-marke { display: flex; align-items: center; gap: 12px; margin: 0 0 1.1rem;
+            font-weight: 600; font-size: 1.04rem; color: var(--ink); }
+/* Die Blocknummer traegt den Akzent mit. */
+.ab-nr { font-family: var(--font-serif); font-weight: 700; color: var(--ak); }
+.ab-felder { margin: 0; display: grid; gap: 14px; }
+.ab-feld { display: grid; grid-template-columns: 7.5rem 1fr; gap: 4px 20px; }
+/* Zugeklappt steht nur ein Feld da - eine Beschriftung "Ergebnis" erklaert
+   dann nichts und schiebt den Satz nach rechts. Beides weg. */
+.ab-block:not(.is-offen) .ab-feld { grid-template-columns: 1fr; }
+.ab-block:not(.is-offen) .ab-feld dt { display: none; }
+.ab-feld dt { font-size: .82rem; letter-spacing: .06em; text-transform: uppercase;
+              font-weight: 600; color: var(--grey-50); padding-top: 2px; }
+.ab-feld dd { margin: 0; font-size: .96rem; line-height: 1.7; color: var(--grey-70); }
+.ab-liste, .ab-fragen, .ab-kette, .ab-unterkette { margin: 0; padding: 0; list-style: none;
+                                                   display: grid; gap: 6px; }
+.ab-liste li, .ab-kette li { position: relative; padding-left: 17px; }
+.ab-liste li::before { content: ""; position: absolute; left: 0; top: .78em; width: 11px;
+                       height: 2px; border-radius: 2px; background: var(--ak); }
+.ab-kette { counter-reset: kette; gap: 7px; }
+.ab-kette > li { padding-left: 26px; counter-increment: kette; }
+/* Die Ziffern tragen den Akzent. Der dritte Punkt ist Reserve - Ziffer und
+   Text stehen in Grau, damit der Blick auf 1 und 2 bleibt. */
+.ab-kette > li::before { content: counter(kette); position: absolute; left: 0; top: 0;
+                         font-size: .78rem; font-weight: 700; color: var(--ak); }
+.ab-kette > li.ist-reserve, .ab-kette > li.ist-reserve b { color: #a8a29b; }
+.ab-kette > li.ist-reserve::before { color: #c4beb7; }
+.ab-unterkette { margin-top: 6px; gap: 4px; }
+.ab-unterkette li { position: relative; padding-left: 15px; font-size: .92rem;
+                    color: var(--grey-50); }
+.ab-unterkette li::before { content: ""; position: absolute; left: 0; top: .68em; width: 6px;
+                            height: 1.5px; background: var(--grey-50); }
+.ab-fragen li { padding-left: 16px; border-left: 2px solid var(--ak); font-style: italic;
+                color: var(--ink); }
+.ab-warnung { color: var(--ink); font-weight: 500; }
+.ab-rollen { display: grid; gap: 10px; }
+.ab-rolle { padding: 12px 16px; background: #faf9f7; border-radius: 14px; }
+.ab-rolle b { display: block; font-weight: 600; font-size: .95rem; color: var(--ink); }
+.ab-rolle small { display: block; margin-top: 2px; font-size: .88rem; line-height: 1.55;
+                  color: var(--grey-70); }
+
+@media (max-width: 900px) {
+  .ab-ziele { grid-template-columns: 1fr; }
+  .ab-block { grid-template-columns: 1fr; gap: 14px; }
+  .ab-spur { flex-direction: row; align-items: center; gap: 22px; min-height: 0;
+             border: 1px solid #e4e1dd; border-radius: var(--radius-card); }
+  .ab-block + .ab-block .ab-spur { border-top: 1px solid #e4e1dd; }
+  .ab-spur--erste, .ab-spur--letzte { border-radius: var(--radius-card); }
+  .ab-inhalt { padding-top: 4px; }
+  .ab-feld { grid-template-columns: 1fr; gap: 2px; }
+}
+
+/* ---- Der Ablauf -------------------------------------------------------
+   Eine Darstellung: links die Dauer als Ziffer mit dem mitlaufenden Balken,
+   rechts der Block. Zugeklappt steht nur das Ergebnis da, offen kommen
+   Vorgehen und Leitfragen dazu. Offen ist immer nur ein Block.
+   Die Akzentfarbe steckt in --ak und faerbt vier Dinge: die Blocknummer,
+   die markierte Strecke im Balken, die Striche der Aufzaehlung und die
+   Linien an den Leitfragen. */
+.ab-ablauf { --ak: #0B9FBD; margin-top: clamp(26px,3.2vw,40px); }
+
+
+.ab-block { display: grid; grid-template-columns: minmax(0,132px) 1fr;
+            gap: clamp(18px,2.4vw,34px); align-items: start;
+            border-bottom: 1px solid #ebe8e5; }
+.ab-block:last-child { border-bottom: 0; }
+.ab-spur { display: flex; flex-direction: column; gap: 10px;
+           padding: clamp(18px,2vw,24px) 0; }
+.ab-dauer { font-family: var(--font-serif); font-weight: 700; font-size: 2.6rem;
+            line-height: 1; color: var(--ink); }
+.ab-dauer small { display: block; margin: 4px 0 0; font-size: .68rem;
+                  font-family: var(--font-sans); font-weight: 600; letter-spacing: .1em;
+                  text-transform: uppercase; color: var(--grey-50); }
+/* Der Balken zeigt, wo im Termin der Block liegt: --vor sind die Minuten
+   davor, --min seine eigene Dauer. */
+.ab-anteil { display: block; width: 100%; height: 4px; border-radius: 999px;
+             background: #e4e1dd; margin-top: 2px; }
+.ab-anteil i { display: block; height: 100%; border-radius: 999px; background: var(--ak);
+               width: calc(var(--min) / 120 * 100%);
+               margin-left: calc(var(--vor, 0) / 120 * 100%); }
+
+.ab-inhalt { padding: clamp(18px,2vw,24px) 0; }
+.ab-marke { appearance: none; -webkit-appearance: none; background: none; border: 0;
+            width: 100%; padding: 0; margin: 0 0 1.1rem; cursor: pointer;
+            display: flex; align-items: center; gap: 12px; text-align: left;
+            font-family: inherit; font-weight: 600; font-size: 1.04rem; color: var(--ink); }
+.ab-marke-titel { flex: 1 1 auto; }
+.ab-marke-dauer { display: none; }
+.ab-marke-pfeil { flex: 0 0 auto; width: 9px; height: 9px; border-right: 2px solid var(--grey-50);
+                  border-bottom: 2px solid var(--grey-50); transform: rotate(45deg);
+                  margin-bottom: 3px; transition: transform .2s ease; }
+.ab-marke:hover .ab-marke-pfeil { border-color: var(--ink); }
+.ab-block.is-offen .ab-marke-pfeil { transform: rotate(-135deg); margin-bottom: -3px; }
+.ab-block:not(.is-offen) .ab-feld:not(:first-child) { display: none; }
+.ab-block:not(.is-offen) .ab-feld { grid-template-columns: 1fr; }
+.ab-block:not(.is-offen) .ab-feld dt { display: none; }
+
+/* ---- Gabelung im Protokoll: zwei Straenge, die wieder zusammenlaufen ----
+   Schritt 3 teilt sich in 3a und 3b und muendet in Schritt 4. Die Klammer
+   darueber und darunter macht das sichtbar, ohne eine Grafik zu brauchen. */
+.pj-gabel { position: relative; display: grid; grid-template-columns: 1fr 1fr;
+            gap: clamp(16px,2vw,24px); margin-left: 70px; padding-top: 30px; }
+.pj-gabel::before { content: ""; position: absolute; top: 12px; left: 25%; right: 25%;
+                    height: 18px; border: 1px solid #ddd9d4; border-bottom: 0;
+                    border-radius: 12px 12px 0 0; }
+.pj-gabel::after { content: ""; position: absolute; top: -10px; left: 50%; width: 1px;
+                   height: 22px; background: #ddd9d4; }
+.pj-gabel-arm { display: grid; gap: 14px; align-content: start; }
+.pj-gabel-kopf { display: flex; align-items: center; gap: 12px; }
+.pj-schritt-nr--zweig { width: 38px; height: 38px; font-size: .9rem; flex: 0 0 auto; }
+.pj-gabel-kopf h3 { margin: 0; font-family: var(--font-serif); font-weight: 700;
+                    font-size: 1.18rem; line-height: 1.26; }
+.pj-gabel .pj-schritt-inhalt { padding: clamp(18px,2vw,24px); }
+/* Die Klammer, mit der die beiden Straenge wieder zusammenlaufen. */
+.pj-zusammen { position: relative; height: 34px; margin-left: 70px; }
+.pj-zusammen::before { content: ""; position: absolute; top: 0; left: 25%; right: 25%;
+                       height: 18px; border: 1px solid #ddd9d4; border-top: 0;
+                       border-radius: 0 0 12px 12px; }
+.pj-zusammen::after { content: ""; position: absolute; top: 18px; left: 50%; width: 1px;
+                      height: 16px; background: #ddd9d4; }
+@media (max-width: 900px) {
+  .pj-gabel { grid-template-columns: 1fr; margin-left: 0; padding-top: 10px; }
+  .pj-gabel::before, .pj-gabel::after, .pj-zusammen { display: none; }
+}
+
+/* Die drei Ebenen der Wahrnehmung im Protokolltext. */
+.pj-ebenen { list-style: none; margin: 1rem 0; padding: 0; display: grid; gap: 10px; }
+.pj-ebenen li { position: relative; padding-left: 20px; font-size: .96rem; line-height: 1.68;
+                color: var(--grey-70); }
+.pj-ebenen li::before { content: ""; position: absolute; left: 0; top: .62em; width: 10px;
+                        height: 2px; border-radius: 2px; background: var(--ink); }
+.pj-ebenen li:nth-child(2)::before { width: 13px; }
+.pj-ebenen li:nth-child(3)::before { width: 16px; }
+.pj-ebenen b { color: var(--ink); font-weight: 600; }
+
+/* ---- Kopfzeile: voller Pfad und die drei Themenfelder als Reiter --------
+   Vorher stand dort nur ein Schritt zurueck ("<- Strategie") und auf den
+   Feldseiten drei nummerierte Punkte. Auf Ebene 3 war damit nicht zu sehen,
+   wo man ueberhaupt ist. Jetzt steht der ganze Weg da, und die Reiter zeigen
+   die Struktur auf jeder Seite des Strangs - auch zwei Ebenen tiefer. */
+.pj-wo-trenner { color: var(--grey-50); }
+.pj-wo [aria-current="page"] { color: var(--ink); font-weight: 600; }
+
+.pj-reiter { display: flex; flex-wrap: wrap; gap: 8px; margin: 1rem 0 1.7rem; }
+.pj-reiter-knopf { display: inline-flex; align-items: center; gap: 9px;
+                   padding: 7px 15px 7px 9px; border-radius: 999px;
+                   border: 1px solid #ddd9d4; background: #fff; color: var(--grey-70);
+                   text-decoration: none; font-family: var(--font-sans);
+                   font-weight: 600; font-size: .84rem;
+                   transition: border-color .15s ease, color .15s ease, background .15s ease; }
+.pj-reiter-knopf:hover { border-color: var(--ink); color: var(--ink); }
+.pj-reiter-nr { width: 21px; height: 21px; border-radius: 50%; flex: 0 0 auto;
+                display: grid; place-items: center; background: var(--grey-bg);
+                color: var(--grey-50); font-family: var(--font-serif); font-weight: 700;
+                font-size: .76rem; }
+.pj-reiter-knopf.is-hier { background: var(--ink); border-color: var(--ink); color: #fff; }
+.pj-reiter-knopf.is-hier .pj-reiter-nr { background: var(--hl); color: var(--ink); }
+
+/* ---- Termine: der Verlauf als zweite Achse ------------------------------
+   Themen gehen ueber die drei Felder, Zeit geht hier entlang. Der juengste
+   Termin steht oben, damit man nicht scrollen muss, um den aktuellen Stand
+   zu sehen. Aufbau wie die Methodenzeilen im Werkzeugkasten - dieselbe
+   Lesebewegung, dieselbe Hoehe. */
+.tm-kopf { margin-top: clamp(36px,4.4vw,62px); }
+.tm-liste { list-style: none; margin: clamp(22px,2.6vw,32px) 0 0; padding: 0;
+            display: grid; gap: 12px; counter-reset: termin; }
+/* Der Kasten ist das <li>: Klappt ein Termin auf, oeffnet sich seine
+   Umrandung mit und schliesst die Dokumente ein. Stuenden sie darunter,
+   waere nicht zu sehen, zu welchem Termin sie gehoeren. */
+.tm-posten { background: #fff; border: 1px solid #e4e1dd; border-radius: var(--radius-card);
+             overflow: hidden; transition: border-color .2s ease, box-shadow .2s ease; }
+.tm-posten--geplant { border-left: 4px solid var(--hl); }
+.tm-posten--offen { background: transparent; border-style: dashed; }
+.tm-posten.is-offen { border-color: var(--ink); box-shadow: 0 12px 28px rgba(0,0,0,.08); }
+.tm-eintrag { display: grid; grid-template-columns: 92px 1fr auto auto;
+              align-items: center; gap: clamp(16px,2vw,26px);
+              padding: 16px 20px; background: none; border: 0;
+              text-decoration: none; color: var(--ink); }
+.tm-datum { text-align: center; flex: 0 0 auto; }
+.tm-datum b { display: block; font-family: var(--font-serif); font-weight: 700;
+              font-size: 1.02rem; line-height: 1.2; }
+.tm-datum small { display: block; margin-top: 2px; font-size: .72rem; color: var(--grey-50); }
+.tm-text { min-width: 0; }
+.tm-text b { display: block; font-weight: 600; font-size: .98rem; line-height: 1.3; }
+.tm-text small { display: block; margin-top: 3px; font-size: .86rem; line-height: 1.5;
+                 color: var(--grey-70); }
+.tm-stand { font-size: .82rem; font-weight: 600; color: var(--grey-50); white-space: nowrap; }
+a.tm-eintrag:hover .tm-stand { color: var(--ink); }
+.tm-posten--offen .tm-text b, .tm-posten--offen .tm-datum b { color: var(--grey-50); }
+.tm-stand--offen { font-style: italic; font-weight: 400; }
+@media (max-width: 760px) {
+  .tm-eintrag { grid-template-columns: 70px 1fr; }
+  .tm-stand, .tm-eintrag .mk-pfeil { grid-column: 2; }
+}
+
+/* Die Terminzeile traegt statt der drei Straenge ein Listenzeichen. */
+.pj-standzeile-balken--liste .pj-standbalken { background: #ddd9d4; }
+.pj-standzeile-balken--liste .pj-standbalken:nth-child(1) { width: 100%; }
+.pj-standzeile-balken--liste .pj-standbalken:nth-child(2) { width: 72%; }
+.pj-standzeile-balken--liste .pj-standbalken:nth-child(3) { width: 86%; }
+.pj-standzeile + .pj-standzeile { margin-top: 12px; }
+
+/* Vierter Ast: die Termine. Gleiche Form, andere Rolle - deshalb kein
+   nummeriertes Zeichen, sondern ein Pfeil nach unten fuer "Verlauf". */
+/* ==========================================================================
+   Sitemap: die Struktur als Organigramm
+   Vorschaubilder sahen alle gleich aus und halfen nicht beim Erfassen. Jetzt
+   zaehlt die Form: eine Wurzel, drei Aeste nebeneinander, darunter je das,
+   was daran haengt. Wer die Seite nie gesehen hat, sieht in zwei Sekunden,
+   wo es tief wird und wo nicht.
+   ========================================================================== */
+.sm-karte { margin-top: clamp(26px,3.2vw,40px); }
+.sm-wurzel { display: flex; justify-content: center; position: relative;
+             padding-bottom: 26px; }
+/* Der Strich von der Wurzel hinunter zur Querverbindung der drei Aeste. */
+.sm-wurzel::after { content: ""; position: absolute; bottom: 0; left: 50%; width: 1px;
+                    height: 26px; background: #ddd9d4; }
+.sm-aeste { display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: clamp(14px,1.8vw,22px); position: relative; padding-top: 26px; }
+/* Die Querverbindung: links und rechts bis zur Mitte des aeusseren Astes. */
+.sm-aeste::before { content: ""; position: absolute; top: 0; left: 16.66%; right: 16.66%;
+                    height: 1px; background: #ddd9d4; }
+.sm-ast { position: relative; display: grid; gap: 14px; align-content: start; }
+.sm-ast::before { content: ""; position: absolute; top: -26px; left: 50%; width: 1px;
+                  height: 26px; background: #ddd9d4; }
+
+.sm-kn { display: block; position: relative; padding: 14px 16px; background: #fff;
+         border: 1px solid #e4e1dd; border-radius: var(--radius-card);
+         text-decoration: none; color: var(--ink);
+         transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease; }
+.sm-kn:hover { border-color: var(--ink); transform: translateY(-2px);
+               box-shadow: 0 12px 28px rgba(0,0,0,.08); }
+.sm-kn b { display: block; font-weight: 600; font-size: .98rem; line-height: 1.3; }
+.sm-kn small { display: block; margin-top: 2px; font-size: .84rem; line-height: 1.45;
+               color: var(--grey-50); }
+.sm-kn--wurzel { background: var(--ink); border-color: var(--ink); min-width: 260px;
+                 text-align: center; }
+.sm-kn--wurzel b { color: #fff; font-size: 1.06rem; }
+.sm-kn--wurzel small { color: var(--hl); }
+.sm-kn--feld { padding-left: 52px; }
+.sm-nr { position: absolute; left: 14px; top: 14px; width: 26px; height: 26px;
+         border-radius: 50%; display: grid; place-items: center; background: var(--ink);
+         color: var(--hl); font-family: var(--font-serif); font-weight: 700;
+         font-size: .84rem; }
+.sm-kn--extern { border-style: dashed; }
+.sm-tag { display: inline-block; margin-top: 7px; padding: 3px 9px; border-radius: 999px;
+          background: var(--grey-bg); font-size: .68rem; letter-spacing: .1em;
+          text-transform: uppercase; font-weight: 700; color: var(--grey-50); }
+
+/* Was unter einem Ast haengt: eine Spur links, damit die Zugehoerigkeit
+   sichtbar bleibt, ohne jede Verbindung einzeln zu zeichnen. */
+.sm-kinder { position: relative; display: grid; gap: 10px; padding-left: 22px; }
+.sm-kinder::before { content: ""; position: absolute; left: 9px; top: -14px; bottom: 18px;
+                     width: 1px; background: #ddd9d4; }
+.sm-kinder > *::before { content: ""; position: absolute; left: -13px; top: 50%;
+                         width: 13px; height: 1px; background: #ddd9d4; }
+.sm-kinder > * { position: relative; }
+.sm-enkel { padding-left: 22px; position: relative; }
+.sm-enkel::before { content: ""; position: absolute; left: 9px; top: -10px; bottom: 50%;
+                    width: 1px; background: #ddd9d4; }
+.sm-leer { display: block; padding: 12px 2px; font-size: .84rem; font-style: italic;
+           color: var(--grey-50); }
+.sm-leer::before { background: none !important; }
+
+/* ---- Analyse ------------------------------------------------------------ */
+.sm-analyse { margin-top: clamp(40px,5vw,72px);
+              padding: clamp(26px,3.2vw,44px) clamp(24px,3vw,40px);
+              background: #faf9f7; border-radius: var(--radius-card); }
+.sm-analyse-kopf h2 { margin: 0; font-weight: 500; font-size: clamp(1.5rem,2.4vw,2rem);
+                      line-height: 1.2; max-width: 30ch; }
+.sm-spalten { display: grid; grid-template-columns: repeat(3, 1fr);
+              gap: clamp(20px,2.6vw,36px); margin-top: clamp(24px,3vw,36px); }
+.sm-spalte-kopf { margin: 0 0 .9rem; font-size: .72rem; letter-spacing: .12em;
+                  text-transform: uppercase; font-weight: 700; color: var(--grey-50); }
+.sm-spalte-kopf--warnung { color: #F0603A; }
+.sm-spalte-kopf--vorschlag { color: var(--ink); }
+.sm-liste { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+.sm-liste li { position: relative; padding-left: 18px; font-size: .92rem; line-height: 1.62;
+               color: var(--grey-70); }
+.sm-liste li::before { content: ""; position: absolute; left: 0; top: .6em; width: 7px;
+                       height: 7px; border-radius: 50%; background: #ddd9d4; }
+.sm-spalte-kopf--warnung ~ .sm-liste li::before { background: #F0603A; }
+.sm-liste--vorschlag li::before { background: var(--hl); }
+.sm-liste b { color: var(--ink); font-weight: 600; }
+.sm-fuss { margin: clamp(22px,2.6vw,32px) 0 0; font-size: .88rem; line-height: 1.6;
+           color: var(--grey-50); max-width: 70ch; }
+
+@media (max-width: 900px) {
+  .sm-aeste { grid-template-columns: 1fr; }
+  .sm-aeste::before, .sm-ast::before, .sm-wurzel::after { display: none; }
+  .sm-wurzel { padding-bottom: 14px; }
+  .sm-aeste { padding-top: 0; }
+  .sm-spalten { grid-template-columns: 1fr; }
+}
+
+.sm-aeste--vier { grid-template-columns: repeat(4, 1fr); }
+.sm-aeste--vier::before { left: 12.5%; right: 12.5%; }
+.sm-ast--verlauf .sm-kn--feld { border-style: dashed; }
+.sm-nr--verlauf { background: var(--grey-bg); color: var(--grey-50); font-family: var(--font-sans);
+                  font-size: .9rem; font-weight: 700; }
+.sm-spalte-kopf--fertig { color: #059669; }
+.sm-spalte-kopf--fertig ~ .sm-liste li::before { background: #059669; }
+@media (max-width: 1100px) { .sm-aeste--vier { grid-template-columns: repeat(2, 1fr); }
+  .sm-aeste--vier::before, .sm-ast::before, .sm-wurzel::after { display: none; }
+  .sm-aeste { padding-top: 0; } }
+
+/* Ein Pfeil nach schraeg oben heisst: hier geht es aus dem Projekt heraus. */
+.pj-extern { display: inline-block; margin-left: 2px; font-size: .9em; line-height: 1; }
+
+/* ---- Protokoll: Schritte zum Aufklappen ---------------------------------
+   Fuenf Schritte, zugeklappt gleich hoch - so sieht man 1 bis 5 auf einen
+   Blick, statt durch drei Bildschirmhoehen Text zu scrollen. Offen ist
+   immer nur einer. */
+.pj-schritt-box { border: 1px solid #e4e1dd; border-radius: var(--radius-card);
+                  background: #fff; overflow: hidden; }
+.pj-schritt-kopf { appearance: none; -webkit-appearance: none; cursor: pointer;
+                   width: 100%; display: flex; align-items: center; gap: 14px;
+                   padding: clamp(16px,1.9vw,21px) clamp(18px,2.2vw,26px);
+                   background: none; border: 0; text-align: left;
+                   font-family: var(--font-serif); font-weight: 700;
+                   font-size: 1.14rem; line-height: 1.26; color: var(--ink); }
+.pj-schritt-titel { flex: 1 1 auto; }
+.pj-schritt-pfeil { flex: 0 0 auto; width: 9px; height: 9px;
+                    border-right: 2px solid var(--grey-50);
+                    border-bottom: 2px solid var(--grey-50); transform: rotate(45deg);
+                    margin-bottom: 3px; transition: transform .2s ease; }
+.pj-schritt-kopf:hover .pj-schritt-pfeil { border-color: var(--ink); }
+.pj-schritt-box.is-offen .pj-schritt-pfeil { transform: rotate(-135deg); margin-bottom: -3px; }
+.pj-schritt-koerper { display: none; padding: 0 clamp(18px,2.2vw,26px) clamp(20px,2.4vw,28px);
+                      gap: clamp(16px,2vw,24px); }
+.pj-schritt-box.is-offen .pj-schritt-koerper { display: grid; grid-template-columns: 1fr .72fr;
+                                               align-items: start; }
+/* In den schmalen Armen der Gabelung steht die Methode unter dem Text. */
+.pj-gabel .pj-schritt-box.is-offen .pj-schritt-koerper { grid-template-columns: 1fr; }
+.pj-schritt-box .pj-schritt-inhalt { border: 0; border-radius: 0; background: none; padding: 0; }
+.pj-schritt-box .mk--neben { margin-top: clamp(16px,2vw,22px); }
+.pj-schritt-box.is-offen .pj-schritt-koerper > .mk--neben { margin-top: 0; }
+.pj-gabel .pj-schritt-kopf { font-size: 1.06rem; }
+/* Das Zeichen bleibt kleiner als die Textzeile - sonst sind die beiden
+   Arme hoeher als die fuenf Schritte darueber. */
+.pj-gabel .pj-schritt-nr--zweig { width: 24px; height: 24px; font-size: .72rem; }
+
+/* Aufzaehlungen im Protokoll: farbige Punkte und Striche statt Fliesstext. */
+.pj-punktliste, .pj-striche { list-style: none; margin: .9rem 0; padding: 0;
+                              display: grid; gap: 8px; }
+.pj-punktliste li, .pj-striche li { position: relative; padding-left: 20px;
+                                    font-size: .96rem; line-height: 1.6; color: var(--grey-70); }
+.pj-punktliste li::before { content: ""; position: absolute; left: 0; top: .52em;
+                            width: 10px; height: 10px; border-radius: 50%; }
+.pj-punktliste .pj-punkt--gruen::before { background: #059669; }
+.pj-punktliste .pj-punkt--blau::before  { background: #0B9FBD; }
+.pj-punktliste .pj-punkt--rot::before   { background: #C51F5D; }
+.pj-striche li::before { content: ""; position: absolute; left: 0; top: .72em; width: 11px;
+                         height: 2px; border-radius: 2px; background: var(--ink); }
+.pj-punktliste b, .pj-striche b { color: var(--ink); font-weight: 600; }
+
+@media (max-width: 900px) {
+  .pj-schritt-box.is-offen .pj-schritt-koerper { grid-template-columns: 1fr; }
+}
+
+/* Zielpunkte aus dem Meilensteinplan: kein Kasten, sondern eine Marke auf
+   einem Strich. Sie sind kein Termin, sondern das Ergebnis, das bis dahin
+   vorliegen soll - das soll man auch sehen. */
+.tm-ziel { display: flex; align-items: center; gap: 14px; padding: 8px 4px 8px 0; }
+.tm-ziel-marke { flex: 0 0 auto; width: 92px; text-align: center;
+                 font-size: .66rem; letter-spacing: .14em; text-transform: uppercase;
+                 font-weight: 700; color: var(--ink); }
+.tm-ziel-text { flex: 0 1 auto; font-size: .92rem; line-height: 1.55; color: var(--grey-50); }
+.tm-ziel-text b { color: var(--ink); font-weight: 600; }
+/* Der Strich laeuft hinter dem Text aus, nicht durch ihn hindurch. */
+.tm-ziel-linie { flex: 1 1 auto; min-width: 24px; height: 1px; background: var(--ink);
+                 opacity: .22; }
+@media (max-width: 760px) {
+  .tm-ziel { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .tm-ziel-marke { width: auto; text-align: left; }
+  .tm-ziel-linie { display: none; }
+}
+
+/* Zwei Roll-ups nebeneinander im Pop-up - beide ganz zu sehen, beide
+   herunterladbar. */
+.modal.modal--breit { max-width: 980px; }
+.pj-rollups { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px,2.6vw,36px); }
+.pj-rollup { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+/* Die Roll-ups sind doppelt so hoch wie breit. Ohne Deckel passen Bild,
+   Text und Knopf nicht zusammen ins Fenster - dann muesste man im Pop-up
+   scrollen, um ueberhaupt an den Download zu kommen. */
+/* Kein weisser Rahmen hinter den Blaettern - sie liegen direkt auf dem
+   dunklen Fenster, wie die Vorschau im Selbstverstaendnis und bei der
+   Startseite der Akademie. */
+.pj-rollup-bild { display: flex; justify-content: center; width: 100%;
+                  border: 0; background: none; padding: 0; line-height: 0;
+                  border-radius: 10px; transition: transform .2s ease, box-shadow .2s ease; }
+.pj-rollup-bild:hover { transform: translateY(-2px);
+                        box-shadow: 0 18px 40px rgba(0,0,0,.35); }
+.pj-rollup-bild img { display: block; max-height: 46vh; width: auto; max-width: 100%;
+                      height: auto; border-radius: 10px; }
+.pj-rollup b { font-family: var(--font-serif); font-weight: 700; font-size: 1.08rem;
+               line-height: 1.26; color: #fff; }
+.pj-rollup small { font-size: .88rem; line-height: 1.55; color: rgba(255,255,255,.72); }
+.pj-rollup .btn { margin-top: auto; }
+@media (max-width: 760px) { .pj-rollups { grid-template-columns: 1fr; } }
+
+/* ---- Termine: Dokumente je Termin --------------------------------------
+   Ein Termin bringt selten nur ein Blatt mit. Zugeklappt bleibt die Liste
+   lesbar; offen zeigt der Streifen seine Dokumente als kleine gerahmte
+   Kaesten mit Vorschau und Unterschrift. */
+button.tm-eintrag { width: 100%; text-align: left; cursor: pointer;
+                    font-family: inherit; font-size: inherit; }
+.tm-pfeil { flex: 0 0 auto; width: 9px; height: 9px; border-right: 2px solid var(--grey-50);
+            border-bottom: 2px solid var(--grey-50); transform: rotate(45deg);
+            margin-bottom: 3px; transition: transform .2s ease; }
+button.tm-eintrag:hover .tm-pfeil { border-color: var(--ink); }
+.tm-posten.is-offen .tm-pfeil { transform: rotate(-135deg); margin-bottom: -3px; }
+.tm-dokumente { display: none; }
+.tm-posten.is-offen .tm-dokumente { display: grid;
+                            grid-template-columns: repeat(auto-fill, minmax(260px,320px));
+                            gap: 12px; padding: 4px 20px 20px calc(92px + clamp(16px,2vw,26px) + 20px); }
+/* Ohne Trennstrich: Der aufgeklappte Kasten haelt die Dokumente schon
+   zusammen, ein zweites Trennzeichen darin waere doppelt. */
+.tm-dok { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 14px;
+          padding: 12px 16px 12px 12px; background: #fff;
+          border: 1px solid #e4e1dd; border-radius: 16px;
+          text-decoration: none; color: var(--ink);
+          transition: border-color .2s ease, box-shadow .2s ease; }
+.tm-dok:hover { border-color: var(--ink); box-shadow: 0 10px 24px rgba(0,0,0,.07); }
+.tm-dok-bild { width: 46px; height: 62px; flex: 0 0 auto; overflow: hidden;
+               border: 1px solid #ebe8e5; border-radius: 6px; background: #fff; line-height: 0; }
+.tm-dok-bild img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+.tm-dok-bild--zeichen { display: grid; place-items: center; background: var(--ink);
+                        border-color: var(--ink); }
+.tm-dok-bild--zeichen svg { width: 22px; height: 22px; color: var(--hl); }
+.tm-dok-text b { display: block; font-weight: 600; font-size: .95rem; line-height: 1.3; }
+.tm-dok-text small { display: block; margin-top: 2px; font-size: .8rem; line-height: 1.45;
+                     color: var(--grey-50); }
+@media (max-width: 760px) { .tm-posten.is-offen .tm-dokumente { padding-left: 20px;
+                            grid-template-columns: 1fr; } }
+/* Querformatige Vorlagen bekommen einen querformatigen Rahmen - sonst
+   schneidet der hochkante Ausschnitt die Ueberschrift weg. */
+.tm-dok-bild--quer { width: 72px; height: 54px; }
+.tm-dok-bild--quer img { object-position: center top; }
+
+
+
+
+/* ==========================================================================
+   Themenfelder: drei Entwuerfe zur Auswahl
+   Gemeinsam: Aufzaehlungen mit feinen Strichen statt gelber Punkte (die
+   flimmern bei drei Kaesten nebeneinander), Status in Schrift statt in
+   blassem Gelb, und deutlich mehr Gewicht auf dem Titel - das sind die
+   Hauptthemen des Projekts.
+   ========================================================================== */
+.pj-felder { grid-template-rows: none; align-items: stretch; }
+.pj-felder .pj-feld { grid-row: auto; display: flex; flex-direction: column;
+                               padding: 0; overflow: hidden; }
+
+/* Der Status: Wort und Punkt, keine Flaeche. */
+.pj-marke { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+            font-size: .74rem; letter-spacing: .1em; text-transform: uppercase;
+            font-weight: 700; }
+.pj-marke::before { content: ""; width: 8px; height: 8px; border-radius: 50%; }
+.pj-marke--fertig { color: var(--ink); }
+.pj-marke--fertig::before { background: var(--ink); }
+.pj-marke--laeuft { color: var(--grey-50); }
+.pj-marke--laeuft::before { background: #fff; border: 2px solid var(--grey-50); }
+
+/* Aufzaehlung: feiner Strich statt gelbem Punkt. */
+.pj-feld-liste { list-style: none; margin: 0; padding: 14px 0 0; display: grid; gap: 7px; }
+.pj-feld-liste li { position: relative; padding-left: 18px; font-size: .88rem;
+                    line-height: 1.5; color: var(--grey-70); }
+.pj-feld-liste li::before { content: ""; position: absolute; left: 0; top: .72em;
+                            width: 10px; height: 1.5px; background: #c9c3bc; }
+.pj-feld-fuss { margin-top: auto; padding-top: 22px; display: flex; align-items: center;
+                justify-content: space-between; gap: 10px; }
+.pj-feld h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.16;
+              margin: 0; }
+.pj-feld p { color: var(--grey-70); }
+
+/* --- A: schwarzer Kopf -------------------------------------------------- */
+/* Feste Kopfhoehe: Die zweite Frage laeuft ueber zwei Zeilen - ohne das
+   Mindestmass starten die Titel darunter auf drei verschiedenen Hoehen. */
+.pj-feld .pj-feld-kopf { display: flex; align-items: center; gap: 14px;
+  min-height: 74px; padding: 14px clamp(22px,2.4vw,30px); background: var(--ink); }
+.pj-feld .pj-feld-nr { width: 30px; height: 30px; flex: 0 0 auto; background: var(--hl);
+  color: var(--ink); }
+.pj-feld .pj-feld-frage { padding: 0; color: rgba(255,255,255,.72); }
+.pj-feld .pj-feld-koerper { display: flex; flex-direction: column; flex: 1 1 auto;
+  padding: clamp(22px,2.4vw,30px); }
+.pj-feld h3 { font-size: 1.7rem; margin-bottom: .5rem; }
+.pj-feld p { font-size: .95rem; line-height: 1.62; margin: 0; }
+
+/* Was hinter uns liegt, steht in Grau - so sieht man beim Ueberfliegen, wo
+   die Gegenwart ist. Die Zielpunkte bleiben schwarz, sie sind Ergebnisse
+   und keine Termine. */
+.tm-posten--vergangen .tm-datum b,
+.tm-posten--vergangen .tm-text b { color: var(--grey-50); }
+.tm-posten--vergangen .tm-text small,
+.tm-posten--vergangen .tm-datum small { color: #a8a29b; }
+.tm-posten--vergangen .tm-stand { color: #a8a29b; }
+.tm-posten--vergangen.is-offen .tm-text b,
+.tm-posten--vergangen.is-offen .tm-datum b { color: var(--ink); }
+
+/* Ein Dokument im Methodenfenster: Vorschau links, Einordnung rechts.
+   Das Blatt liegt direkt auf dem dunklen Grund, ohne weissen Rahmen. */
+/* Die Methodenfenster sind hell - Text in Tinte, nicht in Weiss. */
+.pj-modal-dok { display: grid; grid-template-columns: auto 1fr;
+                gap: clamp(18px,2.4vw,28px); align-items: start;
+                margin-top: clamp(20px,2.4vw,28px); padding-top: clamp(20px,2.4vw,28px);
+                border-top: 1px solid #ebe8e5; }
+.pj-modal-dok-bild { display: block; width: clamp(120px,14vw,168px); line-height: 0;
+                     border-radius: 8px; overflow: hidden;
+                     transition: transform .2s ease, box-shadow .2s ease; }
+.pj-modal-dok-bild { border: 1px solid #e4e1dd; }
+.pj-modal-dok-bild:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0,0,0,.12); }
+.pj-modal-dok-bild img { display: block; width: 100%; height: auto; }
+.pj-modal-dok-text b { display: block; font-family: var(--font-serif); font-weight: 700;
+                       font-size: 1.06rem; color: var(--ink); margin-bottom: .4rem; }
+.pj-modal-dok-text small { display: block; font-size: .9rem; line-height: 1.6;
+                           color: var(--grey-70); }
+.pj-modal-dok-knoepfe { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 1rem; }
+@media (max-width: 600px) { .pj-modal-dok { grid-template-columns: 1fr; } }
+
+/* "Offen" in derselben Schreibweise wie die anderen Marken. */
+.pj-marke--offen { color: #b4aea7; }
+.pj-marke--offen::before { background: #fff; border: 2px solid #ddd7d0; }
+
+/* Der Vorspann steht unter der Ueberschrift, nicht als schmale Spalte
+   rechts daneben - eine Ueberschrift links und ein Textchen rechts liest
+   sich wie zwei unverbundene Teile. */
+.pj-hero-grid--einspaltig { grid-template-columns: 1fr; }
+.pj-hero-grid--einspaltig .pj-hero-text { max-width: 62ch; }
+.pj-hero-grid--einspaltig .pj-hero-text .lead { margin-top: 0; }
+
+/* Der Knopf unter der Webseite steht mittig zum Bild und mit Luft darunter. */
+.pj-browser-aktionen--mitte { justify-content: center; margin-top: clamp(26px,3vw,40px); }
+
+/* Der Meilensteinplan schliesst direkt an den Kopf an - zwischen Vorspann
+   und Kasten braucht es keine volle Sektionshoehe. */
+.section--eng { padding-top: clamp(26px,3.4vw,52px); }
+
+/* Das Strategiemodell steht rechts neben Ueberschrift und Text - als
+   kleiner umrandeter Kasten wie die Dokumentvorschau im Selbstverstaendnis,
+   nur schmaler. Seine Unterkante liegt auf der Unterkante des Textes. */
+.pj-kopfzeile--mitbild { display: grid; grid-template-columns: 1fr auto;
+                         gap: clamp(28px,4vw,60px); align-items: start; max-width: none; }
+.pj-kopfzeile--mitbild > div { max-width: 56ch; }
+/* Der Kasten schliesst unten mit dem Text links ab - deshalb align-self:
+   end statt eines festen Abstands nach oben. */
+.pj-modellkasten { appearance: none; -webkit-appearance: none; cursor: pointer;
+                   display: grid; grid-template-columns: auto 1fr; align-items: center;
+                   align-self: end;
+                   gap: 16px; width: clamp(280px,26vw,330px);
+                   padding: 16px; text-align: left;
+                   background: #fff; border: 1px solid #e4e1dd;
+                   border-radius: var(--radius-card);
+                   transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease; }
+.pj-modellkasten:hover { border-color: var(--ink); transform: translateY(-2px);
+                         box-shadow: 0 12px 28px rgba(0,0,0,.08); }
+.pj-modellkasten-bild { display: block; width: 84px; flex: 0 0 auto; line-height: 0;
+                        border-radius: 7px; overflow: hidden; }
+.pj-modellkasten-bild img { display: block; width: 100%; height: auto; }
+.pj-modellkasten-text b { display: block; font-family: var(--font-serif); font-weight: 700;
+                          font-size: 1rem; line-height: 1.25; }
+.pj-modellkasten-text small { display: block; margin-top: 4px; font-size: .82rem;
+                              line-height: 1.5; color: var(--grey-70); }
+.pj-modellkasten-mehr { display: block; margin-top: 10px; font-size: .82rem;
+                        font-weight: 600; color: var(--ink); }
+@media (max-width: 860px) {
+  .pj-kopfzeile--mitbild { grid-template-columns: 1fr; }
+  .pj-modellkasten { margin-top: 8px; width: 100%; max-width: 360px; }
+}
+
+/* Die Zeile zur Projektplanung gehoert zu den drei Feldern, steht aber
+   nicht auf ihnen - ein Abstand wie zwischen den Feldern selbst. */
+.pj-felder + .pj-standzeile { margin-top: clamp(14px,1.8vw,22px); }
+
+/* SWOT-Matrix und die Methode daneben - sonst steht die Matrix allein auf
+   der linken Haelfte und rechts bleibt die Seite leer. */
+.pj-swot-zeile { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,.62fr);
+                 gap: clamp(20px,2.8vw,40px); align-items: start;
+                 margin-top: clamp(26px,3.2vw,40px); }
+.pj-swot-zeile .pj-swot { max-width: none; margin-top: 0; }
+.pj-swot-seite { display: grid; gap: 16px; align-content: start; }
+.pj-swot-seite .mk--neben { margin: 0; }
+@media (max-width: 900px) { .pj-swot-zeile { grid-template-columns: 1fr; } }
+
+
+/* Die Minutenzahl steht linksbuendig in der Spur, die Einheit darunter.
+   Tabellenziffern halten die Spalte ruhig. */
+.ab-dauer { font-variant-numeric: tabular-nums; }
+
+/* Die Zaehlung laeuft ueber zwei Listen weiter: 1 und 2 stehen im Kern,
+   3 folgt als Reserve. */
+.ab-kette--fortsetzung { counter-reset: kette 2; margin-top: 7px; }
+
+/* Block 03 traegt den Termin, das soll man sehen: ein hauchzarter cyaner
+   Grund unter dem ganzen Block, und aufgeklappt rahmt eine gestrichelte
+   Linie die beiden Schritte ein, um die es wirklich geht.
+   Der Deep Dive bleibt ausserhalb dieses Rahmens, steht aber auf derselben
+   Achse - sonst stehen 1, 2 und 3 nicht untereinander. Dafuer traegt die
+   Fortsetzung denselben Rand in Transparent und dieselben Innenabstaende
+   wie der gestrichelte Kasten.
+   Den Innenabstand traegt der Block selbst und gibt ihn per negativem
+   Aussenabstand nach aussen zurueck: so liegt der cyane Grund breiter als
+   der Block, die 45 Minuten stehen aber auf derselben Achse wie 10, 15, 30
+   und 20. Die 16px bleiben immer im Seitenrand des Containers (mindestens
+   20px), es entsteht also kein Querscrollen. */
+.ab-block--kern { background: rgba(11,159,189,.05);
+                  padding-inline: 16px; margin-inline: -16px; }
+/* Bloecke 02 und 03 liegen auf einem gemeinsamen Grund. Damit daraus ein
+   Kasten wird und nicht zwei: der erste rundet oben, der zweite unten.
+   Welcher der zweite ist, sagt der Nachbarselektor - einen Selektor fuer
+   "steht als erstes einer Reihe" gibt es nicht. */
+.ab-block--kern { border-radius: var(--radius-card) var(--radius-card) 0 0; }
+.ab-block--kern + .ab-block--kern { border-radius: 0 0 var(--radius-card) var(--radius-card); }
+.ab-block--kern.is-offen .ab-kette--kern {
+  border: 1px dashed var(--ak); border-radius: 14px; padding: 14px 16px;
+  background: #fff; }
+.ab-block--kern.is-offen .ab-kette--fortsetzung {
+  border: 1px solid transparent; padding: 0 16px; }
+
+/* Die fette Aussage jedes Story-Schritts steht als eigene Zeile ueber dem
+   Erlaeuterungstext - sonst laeuft beides ineinander und man sieht die
+   Kernaussage erst beim Lesen. Platz ist da, der Block klappt frei auf. */
+.ab-kette > li > b { display: block; margin-bottom: 3px; }
+/* Jeder Schritt besteht jetzt aus zwei Zeilen. Beim alten Abstand von 7px
+   stand der naechste Schritt genauso eng wie seine eigene zweite Zeile -
+   die drei Gruppen waren nicht mehr auseinanderzuhalten. */
+.ab-kette--kern { gap: 14px; }
+
+/* Die drei Rollen stehen nebeneinander, nicht untereinander: Botschafter,
+   Schutzgeber, Tueroeffner sind drei gleichwertige Zusagen und als Reihe
+   schneller zu erfassen. Unter 820px Fensterbreite waere jede Spalte zu
+   schmal fuer den Erlaeuterungstext, dann stehen sie wieder untereinander. */
+.ab-rollen { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;
+             align-items: stretch; }
+/* Der Rahmen laeuft einmal komplett herum, wie beim Projektscope - der
+   helle Grund allein hebt die drei Kaesten vor Weiss kaum ab. */
+.ab-rolle { border: 1px solid #e4e1dd; }
+@media (max-width: 820px) { .ab-rollen { grid-template-columns: 1fr; } }
+
+/* Die Grundrolle steht als flacher Balken ueber den drei Kaesten und
+   laeuft ueber deren ganze Breite: sie ist keine vierte Zusage neben den
+   anderen, sondern die Position, aus der die drei folgen. Titel und
+   Erklaerung stehen deshalb nebeneinander statt untereinander. */
+.ab-rolle--grund { grid-column: 1 / -1; display: flex; align-items: baseline;
+                   flex-wrap: wrap; gap: 4px 14px; padding: 10px 16px; }
+.ab-rolle--grund b { flex: 0 0 auto; }
+.ab-rolle--grund small { flex: 1 1 320px; margin-top: 0; }

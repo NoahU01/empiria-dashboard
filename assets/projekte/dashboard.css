@@ -1,0 +1,1133 @@
+/* ==========================================================================
+   Projektseite SV Akademie - V2 "Leitstand"
+
+   V1 ist eine Landingpage: Abschnitt unter Abschnitt, jeder mit Vorspann.
+   Wer die Seite zum fuenften Mal oeffnet, sucht aber keinen Einstieg mehr,
+   sondern eine Stelle. V2 zeigt denselben Inhalt in zwei Ebenen - und in
+   genau zwei, nicht mehr:
+
+     1  Arbeitsstand   - die drei Module als kraeftige Karten mit schwarzem
+                         Kopf, darunter ein Balken zur Projektplanung.
+                         Alles Terminliche liegt hinter diesem einen Balken.
+     2  Werkzeugkasten - Ergebnisse und Methoden, abgesetzt auf eigenem
+                         Grund und in anderer Form: schlanke Zeilen statt
+                         Karten. Das hat mit dem Fortschritt des Projekts
+                         nichts zu tun, also darf es auch nicht so aussehen.
+
+   Eine erste Fassung hatte drei Ebenen (Statusband, Modulkarten, Kacheln)
+   und eine stehende Leiste daneben. Ergebnis: vier Formen, die alle gleich
+   wogen, und keine Blickfuehrung. Beides ist wieder raus.
+   ========================================================================== */
+
+/* ---- Variantenwahl ueber der Subheadline -------------------------------- */
+.pv-wahl { display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+           margin-bottom: clamp(18px, 2.2vw, 26px); }
+.pv-wahl-tag { font-size: .72rem; letter-spacing: .12em; text-transform: uppercase;
+               font-weight: 700; color: var(--grey-50); margin-right: 6px; }
+.pv-pille { display: inline-flex; align-items: center; gap: 7px;
+            padding: 7px 15px; border-radius: 999px; text-decoration: none;
+            font-size: .85rem; font-weight: 600; line-height: 1;
+            color: var(--grey-70); background: #fff; border: 1px solid #e4e1dd;
+            transition: border-color .2s ease, color .2s ease, background-color .2s ease; }
+.pv-pille:hover { border-color: var(--ink); color: var(--ink); }
+.pv-pille.is-aktiv { background: var(--ink); border-color: var(--ink); color: #fff; }
+.pv-pille small { font-weight: 500; opacity: .72; }
+
+/* ---- Kopf: Projekt links, naechster Termin rechts -----------------------
+   Die beiden Fragen, die jeder zuerst hat: worum geht es, und wann
+   passiert das Naechste. */
+.db-kopf { display: grid; grid-template-columns: minmax(0, 1fr) auto;
+           gap: clamp(24px, 3vw, 48px); align-items: start; }
+.db-kopf h1 { font-family: var(--font-serif); font-weight: 500; line-height: 1.2;
+              font-size: clamp(1.9rem, 3.4vw, 2.8rem); letter-spacing: -.015em;
+              margin: .35rem 0 0; }
+.db-kopf .lead { margin: 1rem 0 0; max-width: 60ch; }
+.db-leise { appearance: none; -webkit-appearance: none; border: 0; background: none;
+            padding: 0; margin-top: 1rem; cursor: pointer; font-family: inherit;
+            font-size: .9rem; font-weight: 600; color: var(--grey-70);
+            transition: color .15s ease; }
+.db-leise:hover { color: var(--ink); text-decoration: underline; }
+
+.db-naechst { display: grid; gap: 5px; justify-items: start;
+              width: clamp(260px, 26vw, 330px);
+              padding: 18px 22px; background: var(--ink); border-radius: var(--radius-card);
+              text-decoration: none; color: #fff;
+              transition: transform .2s ease, box-shadow .2s ease; }
+.db-naechst:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(0,0,0,.16); }
+.db-naechst-tag { font-size: .7rem; letter-spacing: .12em; text-transform: uppercase;
+                  font-weight: 700; color: var(--hl); }
+.db-naechst b { font-family: var(--font-serif); font-size: 1.12rem; font-weight: 700;
+                line-height: 1.25; }
+.db-naechst small { font-size: .85rem; line-height: 1.5; color: rgba(255,255,255,.7); }
+.db-naechst-mehr { margin-top: 8px; font-size: .84rem; font-weight: 600; color: #fff; }
+
+/* ---- Abschnittskopf ---------------------------------------------------- */
+.db-abschnitt { margin-top: clamp(40px, 5vw, 72px); }
+.db-abschnitt-kopf { margin-bottom: clamp(18px, 2.2vw, 26px); }
+.db-abschnitt-kopf h2 { font-weight: 600; margin: 0;
+                        font-size: clamp(1.5rem, 2.4vw, 2rem); line-height: 1.25; }
+.db-abschnitt-kopf p { margin: .5rem 0 0; max-width: 62ch;
+                       font-size: .96rem; line-height: 1.7; color: var(--grey-70); }
+
+/* ---- Ebene 1: die drei Module ------------------------------------------
+   Die kraeftigste Form auf der Seite. Schwarzer Kopf, weisser Koerper,
+   drei nebeneinander - das ist der Arbeitsstand und sonst nichts. */
+.db-module { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+             gap: clamp(12px, 1.6vw, 20px); }
+.db-modul { display: flex; flex-direction: column;
+            border: 1px solid #e4e1dd; border-radius: var(--radius-card);
+            background: #fff; overflow: hidden;
+            transition: border-color .2s ease, box-shadow .2s ease; }
+.db-modul:hover { border-color: var(--ink); box-shadow: 0 14px 32px rgba(0,0,0,.07); }
+.db-modul-kopf { display: block; min-height: 136px; padding: 20px 22px 18px;
+                 text-decoration: none; background: var(--ink); color: #fff; }
+.db-modul-reihe { display: flex; align-items: center; justify-content: space-between;
+                  gap: 10px; }
+.db-modul-nr { font-family: var(--font-serif); font-weight: 700; font-size: 1.1rem;
+               color: var(--hl); }
+.db-modul-kopf h3 { margin: 10px 0 0; font-family: var(--font-serif); font-size: 1.3rem;
+                    font-weight: 700; line-height: 1.2; color: #fff; }
+.db-modul-frage { display: block; margin-top: 5px; font-size: .88rem; line-height: 1.45;
+                  color: rgba(255,255,255,.66); }
+.db-modul-marke { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+                  font-size: .76rem; font-weight: 600; letter-spacing: .02em;
+                  color: rgba(255,255,255,.82); }
+.db-modul-marke::before { content: ""; width: 8px; height: 8px; border-radius: 50%;
+                          background: #fff; }
+.db-modul-marke--laeuft::before { background: none; border: 2px solid rgba(255,255,255,.6); }
+.db-modul-koerper { display: flex; flex-direction: column; flex: 1 1 auto;
+                    padding: 18px 22px 20px; }
+.db-modul-koerper p { margin: 0; font-size: .95rem; line-height: 1.65; color: var(--grey-70); }
+.db-modul-fuss { display: block; margin-top: auto; padding-top: 16px; }
+.db-modul-fuss a { font-size: .9rem; font-weight: 600; color: var(--ink);
+                   text-decoration: none; }
+.db-modul-fuss a:hover { text-decoration: underline; }
+
+/* Der Balken zur Projektplanung schliesst an die Module an - er gehoert
+   zur selben Ebene, traegt aber die Zeit statt der Themen. */
+.db-module + .pj-standzeile { margin-top: clamp(14px, 1.8vw, 22px); }
+
+/* ---- Ebene 2: der Werkzeugkasten ---------------------------------------
+   Eigener Grund ueber die volle Breite, damit der Schnitt zur Ebene
+   darueber im Augenwinkel sichtbar ist, bevor man liest. */
+/* Kein zusaetzlicher Aussenabstand: der Abschnitt darueber bringt seinen
+   eigenen Fuss mit, zusammen klafft sonst eine halbe Bildschirmhoehe. */
+.db-werkzeug { background: #faf9f7; border-top: 1px solid #ebe8e5; }
+.db-abschnitt-kopf--werkzeug { max-width: 62ch; }
+.db-werkzeug .mk--klein { background: #fff; }
+
+/* ---- Schmalere Fenster ------------------------------------------------- */
+@media (max-width: 1000px) {
+  .db-kopf { grid-template-columns: 1fr; }
+  .db-naechst { width: 100%; max-width: 420px; }
+  .db-module { grid-template-columns: 1fr; }
+  .db-modul-kopf { min-height: 0; }
+}
+
+
+/* ==========================================================================
+   V4 "Tool" - Panels auf hellem Anwendungsgrund
+
+   Was eine Anwendung von einer Seite unterscheidet, ist nicht die Farbe,
+   sondern die Dichte: feste Panels mit Kopf und Koerper, kleinere Radien,
+   engere Zeilen, Zahlen statt Flaechen. Gescrollt wird trotzdem nur einmal.
+   ========================================================================== */
+.vt-tool { background: #f4f2ef; }
+.vt-tool .section { padding-bottom: clamp(40px, 5vw, 72px); }
+
+.tl-leiste { display: flex; align-items: center; justify-content: space-between;
+             flex-wrap: wrap; gap: 18px; padding: 16px 22px;
+             background: var(--ink); border-radius: 14px; color: #fff; }
+.tl-leiste-name { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.tl-leiste-name b { font-family: var(--font-serif); font-size: 1.22rem; font-weight: 700; }
+.tl-leiste-sub { font-size: .84rem; color: rgba(255,255,255,.6); }
+.tl-punkt { width: 9px; height: 9px; border-radius: 50%; background: var(--hl);
+            align-self: center; }
+.tl-leiste-werte { display: flex; gap: clamp(18px, 2.4vw, 34px); }
+.tl-wert { display: grid; gap: 1px; }
+.tl-wert b { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 700;
+             line-height: 1; color: var(--hl); }
+.tl-wert small { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase;
+                 color: rgba(255,255,255,.6); }
+
+/* Die Panels einer Reihe enden auf einer Linie. Mit align-items:start war
+   das Methodenpanel hoeher als das daneben, weil seine Zeilen zweizeilig
+   umbrechen - das sah aus wie ein Fehler im Raster. */
+.tl-raster { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+             gap: 14px; margin-top: 14px; align-items: stretch; }
+.tl-panel { display: flex; flex-direction: column; background: #fff;
+            border: 1px solid #e4e1dd; border-radius: 14px; overflow: hidden; }
+.tl-panel--breit { grid-column: span 2; }
+.tl-panel-kopf { display: flex; align-items: center; justify-content: space-between;
+                 gap: 12px; padding: 12px 16px; border-bottom: 1px solid #ebe8e5;
+                 background: #faf9f7; }
+.tl-panel-kopf h2 { margin: 0; font-size: .78rem; letter-spacing: .12em;
+                    text-transform: uppercase; font-weight: 700; color: var(--grey-70); }
+.tl-panel-mehr { font-size: .8rem; font-weight: 600; color: var(--ink);
+                 text-decoration: none; }
+.tl-panel-mehr:hover { text-decoration: underline; }
+.tl-zahl { font-size: .8rem; font-weight: 700; color: var(--grey-50); }
+.tl-panel-koerper { padding: 8px; }
+.tl-panel-koerper--zeilen { display: grid; gap: 2px; }
+.tl-panel-koerper--zwei { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 10px; }
+
+.tl-modul { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto;
+            align-items: center; gap: 14px; padding: 12px 10px; border-radius: 10px;
+            text-decoration: none; color: inherit;
+            transition: background-color .15s ease; }
+.tl-modul + .tl-modul { border-top: 1px solid #f0eeea; }
+.tl-modul:hover { background: #faf9f7; }
+.tl-modul-nr { font-family: var(--font-serif); font-weight: 700; font-size: 1.05rem;
+               color: var(--grey-50); }
+.tl-modul-text b { display: block; font-size: 1rem; font-weight: 600; line-height: 1.3; }
+.tl-modul-text small { display: block; margin-top: 2px; font-size: .84rem;
+                       color: var(--grey-70); }
+.tl-modul-stand { display: grid; gap: 7px; justify-items: end; min-width: 132px; }
+.tl-balken { display: block; width: 120px; height: 4px; border-radius: 999px;
+             background: #e4e1dd; overflow: hidden; }
+.tl-balken i { display: block; height: 100%; border-radius: 999px; background: var(--ink);
+               width: var(--anteil, 0%); }
+.tl-modul-pfeil { color: var(--grey-50); }
+.tl-modul:hover .tl-modul-pfeil { color: var(--ink); }
+
+.tl-scope { list-style: none; margin: 0; padding: 6px 8px; display: grid; gap: 10px; }
+.tl-scope li { position: relative; padding-left: 20px; font-size: .92rem; line-height: 1.55;
+               color: var(--grey-70); }
+.tl-scope li::before { content: ""; position: absolute; left: 0; top: .55em;
+                       width: 10px; height: 2px; border-radius: 2px; background: var(--ink); }
+.tl-flach, .db-leise { }
+.tl-flach { appearance: none; -webkit-appearance: none; border: 0; background: none;
+            margin: 10px 0 4px 8px; padding: 0; cursor: pointer; font-family: inherit;
+            font-size: .86rem; font-weight: 600; color: var(--grey-70); }
+.tl-flach:hover { color: var(--ink); text-decoration: underline; }
+
+.tl-zeile { display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+            align-items: center; gap: 12px; width: 100%; padding: 10px;
+            border: 0; background: none; border-radius: 10px; cursor: pointer;
+            font-family: inherit; text-align: left; text-decoration: none; color: inherit;
+            transition: background-color .15s ease; }
+.tl-zeile:hover { background: #faf9f7; }
+.tl-zeile-ic { display: grid; place-items: center; width: 30px; height: 30px;
+               border-radius: 8px; background: var(--ink); color: var(--hl); }
+.tl-zeile-ic svg { width: 16px; height: 16px; }
+.tl-zeile-text b { display: block; font-size: .92rem; font-weight: 600; line-height: 1.3; }
+.tl-zeile-text small { display: block; margin-top: 1px; font-size: .8rem; line-height: 1.45;
+                       color: var(--grey-70); }
+.tl-zeile-pfeil { color: var(--grey-50); }
+.tl-zeile:hover .tl-zeile-pfeil { color: var(--ink); }
+
+@media (max-width: 1100px) {
+  .tl-raster { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tl-panel--breit { grid-column: span 2; }
+  .tl-panel-koerper--zwei { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .tl-raster, .tl-panel--breit { grid-template-columns: 1fr; grid-column: auto; }
+  .tl-modul { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .tl-modul-stand { grid-column: 2 / -1; justify-items: start; }
+}
+
+
+/* ==========================================================================
+   V5 "Faltung" - drei Ebenen, eine offen
+
+   Im ersten Blick steht die ganze Seite: drei Balken mit Namen, Satz und
+   Anzahl. Was dahinter liegt, holt man sich dazu - und es klappt nichts
+   zu, was man selbst geoeffnet hat.
+   ========================================================================== */
+.fl-kopf-zeile { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr);
+                 gap: clamp(24px, 3vw, 54px); align-items: end;
+                 padding-bottom: clamp(22px, 2.6vw, 32px); }
+.fl-kopf-zeile h1 { font-family: var(--font-serif); font-weight: 500; line-height: 1.34;
+                    font-size: clamp(1.9rem, 3.4vw, 2.8rem); letter-spacing: -.015em;
+                    margin: .35rem 0 0; }
+.fl-satz { margin: 0; font-size: 1rem; line-height: 1.75; color: var(--grey-70); }
+
+.fl-ebenen { display: grid; gap: 12px; }
+.fl-ebene { border: 1px solid #e4e1dd; border-radius: var(--radius-card); background: #fff;
+            overflow: hidden; }
+.fl-ebene.is-offen { border-color: #ddd8d2; box-shadow: 0 14px 34px rgba(0,0,0,.05); }
+.fl-kopf { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto;
+           align-items: center; gap: clamp(14px, 2vw, 26px);
+           width: 100%; padding: clamp(16px, 2vw, 22px) clamp(18px, 2.2vw, 26px);
+           border: 0; background: none; cursor: pointer; text-align: left;
+           font-family: inherit; transition: background-color .15s ease; }
+.fl-kopf:hover { background: #faf9f7; }
+.fl-kopf-nr { font-family: var(--font-serif); font-weight: 700; font-size: 1.1rem;
+              color: var(--grey-50); }
+.fl-ebene.is-offen .fl-kopf-nr { color: var(--ink); }
+.fl-kopf-text b { display: block; font-family: var(--font-serif); font-weight: 700;
+                  font-size: clamp(1.1rem, 1.6vw, 1.35rem); line-height: 1.25; }
+.fl-kopf-text small { display: block; margin-top: 3px; font-size: .9rem; line-height: 1.5;
+                      color: var(--grey-70); }
+.fl-kopf-marke { font-size: .8rem; font-weight: 600; color: var(--grey-50);
+                 white-space: nowrap; }
+.fl-kopf-pfeil { width: 10px; height: 10px; border-right: 2px solid var(--grey-50);
+                 border-bottom: 2px solid var(--grey-50); transform: rotate(45deg);
+                 margin-bottom: 4px; transition: transform .2s ease, border-color .2s ease; }
+.fl-ebene.is-offen .fl-kopf-pfeil { transform: rotate(-135deg); margin-bottom: -3px;
+                                    border-color: var(--ink); }
+.fl-koerper { display: none; padding: 0 clamp(18px, 2.2vw, 26px) clamp(22px, 2.6vw, 30px); }
+.fl-ebene.is-offen .fl-koerper { display: block; }
+.fl-koerper .pj-ziele { margin-top: 0; }
+.fl-koerper .db-module + .pj-standzeile { margin-top: 14px; }
+
+@media (max-width: 860px) {
+  .fl-kopf-zeile { grid-template-columns: 1fr; align-items: start; }
+  .fl-kopf { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .fl-kopf-marke { display: none; }
+}
+
+
+
+/* ---- Projektscope und Arbeitsstand sind zusammengelegt -----------------
+   Vorher standen drei Scope-Kaesten ueber drei Modulkarten - dieselbe
+   Dreiteilung zweimal. Jetzt traegt jede Modulkarte beides: oben das
+   Ergebnis, das der Scope ihr zuordnet, darunter der Stand. */
+.db-modul-ergebnis { margin: 0 0 12px; font-family: var(--font-serif); font-weight: 700;
+                     font-size: 1.02rem; line-height: 1.4; color: var(--ink); }
+.db-modul-stand { margin: 0; font-size: .92rem; line-height: 1.6; color: var(--grey-70);
+                  padding-top: 12px; border-top: 1px solid #f0eeea; }
+.db-modul-stand-tag { display: block; margin-bottom: 3px; font-size: .68rem;
+                      letter-spacing: .12em; text-transform: uppercase; font-weight: 700;
+                      color: var(--grey-50); }
+
+/* Das Strategiemodell steht neben der Ueberschrift des Scope-Abschnitts.
+   Es erklaert die Logik der drei Module und gehoert deshalb hierher, nicht
+   erst in den Werkzeugkasten. */
+.db-abschnitt-kopf--mitbild { display: grid; grid-template-columns: minmax(0, 1fr) auto;
+                              gap: clamp(24px, 3vw, 48px); align-items: end; }
+.db-abschnitt-kopf--mitbild > div { max-width: 62ch; }
+@media (max-width: 900px) {
+  .db-abschnitt-kopf--mitbild { grid-template-columns: 1fr; }
+  .db-abschnitt-kopf--mitbild .pj-modellkasten { width: 100%; max-width: 360px; }
+}
+
+/* V5: dieselbe Erklaerung, nur innerhalb der aufgeklappten Ebene. */
+.fl-logik { display: grid; grid-template-columns: minmax(0, 1fr) auto;
+            gap: clamp(20px, 2.6vw, 40px); align-items: end;
+            margin-bottom: clamp(18px, 2.2vw, 26px); }
+.fl-logik-text { margin: 0; max-width: 56ch; font-size: .96rem; line-height: 1.7;
+                 color: var(--grey-70); }
+@media (max-width: 900px) {
+  .fl-logik { grid-template-columns: 1fr; }
+  .fl-logik .pj-modellkasten { width: 100%; max-width: 360px; }
+}
+
+/* V4: der Satz zum Scope steht unter der Leiste, das Modell als erste
+   Zeile im Panel - mit Vorschaubild, damit es nicht wie ein Eintrag mehr
+   aussieht, sondern wie die Erklaerung darueber. */
+.tl-satz { margin: 16px 2px 0; max-width: 72ch; font-size: .98rem; line-height: 1.7;
+           color: var(--grey-70); }
+.tl-panel--voll { grid-column: 1 / -1; }
+.tl-modul-stand-satz { display: block; margin-top: 4px; font-size: .84rem; line-height: 1.5;
+                       color: var(--grey-50); }
+.tl-modell { display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+             align-items: center; gap: 14px; width: 100%; padding: 10px;
+             margin-bottom: 6px; border: 0; border-bottom: 1px solid #ebe8e5;
+             background: none; border-radius: 10px 10px 0 0; cursor: pointer;
+             font-family: inherit; text-align: left;
+             transition: background-color .15s ease; }
+.tl-modell:hover { background: #faf9f7; }
+.tl-modell-bild { display: block; width: 52px; line-height: 0; border-radius: 7px;
+                  overflow: hidden; border: 1px solid #e4e1dd; }
+.tl-modell-bild img { display: block; width: 100%; height: auto; }
+.tl-modell-text b { display: block; font-size: .92rem; font-weight: 600; line-height: 1.3; }
+.tl-modell-text small { display: block; margin-top: 2px; font-size: .8rem; line-height: 1.45;
+                        color: var(--grey-70); }
+
+
+/* ==========================================================================
+   V9 "Auswahl" - drei Reiter, einer gross daneben
+   ========================================================================== */
+.aw-raster { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
+             gap: 14px; margin-top: 14px; align-items: stretch; }
+.aw-spalte { display: flex; flex-direction: column; gap: 12px; padding: 16px;
+             background: #fff; border: 1px solid #e4e1dd; border-radius: 14px; }
+.aw-spalte-tag { margin: 0 0 2px 2px; font-size: .74rem; letter-spacing: .12em;
+                 text-transform: uppercase; font-weight: 700; color: var(--grey-70); }
+.aw-reiter-reihe { display: grid; gap: 6px; }
+.aw-reiter { display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+             align-items: center; gap: 12px; width: 100%; padding: 12px 14px;
+             border: 1px solid transparent; border-radius: 12px; background: none;
+             cursor: pointer; font-family: inherit; text-align: left;
+             transition: background-color .15s ease, border-color .15s ease; }
+.aw-reiter:hover { background: #faf9f7; }
+.aw-reiter.is-aktiv { background: var(--ink); border-color: var(--ink); }
+.aw-reiter-nr { font-family: var(--font-serif); font-weight: 700; font-size: 1.05rem;
+                color: var(--grey-50); }
+.aw-reiter.is-aktiv .aw-reiter-nr { color: var(--hl); }
+.aw-reiter-text b { display: block; font-size: 1rem; font-weight: 600; line-height: 1.3; }
+.aw-reiter-text small { display: block; margin-top: 2px; font-size: .82rem; line-height: 1.4;
+                        color: var(--grey-70); }
+.aw-reiter.is-aktiv .aw-reiter-text b { color: #fff; }
+.aw-reiter.is-aktiv .aw-reiter-text small { color: rgba(255,255,255,.6); }
+.aw-reiter.is-aktiv .pj-marke { color: rgba(255,255,255,.8); }
+.aw-reiter.is-aktiv .pj-marke::before { background: #fff; border-color: rgba(255,255,255,.6); }
+.aw-balken { grid-column: 1 / -1; display: block; height: 3px; margin-top: 4px;
+             border-radius: 999px; background: #e8e5e1; overflow: hidden; }
+.aw-reiter.is-aktiv .aw-balken { background: rgba(255,255,255,.2); }
+.aw-balken i { display: block; height: 100%; border-radius: 999px; background: var(--ink);
+               width: var(--anteil, 0%); }
+.aw-reiter.is-aktiv .aw-balken i { background: var(--hl); }
+.aw-spalte .pj-modellkasten { width: 100%; margin-top: auto; }
+
+.aw-tafel { padding: clamp(24px, 3vw, 38px); background: #fff;
+            border: 1px solid #e4e1dd; border-radius: 14px; }
+.aw-tafel-nr { display: block; font-family: var(--font-serif); font-weight: 700;
+               font-size: 1.05rem; color: var(--grey-50); }
+.aw-tafel h2 { margin: 4px 0 0; font-weight: 700; line-height: 1.15;
+               font-size: clamp(1.7rem, 2.8vw, 2.4rem); }
+.aw-tafel-frage { margin: .3rem 0 0; font-size: .95rem; color: var(--grey-50); }
+.aw-tafel-ergebnis { margin: 1.3rem 0 0; font-family: var(--font-serif); font-weight: 700;
+                     font-size: 1.15rem; line-height: 1.45; max-width: 46ch; }
+.aw-tafel-stand { margin: 1rem 0 0; padding-top: 1rem; border-top: 1px solid #f0eeea;
+                  font-size: .95rem; line-height: 1.65; color: var(--grey-70); }
+.aw-stand-tag { display: block; margin-bottom: 3px; font-size: .68rem; letter-spacing: .12em;
+                text-transform: uppercase; font-weight: 700; color: var(--grey-50); }
+.aw-tafel-wege { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+                 gap: clamp(16px, 2.2vw, 30px); margin-top: 1.6rem; }
+.aw-wege-tag { margin: 0 0 6px 2px; font-size: .68rem; letter-spacing: .12em;
+               text-transform: uppercase; font-weight: 700; color: var(--grey-50); }
+.aw-weg { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 10px;
+          border: 0; background: none; border-radius: 9px; cursor: pointer;
+          font-family: inherit; font-size: .9rem; text-align: left; text-decoration: none;
+          color: var(--grey-70); transition: background-color .15s ease, color .15s ease; }
+.aw-weg:hover { background: #faf9f7; color: var(--ink); }
+.aw-weg span { margin-left: auto; color: var(--grey-50); }
+.aw-leer { display: block; padding: 8px 10px; font-size: .86rem; color: #b4aea7; }
+.aw-tafel-knopf { margin-top: 1.6rem; }
+.aw-planung { margin-top: 14px; background: #fff; }
+
+@media (max-width: 1000px) {
+  .aw-raster { grid-template-columns: 1fr; }
+  .aw-tafel-wege { grid-template-columns: 1fr; }
+}
+
+
+
+/* ---- Beim Entfernen der Varianten V7/V8/V10 sind diese drei Regeln
+   mitgegangen, weil sie im Stylesheet danach standen. Sie gehoeren zu
+   V2, V3 und V5 und stehen deshalb ab hier dauerhaft. ------------------- */
+
+/* Eine Variante, die zur Wahl steht, aber nicht im Vordergrund. */
+.pv-pille--leise { color: #a8a29b; border-color: #efece8; }
+.pv-pille--leise small { opacity: .6; }
+.pv-pille--leise:hover { color: var(--grey-70); border-color: #ddd8d2; }
+
+/* Ohne Terminkasten steht der Kopf in einer Spalte, nicht im Raster. */
+.db-kopf--einspaltig { display: block; max-width: 62ch; }
+
+/* V5: der Werkzeugkasten liegt auf hellem Grund, auch zugeklappt. */
+.fl-ebene--werkzeug { background: #faf9f7; }
+.fl-ebene--werkzeug .fl-kopf:hover { background: #f4f2ef; }
+.fl-ebene--werkzeug .mk--klein { background: #fff; }
+
+/* ---- Nachtrag zu V4 und V9 --------------------------------------------- */
+.tl-titel { margin: clamp(22px, 2.6vw, 32px) 2px clamp(16px, 2vw, 22px);
+            font-weight: 500; line-height: 1.2; letter-spacing: -.015em;
+            font-size: clamp(1.8rem, 3.2vw, 2.6rem); }
+.vt-tool .tl-panel--voll + .tl-panel--voll { margin-top: 14px; }
+.tl-ziel-koerper { padding: clamp(18px, 2.2vw, 26px); max-width: 78ch; }
+.tl-ziel-koerper p { margin: 0 0 .8rem; font-size: .96rem; line-height: 1.75;
+                     color: var(--grey-70); }
+.tl-ziel-koerper p:last-child { margin-bottom: 0; }
+/* Der erste Satz stand in Serife, fett und gross - und ueberlagerte
+   damit alles, was danach kam. Jetzt liest sich der Block als Absatz. */
+.tl-ziel-koerper p:first-child { color: var(--ink); }
+.tl-werkzeug-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+                    gap: clamp(16px, 2.2vw, 30px); padding: 14px; }
+.tl-spalte-tag { margin: 0 0 6px 10px; font-size: .68rem; letter-spacing: .12em;
+                 text-transform: uppercase; font-weight: 700; color: var(--grey-50); }
+.aw-werkzeug { margin-top: 14px; }
+.aw-reiter-pfeil { color: var(--grey-50); font-size: 1rem; }
+.aw-reiter.is-aktiv .aw-reiter-pfeil { color: var(--hl); }
+.aw-reiter { grid-template-columns: auto minmax(0, 1fr) auto auto; }
+.db-abschnitt--eng { margin-top: clamp(28px, 3.2vw, 44px); }
+.db-abschnitt--eng .db-abschnitt-kopf { margin-bottom: clamp(16px, 2vw, 22px); }
+.fl-ziel { max-width: 74ch; }
+.fl-ziel p { margin: 0 0 .9rem; font-size: .98rem; line-height: 1.75; color: var(--grey-70); }
+.fl-ziel p:first-child { color: var(--ink); }
+@media (max-width: 760px) { .tl-werkzeug-grid { grid-template-columns: 1fr; } }
+
+
+/* ##########################################################################
+   Vier Entwuerfe ohne Kaesten
+
+   Alles bisher Gezeigte war dieselbe Form: weisse Flaeche, grauer Rand,
+   runde Ecke. Die folgenden vier loesen sich davon und nehmen die
+   Sekundaerfarben des Hauses dazu - Magenta, Violett und Cyan, dieselben
+   drei, die im Meilensteinplan schon die drei Straenge tragen. Dieselbe
+   Sache behaelt damit ueberall dieselbe Farbe.
+   ########################################################################## */
+
+
+/* ==========================================================================
+   V13 "Spektrum" - vollflaechige Baender
+
+   Keine Karte, keine Rundung, kein Schatten. Jedes Modul ist eine Flaeche
+   ueber die ganze Breite des Fensters, die Ziffer steht riesig daneben.
+   Der Farbwechsel von oben nach unten macht die Reihenfolge sichtbar.
+   ========================================================================== */
+.vt-spektrum .sp-kopf { max-width: 62ch; }
+.sp-kopf h1 { font-family: var(--font-serif); font-weight: 500; line-height: 1.15;
+              letter-spacing: -.02em; font-size: clamp(2.4rem, 5.2vw, 4.2rem);
+              margin: .4rem 0 0; }
+.sp-ziel { margin: 1.5rem 0 0; font-family: var(--font-serif); font-weight: 700;
+           font-size: clamp(1.15rem, 1.9vw, 1.5rem); line-height: 1.5; }
+.sp-ziel-klein { margin: .9rem 0 0; font-size: 1rem; line-height: 1.75; color: var(--grey-70); }
+
+.sp-baender { display: block; }
+.sp-band { display: block; background: var(--f); color: #fff; text-decoration: none;
+           transition: filter .2s ease; }
+.sp-band:hover { filter: brightness(1.08); }
+.sp-band-inhalt { display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+                  align-items: center; gap: clamp(24px, 4vw, 72px);
+                  padding-top: clamp(40px, 5vw, 76px); padding-bottom: clamp(40px, 5vw, 76px); }
+.sp-ziffer { font-family: var(--font-serif); font-weight: 700; line-height: .8;
+             font-size: clamp(4rem, 9vw, 9rem); color: rgba(255,255,255,.34); }
+.sp-marke { display: inline-block; padding: 4px 11px; border-radius: 999px;
+            background: rgba(255,255,255,.18); font-size: .72rem; letter-spacing: .1em;
+            text-transform: uppercase; font-weight: 700; }
+.sp-text h2 { margin: 12px 0 0; font-weight: 700; color: #fff; line-height: 1.1;
+              font-size: clamp(1.9rem, 3.6vw, 3rem); }
+.sp-frage { margin: 6px 0 0; font-size: 1rem; color: rgba(255,255,255,.72); }
+.sp-ergebnis { margin: 1.2rem 0 0; font-family: var(--font-serif); font-weight: 700;
+               font-size: clamp(1.05rem, 1.7vw, 1.3rem); line-height: 1.45; max-width: 44ch; }
+.sp-stand { margin: .6rem 0 0; font-size: .95rem; line-height: 1.6;
+            color: rgba(255,255,255,.76); max-width: 48ch; }
+.sp-pfeil { font-size: 1.8rem; color: rgba(255,255,255,.7); }
+.sp-band:hover .sp-pfeil { color: #fff; }
+
+.sp-fuss { background: #faf9f7; }
+.sp-fuss-raster { display: grid; grid-template-columns: auto minmax(0, 1fr);
+                  gap: clamp(16px, 2.4vw, 32px); align-items: stretch; }
+.sp-modell { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px;
+             align-items: center; padding: 18px 22px; background: #fff; border: 0;
+             border-radius: 0; cursor: pointer; font-family: inherit; text-align: left; }
+.sp-modell img { display: block; width: 58px; height: auto; }
+.sp-modell b { display: block; font-size: 1rem; font-weight: 600; }
+.sp-modell small { display: block; margin-top: 3px; font-size: .86rem; color: var(--grey-70); }
+.sp-planung { display: grid; align-content: center; gap: 4px; padding: 18px 24px;
+              background: var(--ink); color: #fff; text-decoration: none; position: relative; }
+.sp-planung b { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; }
+.sp-planung small { font-size: .88rem; color: rgba(255,255,255,.66); max-width: 54ch; }
+.sp-planung span { position: absolute; right: 24px; top: 50%; transform: translateY(-50%);
+                   font-size: 1.3rem; }
+.sp-werkzeug { margin-top: clamp(34px, 4vw, 56px); padding-top: clamp(26px, 3vw, 40px);
+               border-top: 2px solid var(--ink); }
+.sp-werkzeug h2 { margin: 0 0 clamp(18px, 2.2vw, 26px); font-weight: 600;
+                  font-size: clamp(1.5rem, 2.4vw, 2rem); }
+.sp-werkzeug-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+                    gap: clamp(18px, 2.4vw, 34px); }
+.sp-werkzeug .tl-zeile { border-radius: 0; }
+@media (max-width: 860px) {
+  .sp-band-inhalt { grid-template-columns: auto minmax(0, 1fr); }
+  .sp-pfeil { display: none; }
+  .sp-fuss-raster, .sp-werkzeug-grid { grid-template-columns: 1fr; }
+}
+
+
+/* ==========================================================================
+   V16 "Buehne" - Vollbildstufen mit Kapitelmarken
+
+   Eine Flaeche nach der anderen, jede so hoch wie das Fenster, der Wechsel
+   rastet ein. Links laeuft eine Leiste mit fuenf Marken mit, die zeigt, wo
+   man ist, und auf Klick dorthin springt - wie die Kapitel eines Films.
+   ========================================================================== */
+.vt-buehne { background: var(--ink); }
+.bu-wahl { padding-top: 26px; padding-bottom: 18px; }
+.vt-buehne .pv-pille { background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.2);
+                       color: rgba(255,255,255,.74); }
+.vt-buehne .pv-pille:hover { border-color: #fff; color: #fff; }
+.vt-buehne .pv-pille.is-aktiv { background: var(--hl); border-color: var(--hl); color: var(--ink); }
+.vt-buehne .pv-pille--leise { color: rgba(255,255,255,.4); border-color: rgba(255,255,255,.12); }
+.vt-buehne .pv-wahl-tag { color: rgba(255,255,255,.45); }
+
+.bu-rahmen { position: relative; }
+.bu-raum { height: calc(100vh - 150px); min-height: 560px; overflow-y: auto;
+           scroll-snap-type: y mandatory; scrollbar-width: none; }
+.bu-raum::-webkit-scrollbar { display: none; }
+.bu-stufe { min-height: calc(100vh - 150px); display: grid; align-items: center;
+            scroll-snap-align: start; padding: clamp(40px, 6vh, 80px) 0; }
+/* Der Inhalt steht auf der Achse des Seitenrands, nicht mittig: sonst
+   beginnt die Ueberschrift weiter rechts als das Logo darueber. Die
+   Begrenzung auf 62 Zeichen gilt den einzelnen Zeilen, nicht dem Kasten. */
+.bu-inhalt > * { max-width: 62ch; }
+.bu-inhalt--breit > * { max-width: none; }
+.bu-stufe--ziel { background: var(--ink); color: #fff; }
+.bu-kicker { color: rgba(255,255,255,.5); }
+.bu-stufe--ziel h1 { font-family: var(--font-serif); font-weight: 500; color: #fff;
+                     line-height: 1.12; letter-spacing: -.02em;
+                     font-size: clamp(2.4rem, 5.6vw, 4.6rem); margin: .4rem 0 0; }
+.bu-ziel { margin: 1.6rem 0 0; font-family: var(--font-serif); font-weight: 700;
+           font-size: clamp(1.15rem, 2vw, 1.55rem); line-height: 1.5; color: #fff; }
+.bu-ziel-klein { margin: 1rem 0 0; font-size: 1rem; line-height: 1.75;
+                 color: rgba(255,255,255,.66); max-width: 60ch; }
+.bu-knoepfe { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 2rem; }
+.bu-knopf { display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px;
+            border-radius: 999px; border: 0; background: var(--hl); color: var(--ink);
+            font-family: inherit; font-size: .92rem; font-weight: 600; cursor: pointer;
+            text-decoration: none; transition: transform .2s ease; }
+.bu-knopf:hover { transform: translateY(-2px); }
+.bu-knopf--leise { background: none; border: 1px solid rgba(255,255,255,.35); color: #fff; }
+.bu-knopf--leise:hover { border-color: #fff; }
+
+.bu-stufe--modul { background: var(--f); color: #fff; }
+.bu-nr { display: block; font-family: var(--font-serif); font-weight: 700; line-height: .8;
+         font-size: clamp(3.4rem, 7vw, 6.5rem); color: rgba(255,255,255,.3); }
+.bu-stufe--modul h2 { margin: 18px 0 0; font-weight: 700; color: #fff; line-height: 1.1;
+                      font-size: clamp(2.2rem, 4.6vw, 3.8rem); }
+.bu-frage { margin: 8px 0 0; font-size: 1.05rem; color: rgba(255,255,255,.74); }
+.bu-ergebnis { margin: 1.6rem 0 0; font-family: var(--font-serif); font-weight: 700;
+               font-size: clamp(1.15rem, 2vw, 1.5rem); line-height: 1.45; }
+.bu-stand { margin: 1rem 0 0; font-size: 1rem; line-height: 1.7; color: rgba(255,255,255,.78); }
+.bu-stand-tag { display: inline-block; margin-right: 10px; padding: 3px 10px;
+                border-radius: 999px; background: rgba(255,255,255,.2); font-size: .72rem;
+                letter-spacing: .1em; text-transform: uppercase; font-weight: 700; }
+.bu-stufe--modul .bu-knopf { margin-top: 2rem; background: #fff; color: var(--ink); }
+
+.bu-stufe--werkzeug { background: #faf9f7; color: var(--ink); }
+.bu-stufe--werkzeug h2 { margin: 0; font-weight: 600; font-size: clamp(1.7rem, 3vw, 2.4rem); }
+.bu-stufe--werkzeug .bu-ziel-klein { color: var(--grey-70); }
+.bu-werkzeug-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+                    gap: clamp(18px, 2.4vw, 34px); margin: clamp(22px, 2.8vw, 34px) 0; }
+.bu-stufe--werkzeug .bu-knopf--leise { border-color: #d8d3cd; color: var(--ink); }
+
+.bu-leiste { position: absolute; left: clamp(12px, 2.4vw, 34px); top: 50%;
+             transform: translateY(-50%); z-index: 3; display: grid; gap: 14px; }
+.bu-punkt { display: flex; align-items: center; gap: 10px; padding: 0; border: 0;
+            background: none; cursor: pointer; font-family: inherit; }
+.bu-punkt::before { content: ""; width: 9px; height: 9px; border-radius: 50%;
+                    background: rgba(255,255,255,.35); transition: all .2s ease; }
+.bu-punkt span { font-size: .74rem; font-weight: 600; letter-spacing: .04em;
+                 color: transparent; white-space: nowrap; transition: color .2s ease; }
+.bu-punkt:hover span, .bu-punkt.is-hier span { color: rgba(255,255,255,.8); }
+.bu-punkt.is-hier::before { background: var(--hl); transform: scale(1.5); }
+@media (max-width: 900px) {
+  .bu-leiste { display: none; }
+  .bu-werkzeug-grid { grid-template-columns: 1fr; }
+  .bu-raum { height: auto; scroll-snap-type: none; }
+  .bu-stufe { min-height: 0; }
+}
+
+/* ---- Designideen: die Uebersicht --------------------------------------- */
+.di-karten { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+             gap: clamp(16px, 2.2vw, 28px); margin-top: clamp(26px, 3.2vw, 42px); }
+.di-karte { display: grid; gap: 4px; align-content: start; padding: 0 0 clamp(22px, 2.6vw, 30px);
+            border: 1px solid #e4e1dd; border-radius: var(--radius-card); background: #fff;
+            overflow: hidden; text-decoration: none; color: inherit;
+            transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease; }
+.di-karte:hover { border-color: var(--ink); transform: translateY(-2px);
+                  box-shadow: 0 16px 36px rgba(0,0,0,.08); }
+.di-streifen { display: grid; grid-template-columns: repeat(3, 1fr); height: 10px;
+               margin-bottom: clamp(20px, 2.4vw, 28px); }
+.di-streifen i { display: block; height: 100%; }
+.di-karte b { font-family: var(--font-serif); font-weight: 700; line-height: 1.2;
+              font-size: clamp(1.4rem, 2.2vw, 1.9rem); padding: 0 clamp(22px, 2.6vw, 30px); }
+.di-karte small { font-size: .9rem; color: var(--grey-50);
+                  padding: 0 clamp(22px, 2.6vw, 30px); }
+.di-satz { display: block; margin-top: 1rem; font-size: .96rem; line-height: 1.7;
+           color: var(--grey-70); padding: 0 clamp(22px, 2.6vw, 30px); }
+.di-wofuer { display: block; margin-top: .9rem; padding: 12px clamp(22px, 2.6vw, 30px);
+             background: #faf9f7; font-size: .9rem; line-height: 1.6; color: var(--grey-70); }
+.di-mehr { display: block; margin-top: 1rem; font-size: .92rem; font-weight: 600;
+           color: var(--ink); padding: 0 clamp(22px, 2.6vw, 30px); }
+.pv-pille--zurueck { font-weight: 600; }
+@media (max-width: 860px) { .di-karten { grid-template-columns: 1fr; } }
+
+
+/* ##########################################################################
+   Die Fassungen ohne Scrollen
+
+   Die Frage war: alles sehen, ohne zu scrollen, und trotzdem Tiefe
+   behalten. Schrift verkleinern loest das nicht - das kostet nur
+   Lesbarkeit und man sieht trotzdem nicht mehr. Was es loest, ist ein
+   Rahmen in Bildschirmhoehe, in dem der Inhalt wechselt, statt zu wachsen.
+   Vier Antworten darauf, jede mit einer anderen Steuerungslogik.
+   ########################################################################## */
+.vt-sz { background: #f4f2ef; }
+.sz-raum { padding-top: clamp(16px, 2vw, 26px); padding-bottom: clamp(16px, 2vw, 26px); }
+.pv-wahl--zwei { margin-top: -12px; }
+.vt-sz .pv-wahl { margin-bottom: 10px; gap: 6px; }
+.vt-sz .pv-pille { padding: 5px 12px; font-size: .8rem; }
+
+/* ---- Der Kopf: eine Zeile, mehr Platz ist nicht da --------------------- */
+.sz-kopf { display: flex; align-items: center; justify-content: space-between;
+           flex-wrap: wrap; gap: 14px; padding: 12px 18px; margin-bottom: 12px;
+           background: var(--ink); border-radius: 12px; color: #fff; }
+.sz-kopf-name { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+                min-width: 0; }
+.sz-kopf-name b { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700; }
+.sz-punkt { width: 8px; height: 8px; border-radius: 50%; background: var(--hl);
+            align-self: center; flex: 0 0 auto; }
+.sz-kopf-satz { font-size: .84rem; color: rgba(255,255,255,.62); }
+.sz-kopf-werte { display: flex; align-items: center; gap: 18px; flex: 0 0 auto; }
+.sz-wert { display: flex; align-items: baseline; gap: 6px; }
+.sz-wert b { font-family: var(--font-serif); font-size: 1.1rem; color: var(--hl); }
+.sz-wert small { font-size: .7rem; letter-spacing: .1em; text-transform: uppercase;
+                 color: rgba(255,255,255,.6); }
+.sz-flach { appearance: none; -webkit-appearance: none; cursor: pointer;
+            padding: 6px 13px; border-radius: 999px; border: 1px solid rgba(255,255,255,.28);
+            background: none; font-family: inherit; font-size: .82rem; font-weight: 600;
+            color: #fff; transition: border-color .15s ease, background-color .15s ease; }
+.sz-flach:hover { border-color: #fff; background: rgba(255,255,255,.1); }
+
+/* ---- Der Rahmen: feste Hoehe, der Inhalt rollt darin ------------------- */
+/* Die Hoehe rechnet sich aus dem Fenster: Kopfzeile der Seite, zwei
+   Pillenreihen, der Projektkopf. Was darunter bleibt, ist der Rahmen.
+   Reicht es nicht, rollt der Inhalt im Feld - abgeschnitten wird nichts. */
+.sz-rahmen { display: grid; gap: 10px;
+             height: calc(100vh - 388px); min-height: 420px; }
+.sz-feld { display: flex; flex-direction: column; min-height: 0;
+           padding: 14px 16px; background: #fff; border: 1px solid #e4e1dd;
+           border-radius: 14px; }
+.sz-feld-tag { margin: 0 0 10px 2px; font-size: .7rem; letter-spacing: .12em;
+               text-transform: uppercase; font-weight: 700; color: var(--grey-50); }
+.sz-spalte-tag { margin: 0 0 6px 2px; font-size: .66rem; letter-spacing: .12em;
+                 text-transform: uppercase; font-weight: 700; color: var(--grey-50); }
+.sz-rollbar { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding-right: 4px;
+              scrollbar-width: thin; }
+
+/* ---- Die Bausteine, die alle vier teilen ------------------------------- */
+.sz-module { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px;
+             flex: 1 1 auto; min-height: 0; }
+.sz-modul { display: grid; gap: 4px; align-content: start; padding: 13px 15px;
+            background: #faf9f7; border: 1px solid #e4e1dd; border-radius: 12px;
+            text-decoration: none; color: inherit; min-height: 0; overflow-y: auto;
+            transition: border-color .2s ease, background-color .2s ease; }
+.sz-modul:hover { border-color: var(--ink); background: #fff; }
+.sz-modul-kopf { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.sz-modul-nr { font-family: var(--font-serif); font-weight: 700; font-size: 1rem;
+               color: var(--grey-50); }
+.sz-modul b { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700;
+              line-height: 1.2; }
+.sz-modul small { font-size: .82rem; color: var(--grey-50); }
+.sz-modul-ergebnis { display: block; margin-top: .4rem; font-family: var(--font-serif);
+                     font-weight: 700; font-size: .95rem; line-height: 1.4; }
+.sz-modul-stand { display: block; margin-top: .4rem; padding-top: .4rem;
+                  border-top: 1px solid #ebe8e5; font-size: .84rem; line-height: 1.5;
+                  color: var(--grey-70); }
+
+.sz-planung { display: grid; grid-template-columns: minmax(0, 1fr) auto;
+              align-items: center; gap: 10px; margin-top: 10px; padding: 11px 16px;
+              background: var(--hl); border-radius: 12px; text-decoration: none;
+              color: var(--ink); flex: 0 0 auto; }
+.sz-planung .pj-tag { grid-column: 1; margin: 0; }
+.sz-planung b { grid-column: 1; font-family: var(--font-serif); font-size: 1rem;
+                font-weight: 700; line-height: 1.25; }
+.sz-planung small { grid-column: 1; font-size: .82rem; color: rgba(26,24,23,.72); }
+.sz-planung-pfeil { grid-column: 2; grid-row: 1 / span 3; font-size: 1.2rem; }
+
+.sz-zeile { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center;
+            gap: 10px; width: 100%; padding: 7px 8px; border: 0; background: none;
+            border-radius: 9px; cursor: pointer; font-family: inherit; text-align: left;
+            text-decoration: none; color: inherit; transition: background-color .15s ease; }
+.sz-zeile:hover { background: #f4f2ef; }
+.sz-zeile-ic { display: grid; place-items: center; width: 26px; height: 26px;
+               border-radius: 7px; background: var(--ink); color: var(--hl); }
+.sz-zeile-ic svg { width: 14px; height: 14px; }
+.sz-zeile-text b { display: block; font-size: .88rem; font-weight: 600; line-height: 1.3; }
+.sz-zeile-text small { display: block; font-size: .78rem; line-height: 1.4; color: var(--grey-50); }
+.sz-werkzeug { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px;
+               flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+.sz-ziel { margin: 0 0 .7rem; font-size: .92rem; line-height: 1.7; color: var(--grey-70); }
+.sz-ziel:last-child { margin-bottom: 0; }
+
+/* ---- V2+ alles gleichzeitig ------------------------------------------- */
+/* In V2+ steht am meisten gleichzeitig. Die Module bekommen den groesseren
+   Anteil, sonst rollen ihre Karten innen. */
+.sz-rahmen--v2 { grid-template-rows: minmax(0, 1.3fr) minmax(0, 1fr); }
+
+/* ---- V4+ Panels mit eigenem Rollbereich -------------------------------- */
+.sz-rahmen--v4 { grid-template-columns: repeat(3, minmax(0, 1fr));
+                 grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) auto; }
+.sz-feld--weit { grid-column: span 2; }
+.sz-feld--voll { grid-column: 1 / -1; padding: 0; border: 0; background: none; }
+.sz-feld--voll .sz-planung { margin-top: 0; }
+.sz-rollbar--zwei { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+                    gap: 0 14px; align-content: start; }
+.sz-reihe { display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+            align-items: center; gap: 12px; padding: 9px 8px; border-radius: 10px;
+            text-decoration: none; color: inherit; transition: background-color .15s ease; }
+.sz-reihe + .sz-reihe { border-top: 1px solid #f0eeea; }
+.sz-reihe:hover { background: #faf9f7; }
+.sz-reihe-nr { font-family: var(--font-serif); font-weight: 700; font-size: 1rem;
+               color: var(--grey-50); }
+.sz-reihe-text b { display: block; font-size: .95rem; font-weight: 600; line-height: 1.3; }
+.sz-reihe-text small { display: block; margin-top: 1px; font-size: .84rem; line-height: 1.45;
+                       color: var(--grey-70); }
+.sz-reihe-stand { display: block; margin-top: 2px; font-size: .8rem; color: var(--grey-50); }
+.sz-reihe-marke { display: grid; gap: 5px; justify-items: end; }
+.sz-balken { display: block; width: 92px; height: 3px; border-radius: 999px;
+             background: #e4e1dd; overflow: hidden; }
+.sz-balken i { display: block; height: 100%; background: var(--ink); width: var(--anteil, 0%); }
+
+/* ---- V5+ drei Ebenen nebeneinander ------------------------------------- */
+.sz-rahmen--quer { display: flex; gap: 10px; }
+.qr-ebene { display: flex; min-width: 0; background: #fff; border: 1px solid #e4e1dd;
+            border-radius: 14px; overflow: hidden; flex: 0 0 62px;
+            transition: flex-basis .25s ease, flex-grow .25s ease; }
+.qr-ebene.is-offen { flex: 1 1 auto; }
+.qr-griff { display: flex; flex-direction: column; align-items: center; gap: 14px;
+            flex: 0 0 62px; padding: 16px 0; border: 0; border-right: 1px solid #ebe8e5;
+            background: #faf9f7; cursor: pointer; font-family: inherit;
+            transition: background-color .15s ease; }
+.qr-griff:hover { background: #f0ede9; }
+.qr-ebene.is-offen .qr-griff { background: var(--ink); border-right-color: var(--ink); }
+.qr-nr { font-family: var(--font-serif); font-weight: 700; font-size: 1rem;
+         color: var(--grey-50); }
+.qr-ebene.is-offen .qr-nr { color: var(--hl); }
+.qr-titel { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap;
+            font-size: .82rem; letter-spacing: .1em; text-transform: uppercase;
+            font-weight: 700; color: var(--grey-70); }
+.qr-ebene.is-offen .qr-titel { color: #fff; }
+.qr-inhalt { display: none; flex: 1 1 auto; min-width: 0; flex-direction: column;
+             padding: 14px 16px; }
+.qr-ebene.is-offen .qr-inhalt { display: flex; }
+
+/* ---- V9+ links waehlen, rechts lesen ----------------------------------- */
+.sz-rahmen--wahl { grid-template-columns: minmax(280px, .8fr) minmax(0, 1.2fr); }
+.kw-wahl { display: grid; gap: 7px; align-content: start; flex: 1 1 auto; min-height: 0;
+           overflow-y: auto; }
+.kw-modul { display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+            align-items: center; gap: 11px; width: 100%; padding: 11px 13px;
+            border: 1px solid transparent; border-radius: 11px; background: #faf9f7;
+            cursor: pointer; font-family: inherit; text-align: left;
+            transition: background-color .15s ease, border-color .15s ease; }
+.kw-modul:hover { background: #f0ede9; }
+.kw-modul.is-aktiv { background: var(--ink); border-color: var(--ink); }
+.kw-modul-nr { font-family: var(--font-serif); font-weight: 700; font-size: 1rem;
+               color: var(--grey-50); }
+.kw-modul.is-aktiv .kw-modul-nr { color: var(--hl); }
+.kw-modul-text b { display: block; font-size: .95rem; font-weight: 600; line-height: 1.3; }
+.kw-modul-text small { display: block; font-size: .79rem; line-height: 1.35; color: var(--grey-70); }
+.kw-modul.is-aktiv .kw-modul-text b { color: #fff; }
+.kw-modul.is-aktiv .kw-modul-text small { color: rgba(255,255,255,.6); }
+.kw-modul.is-aktiv .pj-marke { color: rgba(255,255,255,.8); }
+.kw-modul.is-aktiv .pj-marke::before { background: #fff; border-color: rgba(255,255,255,.6); }
+.kw-reiter-reihe { display: flex; gap: 2px; margin-bottom: 12px;
+                   border-bottom: 1px solid #ebe8e5; flex: 0 0 auto; }
+.kw-reiter { appearance: none; -webkit-appearance: none; cursor: pointer;
+             padding: 8px 15px; border: 0; background: none; font-family: inherit;
+             font-size: .86rem; font-weight: 600; color: var(--grey-50);
+             border-bottom: 2px solid transparent; margin-bottom: -1px;
+             transition: color .15s ease, border-color .15s ease; }
+.kw-reiter:hover { color: var(--ink); }
+.kw-reiter.is-aktiv { color: var(--ink); border-bottom-color: var(--ink); }
+.kw-tafel-nr { display: block; font-family: var(--font-serif); font-weight: 700;
+               font-size: 1rem; color: var(--grey-50); }
+.kw-tafel h2 { margin: 3px 0 0; font-weight: 700; line-height: 1.15;
+               font-size: clamp(1.5rem, 2.4vw, 2.1rem); }
+.kw-tafel-frage { margin: .25rem 0 0; font-size: .92rem; color: var(--grey-50); }
+.kw-tafel-ergebnis { margin: 1rem 0 0; font-family: var(--font-serif); font-weight: 700;
+                     font-size: 1.08rem; line-height: 1.45; max-width: 46ch; }
+.kw-tafel-stand { margin: .9rem 0 0; padding-top: .9rem; border-top: 1px solid #f0eeea;
+                  font-size: .92rem; line-height: 1.6; color: var(--grey-70); }
+.kw-wege { margin-top: 1.2rem; }
+.kw-weg { display: flex; align-items: center; gap: 9px; padding: 7px 9px; border-radius: 9px;
+          font-size: .88rem; color: var(--grey-70); text-decoration: none;
+          transition: background-color .15s ease, color .15s ease; }
+.kw-weg:hover { background: #faf9f7; color: var(--ink); }
+.kw-weg span { margin-left: auto; color: var(--grey-50); }
+.kw-leer { display: block; padding: 7px 9px; font-size: .85rem; color: #b4aea7; }
+.kw-knopf { margin-top: 1.2rem; }
+
+@media (max-width: 1100px) {
+  .sz-rahmen { height: auto; min-height: 0; }
+  .sz-rahmen--v4, .sz-rahmen--wahl { grid-template-columns: 1fr; }
+  .sz-feld--weit, .sz-feld--voll { grid-column: auto; }
+  .sz-module, .sz-werkzeug, .sz-rollbar--zwei { grid-template-columns: 1fr; }
+  .sz-rahmen--quer { flex-direction: column; }
+  .qr-ebene { flex: 0 0 auto; }
+  .qr-griff { flex-direction: row; flex: 0 0 auto; border-right: 0;
+              border-bottom: 1px solid #ebe8e5; padding: 12px 16px; }
+  .qr-titel { writing-mode: horizontal-tb; transform: none; }
+  .sz-rollbar { overflow: visible; }
+}
+
+/* "STAND" klebte am Satz, weil die Marke inline stand. */
+.kw-tafel-stand .sz-spalte-tag { display: block; margin-bottom: 4px; }
+
+
+/* ==========================================================================
+   V9++ "Auswahl verbunden"
+
+   Zwei Dinge, die V9+ nicht geleistet hat:
+
+   1  Drei Ebenen, die als drei Ebenen zu erkennen sind. Vorher stand ein
+      Feld mit Tag, darunter ein gelber Balken, darunter ein Feld mit
+      Reitern - drei Formen fuer drei gleichrangige Dinge. Jetzt tragen
+      alle drei denselben Kopf: Ziffer, Name, Anzahl. Der Werkzeugkasten
+      unterscheidet sich nur im Grund, nicht in der Beschriftung.
+
+   2  Die Auswahl und ihre Tafel gehoeren sichtbar zusammen. Vorher waren
+      es zwei getrennte Kaesten nebeneinander. Jetzt ein Rahmen mit einer
+      Trennlinie, und die gewaehlte Zeile traegt eine Nase, die auf die
+      Tafel zeigt. Die Tafel wiederholt die Ziffer - damit liest es sich
+      als aufgeklappter Zustand und nicht als zweiter Kasten.
+   ========================================================================== */
+/* Die Modulebene braucht am meisten: ihre Tafel traegt Ergebnis, Stand,
+   Unterseiten und den Knopf. Ebene 02 ist eine Zeile und bekommt nur, was
+   sie braucht. */
+.sz-rahmen--vb { grid-template-rows: minmax(0, 1.28fr) auto minmax(0, 1.12fr); gap: 9px; }
+.sz-rahmen--vb .vb-ebene:nth-child(2) .vb-koerper { padding: 9px 14px; }
+
+.vb-ebene { display: flex; flex-direction: column; min-height: 0;
+            background: #fff; border: 1px solid #e4e1dd; border-radius: 14px;
+            overflow: hidden; }
+.vb-ebene--werkzeug { background: #faf9f7; }
+
+/* Der Kopf ist in allen drei Ebenen derselbe - daran haengt die Einheit. */
+.vb-kopf { display: flex; align-items: baseline; gap: 12px; flex: 0 0 auto;
+           padding: 9px 16px; border-bottom: 1px solid #ebe8e5; background: #fff; }
+.vb-ebene--werkzeug .vb-kopf { background: #faf9f7; }
+.vb-kopf-nr { font-family: var(--font-serif); font-weight: 700; font-size: .95rem;
+              color: var(--grey-50); }
+.vb-kopf h2 { margin: 0; font-size: .82rem; letter-spacing: .12em; text-transform: uppercase;
+              font-weight: 700; color: var(--ink); }
+.vb-kopf-zahl { margin-left: auto; font-size: .76rem; font-weight: 600; color: var(--grey-50); }
+
+.vb-koerper { flex: 1 1 auto; min-height: 0; padding: 12px 14px; }
+.vb-koerper--wahl { display: grid; grid-template-columns: minmax(260px, .78fr) minmax(0, 1.22fr);
+                    gap: 0; padding: 0; }
+
+/* Links die Liste, rechts die Tafel - eine Flaeche, eine Trennlinie. */
+.vb-liste { display: grid; gap: 4px; align-content: start; min-height: 0; overflow-y: auto;
+            padding: 12px; border-right: 1px solid #ebe8e5; background: #faf9f7; }
+.vb-zeile { position: relative; display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px;
+            width: 100%; padding: 10px 12px; border: 1px solid transparent;
+            border-radius: 10px; background: none; cursor: pointer; font-family: inherit;
+            text-align: left; transition: background-color .15s ease; }
+.vb-zeile:hover { background: #fff; }
+.vb-zeile.is-aktiv { background: var(--ink); border-color: var(--ink); }
+.vb-zeile-nr { font-family: var(--font-serif); font-weight: 700; font-size: .98rem;
+               color: var(--grey-50); }
+.vb-zeile.is-aktiv .vb-zeile-nr { color: var(--hl); }
+.vb-zeile-text b { display: block; font-size: .94rem; font-weight: 600; line-height: 1.3; }
+.vb-zeile-text small { display: block; font-size: .78rem; line-height: 1.35; color: var(--grey-70); }
+.vb-zeile.is-aktiv .vb-zeile-text b { color: #fff; }
+.vb-zeile.is-aktiv .vb-zeile-text small { color: rgba(255,255,255,.6); }
+.vb-zeile.is-aktiv .pj-marke { color: rgba(255,255,255,.8); }
+.vb-zeile.is-aktiv .pj-marke::before { background: #fff; border-color: rgba(255,255,255,.6); }
+
+/* Die Nase zeigt von der gewaehlten Zeile auf die Tafel. Sie sitzt auf der
+   Trennlinie und macht aus zwei Kaesten einen Zusammenhang. */
+.vb-nase { position: absolute; right: -13px; top: 50%; width: 12px; height: 12px;
+           transform: translateY(-50%) rotate(45deg); background: var(--ink);
+           opacity: 0; transition: opacity .15s ease; }
+.vb-zeile.is-aktiv .vb-nase { opacity: 1; }
+
+.vb-tafel-raum { min-height: 0; overflow-y: auto; padding: 13px 18px; }
+.vb-tafel-nr { display: block; font-family: var(--font-serif); font-weight: 700;
+               font-size: 1.6rem; line-height: 1; color: #ddd8d2; }
+.vb-tafel h3 { margin: 4px 0 0; font-weight: 700; line-height: 1.15;
+               font-size: clamp(1.35rem, 2.1vw, 1.8rem); }
+.vb-tafel-frage { margin: .25rem 0 0; font-size: .9rem; color: var(--grey-50); }
+.vb-tafel-ergebnis { margin: .7rem 0 0; font-family: var(--font-serif); font-weight: 700;
+                     font-size: 1.05rem; line-height: 1.45; max-width: 44ch; }
+.vb-tafel-stand { margin: .65rem 0 0; padding-top: .65rem; border-top: 1px solid #f0eeea;
+                  font-size: .9rem; line-height: 1.6; color: var(--grey-70); }
+.vb-tafel-stand .sz-spalte-tag { display: block; margin-bottom: 3px; }
+.vb-wege { margin-top: .8rem; }
+.vb-knopf { margin-top: .8rem; }
+
+/* Ebene 02 ist eine Zeile - sie braucht keinen eigenen Kasten mehr, der
+   Kopf darueber traegt sie schon. */
+.vb-planung { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center;
+              gap: 14px; padding: 12px 14px; background: var(--hl); border-radius: 10px;
+              text-decoration: none; color: var(--ink); }
+.vb-planung-text b { display: block; font-family: var(--font-serif); font-size: 1.02rem;
+                     font-weight: 700; line-height: 1.25; }
+.vb-planung-text small { display: block; margin-top: 2px; font-size: .84rem; line-height: 1.5;
+                         color: rgba(26,24,23,.72); }
+.vb-planung-pfeil { font-size: 1.2rem; }
+.vt-vb .sz-werkzeug { gap: 14px; }
+.vt-vb .sz-zeile:hover { background: #fff; }
+
+@media (max-width: 1000px) {
+  .vb-koerper--wahl { grid-template-columns: 1fr; }
+  .vb-liste { border-right: 0; border-bottom: 1px solid #ebe8e5; }
+  .vb-nase { display: none; }
+}
+
+/* Zwei Stellen, an denen der Platz noch nicht reichte:
+   - Die fuenf Methoden standen untereinander und schoben zwei davon aus
+     dem Bild. Sie stehen jetzt in zwei Spalten.
+   - Der Knopf "Zum Modul" lag unter der Tafel und wurde abgeschnitten.
+     Er sitzt jetzt oben rechts neben dem Modulnamen, wo ohnehin Platz ist. */
+.vt-vb .sz-werkzeug > div:last-child { display: grid; grid-template-rows: auto 1fr; }
+.vt-vb .sz-werkzeug > div:last-child .sz-spalte-tag { grid-column: 1 / -1; }
+.vt-vb .sz-werkzeug > div:last-child { grid-template-columns: repeat(2, minmax(0, 1fr));
+                                       gap: 0 10px; align-content: start; }
+.vb-tafel { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; }
+.vb-tafel > * { grid-column: 1; }
+.vb-knopf { grid-column: 2; grid-row: 1 / span 3; align-self: start; margin-top: 4px; }
+
+/* display:grid schlaegt das hidden-Attribut - ohne diese Zeile standen
+   alle drei Tafeln uebereinander im Bild. */
+.vb-tafel[hidden] { display: none; }
+
+/* ---- Die Verbindung zwischen Auswahl und Tafel -------------------------
+   Die schwarze Raute war ein Fremdkoerper. Jetzt macht es die Zeile
+   selbst: Sie schiebt sich um einen Pixel ueber die Trennlinie, ihre
+   rechten Ecken werden gerade, und der Rand auf dieser Seite faellt weg.
+   Damit laeuft sie in die Tafel hinein - wie ein Reiter in sein Blatt.
+   Kein zusaetzliches Zeichen noetig. */
+.vb-zeile.is-aktiv { margin-right: -13px; padding-right: 24px;
+                     border-top-right-radius: 0; border-bottom-right-radius: 0;
+                     border-right-color: var(--ink); position: relative; z-index: 2; }
+
+/* ---- V9 in voller Hoehe: dieselben drei Ebenen, nur ohne Rahmenzwang --- */
+.aw-ebenen { display: grid; gap: 12px; margin-top: 14px; }
+.aw-ebenen .vb-ebene { min-height: 0; }
+.aw-ebenen .vb-liste { max-height: none; }
+.aw-ebenen .vb-tafel-raum { overflow: visible; }
+.vb-wege--zwei { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+                 gap: clamp(14px, 2vw, 26px); }
+
+/* Das Strategiemodell steht als schlanke Zeile unter der Modulauswahl -
+   es gehoert zu den Modulen, ist aber keines. */
+.aw-modell, .fl-modell { margin-top: 10px; background: #fff; }
+.aw-modell { width: 100%; }
+
+/* ---- V5: das Modell schlank statt als Kasten mit Vorschau --------------
+   Der Kasten mit dem Vorschaubild war hoch und hat die ganze Ebene nach
+   unten gezogen. Als Zeile wie im Werkzeugkasten braucht er ein Drittel
+   der Hoehe, und der Text steht wieder oben. */
+.fl-logik { grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
+            align-items: center; margin-bottom: clamp(14px, 1.8vw, 20px); }
+.fl-modell { margin-top: 0; }
+@media (max-width: 900px) { .fl-logik { grid-template-columns: 1fr; } }
+
+/* ---- V5g: dieselbe Faltung auf hellem Grund ----------------------------
+   Wie in der Tool-Fassung traegt die Seite den Papierton des Hauses, die
+   Kaesten bleiben weiss. Dadurch heben sie sich ab, statt auf Weiss in
+   Weiss zu stehen. Mehr unterscheidet V5g nicht von V5. */
+.vt-falt--grau { background: #f4f2ef; }
+.vt-falt--grau .fl-ebene { background: #fff; border-color: #e4e1dd; }
+.vt-falt--grau .fl-ebene.is-offen { box-shadow: 0 16px 38px rgba(0,0,0,.06); }
+.vt-falt--grau .fl-kopf:hover { background: #faf9f7; }
+/* Alle drei Ebenen stehen auf Weiss. Der Werkzeugkasten hatte zusaetzlich
+   einen hellen Grund - auf dem ohnehin hellen Seitenhintergrund war das
+   ein Unterschied ohne Aussage. */
+.vt-falt--grau .fl-ebene--werkzeug { background: #fff; }
+.vt-falt--grau .fl-ebene--werkzeug .fl-kopf:hover { background: #faf9f7; }
+.vt-falt--grau .mk--klein { background: #fff; }
+.vt-falt--grau .pj-standzeile { background: #fff; }
+
+/* V5g: die Modulkarten kommen aus V1. Innerhalb der Faltung braucht das
+   Raster seine sechs Zeilen, damit die Kaesten auf einer Linie stehen. */
+/* Ohne Zeilenraster: V1 teilt seine Karten auf sechs Rasterzeilen auf,
+   damit sie ueber mehrere Abschnitte hinweg buendig stehen. Hier stehen
+   sie allein - das Raster liess dadurch 118px Luft unter den Karten
+   stehen, bevor die Projektplanung kam. */
+.vt-falt--grau .pj-felder { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+                            gap: clamp(12px, 1.6vw, 20px); align-items: stretch; }
+.vt-falt--grau .pj-feld { grid-row: auto; grid-template-rows: none;
+                          display: flex; flex-direction: column; }
+.vt-falt--grau .pj-feld-fuss { margin-top: auto; }
+.vt-falt--grau .pj-felder + .pj-standzeile { margin-top: clamp(12px, 1.6vw, 18px); }
+/* Die Karten brauchen ihre sechs Rasterzeilen fuer die Ausrichtung, aber
+   die letzte darf nicht mitwachsen - sonst steht unter den Karten Luft,
+   bevor die Projektplanung kommt. */
+
+/* Der Raum unter der Marke ist um ein Fuenftel knapper als in V1 - dort
+   traegt die Karte mehr Inhalt und vertraegt mehr Luft. */
+.vt-falt--grau .pj-feld { padding-bottom: clamp(13px, 1.45vw, 18px); }
+.vt-falt--grau .pj-feld-fuss { padding-top: 16px; }
+/* Unter der Marke lagen 48px: 18 von der Karte und 30 vom Koerper. Jetzt
+   sind es 39 - ein Fuenftel weniger, wie gewuenscht. */
+.vt-falt--grau .pj-feld-koerper { padding-bottom: 21px; }
+@media (max-width: 900px) {
+  .vt-falt--grau .pj-felder { grid-template-columns: 1fr; grid-template-rows: none; }
+  .vt-falt--grau .pj-feld { grid-row: auto; grid-template-rows: none; }
+}
+
+
+/* ==========================================================================
+   Vier Fassungen des Werkzeugkastens
+
+   Auf einer hellgrauen Seite kann der Werkzeugkasten nicht noch heller
+   werden - der Trick aus V1 und V2, ihn grau zu hinterlegen, faellt hier
+   also aus. Drei andere Wege:
+
+   W2 "Dunkel"   der Kasten wird dunkel. Weiss wird dadurch knapp und die
+                 Eintraege treten hervor.
+   W3 "Karten"   zwei grosse Karten mit dunklem Kopf, innen nur Haarlinien.
+                 Damit steht nicht Kasten in Kasten in Kasten.
+   W4 "Kacheln"  jedes Werkzeug eine Kachel mit grossem Zeichen. Liest sich
+                 als Sammlung, nicht als Liste.
+   ========================================================================== */
+
+/* ---- W2 "Dunkel" ------------------------------------------------------- */
+.wk-dunkel { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+             gap: clamp(22px, 2.8vw, 40px);
+             padding: clamp(22px, 2.6vw, 32px); margin-top: 4px;
+             background: var(--ink); border-radius: var(--radius-card); }
+.wk-dunkel .pj-tag { color: var(--hl); }
+.mk--dunkel { background: rgba(255,255,255,.06) !important;
+              border-color: rgba(255,255,255,.14) !important; color: #fff; }
+.mk--dunkel:hover { background: rgba(255,255,255,.12) !important;
+                    border-color: rgba(255,255,255,.4) !important; }
+.mk--dunkel .mk-text b { color: #fff; }
+.mk--dunkel .mk-text small { color: rgba(255,255,255,.58); }
+.mk--dunkel .mk-pfeil { color: rgba(255,255,255,.45); }
+.mk--dunkel:hover .mk-pfeil { color: #fff; }
+@media (max-width: 760px) { .wk-dunkel { grid-template-columns: 1fr; } }
+
+/* ---- W3 "Karten" ------------------------------------------------------- */
+.wk-karten { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+             gap: clamp(14px, 1.8vw, 22px); margin-top: 4px; }
+.wk-karte { background: #fff; border: 1px solid #e4e1dd;
+            border-radius: var(--radius-card); overflow: hidden; }
+.wk-karte header { display: flex; align-items: baseline; justify-content: space-between;
+                   gap: 12px; padding: 13px 20px; background: var(--ink); }
+.wk-karte header b { font-size: .78rem; letter-spacing: .14em; text-transform: uppercase;
+                     font-weight: 700; color: var(--hl); }
+.wk-karte header span { font-size: .78rem; font-weight: 600; color: rgba(255,255,255,.55); }
+.wk-zeile { display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+            align-items: center; gap: 14px; width: 100%; padding: 14px 20px;
+            border: 0; background: none; cursor: pointer; font-family: inherit;
+            text-align: left; text-decoration: none; color: inherit;
+            transition: background-color .15s ease; }
+.wk-zeile + .wk-zeile { border-top: 1px solid #f0eeea; }
+.wk-zeile:hover { background: #faf9f7; }
+.wk-zeile-ic { display: grid; place-items: center; width: 34px; height: 34px;
+               border-radius: 11px; background: var(--ink); color: var(--hl); }
+.wk-zeile-ic svg { width: 18px; height: 18px; }
+.wk-zeile-text b { display: block; font-size: .95rem; font-weight: 600; line-height: 1.3; }
+.wk-zeile-text small { display: block; margin-top: 2px; font-size: .84rem; line-height: 1.5;
+                       color: var(--grey-70); }
+.wk-zeile-pfeil { color: var(--grey-50); }
+.wk-zeile:hover .wk-zeile-pfeil { color: var(--ink); }
+@media (max-width: 760px) { .wk-karten { grid-template-columns: 1fr; } }
+
+/* ---- W4 "Kacheln" ------------------------------------------------------ */
+.wk-gruppe + .wk-gruppe { margin-top: clamp(22px, 2.6vw, 32px); }
+.wk-kacheln { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+              gap: clamp(10px, 1.3vw, 14px); margin-top: 10px; }
+.wk-kachel { display: grid; gap: 4px; align-content: start; padding: 18px 18px 20px;
+             background: #fff; border: 1px solid #e4e1dd; border-radius: var(--radius-card);
+             cursor: pointer; font-family: inherit; text-align: left;
+             text-decoration: none; color: inherit;
+             transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease; }
+.wk-kachel:hover { border-color: var(--ink); transform: translateY(-2px);
+                   box-shadow: 0 14px 30px rgba(0,0,0,.07); }
+.wk-kachel-ic { display: grid; place-items: center; width: 44px; height: 44px;
+                margin-bottom: 10px; border-radius: 13px;
+                background: var(--ink); color: var(--hl); }
+.wk-kachel-ic svg { width: 23px; height: 23px; }
+.wk-kachel b { font-family: var(--font-serif); font-size: 1.02rem; font-weight: 700;
+               line-height: 1.3; }
+.wk-kachel small { font-size: .84rem; line-height: 1.5; color: var(--grey-70); }
+
+/* ---- Die Fusszeile sitzt unten, auch wenn die Seite kurz ist ----------
+   Sind alle drei Module zugeklappt, endet der Inhalt vor dem unteren
+   Fensterrand. Vorher endete dort auch der graue Grund und darunter stand
+   eine weisse Flaeche ueber der schwarzen Fusszeile. Jetzt traegt der
+   Koerper die volle Fensterhoehe: der graue Grund dehnt sich in den Rest,
+   die Fusszeile schliesst das Fenster ab. */
+body:has(> .vt-falt--grau) { min-height: 100vh; display: flex; flex-direction: column; }
+body:has(> .vt-falt--grau) > .vt-falt--grau { flex: 1 0 auto; }

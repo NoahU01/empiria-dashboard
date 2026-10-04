@@ -1,0 +1,1848 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ökosystem &middot; Steuerungszentrale &ndash; empiria</title>
+<meta name="description" content="Schaltplan der Steuerungszentrale: Datenquellen, Ausführungsknoten, Dashboard, Aktionen und die drei Marken.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/assets/projekte/projekte.css">
+<link rel="stylesheet" href="/assets/projekte/dashboard.css">
+<link rel="stylesheet" href="/assets/oekosystem.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="/index.html" aria-label="empiria Startseite">
+      <img src="/assets/empiria-logo.svg" alt="empiria">
+    </a>
+    <nav class="nav-links" aria-label="Hauptnavigation">
+      <a href="/index.html#problem">Problem</a>
+      <a href="/index.html#loesung">Lösung</a>
+      <div class="nav-item nav-item--dropdown">
+        <a href="/index.html#leistungen">Leistungen</a>
+        <div class="nav-dropdown">
+          <div class="nav-dropdown-panel">
+            <div class="nav-item--subdropdown">
+              <a href="/index.html#leistungen" class="nav-dropdown-sub-trigger nav-dropdown-sub-trigger--link">Strategiehandwerk</a>
+              <div class="nav-dropdown-sub">
+                <div class="nav-dropdown-panel">
+                  <a href="/leistungen/strategie">Strategie in den Alltag überführen</a>
+                  <a href="/leistungen/komplexe-themen">Komplexe Themen strukturieren &amp; kommunizieren</a>
+                  <a href="/leistungen/innovation">Innovation &amp; Geschäftsmodell neu denken</a>
+                </div>
+              </div>
+            </div>
+            <div class="nav-dropdown-divider"></div>
+            <div class="nav-item--subdropdown">
+              <a href="/workshops" class="nav-dropdown-sub-trigger nav-dropdown-sub-trigger--link">Workshops</a>
+              <div class="nav-dropdown-sub">
+                <div class="nav-dropdown-panel">
+                  <a href="/ki-zum-anfassen">KI zum Anfassen</a>
+                  <a href="/sprint-landingpage">Sprint Landingpage</a>
+                  <a href="/workshop-moderation">Moderation deines Workshops</a>
+                </div>
+              </div>
+            </div>
+            <div class="nav-dropdown-divider"></div>
+            <div class="nav-item--subdropdown">
+              <a href="/marketing" class="nav-dropdown-sub-trigger nav-dropdown-sub-trigger--link">Marketing 2.0</a>
+              <div class="nav-dropdown-sub">
+                <div class="nav-dropdown-panel">
+                  <a href="/dashboard-digitales-marketing">MarketingEcoSystem (MES)</a>
+                  <a href="/sofort-sichtbar"><img src="/assets/sofort-sichtbar-logo-ink.svg" alt="sofort sichtbar" class="nav-sofort-logo"></a>
+                  <a href="/paid-ads">Paid Ads</a>
+                  <a href="/medien">Medien, die Ergebnisse liefern</a>
+                </div>
+              </div>
+            </div>
+            <div class="nav-dropdown-divider"></div>
+            <div class="nav-item--subdropdown">
+              <a href="/training-sparring" class="nav-dropdown-sub-trigger nav-dropdown-sub-trigger--link">Training & Sparring</a>
+              <div class="nav-dropdown-sub">
+                <div class="nav-dropdown-panel">
+                  <a href="/praesentationsseminar">Teams befähigen, professionell zu kommunizieren</a>
+                  <a href="/sparring">1:1 Sparring</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+<!-- ENTWICKLUNG:START (nur Sandbox – wird beim Push automatisch entfernt) -->
+<div class="dev-dd dev-dd--desktop" data-dev-dd>
+<button class="dev-dd-toggle" type="button" aria-expanded="false"><span class="dev-dd-long">/ Entwicklung /</span><span class="dev-dd-short" aria-hidden="true">/ Entw. /</span><svg class="dev-dd-chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+<div class="dev-dd-panel">
+<p class="dev-dd-note"><b>Nur in der Entwicklungsumgebung sichtbar</b>Dieser Menüpunkt ist in der Live-Version nicht enthalten.</p>
+<p class="dev-dd-group">Unterseiten</p>
+<div class="dev-dd-sub">
+<a href="../impulsvortraege.html" class="dev-dd-link dev-dd-link--parent"><span class="dev-dd-tag">IV</span><span class="dev-dd-txt"><b>Impulsvorträge</b><small>Übersicht aller Vorträge</small></span></a>
+<div class="dev-dd-flyout"><div class="dev-dd-flyout-panel">
+<p class="dev-dd-group">Die Vorträge</p>
+<a href="../vortrag-1.html" class="dev-dd-link"><span class="dev-dd-tag">1</span><span class="dev-dd-txt"><b>Warum sich niemand für Dein Produkt interessiert.</b><small>Relevanz</small></span></a>
+<a href="../vortrag-2.html" class="dev-dd-link"><span class="dev-dd-tag">2</span><span class="dev-dd-txt"><b>Strategie, die endlich ankommt.</b><small>Strategie im Alltag</small></span></a>
+<a href="../vortrag-3.html" class="dev-dd-link"><span class="dev-dd-tag">3</span><span class="dev-dd-txt"><b>Gründe Deinen stärksten Konkurrenten!</b><small>Perspektivwechsel</small></span></a>
+</div></div>
+</div>
+<div class="dev-dd-sub">
+<a href="../budget-retter.html" class="dev-dd-link dev-dd-link--parent"><span class="dev-dd-tag">BR</span><span class="dev-dd-txt"><b>Budget-Retter</b><small>Landingpage · Varianten</small></span></a>
+<div class="dev-dd-flyout"><div class="dev-dd-flyout-panel">
+<p class="dev-dd-group">Die Varianten</p>
+<a href="../budget-retter-1.html" class="dev-dd-link"><span class="dev-dd-tag">B1</span><span class="dev-dd-txt"><b>Variante 1</b><small>Der gemeinsame Stand</small></span></a>
+<a href="../budget-retter-2.html" class="dev-dd-link"><span class="dev-dd-tag">B2</span><span class="dev-dd-txt"><b>Variante 2</b><small>Nach der Kritik umgebaut</small></span></a>
+<a href="../budget-retter-3.html" class="dev-dd-link"><span class="dev-dd-tag">B3</span><span class="dev-dd-txt"><b>Variante 3</b><small>Mit dem Zeichen im Aufmacher</small></span></a>
+</div></div>
+</div>
+<a href="../strategie-aufsichtsrat.html" class="dev-dd-link"><span class="dev-dd-tag">AR</span><span class="dev-dd-txt"><b>Strategie für Aufsichtsräte</b><small>Impulsvortrag &amp; Schulung</small></span></a>
+<div class="dev-dd-sub">
+<a href="../xmas.html" class="dev-dd-link dev-dd-link--parent"><span class="dev-dd-tag">XM</span><span class="dev-dd-txt"><b>X-Mas</b><small>Weihnachtsseite · Varianten</small></span></a>
+<div class="dev-dd-flyout"><div class="dev-dd-flyout-panel">
+<p class="dev-dd-group">Die Varianten</p>
+<a href="../xmas-1.html" class="dev-dd-link"><span class="dev-dd-tag">X1</span><span class="dev-dd-txt"><b>Die Bescherung</b><small>Landschaft &amp; Geschenke</small></span></a>
+<a href="../xmas-2.html" class="dev-dd-link"><span class="dev-dd-tag">X2</span><span class="dev-dd-txt"><b>Der Adventskalender</b><small>Zwölf Türchen</small></span></a>
+<a href="../xmas-4.html" class="dev-dd-link"><span class="dev-dd-tag">X4</span><span class="dev-dd-txt"><b>Die Lichterkette</b><small>Sekundärfarben</small></span></a>
+<a href="../xmas-5.html" class="dev-dd-link"><span class="dev-dd-tag">X5</span><span class="dev-dd-txt"><b>Das Fenster</b><small>Scheiben freiwischen</small></span></a>
+<a href="../xmas-6.html" class="dev-dd-link"><span class="dev-dd-tag">X6</span><span class="dev-dd-txt"><b>Der Wunschzettel</b><small>Zum Abhaken</small></span></a>
+<a href="../xmas-8.html" class="dev-dd-link"><span class="dev-dd-tag">X8</span><span class="dev-dd-txt"><b>Der Schneesturm</b><small>Legt sich beim Öffnen</small></span></a>
+<a href="../xmas-9.html" class="dev-dd-link"><span class="dev-dd-tag">X9</span><span class="dev-dd-txt"><b>Der Baum aus Worten</b><small>Typografie statt Grafik</small></span></a>
+<a href="../xmas-10.html" class="dev-dd-link"><span class="dev-dd-tag">X10</span><span class="dev-dd-txt"><b>Das Geschenkpapier</b><small>Zum Aufreißen</small></span></a>
+<a href="../xmas-11.html" class="dev-dd-link"><span class="dev-dd-tag">X11</span><span class="dev-dd-txt"><b>Vorsätze · Der Zettel</b><small>2025/26 gestrichen · PDF</small></span></a>
+<a href="../xmas-12.html" class="dev-dd-link"><span class="dev-dd-tag">X12</span><span class="dev-dd-txt"><b>Vorsätze · Der Stapel</b><small>Drei Jahre übereinander</small></span></a>
+<a href="../xmas-13.html" class="dev-dd-link"><span class="dev-dd-tag">X13</span><span class="dev-dd-txt"><b>Vorsätze · Die Jahreszahlen</b><small>Strich wird gezogen</small></span></a>
+</div></div>
+</div>
+<a href="../capiamo.html" class="dev-dd-link"><span class="dev-dd-tag">ca</span><span class="dev-dd-txt"><b>capiamo</b><small>Fachbereich trifft IT</small></span></a>
+<div class="dev-dd-sub">
+<a href="../designideen.html" class="dev-dd-link dev-dd-link--parent"><span class="dev-dd-tag">DI</span><span class="dev-dd-txt"><b>Designideen</b><small>Gestaltungen f&uuml;r Seiten, die wirken m&uuml;ssen</small></span></a>
+<div class="dev-dd-flyout"><div class="dev-dd-flyout-panel">
+<p class="dev-dd-group">Die Ideen</p>
+<a href="../designideen/spektrum.html" class="dev-dd-link"><span class="dev-dd-tag">SP</span><span class="dev-dd-txt"><b>Spektrum</b><small>Vollfl&auml;chige Farbb&auml;nder</small></span></a>
+<a href="../designideen/buehne.html" class="dev-dd-link"><span class="dev-dd-tag">B&Uuml;</span><span class="dev-dd-txt"><b>B&uuml;hne</b><small>Vollbildstufen mit Kapitelmarken</small></span></a>
+</div></div>
+</div>
+<p class="dev-dd-group dev-dd-group--sub">Projekte</p>
+<div class="dev-dd-sub">
+<a href="../projekte/sv-akademie.html" class="dev-dd-link dev-dd-link--parent"><span class="dev-dd-tag">SV</span><span class="dev-dd-txt"><b>SV Akademie</b><small>Steuerungsseite &middot; drei Module</small></span></a>
+<div class="dev-dd-flyout"><div class="dev-dd-flyout-panel">
+<p class="dev-dd-group">Die Module</p>
+<a href="../projekte/sv-selbstverstaendnis.html" class="dev-dd-link"><span class="dev-dd-tag">1</span><span class="dev-dd-txt"><b>Selbstverständnis</b><small>Wofür stehen wir?</small></span></a>
+<a href="../projekte/sv-vision.html" class="dev-dd-link"><span class="dev-dd-tag">2</span><span class="dev-dd-txt"><b>Vision</b><small>Wie wollen wir wahrgenommen werden?</small></span></a>
+<div class="dev-dd-sub">
+<a href="../projekte/sv-strategie.html" class="dev-dd-link dev-dd-link--parent"><span class="dev-dd-tag">3</span><span class="dev-dd-txt"><b>Strategie</b><small>Wie kommen wir dorthin?</small></span></a>
+<div class="dev-dd-flyout"><div class="dev-dd-flyout-panel">
+<p class="dev-dd-group">Darunter</p>
+<a href="../projekte/sv-strategie-ist.html" class="dev-dd-link"><span class="dev-dd-tag">IS</span><span class="dev-dd-txt"><b>Ist-Situation</b><small>SWOT-Logik und was einflie&szlig;t</small></span></a>
+<a href="../projekte/sv-strategie-stossrichtungen.html" class="dev-dd-link"><span class="dev-dd-tag">ST</span><span class="dev-dd-txt"><b>Sto&szlig;richtungen</b><small>Herkunft, Auswahl, Nachweis</small></span></a>
+<a href="../projekte/sv-meilensteine.html" class="dev-dd-link"><span class="dev-dd-tag">MS</span><span class="dev-dd-txt"><b>Meilensteinplan</b><small>Drei Str&auml;nge &middot; fein, hell, dunkel</small></span></a>
+<a href="../projekte/sv-abstimmung-hal.html" class="dev-dd-link"><span class="dev-dd-tag">AG</span><span class="dev-dd-txt"><b>Agenda Vision &amp; Strategie</b><small>Workshop mit dem Hauptabteilungsleiter</small></span></a>
+</div></div>
+</div>
+</div></div>
+</div>
+<a href="../projekte/sv-projektplanung.html" class="dev-dd-link"><span class="dev-dd-tag">PP</span><span class="dev-dd-txt"><b>Projektplanung</b><small>Termine, Agenden und der Meilensteinplan</small></span></a>
+<a href="../projekte/sitemap.html" class="dev-dd-link"><span class="dev-dd-tag">&#9638;</span><span class="dev-dd-txt"><b>Sitemap</b><small>Alle Seiten der SV Akademie &middot; mit Vorschau</small></span></a>
+<p class="dev-dd-group dev-dd-group--sub">Strategie</p>
+<a href="zielbild.html" class="dev-dd-link"><span class="dev-dd-tag">SZ</span><span class="dev-dd-txt"><b>Strategie und Zielbild</b><small>Wo wollen wir hin?</small></span></a>
+<a href="meilensteine.html" class="dev-dd-link"><span class="dev-dd-tag">MS</span><span class="dev-dd-txt"><b>Meilensteine</b><small>Was sind die Schritte?</small></span></a>
+<a href="oekosystem.html" class="dev-dd-link"><span class="dev-dd-tag">ÖS</span><span class="dev-dd-txt"><b>Ökosystem</b><small>Schaltplan der Steuerungszentrale</small></span></a>
+<a href="dashboard.html" class="dev-dd-link"><span class="dev-dd-tag">SZ</span><span class="dev-dd-txt"><b>Steuerungszentrale</b><small>Sechs Vorhaben, vier Ansichten</small></span></a>
+<a href="dashboard-lage.html" class="dev-dd-link"><span class="dev-dd-tag">AL</span><span class="dev-dd-txt"><b>Aktuelle Lage</b><small>Startklar, Eingang, Sparring</small></span></a>
+<a href="dashboard-entwuerfe.html" class="dev-dd-link"><span class="dev-dd-tag">EN</span><span class="dev-dd-txt"><b>Entwürfe I</b><small>Fünf Haltungen, dieselben Daten</small></span></a>
+<a href="dashboard-entwuerfe-2.html" class="dev-dd-link"><span class="dev-dd-tag">E2</span><span class="dev-dd-txt"><b>Entwürfe II</b><small>Fünf Ordnungen für dieselbe Lage</small></span></a>
+<p class="dev-dd-group dev-dd-group--sub">Archiv</p>
+<div class="dev-dd-sub">
+<a class="dev-dd-link dev-dd-link--muted dev-dd-link--parent" tabindex="0" role="button" aria-label="Archiv aufklappen"><span class="dev-dd-tag">&#8962;</span><span class="dev-dd-txt"><b>Frühere Stände</b><small>Sieben Seiten</small></span></a>
+<div class="dev-dd-flyout"><div class="dev-dd-flyout-panel">
+<p class="dev-dd-group">Die Seiten</p>
+<a href="../leistungen/teams.html" class="dev-dd-link dev-dd-link--muted"><span class="dev-dd-tag">&#8962;</span><span class="dev-dd-txt"><b>Teams befähigen, professionell zu kommunizieren</b><small>Früherer Stand der Seite</small></span></a>
+<a href="../der-beste-workshop.html" class="dev-dd-link dev-dd-link--muted"><span class="dev-dd-tag">&#8962;</span><span class="dev-dd-txt"><b>Der beste Workshop</b><small>Früherer Stand</small></span></a>
+<a href="../archiv/startseite-v1.html" class="dev-dd-link dev-dd-link--muted"><span class="dev-dd-tag">&#8962;</span><span class="dev-dd-txt"><b>Startseite Version 1.0</b><small>Früherer Stand der Startseite</small></span></a>
+<a href="../archiv/sofort-sichtbar-problem.html" class="dev-dd-link dev-dd-link--muted"><span class="dev-dd-tag">&#8962;</span><span class="dev-dd-txt"><b>sofort sichtbar + Problem</b><small>Früherer Stand</small></span></a>
+<a href="../archiv/digitale-tools-1-0.html" class="dev-dd-link dev-dd-link--muted"><span class="dev-dd-tag">&#8962;</span><span class="dev-dd-txt"><b>Digitale Tools 1.0</b><small>Früherer Stand</small></span></a>
+<a href="../archiv/marketing-1-0.html" class="dev-dd-link dev-dd-link--muted"><span class="dev-dd-tag">&#8962;</span><span class="dev-dd-txt"><b>Marketing 1.0</b><small>Früherer Stand</small></span></a>
+<div class="dev-dd-sub">
+<a href="../archiv/medien.html" class="dev-dd-link dev-dd-link--muted dev-dd-link--parent"><span class="dev-dd-tag">&#8962;</span><span class="dev-dd-txt"><b>Medien, die Ergebnisse liefern</b><small>Früherer Stand</small></span></a>
+<div class="dev-dd-flyout"><div class="dev-dd-flyout-panel">
+<p class="dev-dd-group">Die Medien</p>
+<a href="../archiv/powerpoint.html" class="dev-dd-link dev-dd-link--muted"><span class="dev-dd-tag">&#8962;</span><span class="dev-dd-txt"><b>PowerPoint</b><small>Früherer Stand</small></span></a>
+<a href="../archiv/landingpage.html" class="dev-dd-link dev-dd-link--muted"><span class="dev-dd-tag">&#8962;</span><span class="dev-dd-txt"><b>Landingpage</b><small>Früherer Stand</small></span></a>
+<a href="../archiv/rollup.html" class="dev-dd-link dev-dd-link--muted"><span class="dev-dd-tag">&#8962;</span><span class="dev-dd-txt"><b>Roll-up</b><small>Früherer Stand</small></span></a>
+</div></div>
+</div>
+</div></div>
+</div>
+</div>
+</div>
+<style>
+.dev-dd{position:relative;display:inline-flex;align-items:center;margin-left:auto}
+.dev-dd-toggle{display:inline-flex;align-items:center;gap:.35rem;font-family:inherit;font-size:.95rem;font-weight:400;line-height:1.4;color:var(--grey-50);background:none;border:0;padding:0;cursor:pointer;white-space:nowrap;transition:color .18s ease}
+.dev-dd-toggle:hover,.dev-dd.is-open .dev-dd-toggle{color:var(--ink)}
+.dev-dd-chev{width:12px;height:12px;transition:transform .2s ease}
+.dev-dd.is-open .dev-dd-chev{transform:rotate(180deg)}
+.dev-dd-panel{position:absolute;top:calc(100% + 18px);right:-14px;width:390px;max-height:calc(100vh - 120px);overflow-y:auto;overscroll-behavior:contain;padding:12px;background:#fff;border:1px solid var(--grey-bg);border-radius:18px;box-shadow:0 20px 50px rgba(0,0,0,.14);opacity:0;visibility:hidden;transform:translateY(6px);transition:opacity .16s ease,transform .16s ease,visibility .16s ease;z-index:80;text-align:left}
+.dev-dd-panel::before{content:"";position:absolute;left:0;right:0;top:-20px;height:20px}
+.dev-dd.is-open .dev-dd-panel{opacity:1;visibility:visible;transform:none}
+.dev-dd-note{margin:0 0 14px;padding:11px 13px;background:#fff400;color:#1a1817;border-radius:10px;font-size:12px;line-height:1.45}
+.dev-dd-note b{display:block;font-size:13px;font-weight:600;margin-bottom:2px}
+.dev-dd-group{margin:4px 8px 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey-50);font-weight:600}
+.dev-dd-group--sub{margin-top:14px;padding-top:12px;border-top:1px solid var(--grey-bg)}
+a.dev-dd-link{display:flex;align-items:center;gap:12px;padding:9px 8px;border-radius:10px;color:var(--ink);text-decoration:none;border-bottom:0;font-size:inherit;min-height:0;white-space:normal}
+a.dev-dd-link:hover,a.dev-dd-link.is-current{background:var(--grey-bg);color:var(--ink)}
+a.dev-dd-link--indent{padding-left:30px}
+.dev-dd-tag{flex:0 0 32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:var(--ink);color:#fff;font-weight:600;font-size:12px}
+.dev-dd-link--muted .dev-dd-tag{background:var(--grey-bg);color:var(--grey-70)}
+.dev-dd-txt{display:flex;flex-direction:column;line-height:1.3;min-width:0}
+.dev-dd-txt b{font-weight:500;font-size:14px}
+.dev-dd-txt small{font-size:12px;color:var(--grey-50);margin-top:1px}
+/* ---- Zweite Ebene: oeffnet nach rechts, wie im Leistungen-Menue -----------
+   Das Panel sitzt am rechten Rand; gemessen bleiben dort auch bei 1280 px
+   Fensterbreite noch 277 px frei, das reicht fuer das Flyout. */
+.dev-dd-sub{position:relative}
+a.dev-dd-link--parent::after{content:"";width:6px;height:6px;margin-left:auto;flex:0 0 auto;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);opacity:.45}
+.dev-dd-sub:hover>a.dev-dd-link--parent,.dev-dd-sub:focus-within>a.dev-dd-link--parent{background:var(--grey-bg)}
+.dev-dd-flyout{position:absolute;left:100%;top:-10px;padding-left:10px;opacity:0;visibility:hidden;transition:opacity .16s ease,visibility .16s ease;z-index:81}
+.dev-dd-sub:hover>.dev-dd-flyout,.dev-dd-sub:focus-within>.dev-dd-flyout,.dev-dd-flyout.is-auf{opacity:1;visibility:visible}
+.dev-dd-sub.is-auf>a.dev-dd-link--parent{background:var(--grey-bg)}
+.dev-dd-flyout-panel{width:262px;padding:10px;background:#fff;border:1px solid var(--grey-bg);border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.14)}
+.dev-dd-flyout-panel .dev-dd-group{margin:2px 8px 6px}
+.dev-dd--mobile{display:none}
+.dev-dd-short{display:none}
+@media (min-width:901px) and (max-width:1140px){
+.dev-dd--desktop .dev-dd-long{display:none}
+.dev-dd--desktop .dev-dd-short{display:inline}
+.dev-dd--desktop ~ .nav-cta{margin-left:1.1rem;padding-left:1.6rem;padding-right:1.6rem}
+}
+@media (max-width:900px){
+.nav .dev-dd--desktop{display:none}
+.mobile-menu .dev-dd--mobile{display:block;margin:0}
+.mobile-menu .dev-dd-toggle{display:flex;width:100%;justify-content:space-between;padding:14px 0;font-size:1.15rem;border-bottom:1px solid #f2f2f2}
+.mobile-menu .dev-dd-panel{position:static;width:auto;max-height:none;overflow:visible;display:none;opacity:1;visibility:visible;transform:none;box-shadow:none;border:0;border-left:2px solid var(--grey-bg);border-radius:0;margin:10px 0 6px;padding:0 0 0 12px}
+.mobile-menu .dev-dd-panel::before{display:none}
+.mobile-menu .dev-dd.is-open .dev-dd-panel{display:block}
+.mobile-menu a.dev-dd-link{padding:9px 8px;font-size:inherit;border-bottom:0}
+.mobile-menu a.dev-dd-link--indent{padding-left:30px}
+.mobile-menu .dev-dd-panel{overflow:auto}
+.mobile-menu .dev-dd-flyout{position:static;opacity:1;visibility:visible;padding-left:0}
+.mobile-menu .dev-dd-flyout-panel{width:auto;padding:0 0 0 12px;margin:2px 0 6px 20px;background:none;border:0;border-left:2px solid var(--grey-bg);border-radius:0;box-shadow:none}
+.mobile-menu a.dev-dd-link--parent::after{display:none}
+}
+</style>
+<script>
+(function(){
+function init(){
+var here=location.href.split('#')[0].split('?')[0];
+document.querySelectorAll('[data-dev-dd]').forEach(function(d){
+var b=d.querySelector('.dev-dd-toggle'),t;
+function desk(){return window.innerWidth>900;}
+function set(o){d.classList.toggle('is-open',o);b.setAttribute('aria-expanded',String(o));}
+b.addEventListener('click',function(e){e.stopPropagation();set(desk()&&d.matches(':hover')?true:!d.classList.contains('is-open'));});
+d.addEventListener('mouseenter',function(){if(desk()){clearTimeout(t);set(true);}});
+d.addEventListener('mouseleave',function(){if(desk()){t=setTimeout(function(){set(false);},180);}});
+document.addEventListener('click',function(e){if(!d.contains(e.target))set(false);});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')set(false);});
+d.querySelectorAll('.dev-dd-link').forEach(function(a){if(a.href&&a.href.split('#')[0]===here)a.classList.add('is-current');});
+
+var panel=d.querySelector('.dev-dd-panel');
+
+// ---- Zweite Ebene -------------------------------------------------------
+// Das Panel muss scrollen, seit es vier Kategorien hat (gemessen: 834px
+// Inhalt bei 680px Platz auf einem 900er Bildschirm). Ein Flyout darin wuerde
+// mitgeschnitten. position:fixed hilft nicht - die Kopfzeile hat einen
+// backdrop-filter und wird dadurch zum Bezugsrahmen fuer fixed. Das Flyout
+// haengt sich beim Oeffnen deshalb unter .dev-dd um: dort ist es absolut
+// positioniert, aber ausserhalb des scrollenden Panels.
+// Weil :hover dort nicht mehr traegt, steuert eine Klasse die Sichtbarkeit.
+panel&&panel.querySelectorAll(':scope>.dev-dd-sub').forEach(function(s){
+var f=s.querySelector(':scope>.dev-dd-flyout');if(!f)return;
+var heim=f.parentNode,nachbar=f.nextSibling,t2;
+function heimholen(){
+clearTimeout(t2);f.classList.remove('is-auf');s.classList.remove('is-auf');
+if(f.parentNode!==heim){heim.insertBefore(f,nachbar);f.removeAttribute('style');}
+}
+function auf(){
+if(!desk()){heimholen();return;}
+clearTimeout(t2);
+if(f.parentNode!==d)d.appendChild(f);
+var z=s.getBoundingClientRect(),dr=d.getBoundingClientRect(),
+    k=f.firstElementChild.getBoundingClientRect();
+// Rechts daneben, wenn Platz ist - sonst nach links gekippt.
+if(z.right+10+k.width>window.innerWidth-12){
+f.style.left=(z.left-dr.left-10-k.width)+'px';
+f.style.paddingLeft='0';f.style.paddingRight='10px';
+}else{
+f.style.left=(z.right-dr.left)+'px';
+f.style.paddingLeft='';f.style.paddingRight='';
+}
+// Senkrecht an der Zeile, aber nie unter den Fensterrand.
+var oben=z.top-dr.top-10,grenze=window.innerHeight-12-k.height-dr.top;
+f.style.top=Math.max(-dr.top+12,Math.min(oben,grenze))+'px';
+f.classList.add('is-auf');s.classList.add('is-auf');
+}
+function zu(){t2=setTimeout(function(){f.classList.remove('is-auf');s.classList.remove('is-auf');},180);}
+s.addEventListener('mouseenter',auf);
+s.addEventListener('focusin',auf);
+s.addEventListener('mouseleave',zu);
+f.addEventListener('mouseenter',function(){clearTimeout(t2);});
+f.addEventListener('mouseleave',zu);
+panel.addEventListener('scroll',function(){if(f.classList.contains('is-auf'))auf();});
+window.addEventListener('resize',heimholen);
+});
+
+// ---- Dritte Ebene -------------------------------------------------------
+// Die bleibt, wo sie ist: ihr Elternteil ist bereits aus dem Panel heraus,
+// dort wird nichts mehr abgeschnitten. Sie braucht nur die Kippung nach
+// links, weil rechts neben der zweiten Ebene kein Platz mehr ist.
+d.querySelectorAll('.dev-dd-flyout .dev-dd-sub').forEach(function(s){
+var f=s.querySelector(':scope>.dev-dd-flyout');if(!f)return;
+function platzieren(){
+f.style.top='';f.style.left='';f.style.right='';f.style.paddingLeft='';f.style.paddingRight='';
+if(!desk())return;
+f.style.top='-10px';
+var r=f.firstElementChild.getBoundingClientRect(),z=s.getBoundingClientRect();
+if(z.right+10+r.width>window.innerWidth-12){
+f.style.left='auto';f.style.right='100%';
+f.style.paddingLeft='0';f.style.paddingRight='10px';
+}
+var u=f.getBoundingClientRect().bottom-(window.innerHeight-12);
+if(u>0)f.style.top=(-10-u)+'px';
+}
+s.addEventListener('mouseenter',platzieren);
+s.addEventListener('focusin',platzieren);
+window.addEventListener('resize',function(){f.removeAttribute('style');});
+});
+});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+<!-- ENTWICKLUNG:END -->
+    <a class="btn btn--dark btn--sm nav-cta" href="/index.html#kontakt">Kontakt</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Menü öffnen" aria-expanded="false">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+    </button>
+  </div>
+  <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile Navigation">
+    <a href="/index.html#problem">Problem</a>
+    <a href="/index.html#loesung">Lösung</a>
+    <a href="/index.html#leistungen">Leistungen</a>
+    <div class="mobile-submenu">
+      <div class="mobile-submenu-group">
+        <div class="mobile-submenu-row">
+          <a class="mobile-submenu-label mobile-submenu-label--link" href="/index.html#leistungen">Strategiehandwerk</a>
+          <button type="button" class="mobile-submenu-toggle" aria-expanded="false" aria-label="Unterpunkte zu Strategiehandwerk anzeigen">
+            <svg class="mobile-submenu-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="mobile-submenu-panel">
+      <a href="/leistungen/strategie" class="mobile-submenu-link">Strategie in den Alltag überführen</a>
+      <a href="/leistungen/komplexe-themen" class="mobile-submenu-link">Komplexe Themen strukturieren &amp; kommunizieren</a>
+      <a href="/leistungen/innovation" class="mobile-submenu-link">Innovation &amp; Geschäftsmodell neu denken</a>
+        </div>
+      </div>
+      <div class="mobile-submenu-divider"></div>
+      <div class="mobile-submenu-group">
+        <div class="mobile-submenu-row">
+          <a class="mobile-submenu-label mobile-submenu-label--link" href="/workshops">Workshops</a>
+          <button type="button" class="mobile-submenu-toggle" aria-expanded="false" aria-label="Unterpunkte zu Workshops anzeigen">
+            <svg class="mobile-submenu-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="mobile-submenu-panel">
+      <a href="/ki-zum-anfassen" class="mobile-submenu-link">KI zum Anfassen</a>
+      <a href="/sprint-landingpage" class="mobile-submenu-link">Sprint Landingpage</a>
+      <a href="/workshop-moderation" class="mobile-submenu-link">Moderation deines Workshops</a>
+        </div>
+      </div>
+      <div class="mobile-submenu-divider"></div>
+      <div class="mobile-submenu-group">
+        <div class="mobile-submenu-row">
+          <a class="mobile-submenu-label mobile-submenu-label--link" href="/marketing">Marketing 2.0</a>
+          <button type="button" class="mobile-submenu-toggle" aria-expanded="false" aria-label="Unterpunkte zu Marketing 2.0 anzeigen">
+            <svg class="mobile-submenu-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="mobile-submenu-panel">
+      <a href="/dashboard-digitales-marketing" class="mobile-submenu-link">MarketingEcoSystem (MES)</a>
+      <a href="/sofort-sichtbar" class="mobile-submenu-link"><img src="/assets/sofort-sichtbar-logo-ink.svg" alt="sofort sichtbar" class="nav-sofort-logo"></a>
+      <a href="/paid-ads" class="mobile-submenu-link">Paid Ads</a>
+      <a href="/medien" class="mobile-submenu-link">Medien, die Ergebnisse liefern</a>
+        </div>
+      </div>
+      <div class="mobile-submenu-divider"></div>
+      <div class="mobile-submenu-group">
+        <div class="mobile-submenu-row">
+          <a class="mobile-submenu-label mobile-submenu-label--link" href="/training-sparring">Training & Sparring</a>
+          <button type="button" class="mobile-submenu-toggle" aria-expanded="false" aria-label="Unterpunkte zu Training & Sparring anzeigen">
+            <svg class="mobile-submenu-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="mobile-submenu-panel">
+      <a href="/praesentationsseminar" class="mobile-submenu-link">Teams befähigen, professionell zu kommunizieren</a>
+      <a href="/sparring" class="mobile-submenu-link">1:1 Sparring</a>
+        </div>
+      </div>
+    </div>
+<!-- ENTWICKLUNG:START (nur Sandbox – wird beim Push automatisch entfernt) -->
+<div class="dev-dd dev-dd--mobile" data-dev-dd>
+<button class="dev-dd-toggle" type="button" aria-expanded="false"><span class="dev-dd-long">/ Entwicklung /</span><span class="dev-dd-short" aria-hidden="true">/ Entw. /</span><svg class="dev-dd-chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+<div class="dev-dd-panel">
+<p class="dev-dd-note"><b>Nur in der Entwicklungsumgebung sichtbar</b>Dieser Menüpunkt ist in der Live-Version nicht enthalten.</p>
+<p class="dev-dd-group">Unterseiten</p>
+<div class="dev-dd-sub">
+<a href="../impulsvortraege.html" class="dev-dd-link dev-dd-link--parent"><span class="dev-dd-tag">IV</span><span class="dev-dd-txt"><b>Impulsvorträge</b><small>Übersicht aller Vorträge</small></span></a>
+<div class="dev-dd-flyout"><div class="dev-dd-flyout-panel">
+<p class="dev-dd-group">Die Vorträge</p>
+<a href="../vortrag-1.html" class="dev-dd-link"><span class="dev-dd-tag">1</span><span class="dev-dd-txt"><b>Warum sich niemand für Dein Produkt interessiert.</b><small>Relevanz</small></span></a>
+<a href="../vortrag-2.html" class="dev-dd-link"><span class="dev-dd-tag">2</span><span class="dev-dd-txt"><b>Strategie, die endlich ankommt.</b><small>Strategie im Alltag</small></span></a>
+<a href="../vortrag-3.html" class="dev-dd-link"><span class="dev-dd-tag">3</span><span class="dev-dd-txt"><b>Gründe Deinen stärksten Konkurrenten!</b><small>Perspektivwechsel</small></span></a>
+</div></div>
+</div>
+<div class="dev-dd-sub">
+<a href="../budget-retter.html" class="dev-dd-link dev-dd-link--parent"><span class="dev-dd-tag">BR</span><span class="dev-dd-txt"><b>Budget-Retter</b><small>Landingpage · Varianten</small></span></a>
+<div class="dev-dd-flyout"><div class="dev-dd-flyout-panel">
+<p class="dev-dd-group">Die Varianten</p>
+<a href="../budget-retter-1.html" class="dev-dd-link"><span class="dev-dd-tag">B1</span><span class="dev-dd-txt"><b>Variante 1</b><small>Der gemeinsame Stand</small></span></a>
+<a href="../budget-retter-2.html" class="dev-dd-link"><span class="dev-dd-tag">B2</span><span class="dev-dd-txt"><b>Variante 2</b><small>Nach der Kritik umgebaut</small></span></a>
+<a href="../budget-retter-3.html" class="dev-dd-link"><span class="dev-dd-tag">B3</span><span class="dev-dd-txt"><b>Variante 3</b><small>Mit dem Zeichen im Aufmacher</small></span></a>
+</div></div>
+</div>
+<a href="../strategie-aufsichtsrat.html" class="dev-dd-link"><span class="dev-dd-tag">AR</span><span class="dev-dd-txt"><b>Strategie für Aufsichtsräte</b><small>Impulsvortrag &amp; Schulung</small></span></a>
+<div class="dev-dd-sub">
+<a href="../xmas.html" class="dev-dd-link dev-dd-link--parent"><span class="dev-dd-tag">XM</span><span class="dev-dd-txt"><b>X-Mas</b><small>Weihnachtsseite · Varianten</small></span></a>
+<div class="dev-dd-flyout"><div class="dev-dd-flyout-panel">
+<p class="dev-dd-group">Die Varianten</p>
+<a href="../xmas-1.html" class="dev-dd-link"><span class="dev-dd-tag">X1</span><span class="dev-dd-txt"><b>Die Bescherung</b><small>Landschaft &amp; Geschenke</small></span></a>
+<a href="../xmas-2.html" class="dev-dd-link"><span class="dev-dd-tag">X2</span><span class="dev-dd-txt"><b>Der Adventskalender</b><small>Zwölf Türchen</small></span></a>
+<a href="../xmas-4.html" class="dev-dd-link"><span class="dev-dd-tag">X4</span><span class="dev-dd-txt"><b>Die Lichterkette</b><small>Sekundärfarben</small></span></a>
+<a href="../xmas-5.html" class="dev-dd-link"><span class="dev-dd-tag">X5</span><span class="dev-dd-txt"><b>Das Fenster</b><small>Scheiben freiwischen</small></span></a>
+<a href="../xmas-6.html" class="dev-dd-link"><span class="dev-dd-tag">X6</span><span class="dev-dd-txt"><b>Der Wunschzettel</b><small>Zum Abhaken</small></span></a>
+<a href="../xmas-8.html" class="dev-dd-link"><span class="dev-dd-tag">X8</span><span class="dev-dd-txt"><b>Der Schneesturm</b><small>Legt sich beim Öffnen</small></span></a>
+<a href="../xmas-9.html" class="dev-dd-link"><span class="dev-dd-tag">X9</span><span class="dev-dd-txt"><b>Der Baum aus Worten</b><small>Typografie statt Grafik</small></span></a>
+<a href="../xmas-10.html" class="dev-dd-link"><span class="dev-dd-tag">X10</span><span class="dev-dd-txt"><b>Das Geschenkpapier</b><small>Zum Aufreißen</small></span></a>
+<a href="../xmas-11.html" class="dev-dd-link"><span class="dev-dd-tag">X11</span><span class="dev-dd-txt"><b>Vorsätze · Der Zettel</b><small>2025/26 gestrichen · PDF</small></span></a>
+<a href="../xmas-12.html" class="dev-dd-link"><span class="dev-dd-tag">X12</span><span class="dev-dd-txt"><b>Vorsätze · Der Stapel</b><small>Drei Jahre übereinander</small></span></a>
+<a href="../xmas-13.html" class="dev-dd-link"><span class="dev-dd-tag">X13</span><span class="dev-dd-txt"><b>Vorsätze · Die Jahreszahlen</b><small>Strich wird gezogen</small></span></a>
+</div></div>
+</div>
+<a href="../capiamo.html" class="dev-dd-link"><span class="dev-dd-tag">ca</span><span class="dev-dd-txt"><b>capiamo</b><small>Fachbereich trifft IT</small></span></a>
+<div class="dev-dd-sub">
+<a href="../designideen.html" class="dev-dd-link dev-dd-link--parent"><span class="dev-dd-tag">DI</span><span class="dev-dd-txt"><b>Designideen</b><small>Gestaltungen f&uuml;r Seiten, die wirken m&uuml;ssen</small></span></a>
+<div class="dev-dd-flyout"><div class="dev-dd-flyout-panel">
+<p class="dev-dd-group">Die Ideen</p>
+<a href="../designideen/spektrum.html" class="dev-dd-link"><span class="dev-dd-tag">SP</span><span class="dev-dd-txt"><b>Spektrum</b><small>Vollfl&auml;chige Farbb&auml;nder</small></span></a>
+<a href="../designideen/buehne.html" class="dev-dd-link"><span class="dev-dd-tag">B&Uuml;</span><span class="dev-dd-txt"><b>B&uuml;hne</b><small>Vollbildstufen mit Kapitelmarken</small></span></a>
+</div></div>
+</div>
+<p class="dev-dd-group dev-dd-group--sub">Projekte</p>
+<div class="dev-dd-sub">
+<a href="../projekte/sv-akademie.html" class="dev-dd-link dev-dd-link--parent"><span class="dev-dd-tag">SV</span><span class="dev-dd-txt"><b>SV Akademie</b><small>Steuerungsseite &middot; drei Module</small></span></a>
+<div class="dev-dd-flyout"><div class="dev-dd-flyout-panel">
+<p class="dev-dd-group">Die Module</p>
+<a href="../projekte/sv-selbstverstaendnis.html" class="dev-dd-link"><span class="dev-dd-tag">1</span><span class="dev-dd-txt"><b>Selbstverständnis</b><small>Wofür stehen wir?</small></span></a>
+<a href="../projekte/sv-vision.html" class="dev-dd-link"><span class="dev-dd-tag">2</span><span class="dev-dd-txt"><b>Vision</b><small>Wie wollen wir wahrgenommen werden?</small></span></a>
+<div class="dev-dd-sub">
+<a href="../projekte/sv-strategie.html" class="dev-dd-link dev-dd-link--parent"><span class="dev-dd-tag">3</span><span class="dev-dd-txt"><b>Strategie</b><small>Wie kommen wir dorthin?</small></span></a>
+<div class="dev-dd-flyout"><div class="dev-dd-flyout-panel">
+<p class="dev-dd-group">Darunter</p>
+<a href="../projekte/sv-strategie-ist.html" class="dev-dd-link"><span class="dev-dd-tag">IS</span><span class="dev-dd-txt"><b>Ist-Situation</b><small>SWOT-Logik und was einflie&szlig;t</small></span></a>
+<a href="../projekte/sv-strategie-stossrichtungen.html" class="dev-dd-link"><span class="dev-dd-tag">ST</span><span class="dev-dd-txt"><b>Sto&szlig;richtungen</b><small>Herkunft, Auswahl, Nachweis</small></span></a>
+<a href="../projekte/sv-meilensteine.html" class="dev-dd-link"><span class="dev-dd-tag">MS</span><span class="dev-dd-txt"><b>Meilensteinplan</b><small>Drei Str&auml;nge &middot; fein, hell, dunkel</small></span></a>
+<a href="../projekte/sv-abstimmung-hal.html" class="dev-dd-link"><span class="dev-dd-tag">AG</span><span class="dev-dd-txt"><b>Agenda Vision &amp; Strategie</b><small>Workshop mit dem Hauptabteilungsleiter</small></span></a>
+</div></div>
+</div>
+</div></div>
+</div>
+<a href="../projekte/sv-projektplanung.html" class="dev-dd-link"><span class="dev-dd-tag">PP</span><span class="dev-dd-txt"><b>Projektplanung</b><small>Termine, Agenden und der Meilensteinplan</small></span></a>
+<a href="../projekte/sitemap.html" class="dev-dd-link"><span class="dev-dd-tag">&#9638;</span><span class="dev-dd-txt"><b>Sitemap</b><small>Alle Seiten der SV Akademie &middot; mit Vorschau</small></span></a>
+<p class="dev-dd-group dev-dd-group--sub">Strategie</p>
+<a href="zielbild.html" class="dev-dd-link"><span class="dev-dd-tag">SZ</span><span class="dev-dd-txt"><b>Strategie und Zielbild</b><small>Wo wollen wir hin?</small></span></a>
+<a href="meilensteine.html" class="dev-dd-link"><span class="dev-dd-tag">MS</span><span class="dev-dd-txt"><b>Meilensteine</b><small>Was sind die Schritte?</small></span></a>
+<a href="oekosystem.html" class="dev-dd-link"><span class="dev-dd-tag">ÖS</span><span class="dev-dd-txt"><b>Ökosystem</b><small>Schaltplan der Steuerungszentrale</small></span></a>
+<a href="dashboard.html" class="dev-dd-link"><span class="dev-dd-tag">SZ</span><span class="dev-dd-txt"><b>Steuerungszentrale</b><small>Sechs Vorhaben, vier Ansichten</small></span></a>
+<a href="dashboard-lage.html" class="dev-dd-link"><span class="dev-dd-tag">AL</span><span class="dev-dd-txt"><b>Aktuelle Lage</b><small>Startklar, Eingang, Sparring</small></span></a>
+<a href="dashboard-entwuerfe.html" class="dev-dd-link"><span class="dev-dd-tag">EN</span><span class="dev-dd-txt"><b>Entwürfe I</b><small>Fünf Haltungen, dieselben Daten</small></span></a>
+<a href="dashboard-entwuerfe-2.html" class="dev-dd-link"><span class="dev-dd-tag">E2</span><span class="dev-dd-txt"><b>Entwürfe II</b><small>Fünf Ordnungen für dieselbe Lage</small></span></a>
+<p class="dev-dd-group dev-dd-group--sub">Archiv</p>
+<div class="dev-dd-sub">
+<a class="dev-dd-link dev-dd-link--muted dev-dd-link--parent" tabindex="0" role="button" aria-label="Archiv aufklappen"><span class="dev-dd-tag">&#8962;</span><span class="dev-dd-txt"><b>Frühere Stände</b><small>Sieben Seiten</small></span></a>
+<div class="dev-dd-flyout"><div class="dev-dd-flyout-panel">
+<p class="dev-dd-group">Die Seiten</p>
+<a href="../leistungen/teams.html" class="dev-dd-link dev-dd-link--muted"><span class="dev-dd-tag">&#8962;</span><span class="dev-dd-txt"><b>Teams befähigen, professionell zu kommunizieren</b><small>Früherer Stand der Seite</small></span></a>
+<a href="../der-beste-workshop.html" class="dev-dd-link dev-dd-link--muted"><span class="dev-dd-tag">&#8962;</span><span class="dev-dd-txt"><b>Der beste Workshop</b><small>Früherer Stand</small></span></a>
+<a href="../archiv/startseite-v1.html" class="dev-dd-link dev-dd-link--muted"><span class="dev-dd-tag">&#8962;</span><span class="dev-dd-txt"><b>Startseite Version 1.0</b><small>Früherer Stand der Startseite</small></span></a>
+<a href="../archiv/sofort-sichtbar-problem.html" class="dev-dd-link dev-dd-link--muted"><span class="dev-dd-tag">&#8962;</span><span class="dev-dd-txt"><b>sofort sichtbar + Problem</b><small>Früherer Stand</small></span></a>
+<a href="../archiv/digitale-tools-1-0.html" class="dev-dd-link dev-dd-link--muted"><span class="dev-dd-tag">&#8962;</span><span class="dev-dd-txt"><b>Digitale Tools 1.0</b><small>Früherer Stand</small></span></a>
+<a href="../archiv/marketing-1-0.html" class="dev-dd-link dev-dd-link--muted"><span class="dev-dd-tag">&#8962;</span><span class="dev-dd-txt"><b>Marketing 1.0</b><small>Früherer Stand</small></span></a>
+<div class="dev-dd-sub">
+<a href="../archiv/medien.html" class="dev-dd-link dev-dd-link--muted dev-dd-link--parent"><span class="dev-dd-tag">&#8962;</span><span class="dev-dd-txt"><b>Medien, die Ergebnisse liefern</b><small>Früherer Stand</small></span></a>
+<div class="dev-dd-flyout"><div class="dev-dd-flyout-panel">
+<p class="dev-dd-group">Die Medien</p>
+<a href="../archiv/powerpoint.html" class="dev-dd-link dev-dd-link--muted"><span class="dev-dd-tag">&#8962;</span><span class="dev-dd-txt"><b>PowerPoint</b><small>Früherer Stand</small></span></a>
+<a href="../archiv/landingpage.html" class="dev-dd-link dev-dd-link--muted"><span class="dev-dd-tag">&#8962;</span><span class="dev-dd-txt"><b>Landingpage</b><small>Früherer Stand</small></span></a>
+<a href="../archiv/rollup.html" class="dev-dd-link dev-dd-link--muted"><span class="dev-dd-tag">&#8962;</span><span class="dev-dd-txt"><b>Roll-up</b><small>Früherer Stand</small></span></a>
+</div></div>
+</div>
+</div></div>
+</div>
+</div>
+</div>
+<!-- ENTWICKLUNG:END -->
+    <a class="btn btn--dark" href="/index.html#kontakt">Kontakt</a>
+  </nav>
+</header>
+
+<main>
+
+  <section class="section section--eng">
+    <div class="container">
+
+      <p class="kicker">Strategie &middot; Entwicklung</p>
+      <h1 class="h-serif oe-titel">Das <span class="hl">Ökosystem</span> auf einen Blick.</h1>
+      <div class="oe-pult">
+        <p class="oe-pult-kopf">
+          <span class="oe-pult-zeichen" aria-hidden="true"></span>
+          <span>Menü</span>
+        </p>
+        <div class="oe-pult-koerper">
+          <div class="oe-pult-zeilen">
+            <div class="oe-pult-zeile oe-pult-zeile--sicht">
+              <span class="oe-pult-tag">Sicht</span>
+              <div class="oe-pult-feld">
+            <button type="button" class="pv-pille oe-sicht is-aktiv" data-sicht="alles" aria-pressed="true">Alles</button>
+            <button type="button" class="pv-pille oe-sicht" data-sicht="status" aria-pressed="false">Status</button>
+              </div>
+            </div>
+            <div class="oe-pult-zeile oe-pult-zeile--stufen">
+              <span class="oe-pult-tag">Stufen</span>
+              <div class="oe-pult-feld">
+            <button type="button" class="pv-pille oe-sicht" data-sicht="stufe1" aria-pressed="false">1 Logikblock</button>
+            <button type="button" class="pv-pille oe-sicht" data-sicht="stufe2" aria-pressed="false">2 Anbinden</button>
+            <button type="button" class="pv-pille oe-sicht" data-sicht="stufe3" aria-pressed="false">3 Aktionen</button>
+            <button type="button" class="pv-pille oe-sicht" data-sicht="stufe4" aria-pressed="false">4 Kontakte</button>
+              </div>
+            </div>
+            <div class="oe-pult-zeile oe-pult-zeile--leitungen">
+              <span class="oe-pult-tag">Leitungen</span>
+              <div class="oe-pult-feld">
+            <span class="oe-legende-posten"><i class="oe-strich oe-strich--eingerichtet"></i>eingerichtet</span>
+            <span class="oe-legende-posten"><i class="oe-strich oe-strich--geplant"></i>geplant</span>
+            <span class="oe-legende-ampel">
+            <span class="oe-legende-posten"><i class="oe-strich oe-strich--gruen"></i>steht</span>
+            <span class="oe-legende-posten"><i class="oe-strich oe-strich--gelb"></i>in Arbeit</span>
+            <span class="oe-legende-posten"><i class="oe-strich oe-strich--rot"></i>fehlt noch</span>
+          </span>
+              </div>
+            </div>
+          </div>
+          <div class="oe-pult-satz" id="oeSichtSatz">Der ganze Plan: Was hereinkommt, wo gearbeitet wird und was herausgeht. Status zeigt, was davon heute schon steht. Die vier Stufen zeigen, in welcher Reihenfolge der Rest entsteht.</div>
+        </div>
+      </div>
+
+      <div class="oe-raum">
+
+        <p class="oe-schiebehinweis">Zum Vergrößern aufziehen, zum Verschieben wischen.</p>
+        <div class="oe-plan oe-plan--verdrahtung" data-richtung="unten" data-linien="eckig">
+          <svg class="oe-draehte" id="oeDraehte" aria-hidden="true"><defs><marker id="oePunktCyan" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="5" markerHeight="5"><circle cx="4" cy="4" r="3" fill="#b8b2ab"/></marker></defs></svg>
+
+          <div class="oe-abschnitt">
+            <p class="oe-spalte-tag">Datenquellen</p>
+            <div class="oe-quellen">
+            <button type="button" class="oe-knoten" data-baustein="homepages" data-ebene="1" aria-expanded="false" style="grid-column: 1 / 3; grid-row: 1; order: 0;">
+              <span class="oe-knoten-titel">Homepages</span>
+              <span class="oe-knoten-unter">Drei Marken</span>
+            </button>
+            <button type="button" class="oe-knoten" data-baustein="linkedin" data-ebene="1" aria-expanded="false" style="grid-column: 3; grid-row: 1; order: 3;">
+              <span class="oe-knoten-titel">LinkedIn</span>
+              <span class="oe-knoten-unter">Daniel Ströbel</span>
+            </button>
+            <button type="button" class="oe-knoten" data-baustein="li_marken" data-ebene="1" aria-expanded="false" style="grid-column: 4; grid-row: 1; order: 6;">
+              <span class="oe-knoten-titel">LinkedIn</span>
+              <span class="oe-knoten-unter">Drei Firmenseiten</span>
+            </button>
+            <button type="button" class="oe-knoten" data-baustein="instagram" data-ebene="1" aria-expanded="false" style="grid-column: 5; grid-row: 1; order: 7;">
+              <span class="oe-knoten-titel">Instagram</span>
+              <span class="oe-knoten-unter">sofort sichtbar</span>
+            </button>
+            <button type="button" class="oe-knoten" data-baustein="facebook" data-ebene="1" aria-expanded="false" style="grid-column: 6; grid-row: 1; order: 8;">
+              <span class="oe-knoten-titel">Facebook</span>
+              <span class="oe-knoten-unter">sofort sichtbar</span>
+            </button>
+            <button type="button" class="oe-knoten" data-baustein="mail" data-ebene="1" aria-expanded="false" style="grid-column: 7; grid-row: 1; order: 9;">
+              <span class="oe-knoten-titel">E-Mail</span>
+              <span class="oe-knoten-unter">Outlook 365 &middot; drei Marken</span>
+            </button>
+            <button type="button" class="oe-knoten" data-baustein="finder" data-ebene="1" aria-expanded="false" style="grid-column: 8; grid-row: 1; order: 10;">
+              <span class="oe-knoten-titel">Datei&shy;system</span>
+              <span class="oe-knoten-unter">Mac und Nextcloud</span>
+            </button>
+            <button type="button" class="oe-knoten" data-baustein="chrome" data-ebene="1" aria-expanded="false" style="grid-column: 9; grid-row: 1; order: 11;">
+              <span class="oe-knoten-titel">Chrome</span>
+              <span class="oe-knoten-unter">Recherche im Netz</span>
+            </button>
+            <button type="button" class="oe-knoten oe-knoten--speicher" data-baustein="kontakte_db" data-ebene="1" aria-expanded="false" style="grid-column: 10; grid-row: 1; order: 12;">
+              <span class="oe-knoten-titel">Kontakte</span>
+              <span class="oe-knoten-unter">wird gelesen und beschrieben</span>
+            </button>
+            <button type="button" class="oe-knoten" data-baustein="analytics" data-ebene="2" aria-expanded="false" style="grid-column: 1; grid-row: 2; order: 1;">
+              <span class="oe-knoten-titel">Google Analytics</span>
+              <span class="oe-knoten-unter"></span>
+            </button>
+            <button type="button" class="oe-knoten" data-baustein="search" data-ebene="2" aria-expanded="false" style="grid-column: 2; grid-row: 2; order: 2;">
+              <span class="oe-knoten-titel">Search Console</span>
+              <span class="oe-knoten-unter"></span>
+            </button>
+            <button type="button" class="oe-knoten" data-baustein="salesnav" data-ebene="2" aria-expanded="false" style="grid-column: 3; grid-row: 2; order: 4;">
+              <span class="oe-knoten-titel">Sales Navigator</span>
+              <span class="oe-knoten-unter"></span>
+            </button>
+            <button type="button" class="oe-knoten" data-baustein="helper" data-ebene="3" aria-expanded="false" style="grid-column: 3; grid-row: 3; order: 5;">
+              <span class="oe-knoten-titel">Linked Helper</span>
+              <span class="oe-knoten-unter"></span>
+            </button>
+            </div>
+          </div>
+
+          <div class="oe-schiene" data-baustein="schiene" aria-hidden="true"></div>
+
+          <div class="oe-mittelreihe">
+            <div class="oe-geraete">
+              <p class="oe-spalte-tag">Zugänge</p>
+              <button type="button" class="oe-knoten oe-knoten--geraet" data-baustein="macbook" data-ebene="2" aria-expanded="false">
+                <span class="oe-knoten-titel">Haupt-MacBook</span>
+                <span class="oe-knoten-unter">Büro und unterwegs</span>
+              </button>
+              <button type="button" class="oe-knoten oe-knoten--geraet" data-baustein="ipad" data-ebene="2" aria-expanded="false">
+                <span class="oe-knoten-titel">iPad</span>
+                <span class="oe-knoten-unter">Zwei Geräte</span>
+              </button>
+              <button type="button" class="oe-knoten oe-knoten--geraet" data-baustein="iphone" data-ebene="2" aria-expanded="false">
+                <span class="oe-knoten-titel">iPhone</span>
+                <span class="oe-knoten-unter">Unterwegs</span>
+              </button>
+            </div>
+            <div class="oe-knotenplatz">
+            <button type="button" class="oe-knoten oe-knoten--gross" data-baustein="knoten" data-ebene="1" aria-expanded="false">
+              <span class="oe-knoten-titel">Intelligenzschicht</span>
+              <span class="oe-knoten-unter">Claude Code &middot; läuft auf einem Always-on-MacBook</span>
+              <span class="oe-marke oe-marke--ausfuehrung">Ausführung</span>
+            </button>
+            </div>
+            <div class="oe-leitstandplatz">
+            <button type="button" class="oe-knoten oe-knoten--gross" data-baustein="dashboard" data-ebene="1" aria-expanded="false">
+              <span class="oe-knoten-titel">Dashboard</span>
+              <span class="oe-knoten-unter">Analyse und Entscheidung</span>
+              <span class="oe-marke oe-marke--ansicht">Ansichtsebene</span>
+            </button>
+            </div>
+          </div>
+
+          <div class="oe-abschnitt">
+            <p class="oe-spalte-tag">Aktionen</p>
+            <div class="oe-aktionen">
+            <div class="oe-strang" style="grid-column: 1 / 6;" data-strang="postings">
+              <button type="button" class="oe-knoten" data-baustein="postings" data-ebene="1" aria-expanded="false">
+                <span class="oe-knoten-titel">Postings</span>
+                <span class="oe-knoten-unter">Beiträge für die Kanäle</span>
+              </button>
+              <button type="button" class="oe-falter" aria-expanded="true" data-fuer="postings" aria-label="Buffer und drei Kanäle zuklappen"><span class="oe-falter-pfeil" aria-hidden="true"></span></button>
+              <div class="oe-strang-kinder">
+                <button type="button" class="oe-knoten" data-baustein="buffer" data-ebene="2" aria-expanded="false">
+                  <span class="oe-knoten-titel">Buffer</span>
+                  <span class="oe-knoten-unter">spielt aus und liest zurück</span>
+                </button>
+                <button type="button" class="oe-knoten" data-baustein="aus_linkedin" data-ebene="3" aria-expanded="false">
+                  <span class="oe-knoten-titel">LinkedIn</span>
+                  <span class="oe-knoten-unter">Ziel noch offen</span>
+                </button>
+                <button type="button" class="oe-knoten" data-baustein="aus_instagram" data-ebene="4" aria-expanded="false">
+                  <span class="oe-knoten-titel">Instagram</span>
+                  <span class="oe-knoten-unter">sofort sichtbar</span>
+                </button>
+                <button type="button" class="oe-knoten" data-baustein="aus_facebook" data-ebene="5" aria-expanded="false">
+                  <span class="oe-knoten-titel">Facebook</span>
+                  <span class="oe-knoten-unter">sofort sichtbar</span>
+                </button>
+              </div>
+            </div>
+            <div class="oe-strang" style="grid-column: 6 / 11;" data-strang="korrespondenz">
+              <button type="button" class="oe-knoten" data-baustein="korrespondenz" data-ebene="1" aria-expanded="false">
+                <span class="oe-knoten-titel">Korrespondenz</span>
+                <span class="oe-knoten-unter">Entwürfe und Antworten</span>
+              </button>
+              <button type="button" class="oe-falter" aria-expanded="true" data-fuer="korrespondenz" aria-label="Vier Kanäle zuklappen"><span class="oe-falter-pfeil" aria-hidden="true"></span></button>
+              <div class="oe-strang-kinder">
+                <button type="button" class="oe-knoten" data-baustein="aus_mail" data-ebene="2" aria-expanded="false">
+                  <span class="oe-knoten-titel">E-Mails</span>
+                  <span class="oe-knoten-unter">Outlook 365</span>
+                </button>
+                <button type="button" class="oe-knoten" data-baustein="aus_whats" data-ebene="3" aria-expanded="false">
+                  <span class="oe-knoten-titel">WhatsApp</span>
+                  <span class="oe-knoten-unter">mobil</span>
+                </button>
+                <button type="button" class="oe-knoten" data-baustein="aus_dm" data-ebene="4" aria-expanded="false">
+                  <span class="oe-knoten-titel">Direkt&shy;nachrichten</span>
+                  <span class="oe-knoten-unter">in den Netzwerken</span>
+                </button>
+                <button type="button" class="oe-knoten" data-baustein="aus_komm" data-ebene="5" aria-expanded="false">
+                  <span class="oe-knoten-titel">Kommentare</span>
+                  <span class="oe-knoten-unter">Social Media</span>
+                </button>
+              </div>
+            </div>
+            <div class="oe-strang" style="grid-column: 11 / 16;" data-strang="webdev">
+              <button type="button" class="oe-knoten" data-baustein="webdev" data-ebene="1" aria-expanded="false">
+                <span class="oe-knoten-titel">Webseiten</span>
+                <span class="oe-knoten-unter">VS Code bis Vercel</span>
+              </button>
+              <button type="button" class="oe-falter" aria-expanded="true" data-fuer="webdev" aria-label="Der Weg ins Netz zuklappen"><span class="oe-falter-pfeil" aria-hidden="true"></span></button>
+              <div class="oe-strang-kinder">
+                <button type="button" class="oe-knoten" data-baustein="vscode" data-ebene="2" aria-expanded="false">
+                  <span class="oe-knoten-titel">VS Code</span>
+                  <span class="oe-knoten-unter">hier entsteht die Änderung</span>
+                </button>
+                <button type="button" class="oe-knoten" data-baustein="github" data-ebene="3" aria-expanded="false">
+                  <span class="oe-knoten-titel">GitHub</span>
+                  <span class="oe-knoten-unter">zwei Zweige: Daniel und main</span>
+                </button>
+                <button type="button" class="oe-knoten" data-baustein="vercel" data-ebene="4" aria-expanded="false">
+                  <span class="oe-knoten-titel">Vercel</span>
+                  <span class="oe-knoten-unter">Vorschau aus Daniel, live aus main</span>
+                </button>
+              </div>
+            </div>
+            <div class="oe-strang" style="grid-column: 16 / 21;" data-strang="cockpits">
+              <button type="button" class="oe-knoten" data-baustein="cockpits" data-ebene="1" aria-expanded="false">
+                <span class="oe-knoten-titel">Assistenz</span>
+                <span class="oe-knoten-unter">Aufträge aller Art</span>
+              </button>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="oe-feld" id="oeFeld">
+          <div class="oe-feld-leer">
+            <p class="oe-feld-tag">Ebene 2</p>
+            <p>Einen Kasten im Plan anklicken. Hier steht dann, was dahinter
+              steckt, was als Nächstes ansteht und was noch offen ist.</p>
+          </div>
+          <div class="oe-feld-inhalt" hidden>
+            <button type="button" class="oe-feld-zu" aria-label="Schließen">&times;</button>
+            <p class="oe-feld-band"></p>
+            <h2 class="h-serif oe-feld-titel"></h2>
+            <p class="oe-feld-satz"></p>
+            <div class="oe-feld-spalten"></div>
+          </div>
+        </aside>
+
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+  /* Ebene 2 steht als Datenstruktur hier, nicht im Markup verteilt. Wer einen
+     Baustein ergaenzt, schreibt einen Eintrag in DETAILS und setzt im Plan
+     oben einen Knoten mit derselben Kennung - mehr ist nicht noetig. */
+  (function () {
+    var DETAILS = {
+  "mail": {
+    "satz": "Der Posteingang ist die dichteste Quelle: Anfragen, Angebote, laufende Projekte und Termine stehen dort zuerst.",
+    "tools": [
+      "Outlook 365"
+    ],
+    "schritte": [
+      "Als eine der ersten drei Quellen anbinden – einfach umsetzbar"
+    ],
+    "offen": [
+      "Zugriffsrechte und Umgang mit Kundendaten sind noch nicht besprochen"
+    ]
+  },
+  "homepages": {
+    "satz": "Die drei Markenauftritte liefern Inhalte und zeigen über die Nutzung, welche Themen tatsächlich ziehen.",
+    "tools": [
+      "empiria",
+      "sofort sichtbar",
+      "Müller &amp; Ströbel"
+    ],
+    "schritte": [
+      "Gemeinsam mit Analytics und Search Console anbinden"
+    ],
+    "offen": []
+  },
+  "analytics": {
+    "satz": "Google Analytics liest die Homepages aus: welche Seiten gelesen werden und wo Besucher abspringen.",
+    "tools": [
+      "Google Analytics"
+    ],
+    "schritte": [
+      "Als eine der ersten drei Quellen anbinden"
+    ],
+    "offen": []
+  },
+  "search": {
+    "satz": "Die Search Console liest die Homepages aus: mit welchen Suchanfragen Menschen auf die Seiten kommen – die Sprache der Zielgruppe im Original.",
+    "tools": [
+      "Google Search Console"
+    ],
+    "schritte": [
+      "Als eine der ersten drei Quellen anbinden"
+    ],
+    "offen": []
+  },
+  "linkedin": {
+    "satz": "Das Netzwerk, in dem die Zielkunden sitzen. Zugegriffen wird nicht direkt, sondern über den Sales Navigator und über Buffer.",
+    "tools": [
+      "LinkedIn-Profil"
+    ],
+    "schritte": [
+      "Benachrichtigung bei Posts von Zielkunden, dazu Antwortvorschläge"
+    ],
+    "offen": [
+      "Zusammen mit WhatsApp das schwächste Glied: keine saubere Schnittstelle"
+    ]
+  },
+  "social_alt_unbenutzt": {
+    "satz": "Alle weiteren Kanäle, auf denen die Marken sichtbar sind.",
+    "tools": [
+      "Buffer als gemeinsame Ausspielstelle"
+    ],
+    "schritte": [],
+    "offen": [
+      "Welche Kanäle wirklich bespielt werden, ist noch offen"
+    ]
+  },
+  "li_marken": {
+    "satz": "Die drei Firmenseiten auf LinkedIn – empiria, sofort sichtbar und Müller &amp; Ströbel. Sie sind etwas anderes als das persönliche Profil: Dort läuft das Netzwerk, hier die Marke. Was auf den Firmenseiten geschehen soll, ist noch nicht entschieden.",
+    "tools": [
+      "Drei Unternehmensseiten"
+    ],
+    "schritte": [
+      "Festlegen, was auf den Firmenseiten passiert und wie es sich vom persönlichen Profil unterscheidet"
+    ],
+    "offen": [
+      "Ob die Seiten über Buffer bespielt werden oder von Hand",
+      "Ob Beiträge vom persönlichen Profil dort gespiegelt werden"
+    ]
+  },
+  "finder": {
+    "satz": "Alle Daten liegen im Dateisystem des Macs, und die Nextcloud ist dorthin synchronisiert – beides ist derselbe Zugriff. Dass Claude Code direkt an die Dateien kommt, ist der Grund, warum die Intelligenzschicht auf einem Mac mit allen Logins läuft und nicht auf einem nackten Server.",
+    "tools": [
+      "Finder und die lokalen Projektordner",
+      "Nextcloud bei IONOS, in den Finder synchronisiert"
+    ],
+    "schritte": [
+      "Prüfen, dass die Ordner lokal vorliegen und nicht nur als Platzhalter – was nicht heruntergeladen ist, sieht Claude Code nicht"
+    ],
+    "offen": []
+  },
+  "chrome": {
+    "satz": "Recherche im Netz, und der einzige Weg zu Diensten ohne Schnittstelle.",
+    "tools": [
+      "Chrome mit vorhandenen Logins"
+    ],
+    "schritte": [],
+    "offen": []
+  },
+  "macbook": {
+    "satz": "Der Platz im Büro: große Bildschirme, VS Code, Claude Code direkt im Terminal. Von hier aus wird gesprochen und gearbeitet.",
+    "tools": [
+      "Claude Code im Terminal",
+      "VS Code",
+      "Dashboard im Browser"
+    ],
+    "schritte": [],
+    "offen": []
+  },
+  "ipad": {
+    "satz": "Dieselbe Claude-Code-Sitzung wie am Schreibtisch, nur auf einem anderen Bildschirm. Über Remote Control hängt die App am Always-on-MacBook – das Gespräch läuft weiter, wo es aufgehört hat.",
+    "tools": [
+      "Claude-App · Remote Control",
+      "Dashboard im Browser"
+    ],
+    "schritte": [],
+    "offen": []
+  },
+  "iphone": {
+    "satz": "Im Auto, beim Kunden, zwischendurch: In der Claude-App weiterdiskutieren und am Ende sagen, dass es umgesetzt wird. Ausgeführt wird es auf dem Always-on-MacBook.",
+    "tools": [
+      "Claude-App · Remote Control",
+      "Dashboard im Browser"
+    ],
+    "schritte": [],
+    "offen": []
+  },
+  "knoten": {
+    "satz": "Das zweite MacBook läuft dauerhaft und führt alles aus – auch dann, wenn ich im Büro am Haupt-MacBook sitze. Der Grund ist pragmatisch: Alle Logins für Nextcloud, Chrome und Outlook liegen dort bereits. Ein nackter Server hätte die nicht.",
+    "tools": [
+      "Zweites MacBook, always on",
+      "Gleiche Apple ID",
+      "Claude Code"
+    ],
+    "schritte": [
+      "Gerät einrichten und den Dauerbetrieb prüfen"
+    ],
+    "offen": [
+      "Verzögerung von etwa einer Sekunde ist akzeptiert",
+      "Fällt der Knoten aus, wird lokal auf dem verfügbaren Gerät weitergearbeitet",
+      "Alternative für später: kleiner vServer bei IONOS, Hetzner oder DigitalOcean für 5 bis 15 Euro im Monat – zuverlässiger, aber ohne die vorhandenen Logins",
+      "Einbindung von Adobe Illustrator in den Werkzeugstapel ist noch offen"
+    ]
+  },
+  "dashboard": {
+    "satz": "Die Ansichtsebene: Hier werden alle Informationen und Entscheidungen visualisiert – Aufgaben, Vorschläge, Textentwürfe, der Stand der Kontakte. Das Ziel ist ein schnelles Verständnis, aus dem heraus entschieden wird. Analyse und Entscheidung, keine Steuerung: Gearbeitet wird mit Claude, nicht mit einer Oberfläche. Eigenes Repository und eigenes Vercel-Projekt, getrennt von den Homepage-Repos.",
+    "tools": [
+      "Eigenes GitHub-Repository",
+      "Eigenes Vercel-Projekt",
+      "empiria Corporate Design: Weiß als Grundfarbe, Schwarz und Gelb als Akzente"
+    ],
+    "schritte": [
+      "Noah legt Repository und Vercel-Projekt an",
+      "Main-Zweig live, Daniel-Zweig für die Entwicklung – wie bei den Homepages",
+      "Passwortschutz für das Vercel-Deployment"
+    ],
+    "offen": [
+      "Name des Repositories: steuerungszentrale oder empiria-dashboard"
+    ]
+  },
+  "postings": {
+    "satz": "Beiträge entstehen im Sparring. Sie gehen über Buffer heraus, nicht über die Schnittstellen der einzelnen Kanäle.",
+    "tools": [
+      "Buffer"
+    ],
+    "schritte": [
+      "Nach der Datenanbindung als erste Automatisierung"
+    ],
+    "offen": []
+  },
+  "korrespondenz": {
+    "satz": "Entwürfe und Antwortvorschläge auf Basis dessen, was im Postfach, in den Netzwerken und in den Kontakten steht. Geantwortet wird nicht nur per Mail – dieselbe Frage kommt über WhatsApp, als Direktnachricht oder als Kommentar. Korrespondenz entsteht aus drei Anlässen, und nur einer davon kommt von außen.",
+    "anlaesse": [
+      "<b>Es kommt etwas herein.</b> Der Posteingang wird gelesen und bewertet: Worauf muss reagiert werden, was kann warten, was erledigt sich von selbst. Zu jeder Nachricht, die eine Antwort braucht, liegt ein Vorschlag bereit.",
+      "<b>Die Kontaktpflege ist dran.</b> Zu jeder Person steht in den Kontakten, wie oft Kontakt sinnvoll ist. Läuft die Frist ab, entsteht der Anstoß von innen – mit einem Entwurf, der an das letzte Gespräch anknüpft.",
+      "<b>Im Netzwerk passiert etwas.</b> Die Zielkundenlisten im Sales Navigator zeigen, wer gerade etwas veröffentlicht. Darauf wird reagiert: ein Kommentar, eine Direktnachricht, ein Anschreiben über den Linked Helper. Sichtbarkeit entsteht dort, wo die Zielgruppe ohnehin liest."
+    ],
+    "tools": [
+      "Outlook 365",
+      "LinkedIn, Instagram, Facebook",
+      "WhatsApp",
+      "Sales Navigator für die Zielkundenlisten",
+      "Linked Helper für Anschreiben und Mailings",
+      "Die Kontakte mit der Frequenz je Person"
+    ],
+    "schritte": [
+      "Je Kanal festlegen, was als Entwurf vorgelegt wird und was gar nicht erst entstehen soll",
+      "Kontaktfrequenz je Person in den Kontakten hinterlegen"
+    ],
+    "offen": [
+      "Welche Nachrichten automatisch entstehen dürfen und welche nicht",
+      "WhatsApp geht nur über den Browser – fragil und mit Risiko verbunden",
+      "Der Linked Helper berührt die Nutzungsbedingungen von LinkedIn"
+    ]
+  },
+  "aus_mail": {
+    "satz": "Der Hauptkanal: Entwürfe und Antworten im Postfach, bevor sie herausgehen.",
+    "tools": [
+      "Outlook 365"
+    ],
+    "schritte": [],
+    "offen": []
+  },
+  "aus_whats": {
+    "satz": "Kurze Abstimmungen laufen über WhatsApp. Der Zugang ist das schwächste Glied in dieser Reihe: Es gibt keine saubere Schnittstelle, nur den Browser.",
+    "tools": [
+      "WhatsApp Web"
+    ],
+    "schritte": [],
+    "offen": [
+      "Ob der Weg über den Browser tragfähig genug ist"
+    ]
+  },
+  "aus_dm": {
+    "satz": "Direktnachrichten in den Netzwerken – vor allem LinkedIn. Dort beginnt ein Gespräch oft, bevor es in die Mail wandert.",
+    "tools": [
+      "LinkedIn",
+      "Instagram"
+    ],
+    "schritte": [],
+    "offen": [
+      "Ob Direktnachrichten vom persönlichen Profil oder von den Firmenseiten ausgehen"
+    ]
+  },
+  "aus_komm": {
+    "satz": "Kommentare unter eigenen und fremden Beiträgen. Sie sind Teil der Sichtbarkeit und nicht nur Reaktion.",
+    "tools": [
+      "LinkedIn",
+      "Instagram",
+      "Facebook"
+    ],
+    "schritte": [],
+    "offen": []
+  },
+  "webdev": {
+    "satz": "Die Webseiten haben einen festen Weg, deshalb eine eigene Spur: In VS Code wird mit Claude gearbeitet, GitHub hält den Stand, Vercel stellt ihn ins Netz. Je Thema und Marke ein eigenes Repository, darin zwei Zweige – main ist live, Daniel ist die Entwicklung.",
+    "anlaesse": [
+      "<b>In VS Code entsteht die Änderung.</b> Claude arbeitet direkt an den Dateien des Repositories, mit dem ganzen Zusammenhang der Seite vor Augen.",
+      "<b>GitHub hält den Stand.</b> Jede Änderung ist ein Commit im Daniel-Zweig, mit einer Begründung, die später noch lesbar ist.",
+      "<b>Vercel stellt ins Netz.</b> Der Daniel-Zweig wird als Vorschau ausgespielt, der main-Zweig ist die Seite, die Kunden sehen."
+    ],
+    "tools": [
+      "VS Code mit Claude Code",
+      "GitHub, je Marke ein Repository",
+      "Vercel, main live und Daniel als Vorschau"
+    ],
+    "schritte": [],
+    "offen": [
+      "Ob das Dashboard ein eigenes Repository bekommt oder neben den Homepages liegt"
+    ]
+  },
+  "vscode": {
+    "satz": "Hier entsteht die Änderung. Claude arbeitet direkt an den Dateien des Repositories und hat dabei den Zusammenhang der ganzen Seite vor Augen – nicht nur den Ausschnitt, über den gerade gesprochen wird.",
+    "tools": [
+      "VS Code mit Claude Code"
+    ],
+    "schritte": [],
+    "offen": []
+  },
+  "github": {
+    "satz": "Der Ort, an dem der Stand liegt. Je Thema und Marke ein eigenes Repository, darin immer zwei Zweige – und eine Regel, die nie gebrochen wird.",
+    "anlaesse": [
+      "<b>Daniel ist der Entwicklungszweig.</b> Jede Änderung geht zuerst dorthin, ohne Ausnahme. Was dort liegt, sieht kein Kunde.",
+      "<b>main ist der Zweig, der live ist.</b> Dorthin kommt etwas erst, wenn das Kommando dafür gegeben wird – nicht automatisch, nicht nebenbei.",
+      "<b>Die Entwicklung bleibt, wo sie ist.</b> Im Daniel-Zweig gibt es eine eigene Menükategorie „Entwicklung“ mit allem, was in Arbeit ist. Sie wird niemals nach main gebracht."
+    ],
+    "tools": [
+      "GitHub, je Marke ein Repository",
+      "Zwei Zweige je Repository: Daniel und main"
+    ],
+    "schritte": [],
+    "offen": [
+      "Ob das Dashboard ein eigenes Repository bekommt oder neben den Homepages liegt"
+    ]
+  },
+  "vercel": {
+    "satz": "Stellt ins Netz, was in GitHub liegt – automatisch, sobald ein Zweig sich ändert. Aus den zwei Zweigen werden zwei Adressen: eine zum Abstimmen, eine für Kunden.",
+    "anlaesse": [
+      "<b>Aus Daniel wird die Vorschau.</b> Jede Änderung ist sofort unter einer eigenen Adresse zu sehen – zum Prüfen, zum Abstimmen, zum Zeigen.",
+      "<b>Aus main wird die Seite.</b> Was dort ankommt, ist die Seite, die Kunden aufrufen."
+    ],
+    "tools": [
+      "Vercel, je Repository ein Projekt",
+      "Zwei Adressen je Projekt: Vorschau und live"
+    ],
+    "schritte": [],
+    "offen": []
+  },
+  "cockpits": {
+    "satz": "Alles, was sonst anfällt und keine eigene Spur braucht – was eine Assistenz übernehmen würde, übernimmt hier Claude. Die Arbeit an den Webseiten hat eine eigene Spur, weil sie einen festen Weg hat; alles andere läuft hier.",
+    "anlaesse": [
+      "<b>Rechnungen und Belege.</b> Das PDF wird aus der E-Mail gezogen und abgelegt, das Dashboard schlägt einen Namen vor – Datum, Absender, Betrag. Nach der Freigabe geht es nach Papierkram, das über Chrome mitgesteuert wird.",
+      "<b>Termine setzen.</b> Im Gespräch statt im Kalender.",
+      "<b>Recherche im Netz.</b> Informationen sammeln, Daten zusammentragen, Ergebnisse aufbereiten.",
+      "<b>Projekt-Cockpits anlegen.</b> Je Kundenprojekt eine eigene Ansicht mit Agenda, Stand und nächsten Schritten."
+    ],
+    "tools": [
+      "Claude Code auf dem Always-on-MacBook",
+      "Chrome für Recherche und für Papierkram",
+      "Outlook 365 für Termine und für den Rechnungseingang",
+      "Der Ordner „Rechnungen Download“ im Dateisystem"
+    ],
+    "schritte": [
+      "Je Auftragsart festhalten, was Claude braucht und was herauskommen soll"
+    ],
+    "offen": [
+      "Projekt-Cockpits: Einbindung in die bestehenden Produktseiten – eigene Unterseite, eigene Sektion oder mehrere Gestaltungsvarianten zur Auswahl",
+      "Papierkram wird über den Browser bedient – derselbe Weg wie bei WhatsApp und damit dieselbe Unsicherheit",
+      "Ob auch Ausgangsrechnungen über diese Spur laufen",
+      "Beim Sammeln von Daten aus dem Netz sind die Nutzungsbedingungen der jeweiligen Quelle zu prüfen"
+    ]
+  },
+  "empiria": {
+    "satz": "Skalierung über Arbeitszeit, Kooperationspartner und einen höheren Wert je Angebot – etwa ein zweitägiges Seminar mit mehrmonatiger Begleitung statt eines Einzelseminars.",
+    "tools": [],
+    "schritte": [],
+    "offen": [
+      "Gemessen wird in Leads und daraus gewonnenen Kunden"
+    ]
+  },
+  "sichtbar": {
+    "satz": "Klassischer Funnel: Zielgruppen erkennen, Daten erheben, Leads gewinnen, Kunden gewinnen, Umsatz messen.",
+    "tools": [],
+    "schritte": [],
+    "offen": [
+      "Datengetriebene Geschäftsideen darauf aufzusetzen ist Thema des nächsten Sparrings"
+    ]
+  },
+  "ms": {
+    "satz": "Sonderform von empiria, mit Tobias Müller eingebunden.",
+    "tools": [],
+    "schritte": [],
+    "offen": []
+  },
+  "aus_linkedin": {
+    "satz": "Der Kanal, auf dem die Beiträge landen. Gesteuert wird er über Buffer, nicht von Hand.",
+    "tools": [
+      "Buffer"
+    ],
+    "schritte": [],
+    "offen": []
+  },
+  "aus_instagram": {
+    "satz": "Der Kanal, auf dem die Beiträge landen. Gesteuert wird er über Buffer.",
+    "tools": [
+      "Buffer"
+    ],
+    "schritte": [],
+    "offen": []
+  },
+  "aus_facebook": {
+    "satz": "Der Kanal, auf dem die Beiträge landen. Gesteuert wird er über Buffer.",
+    "tools": [
+      "Buffer"
+    ],
+    "schritte": [],
+    "offen": []
+  },
+  "kontakte_db": {
+    "satz": "Der Bestand: Kontakte, Bestandskunden und was zu jedem gilt. Sie ist weder Quelle noch Ergebnis, sondern beides – der Ausführungsknoten liest aus ihr und schreibt in sie zurück. Deshalb steht sie neben ihm und nicht in der Kette.",
+    "tools": [
+      "Eigene Datenhaltung im Dashboard"
+    ],
+    "schritte": [
+      "Festlegen, welche Felder je Person geführt werden",
+      "Kontaktfrequenz je Person hinterlegen"
+    ],
+    "offen": [
+      "Woher der Erstbestand kommt – Outlook, LinkedIn oder beides",
+      "Kundendaten berühren das Rechte- und Sicherheitskonzept, das noch nicht besprochen ist"
+    ]
+  },
+  "facebook": {
+    "satz": "Die Seite der Marken auf Facebook. Gelesen und bespielt wird sie über Buffer, nicht direkt.",
+    "tools": [
+      "Buffer"
+    ],
+    "schritte": [],
+    "offen": []
+  },
+  "instagram": {
+    "satz": "Das Konto auf Instagram. Gelesen und bespielt wird es über Buffer.",
+    "tools": [
+      "Buffer"
+    ],
+    "schritte": [],
+    "offen": []
+  },
+  "salesnav": {
+    "satz": "Der Sales Navigator sitzt auf LinkedIn und ist dort das ausführende Werkzeug: Er findet Zielkunden nach Merkmalen und zeigt ihre Signale.",
+    "tools": [
+      "LinkedIn Sales Navigator"
+    ],
+    "schritte": [
+      "Zielkundenmerkmale festlegen, nach denen gesucht wird"
+    ],
+    "offen": [
+      "Saubere Schnittstelle gibt es nicht – bleibt Handarbeit"
+    ]
+  },
+  "helper": {
+    "satz": "Der Linked Helper setzt auf dem Sales Navigator auf und automatisiert, was dort von Hand liefe.",
+    "tools": [
+      "Linked Helper"
+    ],
+    "schritte": [],
+    "offen": [
+      "Automatisierung auf LinkedIn berührt die Nutzungsbedingungen – das ist vor dem Einsatz zu klären"
+    ]
+  },
+  "buffer": {
+    "satz": "Buffer ist die Stelle, über die Beiträge hinausgehen – auf alle drei Kanäle, aus einer Hand. Und es liefert zurück, was dort passiert ist.",
+    "tools": [
+      "Buffer"
+    ],
+    "schritte": [
+      "Nach der Datenanbindung als erste Automatisierung"
+    ],
+    "offen": [
+      "Welche Kanäle tatsächlich bespielt werden, ist offen"
+    ]
+  }
+};
+
+    var KOEPFE = {
+  "homepages": {
+    "titel": "Homepages",
+    "unter": "Drei Marken",
+    "art": "zuerst",
+    "band": "Datenquellen"
+  },
+  "linkedin": {
+    "titel": "LinkedIn",
+    "unter": "Daniel Ströbel",
+    "art": "fragil",
+    "band": "Datenquellen"
+  },
+  "li_marken": {
+    "titel": "LinkedIn",
+    "unter": "Drei Firmenseiten",
+    "art": "geplant",
+    "band": "Datenquellen"
+  },
+  "instagram": {
+    "titel": "Instagram",
+    "unter": "sofort sichtbar",
+    "art": "geplant",
+    "band": "Datenquellen"
+  },
+  "facebook": {
+    "titel": "Facebook",
+    "unter": "sofort sichtbar",
+    "art": "geplant",
+    "band": "Datenquellen"
+  },
+  "mail": {
+    "titel": "E-Mail",
+    "unter": "Outlook 365 &middot; drei Marken",
+    "art": "zuerst",
+    "band": "Datenquellen"
+  },
+  "finder": {
+    "titel": "Datei&shy;system",
+    "unter": "Mac und Nextcloud",
+    "art": "geplant",
+    "band": "Datenquellen"
+  },
+  "chrome": {
+    "titel": "Chrome",
+    "unter": "Recherche im Netz",
+    "art": "geplant",
+    "band": "Datenquellen"
+  },
+  "kontakte_db": {
+    "titel": "Kontakte",
+    "unter": "wird gelesen und beschrieben",
+    "art": "geplant",
+    "band": "Datenquellen"
+  },
+  "analytics": {
+    "titel": "Google Analytics",
+    "unter": "",
+    "art": "zuerst",
+    "band": "Datenquellen"
+  },
+  "search": {
+    "titel": "Search Console",
+    "unter": "",
+    "art": "zuerst",
+    "band": "Datenquellen"
+  },
+  "salesnav": {
+    "titel": "Sales Navigator",
+    "unter": "",
+    "art": "fragil",
+    "band": "Datenquellen"
+  },
+  "helper": {
+    "titel": "Linked Helper",
+    "unter": "",
+    "art": "fragil",
+    "band": "Datenquellen"
+  },
+  "macbook": {
+    "titel": "Haupt-MacBook",
+    "unter": "Büro und unterwegs",
+    "art": "entschieden",
+    "band": "Zugänge"
+  },
+  "ipad": {
+    "titel": "iPad",
+    "unter": "Zwei Geräte",
+    "art": "entschieden",
+    "band": "Zugänge"
+  },
+  "iphone": {
+    "titel": "iPhone",
+    "unter": "Unterwegs",
+    "art": "entschieden",
+    "band": "Zugänge"
+  },
+  "knoten": {
+    "titel": "Intelligenzschicht",
+    "unter": "Claude Code &middot; läuft auf einem Always-on-MacBook",
+    "art": "ausfuehrung",
+    "band": "Ausführung"
+  },
+  "dashboard": {
+    "titel": "Dashboard",
+    "unter": "Analyse und Entscheidung",
+    "art": "ansicht",
+    "band": "Ansicht"
+  },
+  "postings": {
+    "titel": "Postings",
+    "unter": "Beiträge für die Kanäle",
+    "art": "geplant",
+    "band": "Aktionen"
+  },
+  "korrespondenz": {
+    "titel": "Korrespondenz",
+    "unter": "Entwürfe und Antworten",
+    "art": "geplant",
+    "band": "Aktionen"
+  },
+  "webdev": {
+    "titel": "Webseiten",
+    "unter": "VS Code bis Vercel",
+    "art": "geplant",
+    "band": "Aktionen"
+  },
+  "cockpits": {
+    "titel": "Assistenz",
+    "unter": "Aufträge aller Art",
+    "art": "geplant",
+    "band": "Aktionen"
+  },
+  "buffer": {
+    "titel": "Buffer",
+    "unter": "spielt aus und liest zurück",
+    "art": "geplant",
+    "band": "Aktionen"
+  },
+  "aus_linkedin": {
+    "titel": "LinkedIn",
+    "unter": "Ziel noch offen",
+    "art": "geplant",
+    "band": "Aktionen"
+  },
+  "aus_instagram": {
+    "titel": "Instagram",
+    "unter": "sofort sichtbar",
+    "art": "geplant",
+    "band": "Aktionen"
+  },
+  "aus_facebook": {
+    "titel": "Facebook",
+    "unter": "sofort sichtbar",
+    "art": "geplant",
+    "band": "Aktionen"
+  },
+  "aus_mail": {
+    "titel": "E-Mails",
+    "unter": "Outlook 365",
+    "art": "geplant",
+    "band": "Aktionen"
+  },
+  "aus_whats": {
+    "titel": "WhatsApp",
+    "unter": "mobil",
+    "art": "geplant",
+    "band": "Aktionen"
+  },
+  "aus_dm": {
+    "titel": "Direkt&shy;nachrichten",
+    "unter": "in den Netzwerken",
+    "art": "geplant",
+    "band": "Aktionen"
+  },
+  "aus_komm": {
+    "titel": "Kommentare",
+    "unter": "Social Media",
+    "art": "geplant",
+    "band": "Aktionen"
+  },
+  "vscode": {
+    "titel": "VS Code",
+    "unter": "hier entsteht die Änderung",
+    "art": "geplant",
+    "band": "Aktionen"
+  },
+  "github": {
+    "titel": "GitHub",
+    "unter": "zwei Zweige: Daniel und main",
+    "art": "geplant",
+    "band": "Aktionen"
+  },
+  "vercel": {
+    "titel": "Vercel",
+    "unter": "Vorschau aus Daniel, live aus main",
+    "art": "geplant",
+    "band": "Aktionen"
+  }
+};
+
+    var MARKEN = {"zuerst": "next", "entschieden": "entschieden", "beauftragt": "beauftragt", "geplant": "geplant", "fragil": "fragil", "bestand": "besteht", "ausfuehrung": "Ausführung", "ansicht": "Ansichtsebene"};
+
+    var feld = document.getElementById('oeFeld');
+    if (!feld) return;
+    var inhalt = feld.querySelector('.oe-feld-inhalt');
+    var knoten = Array.prototype.slice.call(document.querySelectorAll('.oe-knoten'));
+    var offen = null;
+
+    function liste(titel, eintraege) {
+      if (!eintraege || !eintraege.length) return '';
+      var li = eintraege.map(function (x) { return '<li>' + x + '</li>'; }).join('');
+      return '<div class="oe-feld-spalte"><p class="oe-feld-tag">' + titel +
+             '</p><ul class="oe-feld-liste">' + li + '</ul></div>';
+    }
+
+    function zeigen(id) {
+      var d = DETAILS[id], k = KOEPFE[id];
+      if (!d || !k) return;
+      feld.querySelector('.oe-feld-band').textContent = k.band;
+      feld.querySelector('.oe-feld-titel').innerHTML = k.titel +
+        ' <span class="oe-marke oe-marke--' + k.art + '">' + MARKEN[k.art] + '</span>';
+      feld.querySelector('.oe-feld-satz').innerHTML = d.satz;
+      feld.querySelector('.oe-feld-spalten').innerHTML =
+        liste('Anlässe', d.anlaesse) +
+        liste('Dahinter steht', d.tools) +
+        liste('Nächste Schritte', d.schritte) +
+        liste('Noch offen', d.offen);
+      feld.querySelector('.oe-feld-leer').hidden = true;
+      inhalt.hidden = false;
+      knoten.forEach(function (b) {
+        var an = b.dataset.baustein === id;
+        b.classList.toggle('is-offen', an);
+        b.setAttribute('aria-expanded', an ? 'true' : 'false');
+      });
+      offen = id;
+    }
+
+    function schliessen() {
+      inhalt.hidden = true;
+      feld.querySelector('.oe-feld-leer').hidden = false;
+      knoten.forEach(function (b) {
+        b.classList.remove('is-offen');
+        b.setAttribute('aria-expanded', 'false');
+      });
+      offen = null;
+    }
+
+    knoten.forEach(function (b) {
+      b.addEventListener('click', function () {
+        var id = b.dataset.baustein;
+        /* Ein Kasten ohne Erklaerung liess vorher die alte Markierung und
+           den alten Infokasten stehen - das sah aus, als haette der Klick
+           nicht gezaehlt. Jetzt raeumt er auf. */
+        if (offen === id || !DETAILS[id] || !KOEPFE[id]) { schliessen(); return; }
+        zeigen(id);
+      });
+    });
+    feld.querySelector('.oe-feld-zu').addEventListener('click', schliessen);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') schliessen();
+    });
+  })();
+  </script>
+  <script>
+  /* Die Leitungen werden gerechnet, nicht geschrieben. Fuer jedes Paar aus
+     LEITUNGEN wird der Mittelpunkt der passenden Kante beider Kaesten
+     genommen und eine Kurve dazwischen gelegt. Bei jeder Aenderung der
+     Groesse wird neu gerechnet - deshalb stimmt der Plan auf jedem Schirm,
+     ohne dass irgendwo Koordinaten stehen. */
+  (function () {
+    var plan = document.querySelector('.oe-plan');
+    var svg = document.getElementById('oeDraehte');
+    if (!plan || !svg) return;
+    var knoten = Array.prototype.slice.call(plan.querySelectorAll('.oe-knoten'));
+    var richtung = plan.dataset.richtung || 'unten';
+    var LEITUNGEN = [["homepages", "analytics"], ["homepages", "search"], ["linkedin", "salesnav"], ["salesnav", "helper"], ["mail", "schiene"], ["finder", "schiene"], ["chrome", "schiene"], ["instagram", "schiene"], ["facebook", "schiene"], ["li_marken", "schiene"], ["analytics", "schiene"], ["search", "schiene"], ["helper", "schiene"], ["kontakte_db", "schiene"], ["schiene", "knoten"], ["macbook", "knoten"], ["ipad", "knoten"], ["iphone", "knoten"], ["knoten", "dashboard"], ["knoten", "postings"], ["knoten", "korrespondenz"], ["knoten", "webdev"], ["knoten", "cockpits"], ["korrespondenz", "aus_mail", "baum"], ["korrespondenz", "aus_whats", "baum"], ["korrespondenz", "aus_dm", "baum"], ["korrespondenz", "aus_komm", "baum"], ["webdev", "vscode"], ["vscode", "github"], ["github", "vercel"], ["postings", "buffer"], ["buffer", "aus_linkedin", "baum"], ["buffer", "aus_instagram", "baum"], ["buffer", "aus_facebook", "baum"]];
+    var ZUSTAND = {"homepages>analytics": "geplant", "homepages>search": "geplant", "linkedin>salesnav": "geplant", "salesnav>helper": "geplant", "mail>schiene": "geplant", "finder>schiene": "geplant", "chrome>schiene": "geplant", "instagram>schiene": "geplant", "facebook>schiene": "geplant", "li_marken>schiene": "geplant", "analytics>schiene": "geplant", "search>schiene": "geplant", "helper>schiene": "geplant", "kontakte_db>schiene": "geplant", "schiene>knoten": "geplant", "macbook>knoten": "geplant", "ipad>knoten": "geplant", "iphone>knoten": "geplant", "knoten>dashboard": "geplant", "knoten>postings": "geplant", "knoten>korrespondenz": "geplant", "knoten>webdev": "geplant", "knoten>cockpits": "geplant", "korrespondenz>aus_mail": "geplant", "korrespondenz>aus_whats": "geplant", "korrespondenz>aus_dm": "geplant", "korrespondenz>aus_komm": "geplant", "webdev>vscode": "geplant", "vscode>github": "geplant", "github>vercel": "geplant", "postings>buffer": "geplant", "buffer>aus_linkedin": "geplant", "buffer>aus_instagram": "geplant", "buffer>aus_facebook": "geplant"};
+    var AMPEL = {"homepages>analytics": "rot", "homepages>search": "rot", "linkedin>salesnav": "rot", "salesnav>helper": "rot", "mail>schiene": "rot", "finder>schiene": "rot", "chrome>schiene": "rot", "instagram>schiene": "rot", "facebook>schiene": "rot", "li_marken>schiene": "rot", "analytics>schiene": "rot", "search>schiene": "rot", "helper>schiene": "rot", "kontakte_db>schiene": "rot", "schiene>knoten": "rot", "macbook>knoten": "rot", "ipad>knoten": "rot", "iphone>knoten": "rot", "knoten>dashboard": "rot", "knoten>postings": "rot", "knoten>korrespondenz": "rot", "knoten>webdev": "rot", "knoten>cockpits": "rot", "korrespondenz>aus_mail": "rot", "korrespondenz>aus_whats": "rot", "korrespondenz>aus_dm": "rot", "korrespondenz>aus_komm": "rot", "webdev>vscode": "rot", "vscode>github": "rot", "github>vercel": "rot", "postings>buffer": "rot", "buffer>aus_linkedin": "rot", "buffer>aus_instagram": "rot", "buffer>aus_facebook": "rot"};
+
+    /* Die Klasse einer Leitung: ihr Zustand, nicht der Stand des Kastens
+       an ihrem Ende. Die Ampel kommt als zweite Klasse dazu und wird nur
+       in der Sicht "Status" sichtbar. */
+    function klasse(l) {
+      var k = l[0] + '>' + l[1];
+      return 'oe-draht oe-draht--' + (ZUSTAND[k] || 'geplant') +
+             ' oe-ampel--' + (AMPEL[k] || 'rot') +
+             (l[2] === 'beide' ? ' oe-draht--beide' : '');
+    }
+
+    function kasten(id) { return plan.querySelector('[data-baustein="' + id + '"]'); }
+
+    function anker(el, seite) {
+      var r = el.getBoundingClientRect(), p = plan.getBoundingClientRect();
+      var x = r.left - p.left, y = r.top - p.top;
+      if (seite === 'unten')  return [x + r.width / 2, y + r.height];
+      if (seite === 'oben')   return [x + r.width / 2, y];
+      if (seite === 'rechts') return [x + r.width, y + r.height / 2];
+      return [x, y + r.height / 2];
+    }
+
+    /* Alle Leitungen, die auf dasselbe Ziel laufen, knicken auf derselben
+       Linie ab. Vorher hatte jede ihren eigenen Knick - bei vier Quellen
+       mit gleichem Abstand zum Knoten ergab das vier verschiedene Hoehen
+       und damit ein Liniengewirr statt einer Sammelschiene. */
+    function sammelLinien() {
+      var s = {};
+      LEITUNGEN.forEach(function (l) {
+        var von = kasten(l[0]), nach = kasten(l[1]), kante = l[2];
+        if (!von || !nach) return;
+        if (l[0] === 'schiene' || l[1] === 'schiene') return;
+        var vr = von.getBoundingClientRect(), nr = nach.getBoundingClientRect();
+        var p = plan.getBoundingClientRect();
+        if (!s[l[1]]) s[l[1]] = { y: -1e9, x: 1e9, n: 0 };
+        s[l[1]].y = Math.max(s[l[1]].y, vr.bottom - p.top);
+        s[l[1]].x = Math.min(s[l[1]].x, vr.right - p.left);
+        s[l[1]].n++;
+        s[l[1]].zielOben = nr.top - p.top;
+        s[l[1]].zielLinks = nr.left - p.left;
+      });
+      Object.keys(s).forEach(function (k) {
+        /* Die Sammellinie liegt mittig zwischen der untersten Quelle und
+           dem Ziel - so bleibt zu beiden Seiten gleich viel Luft. */
+        s[k].mitteY = (s[k].y + s[k].zielOben) / 2;
+        s[k].mitteX = (s[k].x + s[k].zielLinks) / 2;
+      });
+      return s;
+    }
+
+    /* Im Baum laeuft die Leitung an der Sammellinie des Elternkastens
+       herunter und biegt in die linke Kante des Kindes ein - die Form, die
+       jedes Organigramm hat. */
+    function pfadBaum(a, b) {
+      var r = 8;
+      if (Math.abs(b[1] - a[1]) < 2) return 'M' + a[0] + ',' + a[1] + 'L' + b[0] + ',' + b[1];
+      return 'M' + a[0] + ',' + a[1] +
+             'V' + (b[1] - r) +
+             'Q' + a[0] + ',' + b[1] + ' ' + (a[0] + r) + ',' + b[1] +
+             'H' + b[0];
+    }
+
+    function pfadEckig(a, b, quer, m) {
+      var r = 8;
+      if (quer) {
+        var mx = m;
+        if (Math.abs(b[1] - a[1]) < 2) return 'M' + a[0] + ',' + a[1] + 'L' + b[0] + ',' + b[1];
+        var sx = b[1] > a[1] ? 1 : -1;
+        return 'M' + a[0] + ',' + a[1] + 'H' + (mx - r) +
+               'Q' + mx + ',' + a[1] + ' ' + mx + ',' + (a[1] + r * sx) +
+               'V' + (b[1] - r * sx) +
+               'Q' + mx + ',' + b[1] + ' ' + (mx + r) + ',' + b[1] +
+               'H' + b[0];
+      }
+      var my = m;
+      if (Math.abs(b[0] - a[0]) < 2) return 'M' + a[0] + ',' + a[1] + 'L' + b[0] + ',' + b[1];
+      var sy = b[0] > a[0] ? 1 : -1;
+      return 'M' + a[0] + ',' + a[1] + 'V' + (my - r) +
+             'Q' + a[0] + ',' + my + ' ' + (a[0] + r * sy) + ',' + my +
+             'H' + (b[0] - r * sy) +
+             'Q' + b[0] + ',' + my + ' ' + b[0] + ',' + (my + r) +
+             'V' + b[1];
+    }
+
+    function pfadWeich(a, b, quer, m) {
+      if (quer) return 'M' + a[0] + ',' + a[1] + 'C' + m + ',' + a[1] +
+                       ' ' + m + ',' + b[1] + ' ' + b[0] + ',' + b[1];
+      return 'M' + a[0] + ',' + a[1] + 'C' + a[0] + ',' + m +
+             ' ' + b[0] + ',' + m + ' ' + b[0] + ',' + b[1];
+    }
+
+    function zeichnen() {
+      var p = plan.getBoundingClientRect();
+      svg.setAttribute('viewBox', '0 0 ' + p.width + ' ' + p.height);
+      svg.setAttribute('width', p.width);
+      svg.setAttribute('height', p.height);
+      var sammel = sammelLinien();
+      var eckig = plan.dataset.linien === 'eckig';
+      /* Unter 900px steht der Plan als Baum. Dann zeigt der Einzug, was zu
+         wem gehoert, und gezeichnet wird nur, was eine Ebene tiefer fuehrt.
+         Die Wege zur Schiene entfallen: Welcher Abschnitt wohin laeuft,
+         sagt dort die Ueberschrift. */
+      var baum = false;  /* Das Baumlayout bleibt als Ventil im Code - fuer
+         eine Ebene, die zu voll wird. Fuer das schmale Fenster taugt es
+         nicht: Untereinander stehen dann alle Kaesten, aber der Plan
+         sagt nichts mehr. */
+      var teile = [];
+      LEITUNGEN.forEach(function (l) {
+        var von = kasten(l[0]), nach = kasten(l[1]), kante = l[2];
+        if (!von || !nach) return;
+        /* Ein zugeklappter Strang hat keine sichtbaren Kaesten - seine
+           Leitungen entfallen mit ihm. */
+        if (!von.offsetParent || !nach.offsetParent) return;
+        var vr = von.getBoundingClientRect(), nr = nach.getBoundingClientRect();
+        /* Eine Leitung, die als "baum" markiert ist, laeuft an der linken
+           Kante ihres Elternkastens herunter und biegt in das Kind ein -
+           die Form eines Organigramms. Damit passen vier Kanaele
+           untereinander in die Breite von zweien nebeneinander. */
+        if (kante === 'baum') {
+          var ab2 = [vr.left - p.left + 16, vr.bottom - p.top];
+          var bb2 = [nr.left - p.left, nr.top - p.top + nr.height / 2];
+          teile.push('<path class="' + klasse(l) + '" data-von="' + l[0] +
+                     '" data-nach="' + l[1] + '" d="' + pfadBaum(ab2, bb2) + '"/>');
+          return;
+        }
+        if (baum) {
+          if (l[0] === 'schiene' || l[1] === 'schiene') return;
+          var ev = +von.dataset.ebene, en = +nach.dataset.ebene;
+          if (!(en > ev || l[0] + '>' + l[1] === 'knoten>dashboard')) return;
+          var ab = [vr.left - p.left + 14, vr.bottom - p.top];
+          var bb = [nr.left - p.left, nr.top - p.top + nr.height / 2];
+          teile.push('<path class="' + klasse(l) + '" data-von="' + l[0] +
+                     '" data-nach="' + l[1] + '" d="' + pfadBaum(ab, bb) + '"/>');
+          return;
+        }
+        /* Die Leserichtung des Plans bestimmt die Kante. Nur wenn zwei
+           Kaesten quer dazu beieinanderstehen, wird seitlich bzw. von oben
+           angeschlossen - das betrifft die Eingabegeraete am Knoten. */
+        /* Die Schiene ist breit beziehungsweise hoch. Eine Leitung trifft
+           sie dort, wo ihr Kasten steht - nicht in ihrer Mitte. Dadurch
+           laufen alle Zuleitungen senkrecht und keine kreuzt eine andere. */
+        if (l[0] === 'schiene' || l[1] === 'schiene') {
+          var box = l[1] === 'schiene' ? vr : nr;
+          var sr = l[1] === 'schiene' ? nr : vr;
+          var p3 = plan.getBoundingClientRect();
+          var d2;
+          if (richtung === 'rechts') {
+            var yy = box.top - p3.top + box.height / 2;
+            var xs = sr.left - p3.left + sr.width / 2;
+            var xb = l[1] === 'schiene' ? box.right - p3.left : box.left - p3.left;
+            d2 = 'M' + xb + ',' + yy + 'L' + xs + ',' + yy;
+          } else {
+            var xx = box.left - p3.left + box.width / 2;
+            var ys = sr.top - p3.top + sr.height / 2;
+            var yb = l[1] === 'schiene' ? box.bottom - p3.top : box.top - p3.top;
+            d2 = 'M' + xx + ',' + yb + 'L' + xx + ',' + ys;
+          }
+          teile.push('<path class="' + klasse(l) + '" data-von="' + l[0] +
+                     '" data-nach="' + l[1] + '" d="' + d2 + '"/>');
+          return;
+        }
+        var ueberY = Math.min(vr.bottom, nr.bottom) - Math.max(vr.top, nr.top);
+        var ueberX = Math.min(vr.right, nr.right) - Math.max(vr.left, nr.left);
+        var geraet = von.classList.contains('oe-knoten--geraet');
+        var quer, a, b, m;
+        if (richtung === 'rechts') {
+          quer = !(geraet || (ueberX > 4 && ueberY < 4));
+          if (quer) { a = anker(von, 'rechts'); b = anker(nach, 'links');
+                      m = sammel[l[1]].mitteX; }
+          else { var runter = nr.top > vr.top;
+                 a = anker(von, runter ? 'unten' : 'oben');
+                 b = anker(nach, runter ? 'oben' : 'unten');
+                 m = (a[1] + b[1]) / 2; }
+        } else {
+          quer = geraet || kante === 'rechts' || kante === 'beide' ||
+                 (ueberY > 4 && ueberX < 4);
+          if (quer) { var rechts = nr.left > vr.left;
+                      a = anker(von, rechts ? 'rechts' : 'links');
+                      b = anker(nach, rechts ? 'links' : 'rechts');
+                      m = (a[0] + b[0]) / 2; }
+          else { a = anker(von, 'unten'); b = anker(nach, 'oben');
+                 m = sammel[l[1]].mitteY; }
+        }
+        var d = eckig ? pfadEckig(a, b, quer, m) : pfadWeich(a, b, quer, m);
+        teile.push('<path class="' + klasse(l) + '" data-von="' + l[0] +
+                   '" data-nach="' + l[1] + '" d="' + d + '"/>');
+      });
+      /* Die Marker-Definition bleibt stehen, nur die Pfade werden neu
+         geschrieben. */
+      /* Die Schiene laeuft nur so weit, wie Leitungen auf ihr ankommen -
+         links von der ersten und rechts von der letzten hat sie nichts zu
+         suchen. Gezeichnet wird sie deshalb hier und nicht als Kasten mit
+         voller Breite.
+
+         Sie entsteht in Abschnitten, einer zwischen je zwei benachbarten
+         Anschluessen. Aneinandergesetzt ergeben sie dieselbe Linie - aber
+         beim Hervorheben laesst sich genau das Stueck zeigen, das den Weg
+         verbindet, statt der ganzen Breite. */
+      var s = baum ? null : kasten('schiene');
+      if (s) {
+        var sr = s.getBoundingClientRect(), pp = plan.getBoundingClientRect();
+        var punkte = [];
+        LEITUNGEN.forEach(function (l) {
+          if (l[0] !== 'schiene' && l[1] !== 'schiene') return;
+          var k = kasten(l[0] === 'schiene' ? l[1] : l[0]);
+          if (!k) return;
+          var r = k.getBoundingClientRect();
+          punkte.push(r.left - pp.left + r.width / 2);
+        });
+        punkte.sort(function (a, b) { return a - b; });
+        var m2 = sr.top - pp.top + sr.height / 2;
+        for (var i = 0; i < punkte.length - 1; i++) {
+          teile.push('<path class="oe-draht oe-draht--schiene" data-x1="' +
+            punkte[i].toFixed(1) + '" data-x2="' + punkte[i + 1].toFixed(1) +
+            '" d="M' + punkte[i] + ',' + m2 + 'L' + punkte[i + 1] + ',' + m2 + '"/>');
+        }
+      }
+      var defs = svg.querySelector('defs');
+      svg.innerHTML = (defs ? defs.outerHTML : '') + teile.join('');
+    }
+
+    /* Zuklappen: Der Kopf bleibt, der Rest verschwindet, die Leitungen
+       werden neu gezeichnet. Offen ist der Standard - wer den Plan zum
+       ersten Mal sieht, soll alles sehen. */
+    document.querySelectorAll('.oe-falter').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var strang = b.closest('.oe-strang');
+        var zu = strang.classList.toggle('ist-zu');
+        b.setAttribute('aria-expanded', zu ? 'false' : 'true');
+        zeichnen();
+      });
+    });
+
+    zeichnen();
+    window.addEventListener('resize', zeichnen);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(zeichnen);
+
+    /* Zeigen auf einen Kasten hebt seine Leitungen hervor - das ist die
+       Antwort auf "wo fliesst was hin".
+
+       Die Schiene ist dabei ein Durchgang, kein Ziel. Eine Quelle endete
+       sonst dort, wo ihre Leitung die waagerechte Linie trifft, und der
+       Weg zur Intelligenzschicht blieb dunkel - obwohl er genau dort
+       weitergeht. Wer die Schiene beruehrt, bekommt deshalb auch ihre
+       Gegenseite und die Linie selbst mit. */
+    function wegeFuer(id) {
+      var direkt = LEITUNGEN.filter(function (l) {
+        return l[0] === id || l[1] === id; });
+      var anSchiene = direkt.filter(function (l) {
+        return l[0] === 'schiene' || l[1] === 'schiene'; });
+      if (!anSchiene.length) return { leitungen: direkt, schiene: false };
+      /* Laeuft die Leitung auf die Schiene zu, geht es auf ihrer anderen
+         Seite weiter - und umgekehrt. */
+      var seiten = anSchiene.map(function (l) {
+        return l[0] === 'schiene' ? 'ab' : 'an'; });
+      var weiter = LEITUNGEN.filter(function (l) {
+        if (l[0] !== 'schiene' && l[1] !== 'schiene') return false;
+        if (direkt.indexOf(l) > -1) return false;
+        return seiten.indexOf(l[0] === 'schiene' ? 'ab' : 'an') < 0;
+      });
+      return { leitungen: direkt.concat(weiter), schiene: true };
+    }
+
+    function leitungenHell(id) {
+      var w = wegeFuer(id);
+      var paare = w.leitungen.map(function (l) { return l[0] + '>' + l[1]; });
+      /* Von welchem Anschluss bis zu welchem laeuft der Weg ueber die
+         Schiene? Nur die Abschnitte dazwischen gehoeren dazu. */
+      var lo = Infinity, hi = -Infinity;
+      if (w.schiene) {
+        var pp = plan.getBoundingClientRect();
+        w.leitungen.forEach(function (l) {
+          if (l[0] !== 'schiene' && l[1] !== 'schiene') return;
+          var k = kasten(l[0] === 'schiene' ? l[1] : l[0]);
+          if (!k) return;
+          var r = k.getBoundingClientRect();
+          var x = r.left - pp.left + r.width / 2;
+          lo = Math.min(lo, x); hi = Math.max(hi, x);
+        });
+      }
+      svg.querySelectorAll('path').forEach(function (d) {
+        if (d.dataset.x1) {
+          d.classList.toggle('ist-hell', w.schiene &&
+            +d.dataset.x1 >= lo - 0.5 && +d.dataset.x2 <= hi + 0.5);
+          return;
+        }
+        if (!d.dataset.von) { d.classList.remove('ist-hell'); return; }
+        d.classList.toggle('ist-hell',
+          paare.indexOf(d.dataset.von + '>' + d.dataset.nach) > -1);
+      });
+    }
+
+    plan.addEventListener('mouseover', function (e) {
+      var k = e.target.closest('.oe-knoten');
+      if (!k) return;
+      svg.classList.add('ist-gefiltert');
+      leitungenHell(k.dataset.baustein);
+    });
+    plan.addEventListener('mouseout', function (e) {
+      if (e.relatedTarget && plan.contains(e.relatedTarget) &&
+          e.relatedTarget.closest('.oe-knoten')) return;
+      if (plan.classList.contains('ist-sicht')) return;
+      svg.classList.remove('ist-gefiltert');
+      svg.querySelectorAll('path').forEach(function (d) { d.classList.remove('ist-hell'); });
+    });
+
+    /* Sichten: dieselbe Karte, eine andere Frage. Die Knoten einer Sicht
+       bleiben stehen, alles andere blendet ab - samt der Leitungen, deren
+       beide Enden nicht zur Sicht gehoeren. */
+    var SICHTEN = {"status": {"name": "Status", "satz": "Zwei Fragen in einem Bild. Die Kästen sagen, ob es das schon gibt: grün steht, gelb ist in Arbeit, rot gibt es noch nicht. Die Leitungen sagen, ob der Weg dorthin eingerichtet ist – keiner ist es, deshalb sind sie alle rot. Deswegen hängen grüne Kästen an roten Leitungen: Der Dienst läuft, die Anbindung fehlt.", "ampel": true, "knoten": []}, "stufe1": {"name": "1 Logikblock", "satz": "Der Block, der als Erstes funktionieren muss: die Intelligenzschicht auf dem Always-on-MacBook, die drei Zugänge zu ihr und das Dashboard. Solange der nicht steht, steht nichts.", "knoten": ["knoten", "macbook", "ipad", "iphone", "dashboard"]}, "stufe2": {"name": "2 Anbinden", "satz": "Die Intelligenzschicht wird mit allem verbunden, was es schon gibt: Homepages, Analytics, Search Console, die LinkedIn-Konten mit Sales Navigator und Linked Helper, Instagram, Facebook, das Postfach, das Dateisystem und Chrome. Hier ist nichts neu zu bauen, nur anzuschließen.", "knoten": ["knoten", "homepages", "analytics", "search", "linkedin", "li_marken", "salesnav", "helper", "instagram", "facebook", "mail", "finder", "chrome"]}, "stufe3": {"name": "3 Aktionen", "satz": "Was sich mit den angebundenen Quellen bereits tun lässt: Beiträge über Buffer ausspielen, auf Eingänge und auf das Netzwerk reagieren, an den Webseiten arbeiten, Rechnungen ablegen, Aufträge aller Art übernehmen. Die Kontaktpflege fehlt noch – dafür braucht es Stufe 4.", "knoten": ["knoten", "postings", "buffer", "aus_linkedin", "aus_instagram", "aus_facebook", "korrespondenz", "aus_mail", "aus_whats", "aus_dm", "aus_komm", "cockpits", "webdev", "vscode", "github", "vercel"]}, "stufe4": {"name": "4 Kontakte", "satz": "Die Kontakte werden zu einer sauberen Datenbank: Welche Felder je Person geführt werden, woher der Erstbestand kommt und wie oft Kontakt sinnvoll ist. Damit bekommt die Korrespondenz ihren dritten Anlass – den, der von innen kommt.", "knoten": ["kontakte_db", "korrespondenz", "knoten"]}};
+    var AMPEL_KNOTEN = {"homepages": "gruen", "mail": "gruen", "finder": "gruen", "chrome": "gruen", "instagram": "gruen", "facebook": "gruen", "analytics": "gruen", "search": "gruen", "macbook": "gruen", "ipad": "gruen", "iphone": "gruen", "linkedin": "gruen", "li_marken": "gruen", "salesnav": "gruen", "helper": "gruen", "kontakte_db": "gelb", "knoten": "rot", "dashboard": "rot", "postings": "rot", "buffer": "rot", "korrespondenz": "rot", "cockpits": "rot", "webdev": "rot", "vscode": "gruen", "github": "gruen", "vercel": "gruen", "aus_linkedin": "rot", "aus_instagram": "rot", "aus_facebook": "rot", "aus_mail": "rot", "aus_whats": "rot", "aus_dm": "rot", "aus_komm": "rot"};
+    var SATZ_ALLES = "Der ganze Plan: Was hereinkommt, wo gearbeitet wird und was herausgeht. Status zeigt, was davon heute schon steht. Die vier Stufen zeigen, in welcher Reihenfolge der Rest entsteht.";
+    var pillen = Array.prototype.slice.call(document.querySelectorAll('.oe-sicht'));
+    var satz = document.getElementById('oeSichtSatz');
+
+    function sichtSetzen(name) {
+      pillen.forEach(function (b) {
+        var an = b.dataset.sicht === name;
+        b.classList.toggle('is-aktiv', an);
+        b.setAttribute('aria-pressed', an ? 'true' : 'false');
+      });
+      var s = SICHTEN[name];
+      plan.classList.toggle('ist-sicht', !!s);
+      svg.classList.toggle('ist-gefiltert', !!s);
+      if (satz) satz.textContent = s ? s.satz : SATZ_ALLES;
+      /* Die Sicht "Status" faerbt Leitungen und Kaesten. Ein Rahmen in
+         Vollfarbe und ein heller Grund sagen auf einen Blick, wie es um
+         das einzelne Element steht. */
+      var ampel = !!(s && s.ampel);
+      plan.classList.toggle('ist-ampel', ampel);
+      document.body.classList.toggle('ist-ampel-seite', ampel);
+      svg.classList.toggle('ist-ampel', ampel);
+      if (ampel) svg.classList.remove('ist-gefiltert');
+      var menge = (s && !ampel) ? s.knoten : null;
+      knoten.forEach(function (b) {
+        b.classList.toggle('ist-blass', !!menge && menge.indexOf(b.dataset.baustein) < 0);
+        b.classList.remove('oe-ampel--gruen', 'oe-ampel--gelb', 'oe-ampel--rot');
+        if (ampel) {
+          var a = AMPEL_KNOTEN[b.dataset.baustein];
+          if (a) b.classList.add('oe-ampel--' + a);
+        }
+      });
+      /* Die Ampelfarbe setzt das Skript direkt auf die Leitung. Ueber das
+         Stylesheet war sie nicht zuverlaessig durchzusetzen, und eine
+         Farbe, die man sehen will, darf nicht an einer Spezifitaetsfrage
+         haengen. */
+      var FARBE = { gruen: '#34b87a', gelb: '#e8a800', rot: '#f0495a' };
+      svg.querySelectorAll('path').forEach(function (d) {
+        var dran = !!menge && menge.indexOf(d.dataset.von) > -1 &&
+                   (menge.indexOf(d.dataset.nach) > -1 || d.dataset.nach === 'schiene');
+        d.classList.toggle('ist-hell', dran);
+        if (ampel) {
+          var art = (d.getAttribute('class') || '').match(/oe-ampel--(\w+)/);
+          if (art) {
+            d.style.stroke = FARBE[art[1]];
+            d.style.strokeWidth = '2.6';
+            d.style.strokeDasharray = 'none';
+          }
+        } else {
+          d.style.stroke = '';
+          d.style.strokeWidth = '';
+          d.style.strokeDasharray = '';
+        }
+      });
+    }
+
+    pillen.forEach(function (b) {
+      b.addEventListener('click', function () {
+        sichtSetzen(b.classList.contains('is-aktiv') ? 'alles' : b.dataset.sicht);
+      });
+    });
+
+    /* Ein Klick neben die Kaesten loest die Markierung wieder - man soll
+       nicht denselben Kasten noch einmal treffen muessen. */
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('.oe-knoten') || e.target.closest('.oe-feld') ||
+          e.target.closest('.oe-sicht') || e.target.closest('.pv-wahl')) return;
+      var offener = plan.querySelector('.oe-knoten.is-offen');
+      if (offener) offener.click();
+    });
+  })();
+  </script>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-row">
+    <span>empiria GmbH 2026</span>
+    <span class="footer-links"><a href="/impressum.html">Impressum</a> <span>|</span> <a href="/datenschutz.html">Datenschutz</a> <span>|</span> <button type="button" data-cookie-settings>Cookie-Einstellungen</button></span>
+  </div>
+</footer>
+
+<script src="/script.js"></script>
+</body>
+</html>

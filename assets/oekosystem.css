@@ -1,0 +1,704 @@
+/* ==========================================================================
+   Oekosystem - der Schaltplan der Steuerungszentrale
+
+   Zwei Ebenen, strikt getrennt:
+
+   Ebene 1  Der Plan. Baender untereinander, dazwischen ein Pfeil. Jeder
+            Knoten ist ein kleiner Kasten mit Titel, Zusatz und Stand. Das
+            Ganze passt ohne Scrollen auf einen Bildschirm - deshalb sind
+            die Knoten klein und die Abstaende knapp.
+
+   Ebene 2  Ein Feld unter dem Plan, das sich beim Klick auf einen Knoten
+            fuellt. Bewusst kein Fenster ueber dem Plan: der Zusammenhang
+            soll sichtbar bleiben, waehrend man einen Baustein liest. Der
+            angeklickte Knoten steht derweil gelb.
+
+   Farben: Weiss traegt, Schwarz fuehrt, Gelb markiert. Keine Sekundaer-
+   farben - der Plan soll nicht bunt werden, sondern lesbar.
+   ========================================================================== */
+
+.oe-titel { font-family: var(--font-serif); font-weight: 500; line-height: 1.34;
+            letter-spacing: -.015em; font-size: clamp(1.7rem, 2.8vw, 2.3rem);
+            margin: .3rem 0 0; }
+
+/* ---- Ebene 1: der Plan ------------------------------------------------- */
+.oe-plan { display: grid; justify-items: stretch;
+           margin-top: clamp(20px, 2.4vw, 30px); }
+
+.oe-band { border: 1px solid #e4e1dd; border-radius: var(--radius-card);
+           background: #fff; padding: 10px 12px 12px; }
+.oe-band-tag { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+               margin: 0 0 9px 2px; }
+.oe-band-tag b { font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
+                 font-weight: 700; color: var(--ink); }
+.oe-band-tag span { font-size: .8rem; color: var(--grey-50); }
+
+/* Die Knotenreihe bricht um, statt schmaler zu werden - ein Kasten, in dem
+   der Text umbricht, ist in einem Schaltplan nicht mehr zu ueberfliegen. */
+/* Mindestbreite statt freier Teilung: neun Quellen auf die halbe
+   Fensterbreite gequetscht ergaben Kaesten, in denen "Homepages" abriss.
+   Lieber zwei Reihen mit lesbaren Kaesten als eine mit unlesbaren. */
+.oe-reihe { display: grid; gap: 6px;
+             grid-template-columns: repeat(auto-fill, minmax(138px, 1fr)); }
+
+.oe-knoten { appearance: none; -webkit-appearance: none; cursor: pointer;
+             display: grid; gap: 1px; align-content: start; text-align: left;
+             min-width: 0; padding: 8px 10px;
+             font-family: inherit; color: inherit;
+             background: #faf9f7; border: 1px solid #e4e1dd; border-radius: 12px;
+             transition: border-color .15s ease, background-color .15s ease,
+                         transform .15s ease; }
+.oe-knoten:hover { border-color: var(--ink); background: #fff; transform: translateY(-1px); }
+.oe-knoten.is-offen { background: var(--hl); border-color: var(--ink); }
+/* Der Browser trennte "Direkt-nachrich-ten" und "Kommen-tare". Getrennt
+   wird nur noch dort, wo im Titel ein weiches Trennzeichen steht. */
+.oe-knoten-titel, .oe-knoten-unter { overflow-wrap: break-word;
+                                     hyphens: manual; -webkit-hyphens: manual; }
+.oe-knoten-titel { font-size: .82rem; font-weight: 600; line-height: 1.25; }
+.oe-knoten-unter { font-size: .72rem; line-height: 1.3; color: var(--grey-50); }
+.oe-knoten.is-offen .oe-knoten-unter { color: rgba(26,24,23,.66); }
+
+/* Der grosse Knoten traegt die Mitte: Ausfuehrung und Dashboard. */
+.oe-knoten--gross { width: 100%; max-width: 360px; gap: 2px;
+                    padding: 16px 18px; background: var(--ink); border-color: var(--ink);
+                    color: #fff; }
+/* Die Marke steht in den beiden grossen Kaesten weiter vom Satz ab - sie
+   ist dort eine eigene Aussage und kein Anhaengsel. Der Satz haelt zwei
+   Zeilen frei, damit beide Kaesten gleich hoch bleiben: Der eine braucht
+   zwei Zeilen, der andere eine. */
+.oe-knoten--gross .oe-marke { margin-top: 12px; }
+.oe-knoten--gross .oe-knoten-unter { min-height: 2.8em; }
+.oe-knoten--gross:hover { background: #000; }
+.oe-knoten--gross .oe-knoten-titel { font-family: var(--font-serif); font-weight: 700;
+                                     font-size: 1.08rem; }
+.oe-knoten--gross .oe-knoten-unter { color: rgba(255,255,255,.6); }
+.oe-knoten--gross.is-offen { background: var(--hl); border-color: var(--ink);
+                             color: var(--ink); }
+.oe-knoten--gross.is-offen .oe-knoten-unter { color: rgba(26,24,23,.66); }
+
+/* ---- Die Stand-Marke an jedem Knoten ----------------------------------- */
+/* Die Marke bricht lieber um, als abzureissen: in den schmalen Kaesten
+   stand sonst "SCHWACH..." statt "schwaches Glied". */
+.oe-marke { justify-self: start; margin-top: 4px; padding: 2px 7px;
+            max-width: 100%; border-radius: 10px;
+            font-size: .62rem; letter-spacing: .07em; text-transform: uppercase;
+            font-weight: 700; line-height: 1.35;
+            background: #eceae6; color: var(--grey-70); }
+.oe-marke--entschieden { background: var(--ink); color: #fff; }
+.oe-marke--beauftragt  { background: var(--hl); color: var(--ink); }
+/* Die Rolle der beiden grossen Kaesten - Ausfuehrung und Ansichtsebene -
+   steht in Gelb. Dadurch tragen beide dieselbe Form und dieselbe Hoehe. */
+.oe-marke--ausfuehrung, .oe-marke--ansicht { background: var(--hl); color: var(--ink); }
+/* Zwei Marken sagen etwas, das man auf einen Blick sehen soll: was als
+   Naechstes drankommt und was nicht traegt. Beide sind einwortig und
+   tragen ihre Bedeutung in der Farbe - Violett zieht nach vorn, Magenta
+   warnt. Alle anderen Marken bleiben grau. */
+.oe-marke--zuerst      { background: rgba(134,19,161,.1); color: #8613A1; }
+.oe-marke--fragil      { background: rgba(197,31,93,.1); color: #C51F5D; }
+.oe-marke--bestand     { background: none; color: var(--grey-50);
+                         box-shadow: inset 0 0 0 1px #e4e1dd; }
+.oe-knoten--gross.is-offen .oe-marke--ausfuehrung,
+.oe-knoten--gross.is-offen .oe-marke--ansicht { background: var(--ink); color: #fff; }
+
+/* ---- Die Verbindung zwischen den Baendern ------------------------------
+   Eine Linie mit Spitze, mittig. Gezeichnet in CSS statt in SVG: so bleibt
+   sie bei jeder Breite mittig, ohne dass etwas nachgerechnet werden muss. */
+.oe-pfeil { position: relative; display: block; height: 18px; }
+.oe-pfeil::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 7px;
+                    width: 2px; transform: translateX(-50%); background: #d8d3cd; }
+.oe-pfeil::after { content: ""; position: absolute; left: 50%; bottom: 0;
+                   width: 9px; height: 9px; transform: translateX(-50%) rotate(45deg);
+                   border-right: 2px solid #d8d3cd; border-bottom: 2px solid #d8d3cd; }
+
+/* ---- Das Band der Ausfuehrung: Geraete links, Knoten in der Mitte ------ */
+.oe-kern { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1.1fr);
+           gap: clamp(12px, 2vw, 26px); align-items: center; }
+.oe-spalte-tag { margin: 0 0 6px 2px; font-size: .66rem; letter-spacing: .12em;
+                 text-transform: uppercase; font-weight: 700; color: var(--grey-50); }
+.oe-eingabe-reihe { display: grid; gap: 7px;
+                    grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.oe-kern-mitte { display: flex; justify-content: flex-start; }
+
+/* Der Querpfeil von den Geraeten zum Knoten. */
+.oe-pfeil-quer { position: relative; display: block; width: 46px; height: 2px;
+                 background: #d8d3cd; }
+.oe-pfeil-quer::after { content: ""; position: absolute; right: 0; top: 50%;
+                        width: 9px; height: 9px;
+                        transform: translateY(-50%) rotate(-45deg);
+                        border-right: 2px solid #d8d3cd; border-bottom: 2px solid #d8d3cd; }
+
+.oe-mitte { display: flex; justify-content: center; }
+.oe-band--mitte .oe-band-tag { justify-content: center; }
+
+/* Die Marken tragen den Plan - sie stehen auf dunklem Grund, damit der
+   Blick am Ende dort ankommt und nicht einfach ausklingt. */
+.oe-band--marken { background: var(--ink); border-color: var(--ink); }
+.oe-band--marken .oe-band-tag b { color: var(--hl); }
+.oe-band--marken .oe-band-tag span { color: rgba(255,255,255,.55); }
+.oe-band--marken .oe-knoten { background: rgba(255,255,255,.06);
+                              border-color: rgba(255,255,255,.18); color: #fff; }
+.oe-band--marken .oe-knoten:hover { background: rgba(255,255,255,.12); border-color: #fff; }
+.oe-band--marken .oe-knoten-unter { color: rgba(255,255,255,.55); }
+.oe-band--marken .oe-marke--bestand { color: rgba(255,255,255,.6);
+                                      box-shadow: inset 0 0 0 1px rgba(255,255,255,.22); }
+.oe-band--marken .oe-knoten.is-offen { background: var(--hl); border-color: var(--hl);
+                                       color: var(--ink); }
+.oe-band--marken .oe-knoten.is-offen .oe-knoten-unter { color: rgba(26,24,23,.66); }
+.oe-band--marken .oe-knoten.is-offen .oe-marke--bestand { color: rgba(26,24,23,.7);
+                                      box-shadow: inset 0 0 0 1px rgba(26,24,23,.3); }
+
+/* ---- Ebene 2: das Feld unter dem Plan ---------------------------------- */
+.oe-feld { position: relative; margin-top: clamp(18px, 2.2vw, 26px);
+           padding: clamp(22px, 2.6vw, 32px);
+           border: 2px solid var(--ink); border-radius: var(--radius-card);
+           background: #fff; }
+.oe-feld-zu { position: absolute; top: 14px; right: 16px; width: 34px; height: 34px;
+              display: grid; place-items: center; cursor: pointer;
+              border: 0; border-radius: 50%; background: #f4f2ef;
+              font-family: inherit; font-size: 1.3rem; line-height: 1; color: var(--grey-70);
+              transition: background-color .15s ease, color .15s ease; }
+.oe-feld-zu:hover { background: var(--ink); color: #fff; }
+.oe-feld-band { margin: 0; font-size: .7rem; letter-spacing: .14em;
+                text-transform: uppercase; font-weight: 700; color: var(--grey-50); }
+.oe-feld-titel { display: flex; align-items: center; flex-wrap: wrap; gap: 12px;
+                 margin: .4rem 0 0; font-weight: 700; line-height: 1.2;
+                 font-size: clamp(1.4rem, 2.2vw, 1.9rem); }
+.oe-feld-titel .oe-marke { margin-top: 0; }
+.oe-feld-satz { margin: .9rem 0 0; max-width: 72ch; font-size: 1rem; line-height: 1.75;
+                color: var(--grey-70); }
+.oe-feld-spalten { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                   gap: clamp(18px, 2.4vw, 34px); margin-top: clamp(20px, 2.4vw, 28px); }
+.oe-feld-spalte { min-width: 0; }
+.oe-feld-tag { margin: 0 0 8px; font-size: .68rem; letter-spacing: .12em;
+               text-transform: uppercase; font-weight: 700; color: var(--grey-50); }
+.oe-feld-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+.oe-feld-liste li { position: relative; padding-left: 20px; font-size: .94rem;
+                    line-height: 1.6; color: var(--grey-70); }
+.oe-feld-liste li::before { content: ""; position: absolute; left: 0; top: .66em;
+                            width: 11px; height: 2px; border-radius: 2px;
+                            background: var(--ink); }
+
+
+/* ---- Schmalere Fenster -------------------------------------------------
+   Unter 900px wird aus dem Schaltbild eine Abfolge: Geraete ueber dem
+   Knoten statt daneben, der Querpfeil dreht sich. */
+@media (max-width: 900px) {
+  .oe-kern { grid-template-columns: 1fr; }
+  .oe-pfeil-quer { width: 2px; height: 26px; justify-self: center;
+                   background: #d8d3cd; }
+  .oe-pfeil-quer::after { right: auto; left: 50%; top: auto; bottom: 0;
+                          transform: translateX(-50%) rotate(45deg); }
+  .oe-kern-mitte, .oe-mitte { justify-content: stretch; }
+  .oe-knoten--gross { flex: 1 1 auto; }
+}
+
+/* Der Abschnitt beginnt knapp unter der Kopfzeile: der Plan soll ohne
+   Scrollen dastehen, und jede Zeile Vorspann geht davon ab. */
+.oe-plan ~ * { }
+body .section--eng:has(.oe-plan) { padding-top: clamp(20px, 2.4vw, 34px); }
+
+/* ---- Plan und Detailfeld nebeneinander ---------------------------------
+   Das Feld stand zuerst unter dem Plan. Nach einem Klick musste man dann
+   scrollen, um die Antwort zu lesen - und verlor dabei genau den
+   Zusammenhang, den die Seite zeigen soll. Jetzt steht es rechts daneben
+   und bleibt beim Scrollen stehen. Solange nichts gewaehlt ist, steht dort
+   der Hinweis, dass die Kaesten anklickbar sind. */
+/* Zwischen dem Menue und der ersten Abschnittsueberschrift steht Luft -
+   der Plan beginnt sonst, bevor man den Kasten zu Ende gelesen hat. */
+.oe-raum { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+           gap: clamp(14px, 1.8vw, 24px); align-items: start;
+           margin-top: clamp(28px, 3.6vw, 48px); }
+.oe-raum .oe-plan { margin-top: 0; }
+.oe-raum .oe-feld { position: sticky; top: 100px; margin-top: 0; }
+.oe-feld-leer p:last-child { margin: .5rem 0 0; font-size: .92rem; line-height: 1.7;
+                             color: var(--grey-50); }
+.oe-feld { border-color: #e4e1dd; }
+.oe-feld:has(.oe-feld-inhalt:not([hidden])) { border-color: var(--ink); }
+.oe-feld-titel { font-size: clamp(1.2rem, 1.8vw, 1.5rem); }
+.oe-feld-spalten { grid-template-columns: 1fr; gap: clamp(14px, 1.8vw, 20px); }
+@media (max-width: 1100px) {
+  .oe-raum { grid-template-columns: 1fr; }
+  .oe-raum .oe-feld { position: static; }
+}
+
+/* Die Quellen tragen kurze Namen und kommen mit schmaleren Kaesten aus -
+   so stehen die neun in zwei Reihen statt in drei, und der Plan bleibt
+   auf einem Laptop ohne Scrollen sichtbar. */
+#band-quellen .oe-reihe { grid-template-columns: repeat(auto-fill, minmax(126px, 1fr)); }
+.oe-raum { grid-template-columns: minmax(0, 1fr) minmax(290px, 330px); }
+
+
+/* ==========================================================================
+   Varianten B und C: echte Leitungen
+
+   Die Baender-Variante zeigt die Ebenen, aber nur einen Pfeil dazwischen.
+   Wer wissen will, welche Quelle wo ankommt, sieht es dort nicht. Hier
+   liegt deshalb ein SVG ueber dem Plan, in das fuer jedes Paar aus der
+   Leitungsliste eine Kurve gezeichnet wird - gerechnet aus den echten
+   Positionen der Kaesten, nicht von Hand gesetzt.
+
+   Der Strich sagt den Stand: durchgezogen und dunkel heisst entschieden,
+   gestrichelt heisst geplant. So sieht man im Bild, welcher Weg schon
+   steht und welcher noch Absicht ist.
+   ========================================================================== */
+.oe-plan--verdrahtung, .oe-plan--strang { position: relative; }
+.oe-draehte { position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+              overflow: visible; pointer-events: none; z-index: 0; }
+.oe-draht { fill: none; stroke: #cfc9c2; stroke-width: 1.5;
+            transition: stroke .15s ease, stroke-width .15s ease, opacity .15s ease; }
+/* Zwei Zustaende, mehr braucht es nicht: Der Weg steht, oder er ist
+   geplant. Der Stand des Kastens am Ende sagt darueber nichts aus - dass
+   das Dashboard beauftragt ist, macht den Weg zur Terminplanung nicht
+   beauftragt. */
+.oe-draht--eingerichtet { stroke: #8a8783; stroke-width: 2; }
+.oe-draht--geplant      { stroke: #b8b2ab; stroke-width: 1.8; stroke-dasharray: 4 5; }
+
+/* Die Ampel der Sicht "Status" - sichtbar nur in dieser Sicht. */
+.oe-draehte.ist-ampel .oe-draht.oe-ampel--gruen { stroke: #34b87a; stroke-width: 2.6;
+                                                  stroke-dasharray: none; }
+.oe-draehte.ist-ampel .oe-draht.oe-ampel--gelb  { stroke: #e8a800; stroke-width: 2.6;
+                                                  stroke-dasharray: none; }
+.oe-draehte.ist-ampel .oe-draht.oe-ampel--rot   { stroke: #f0495a; stroke-width: 2.6;
+                                                  stroke-dasharray: none; }
+
+/* In der Sicht "Status" traegt jeder Kasten seine Farbe selbst: Rahmen in
+   Vollton, Grund hell. So sieht man den Stand eines Elements, ohne seine
+   Leitungen zu verfolgen. Der Kasten sagt, wie es um den Dienst steht -
+   die Leitung, wie es um den Weg dorthin steht. */
+.oe-plan.ist-ampel .oe-knoten.oe-ampel--gruen { border-color: #34b87a;
+                                        background: rgba(52,184,122,.12); }
+.oe-plan.ist-ampel .oe-knoten.oe-ampel--gelb  { border-color: #e8a800;
+                                        background: rgba(232,168,0,.12); }
+.oe-plan.ist-ampel .oe-knoten.oe-ampel--rot   { border-color: #f0495a;
+                                        background: rgba(240,73,90,.12); }
+.oe-plan.ist-ampel .oe-knoten[class*="oe-ampel--"] { border-width: 2px; }
+/* Auch die beiden grossen Kaesten tragen ihre Farbe in der Flaeche. Der
+   Text wechselt dafuer auf Dunkel - in dieser Sicht zaehlt der Stand, nicht
+   die Mitte des Plans. */
+.oe-plan.ist-ampel .oe-knoten--gross[class*="oe-ampel--"] { color: var(--ink); }
+.oe-plan.ist-ampel .oe-knoten--gross[class*="oe-ampel--"] .oe-knoten-unter {
+                     color: var(--grey-70); }
+.oe-draehte.ist-gefiltert .oe-draht { opacity: .12; }
+.oe-draehte.ist-gefiltert .oe-draht.ist-hell { opacity: 1; stroke: var(--ink);
+                                               stroke-width: 2.6; stroke-dasharray: none; }
+
+/* Die Kaesten liegen ueber den Leitungen, damit keine Linie durch Schrift
+   laeuft. */
+.oe-plan--verdrahtung .oe-gruppe, .oe-plan--strang .oe-gruppe { position: relative; z-index: 1; }
+
+/* Die Beschriftung einer Gruppe ist keine Spalte des Rasters - ohne diese
+   Zeile nahm sie einen Platz weg und die Reihe lief hinten heraus. */
+.oe-gruppe { display: grid; gap: 7px; align-content: start; }
+.oe-gruppe .oe-spalte-tag { grid-column: 1 / -1; margin: 0 0 2px 2px; }
+
+/* ---- B "Verdrahtung": eine Zeile je Ebene -------------------------------
+   Die Quellen liegen in einem Raster aus neun Spalten und drei Zeilen.
+   Wer auf einer Quelle aufsitzt, steht in derselben Spalte eine Zeile
+   tiefer - dadurch laeuft seine Leitung senkrecht nach unten und kreuzt
+   keine andere. Das war der Fehler der ersten Fassung: Die Ebenen waren
+   benannt, aber alle Kaesten standen in einer Reihe. Eine Querverbindung
+   zwischen Nachbarn liest niemand als "greift darauf zu". */
+.oe-plan--verdrahtung { display: grid; gap: clamp(52px, 7vh, 88px); }
+/* Drei Zeilen, nicht vier: Buffer ist zu den Aktionen gezogen, die vierte
+   Zeile blieb leer stehen und hat die Schiene um ihre Hoehe plus einen
+   Zeilenabstand nach unten geschoben. */
+.oe-quellen { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr));
+              grid-template-rows: auto auto auto;
+              gap: clamp(26px, 3.4vh, 44px) 8px; position: relative; z-index: 1; }
+/* Die Beschriftung steht vor dem Raster, nicht darin - als Rasterkind
+   belegte sie eine vierte Zeile und riss den Abstand zum Knoten auf. */
+.oe-abschnitt { position: relative; z-index: 1; }
+.oe-abschnitt .oe-spalte-tag { margin: 0 0 9px 2px; }
+/* Gleichartige Kaesten sind gleich hoch. Mit align-self:start war
+   jeder so hoch wie sein Text, und die Reihe lief auseinander. */
+.oe-quellen .oe-knoten { align-self: stretch; }
+.oe-aktionen .oe-knoten, .oe-geraete .oe-knoten { align-self: stretch; }
+/* Die Kanaele der Korrespondenz haengen an einer Linie, wie in einem
+   Organigramm - deshalb stehen sie eingerueckt. */
+.oe-strang-kinder > [data-baustein^="aus_"] { margin-left: 26px; }
+.oe-plan--strang .oe-gruppe { align-self: start; }
+.oe-plan--strang .oe-gruppe .oe-knoten { min-height: 76px; }
+
+/* Die Mittelreihe: Geraete ganz links, der Knoten in der Mitte des Plans. */
+.oe-plan--verdrahtung .oe-mittelreihe { display: grid;
+                                        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+                                        gap: clamp(24px, 4vw, 60px); align-items: center;
+                                        position: relative; z-index: 1; }
+.oe-geraete { display: grid; gap: 7px; align-content: center; justify-self: start;
+              max-width: 230px; position: relative; }
+/* Der Tag steht im Fluss - in B3 wuerde er sonst auf dem Kastentitel
+   liegen. Stattdessen traegt die Gruppe unten ein Gegengewicht von genau
+   einer Textzeile desselben Stils. Damit liegt die Mitte der drei Kaesten
+   auf der Mitte der Gruppe, und das iPad fluchtet mit dem Knoten. */
+.oe-plan--verdrahtung .oe-geraete > .oe-spalte-tag,
+.oe-plan--gefasst .oe-geraete > .oe-spalte-tag { margin-bottom: 0; }
+.oe-plan--verdrahtung .oe-geraete::after,
+.oe-plan--gefasst .oe-geraete::after { content: "\00a0"; display: block;
+                     font-size: .66rem; letter-spacing: .12em; }
+.oe-knotenplatz { display: flex; justify-content: center; }
+.oe-leitstandplatz { display: flex; justify-content: flex-start; }
+
+.oe-leitstandplatz .oe-knoten--gross { width: 300px; max-width: 300px; }
+.oe-knotenplatz .oe-knoten--gross { width: 330px; max-width: 330px; }
+.oe-steuerung { display: flex; justify-content: center; position: relative; z-index: 1; }
+.oe-steuerung .oe-knoten--gross { width: 330px; max-width: 330px; }
+/* Drei Zeilen: die fuenf Aktionen, darunter Buffer, darunter die drei
+   Kanaele. Damit laeuft der Weg eines Beitrags von oben nach unten durch
+   und endet dort, wo er veroeffentlicht wird. */
+/* Zwanzig Spalten: Nur in einem feinen Raster passen zwei Kaesten
+   nebeneinander genau unter einen darueber. Der Abstand bleibt bei acht
+   Pixeln, damit die Kanaele so aussehen wie die Quellen oben. */
+.oe-aktionen { display: grid; grid-template-columns: repeat(20, minmax(0, 1fr));
+               gap: 0 8px; align-items: start;
+               position: relative; z-index: 1; }
+
+/* ---- Die vier Straenge --------------------------------------------------
+   Jeder Strang traegt seinen Kopf, darunter die Leiste zum Zuklappen und
+   dann, was zu ihm gehoert. Die Leiste sitzt am Austritt der Leitung, nicht
+   im Kasten: Der Kasten ist schon ein Knopf, und im zugeklappten Zustand
+   sagt die Leiste, was darunter liegt. */
+.oe-strang { display: grid; align-content: start; }
+.oe-strang-kinder { display: grid; gap: clamp(22px, 2.8vh, 36px); }
+.oe-strang.ist-zu .oe-strang-kinder { display: none; }
+
+/* Der Pfeil liegt rechts im Kopfkasten, wie bei einem Akkordeon. Im
+   Markup steht er daneben und wird darueber gelegt - ein Knopf im Knopf
+   waere ungueltig, und der Kasten ist schon einer. */
+.oe-strang { position: relative; }
+.oe-falter { appearance: none; -webkit-appearance: none;
+             position: absolute; right: 6px; top: 6px; z-index: 2;
+             display: grid; place-items: center;
+             width: 34px; height: 34px; margin: 0; padding: 0;
+             border: 0; border-radius: 50%; background: none;
+             color: var(--grey-50); cursor: pointer;
+             transition: color .15s ease, background-color .15s ease; }
+.oe-falter:hover { color: var(--ink); background: rgba(26,24,23,.06); }
+.oe-falter-pfeil { width: 14px; height: 14px; position: relative; }
+.oe-falter-pfeil::before { content: ""; position: absolute; left: 3px; top: 3px;
+                           width: 7px; height: 7px;
+                           border-right: 1.6px solid currentColor;
+                           border-bottom: 1.6px solid currentColor;
+                           transform: rotate(45deg);
+                           transition: transform .15s ease; }
+.oe-strang.ist-zu .oe-falter-pfeil::before { transform: rotate(-45deg);
+                                             top: 5px; }
+.oe-strang.ist-zu .oe-falter { color: var(--ink); }
+/* Der Titel endet vor dem Pfeil, damit er nicht darunter laeuft. */
+.oe-strang > .oe-knoten { padding-right: 40px; }
+.oe-strang .oe-strang-kinder { margin-top: clamp(16px, 2vh, 24px); }
+
+/* Die Eingabegeraete haben eine andere Qualitaet als eine Datenquelle: Sie
+   liefern nichts, sie bedienen. Deshalb tragen sie keine Kastenform,
+   sondern eine Pille mit gestricheltem Rand. */
+/* Kasten mit runden Ecken, nicht Pille - rund wirkt sonst zu weich. Der
+   gestrichelte Rand bleibt: Geraete liefern nichts, sie bedienen. */
+.oe-knoten--geraet { border-radius: 12px; border-style: solid;
+                     border-color: #c8c4bf; background: #fff; }
+.oe-knoten--geraet .oe-knoten-unter { display: none; }
+.oe-knoten--geraet .oe-marke { background: none; color: var(--grey-50);
+                               box-shadow: inset 0 0 0 1px #ddd8d2; margin-top: 2px; }
+.oe-knoten--geraet:hover { border-color: var(--ink); }
+
+/* ---- Die Legende der Strichstaerken ------------------------------------ */
+.oe-legende-posten { display: inline-flex; align-items: center; gap: 8px;
+                     font-size: .8rem; color: var(--grey-70); }
+.oe-strich { display: block; width: 26px; height: 0; border-top: 2px solid #cfc9c2; }
+.oe-strich--eingerichtet { border-color: #8a8783; }
+.oe-strich--geplant      { border-top-style: dashed; border-color: #b8b2ab; }
+.oe-strich--gruen        { border-color: #34b87a; }
+.oe-strich--gelb         { border-color: #e8a800; }
+.oe-strich--rot          { border-color: #f0495a; }
+
+/* Die Ampel steht nur in der Legende, wenn die Sicht "Status" laeuft. */
+.oe-legende-ampel { display: none; align-items: center; gap: 8px 20px; }
+.ist-ampel-seite .oe-legende-ampel { display: inline-flex; }
+.ist-ampel-seite .oe-pult-feld > .oe-legende-posten { display: none; }
+
+/* ---- Das Pult: alles, was den Plan erklaert oder steuert ---------------
+   Darstellung, Sicht, Leitungen und Marken standen vorher an drei Stellen,
+   die Legende sogar unter dem Plan. Sie gehoeren zusammen und vor den
+   Plan - wer ihn liest, hat die Zeichensprache dann schon gesehen. */
+/* Der Kopf traegt dieselbe Form wie die Projektmodule der SV Akademie:
+   schwarzer Streifen, ein gelbes Zeichen links, die Zeile in Versalien.
+
+   Der Kasten steht unter der Headline ueber die ganze Breite. Links die
+   Schalter, rechts der Satz zur gewaehlten Sicht - er stand vorher unter
+   dem Kasten, dadurch wuchs die Seite bei jedem Umschalten und der Plan
+   sprang. Im Kasten wechselt nur der Text. */
+.oe-pult { margin-top: clamp(18px, 2.2vw, 26px);
+           border: 1px solid #e4e1dd; border-radius: var(--radius-card, 16px);
+           background: #faf9f7; overflow: hidden; }
+.oe-pult-koerper { display: grid; grid-template-columns: minmax(0, 480px) minmax(0, 1fr); }
+.oe-pult-zeilen { display: flex; flex-direction: column;
+                  border-right: 1px solid #e4e1dd; }
+.oe-pult-satz { margin: 0; padding: 13px 20px; align-self: start;
+                font-size: .88rem; line-height: 1.6; color: var(--grey-70); }
+.oe-pult-kopf { display: flex; align-items: center; gap: 12px; margin: 0;
+                min-height: 48px; padding: 11px 16px; background: var(--ink);
+                font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
+                font-weight: 700; color: rgba(255,255,255,.82); }
+.oe-pult-zeichen { width: 22px; height: 22px; flex: 0 0 auto; border-radius: 50%;
+                   background: var(--hl); position: relative; }
+.oe-pult-zeichen::before, .oe-pult-zeichen::after { content: ""; position: absolute;
+                   left: 5px; right: 5px; height: 2px; background: var(--ink);
+                   border-radius: 1px; }
+.oe-pult-zeichen::before { top: 7px; }
+.oe-pult-zeichen::after  { top: 13px; }
+/* Der Koerper fuellt, was die Kopfzeile uebrig laesst - die Zeilen teilen
+   sich den Rest, damit der Kasten bis zur Unterkante des Leads traegt. */
+.oe-pult-zeile { flex: 1 1 auto; display: grid;
+                 grid-template-columns: 70px minmax(0, 1fr);
+                 align-items: center; gap: 0 16px; padding: 9px 18px; }
+/* Sichten und Stufen stehen in Reihen zu zweit, alle Pillen gleich breit.
+   Ihr Tag steht oben, weil die Zeile hoch ist - mittig haengt das Wort
+   sonst neben der zweiten Reihe und zeigt auf nichts. */
+.oe-pult-zeile--sicht, .oe-pult-zeile--stufen { align-items: start; }
+.oe-pult-zeile--sicht .oe-pult-tag,
+.oe-pult-zeile--stufen .oe-pult-tag { padding-top: 6px; }
+.oe-pult-zeile--sicht .oe-pult-feld,
+.oe-pult-zeile--stufen .oe-pult-feld { display: grid; gap: 6px;
+                                      grid-template-columns: 1fr 1fr; }
+.oe-pult-zeile--sicht .pv-pille,
+.oe-pult-zeile--stufen .pv-pille { width: 100%; justify-content: center;
+                                  text-align: center; }
+/* Im Kopf steht das Pult in einer schmalen Spalte - die Pillen tragen
+   dort eine Nummer kleiner, sonst bricht die Sicht auf fuenf Zeilen um
+   und der Kasten wird hoeher als der Text daneben. */
+.oe-pult .pv-pille { padding: 6px 13px; font-size: .8rem; white-space: nowrap; }
+.oe-pult .oe-legende-posten { font-size: .78rem; gap: 7px; }
+.oe-pult .oe-strich { width: 22px; }
+.oe-pult-feld { gap: 7px 16px; }
+.oe-pult-zeile + .oe-pult-zeile { border-top: 1px solid #e4e1dd; }
+.oe-pult-tag { font-size: .68rem; letter-spacing: .13em; text-transform: uppercase;
+               font-weight: 700; color: var(--grey-50); }
+.oe-pult-feld { display: flex; flex-wrap: wrap; align-items: center; gap: 7px 18px; }
+/* Der Grund des Pults ist schon hell - die Pillen heben sich nur ab, wenn
+   sie weiss sind. Die aktive bleibt davon ausgenommen, sonst schlaegt die
+   spaetere Regel die Markierung aus dashboard.css. */
+.oe-pult .pv-pille:not(.is-aktiv) { background: #fff; }
+.oe-pult .pv-pille.is-aktiv { background: var(--ink); border-color: var(--ink);
+                              color: #fff; }
+
+@media (max-width: 800px) {
+  .oe-pult-zeile { grid-template-columns: 1fr; gap: 6px; }
+}
+
+/* Die Leitungen waren hier ausgeblendet, weil sie im schmalen Fenster
+   nicht mehr trugen. Jetzt tragen sie - als Baum. */
+
+/* ---- Luft fuer die Leitungen -------------------------------------------
+   Der Plan stand neben dem Detailfeld und war damit nur 742px breit. Auf
+   dieser Breite liefen neun Zuleitungen und fuenf Abgaenge ineinander. In
+   den verdrahteten Fassungen nimmt der Plan jetzt die volle Breite, und
+   das Detailfeld legt sich beim Klick als Tafel rechts darueber - es
+   verdeckt nur, solange man liest. */
+.oe-raum:has(.oe-plan--verdrahtung), .oe-raum:has(.oe-plan--strang),
+.oe-raum:has(.oe-plan--gefasst) {
+  grid-template-columns: 1fr; }
+.oe-raum:has(.oe-plan--verdrahtung) .oe-feld,
+.oe-raum:has(.oe-plan--strang) .oe-feld,
+.oe-raum:has(.oe-plan--gefasst) .oe-feld {
+  position: fixed; right: clamp(16px, 2vw, 32px); top: 96px; width: 340px;
+  max-height: calc(100vh - 128px); overflow-y: auto; z-index: 20;
+  box-shadow: 0 24px 60px rgba(0,0,0,.16); }
+.oe-raum:has(.oe-plan--verdrahtung) .oe-feld:not(:has(.oe-feld-inhalt:not([hidden]))),
+.oe-raum:has(.oe-plan--strang) .oe-feld:not(:has(.oe-feld-inhalt:not([hidden]))),
+.oe-raum:has(.oe-plan--gefasst) .oe-feld:not(:has(.oe-feld-inhalt:not([hidden]))) {
+  display: none; }
+
+/* Abstand zwischen den Ebenen: die Leitungen brauchen einen Kanal, sonst
+   beruehren sie die Kaesten darueber und darunter. Mehr als das schadet -
+   die gestrichelten Leitungen haben sonst eine lange leere Strecke zu
+   ueberbruecken, und der Plan faellt auseinander. */
+.oe-plan--verdrahtung { gap: clamp(30px, 4vh, 50px); }
+.oe-plan--verdrahtung .oe-mittelreihe { gap: clamp(40px, 6vw, 110px); }
+
+
+/* In C stehen Knoten und Geraete untereinander in einer Spalte, mit Luft
+   dazwischen - sonst stiess die Beschriftung der Geraete an den Knoten. */
+.oe-plan--strang .oe-mittelspalte { gap: clamp(34px, 5vh, 60px); }
+.oe-plan--strang .oe-gruppe--marken { grid-column: 6; }
+
+/* Die Beschriftung der Geraete bekommt einen weissen Grund: in C lief eine
+   Zuleitung genau durch die Schrift. */
+.oe-plan--strang .oe-gruppe--geraete .oe-spalte-tag,
+.oe-plan--verdrahtung .oe-gruppe--geraete .oe-spalte-tag {
+  background: #fff; display: inline-block; padding: 1px 6px; margin-left: 0;
+  border-radius: 4px; }
+
+/* ---- Sichten: dieselbe Karte, eine andere Frage ------------------------ */
+.oe-sicht { cursor: pointer; font-family: inherit; }
+.oe-knoten.ist-blass { opacity: .25; filter: grayscale(1); }
+.ist-sicht .oe-knoten:not(.ist-blass) { border-color: var(--ink); }
+
+/* Die vierte Reihe im Plan faellt weg, dadurch rutscht alles enger. */
+
+
+/* ---- C "Strang": eine Spalte je Ebene ----------------------------------
+   Beim Umbau der Quellenseite ist die Spaltenregel verlorengegangen und
+   der Plan lief als eine Spalte ueber die ganze Breite. Fuenf Spalten:
+   Quellen, die Werkzeuge darauf, Ausfuehrung mit den Geraeten darunter,
+   Steuerung, Aktionen. */
+.oe-plan--strang { display: grid; align-items: center;
+                   grid-template-columns: minmax(135px, 1fr) minmax(150px, 1.05fr)
+                                          minmax(165px, 1.1fr) minmax(150px, 1fr)
+                                          minmax(140px, 1fr);
+                   gap: clamp(20px, 2.6vw, 34px) clamp(30px, 3.6vw, 58px); }
+.oe-plan--strang .oe-gruppe { align-self: start; }
+.oe-plan--strang .oe-gruppe--dashboard { align-self: center; }
+.oe-plan--strang .oe-mittelspalte { align-self: start; }
+/* Knoten und Dashboard beginnen auf derselben Hoehe - stehen sie
+   versetzt, laeuft die Leitung dazwischen schraeg und der Plan
+   wirkt verrutscht. */
+.oe-plan--strang .oe-mittelspalte .oe-gruppe:first-child,
+.oe-plan--strang .oe-gruppe--dashboard { margin-top: clamp(120px, 16vh, 210px); }
+.oe-plan--strang .oe-gruppe--dashboard { align-self: start; }
+.oe-plan--strang .oe-mittelspalte .oe-knoten--gross,
+.oe-plan--strang .oe-gruppe--dashboard .oe-knoten--gross { min-height: 92px; }
+.oe-plan--strang .oe-knoten { align-self: auto; }
+
+/* ---- Der Bestand hat eine eigene Form ----------------------------------
+   Die Kontaktdatenbank ist weder Quelle noch Aktion. Sie wird gelesen und
+   beschrieben - deshalb steht sie neben dem Ausfuehrungsknoten und traegt
+   als einziger Baustein die Form eines Speichers: ein Kasten mit einer
+   angedeuteten Zylinderkante oben. */
+.oe-speicherplatz { display: flex; justify-content: flex-start;
+                    position: relative; z-index: 1; }
+/* Das Oval als Zylinderandeutung sah aus wie ein Fehler. Der Bestand hebt
+   sich jetzt ueber die Farbe ab: Cyan aus dem Corporate Design, dieselbe
+   Farbe wie seine Leitung. Eine Farbe fuer eine Sache - mehr wird der Plan
+   nicht bunt. */
+.oe-knoten--speicher { border: 2px solid #0B9FBD;
+                       border-radius: 12px; background: #fff; }
+.oe-knoten--speicher .oe-knoten-titel { font-size: .92rem; color: #0B9FBD; }
+.oe-knoten--speicher .oe-marke { background: rgba(11,159,189,.12); color: #0B9FBD;
+                                 box-shadow: none; }
+.oe-knoten--speicher:hover { background: rgba(11,159,189,.06); }
+.oe-knoten--speicher.is-offen { background: #0B9FBD; border-color: #0B9FBD; }
+.oe-knoten--speicher.is-offen .oe-knoten-titel { color: #fff; }
+.oe-knoten--speicher.is-offen .oe-knoten-unter { color: rgba(255,255,255,.75); }
+.oe-knoten--speicher.is-offen .oe-marke { background: rgba(255,255,255,.2); color: #fff; }
+
+/* Die Leitung zum Bestand laeuft in beide Richtungen - sie ist dicker und
+   traegt an beiden Enden einen Punkt. */
+/* Die Leitung zum Bestand laeuft in beide Richtungen. Sie traegt deshalb
+   an beiden Enden einen Punkt - aber keine eigene Farbe: Cyan hatte in der
+   Legende keine Bedeutung. */
+.oe-draht--beide { marker-start: url(#oePunktCyan); marker-end: url(#oePunktCyan); }
+
+/* Die Mittelreihe traegt jetzt drei Dinge: Geraete, Knoten, Bestand. */
+.oe-plan--strang .oe-speicherplatz { margin-top: clamp(16px, 2.4vh, 28px); }
+
+/* ---- Die Sammelschiene -------------------------------------------------
+   Alle Zuleitungen laufen senkrecht auf diese eine Linie, von ihr fuehrt
+   eine einzige Leitung in den Knoten. Das ist der Grund, warum sich jetzt
+   nichts mehr kreuzt: Vorher suchte sich jede Zuleitung ihren eigenen Weg
+   um die Eingabegeraete herum - und lief dabei durch sie hindurch. */
+/* Die Schiene ist hier nur der Anker, an dem die Leitungen enden - die
+   sichtbare Linie zeichnet das Skript, und zwar nur so weit, wie Zuleitungen
+   darauf ankommen. Vorher lief sie als Kasten ueber die ganze Breite und
+   stand links und rechts ins Leere. */
+.oe-schiene { position: relative; z-index: 1; height: 2px; background: none;
+              margin: 0; }
+
+/* Unter der Schiene liegt der Bedienbereich: Geraete, Knoten, Bestand.
+   Hier verlaeuft keine Zuleitung mehr. Den Abstand setzt allein das
+   Raster des Plans. */
+.oe-plan--verdrahtung .oe-mittelreihe { margin-top: 0; }
+
+/* In C stehen die Geraete nebeneinander. Untereinander zielen ihre drei
+   Leitungen auf denselben Punkt und laufen dabei durch die Kaesten der
+   jeweils daruberliegenden Geraete. */
+.oe-geraete--quer { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.oe-geraete--quer .oe-spalte-tag { grid-column: 1 / -1; }
+
+/* ==========================================================================
+   B3 "Gefasst" - die Fassung aus A, die Verdrahtung aus B
+
+   Jede Ebene steht in einem eigenen Kasten. Innerhalb des Kastens sieht
+   man die Details - dass Analytics auf den Homepages sitzt, dass Buffer
+   ueber allen drei Kanaelen liegt. Was den Kasten verlaesst, sammelt sich
+   auf der Schiene an seinem unteren Rand; zwischen den Kaesten fuehrt ein
+   Pfeil. Aus acht Zuleitungen zum Knoten wird damit eine.
+   ========================================================================== */
+.oe-plan--gefasst { display: grid; position: relative; }
+.gf-kasten { position: relative; z-index: 1; padding: 14px 16px 16px;
+             background: #fff; border: 1px solid #e4e1dd;
+             border-radius: var(--radius-card); }
+.gf-tag { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+          margin: 0 0 11px 2px; font-size: .72rem; letter-spacing: .14em;
+          text-transform: uppercase; font-weight: 700; color: var(--ink); }
+.gf-tag span { letter-spacing: .02em; text-transform: none; font-weight: 500;
+               font-size: .78rem; color: var(--grey-50); }
+.oe-plan--gefasst .oe-quellen { gap: clamp(22px, 2.8vh, 36px) 8px; }
+.oe-plan--gefasst .oe-schiene { margin-top: clamp(20px, 2.6vh, 32px); }
+.oe-plan--gefasst .oe-mittelreihe { margin-top: 0; }
+.oe-plan--gefasst .oe-geraete { max-width: 240px; }
+.oe-plan--gefasst .oe-aktionen { grid-template-columns: repeat(10, minmax(0, 1fr));
+                                gap: clamp(20px, 2.6vh, 32px) 8px; }
+/* Zwischen den Kaesten eine Linie in der Staerke ihrer Umrandung, kein
+   schwarzer Pfeil. Die Richtung ergibt sich aus der Anordnung. */
+.oe-plan--gefasst .oe-pfeil { height: 26px; }
+.oe-plan--gefasst .oe-pfeil::before { background: #e4e1dd; width: 1px; }
+.oe-plan--gefasst .oe-pfeil::after { display: none; }
+@media (max-width: 1100px) {
+
+}
+
+/* In B3 steht die Ausfuehrung wie in B: Geraete links, Knoten mittig,
+   Bestand rechts. */
+.oe-plan--gefasst .oe-mittelreihe { display: grid;
+                                    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+                                    gap: clamp(20px, 3vw, 46px); align-items: center; }
+.oe-plan--gefasst .oe-geraete { justify-self: start; }
+.oe-plan--gefasst .oe-speicherplatz { justify-self: end; }
+
+/* Die Kaesten haben einen weissen Grund und lagen damit ueber den
+   Leitungen. Reihenfolge: Kasten, dann Leitungen, dann Knoten. */
+.oe-plan--gefasst .oe-draehte { z-index: 2; }
+.oe-plan--gefasst .oe-knoten { position: relative; z-index: 3; }
+.oe-plan--gefasst .oe-schiene { z-index: 3; }
+/* Die Schiene ist so stark wie die Leitungen, die auf ihr ankommen. */
+.oe-draht--schiene { stroke: #b8b2ab; stroke-width: 2;
+                     stroke-dasharray: 4 5; }
+
+/* Die vier uebrigen Aktionen teilen sich den Platz rechts vom Strang zu
+   gleichen Teilen - in einem eigenen Raster, damit sie nicht an die
+   Spaltenteilung der Kanaele gebunden sind. */
+.oe-aktionen-rest { grid-column: 8 / 11; grid-row: 1; display: grid;
+                    grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.oe-aktionen-rest .oe-knoten { align-self: stretch; }
+
+@media (max-width: 820px) {
+  .oe-pult-koerper { grid-template-columns: 1fr; }
+  .oe-pult-zeilen { border-right: none; border-bottom: 1px solid #e4e1dd; }
+}
+
+/* ===========================================================================
+   Schmales Fenster: der Plan bleibt ein Plan
+   ---------------------------------------------------------------------------
+   Ein Schaltplan sagt seine Aussage in der Flaeche: oben die Quellen, in
+   der Mitte die Verarbeitung, unten die Aktionen, dazwischen die Wege. In
+   eine Spalte gepresst bleiben die Kaesten uebrig und der Zusammenhang
+   geht verloren - untereinander steht dann alles, aber nichts sagt mehr,
+   was wohin laeuft.
+
+   Deshalb behaelt der Plan seine Breite und wird geschoben wie eine Karte.
+   Aufziehen vergroessert, wischen verschiebt; beides kann das Telefon von
+   sich aus, die Seite verbietet es nicht. Die Form bleibt lesbar, auch
+   wenn man sie in zwei Zuegen abfahren muss.
+   ========================================================================== */
+.oe-schiebehinweis { display: none; align-items: center; gap: 8px;
+                     margin: 0 0 10px; font-size: .78rem; color: var(--grey-50); }
+.oe-schiebehinweis::before { content: ""; width: 26px; height: 0;
+                             border-top: 1px dashed #b8b2ab; }
+
+@media (max-width: 1100px) {
+  .oe-raum { overflow-x: auto; overflow-y: hidden;
+             -webkit-overflow-scrolling: touch;
+             padding-bottom: 6px; }
+  .oe-plan { min-width: 1050px; }
+  /* Der Hinweis steht nur dort, wo geschoben werden muss. */
+  .oe-schiebehinweis { display: flex; }
+}
+
