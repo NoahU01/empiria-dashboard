@@ -1239,12 +1239,13 @@
         for (var i = 0; i < punkte.length - 1; i++) {
           /* Ein Abschnitt ist gruen, wenn ein bestehender Weg ueber ihn
              laeuft: von einer gruenen Zuleitung bis zum gruenen Abzweig
-             zur Intelligenzschicht. */
+             zur Intelligenzschicht. Alle anderen Abschnitte sind rot -
+             durchgezogen wie jede Leitung in der Sicht "Status". */
           var x1 = punkte[i], x2 = punkte[i + 1];
           var weg = abX !== null && gruenX.some(function (gx) {
             return Math.min(gx, abX) <= x1 + 0.5 && x2 - 0.5 <= Math.max(gx, abX); });
           teile.push('<path class="oe-draht oe-draht--schiene' +
-            (weg ? ' oe-ampel--gruen' : '') + '" data-x1="' +
+            (weg ? ' oe-ampel--gruen' : ' oe-ampel--rot') + '" data-x1="' +
             punkte[i].toFixed(1) + '" data-x2="' + punkte[i + 1].toFixed(1) +
             '" d="M' + punkte[i] + ',' + m2 + 'L' + punkte[i + 1] + ',' + m2 + '"/>');
         }
