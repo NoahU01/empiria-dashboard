@@ -1,0 +1,403 @@
+/* ===========================================================================
+   Entwuerfe II - fuenf Ordnungen fuer dieselbe Lage
+   ---------------------------------------------------------------------------
+   Hier wird Aufbau verglichen, nicht Anmutung. Deshalb haben alle fuenf
+   Tafeln dieselbe, bewusst ruhige Gestaltung: eine Schrift, eine Palette,
+   ein Satz Bausteine. Wer Struktur beurteilen soll, darf nicht von Farbe
+   abgelenkt werden.
+
+   Farbe hat genau drei Aufgaben:
+     rot   etwas ist ueberfaellig oder haengt an Dir
+     warm  eine Frist naht
+     gruen etwas laeuft und braucht Dich nicht
+   Alles andere traegt Schwarz auf Weiss.
+   ========================================================================== */
+
+.o-main { --o-ink: #15110f; --o-feld: #faf8f6; --o-linie: #e6e2dd;
+          --o-matt: #7d7873; --o-rot: #b3262c; --o-warm: #9c6410;
+          --o-gut: #2f6b4f;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                       Helvetica, Arial, sans-serif;
+          font-variant-numeric: tabular-nums; }
+.o-main h2, .o-main h3, .o-main h4 { font-family: inherit; }
+
+.o-titel { max-width: 20ch; }
+.o-lead { max-width: 62ch; }
+
+/* ---- Die Wahl der Ordnung ----------------------------------------------- */
+.o-wahl { display: grid; gap: 6px; margin-top: clamp(20px, 2.6vw, 30px); }
+.o-pille { appearance: none; -webkit-appearance: none; text-align: left;
+           display: grid; grid-template-columns: auto minmax(0, 1fr);
+           gap: 10px; align-items: center;
+           padding: 10px 16px; border: 1px solid var(--o-linie);
+           border-radius: 12px; background: #fff; font-family: inherit;
+           color: var(--o-ink); cursor: pointer;
+           transition: border-color .15s ease, background-color .15s ease; }
+.o-pille b { font-size: .8rem; font-weight: 700; color: var(--o-matt); }
+.o-pille span { display: grid; font-size: .92rem; font-weight: 600; }
+.o-pille small { font-size: .74rem; font-weight: 400; color: var(--o-matt); }
+.o-pille:hover { border-color: var(--o-ink); }
+.o-pille.ist-aktiv { background: var(--o-ink); border-color: var(--o-ink);
+                     color: #fff; }
+.o-pille.ist-aktiv b, .o-pille.ist-aktiv small { color: rgba(255,255,255,.62); }
+
+.o-raum { margin-top: clamp(22px, 3vw, 34px); }
+.o-tafel[hidden] { display: none !important; }
+
+/* ---- Bausteine, die alle fuenf teilen ----------------------------------- */
+.o-lage { margin: 0 0 clamp(20px, 3vw, 30px); font-size: 1.12rem;
+          line-height: 1.5; font-weight: 500; max-width: 54ch;
+          padding-left: 14px; border-left: 3px solid var(--o-ink); }
+.o-tag { margin: 0 0 8px; font-size: .66rem; letter-spacing: .14em;
+         text-transform: uppercase; font-weight: 700; color: var(--o-matt); }
+.o-kz { display: inline-block; font-size: .64rem; letter-spacing: .08em;
+        font-weight: 700; color: var(--o-matt); border: 1px solid var(--o-linie);
+        border-radius: 4px; padding: 1px 5px; margin-right: 7px; }
+
+.o-zone { margin-bottom: clamp(30px, 4.6vw, 52px); }
+.o-zonenkopf { margin-bottom: 14px; padding-bottom: 10px;
+               border-bottom: 1px solid var(--o-linie); }
+.o-zonenkopf h2 { margin: 0; font-size: 1.14rem; font-weight: 700;
+                  line-height: 1.3; letter-spacing: -.01em; }
+.o-zonenkopf p { margin: 4px 0 0; font-size: .86rem; color: var(--o-matt);
+                 line-height: 1.5; max-width: 62ch; }
+
+.o-ring { display: block; color: var(--o-ink); flex: none; }
+.o-ring-zahl { font-size: 13px; font-weight: 700; fill: currentColor;
+               font-family: inherit; }
+.o-ring--gross .o-ring-zahl { font-size: 19px; }
+
+.o-zp { width: 8px; height: 8px; border-radius: 50%; display: inline-block;
+        vertical-align: -1px; margin-right: 5px; }
+.o-zp--laeuft { background: var(--o-gut); }
+.o-zp--wartet { background: #c9c3bc; }
+.o-zp--haengt { background: var(--o-rot); }
+
+.o-legende { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 16px 0 0;
+             font-size: .76rem; color: var(--o-matt); align-items: center; }
+
+/* ---- Vorhaben als Flaeche ----------------------------------------------- */
+.o-vf-raum { display: grid; gap: 8px; }
+.o-vf { border: 1px solid var(--o-linie); border-radius: 12px;
+        background: #fff; padding: 14px 16px; }
+.o-vf-kopf { display: flex; align-items: center; justify-content: space-between;
+             gap: 8px; margin: 0; }
+.o-vf-zl { font-size: .64rem; letter-spacing: .1em; font-weight: 700;
+           color: var(--o-matt); }
+.o-vf h4 { margin: 7px 0 0; font-size: 1rem; font-weight: 600; line-height: 1.3;
+           min-height: calc(1rem * 1.3 * 2); }
+.o-vf-mass { display: flex; align-items: center; gap: 11px; margin-top: 11px; }
+.o-vf-mass span { display: grid; }
+.o-vf-mass b { font-size: .84rem; font-weight: 600; line-height: 1.3; }
+.o-vf-mass small { font-size: .72rem; color: var(--o-matt); }
+.o-vf-schritt { margin: 11px 0 0; font-size: .88rem; line-height: 1.5;
+                color: #3d3833; }
+.o-vf-fuss { margin: 11px 0 0; padding-top: 10px;
+             border-top: 1px solid var(--o-linie);
+             font-size: .76rem; color: var(--o-matt); }
+.o-vf--haengt { border-color: #e8bfc0; }
+.o-vf--haengt .o-ring { color: var(--o-rot); }
+
+/* ---- Entscheidung ------------------------------------------------------- */
+.o-ek-raum { display: grid; gap: 10px; }
+.o-ek { border: 1px solid var(--o-linie); border-radius: 14px; background: #fff;
+        padding: 18px 18px 16px; display: grid; align-content: start; }
+.o-ek-kopf { display: flex; align-items: center; justify-content: space-between;
+             gap: 10px; margin: 0; }
+.o-frist { font-size: .66rem; letter-spacing: .08em; text-transform: uppercase;
+           font-weight: 700; padding: 3px 9px; border-radius: 999px;
+           white-space: nowrap; }
+.o-frist--rot { background: #fbeaea; color: var(--o-rot); }
+.o-frist--warm { background: #f7efe2; color: var(--o-warm); }
+.o-ek h3 { margin: 11px 0 0; font-size: 1.08rem; font-weight: 700;
+           line-height: 1.32; letter-spacing: -.01em;
+           min-height: calc(1.08rem * 1.32 * 2); }
+.o-ek-hinter { margin: 10px 0 0; font-size: .88rem; line-height: 1.55;
+               color: var(--o-matt); min-height: calc(.88rem * 1.55 * 4); }
+.o-ek-blk { margin: 12px 0 0; font-size: .8rem; line-height: 1.45;
+            color: var(--o-rot); }
+.o-ek-blk b { font-weight: 700; }
+.o-opts { margin-top: 16px; padding-top: 14px;
+          border-top: 1px solid var(--o-linie); display: grid; gap: 7px; }
+.o-opts-tag { margin: 0 0 3px; font-size: .64rem; letter-spacing: .12em;
+              text-transform: uppercase; font-weight: 700; color: var(--o-matt); }
+/* Eine Moeglichkeit ist eine Flaeche, die man waehlt - nicht ein Listenpunkt.
+   Deshalb traegt jede ihre Folge gleich mit. */
+.o-opt { appearance: none; -webkit-appearance: none; text-align: left;
+         display: grid; gap: 3px; width: 100%;
+         padding: 11px 13px; border: 1px solid var(--o-linie);
+         border-radius: 10px; background: var(--o-feld); font-family: inherit;
+         color: var(--o-ink); cursor: pointer;
+         transition: border-color .15s ease, background-color .15s ease; }
+.o-opt b { font-size: .88rem; font-weight: 600; }
+.o-opt span { font-size: .8rem; line-height: 1.45; color: var(--o-matt); }
+.o-opt:hover { background: #fff; border-color: var(--o-ink); }
+.o-ek--knapp { padding: 14px 16px; }
+.o-ek--knapp h3 { font-size: .96rem; margin-top: 9px; }
+.o-ek--knapp + .o-ek--knapp { margin-top: 8px; }
+
+/* ---- Freigabe ----------------------------------------------------------- */
+.o-fk-raum { display: grid; gap: 8px; }
+.o-fk { border: 1px solid var(--o-linie); border-radius: 12px; background: #fff;
+        padding: 14px 16px; }
+.o-fk h4 { margin: 0; font-size: .98rem; font-weight: 600; line-height: 1.3; }
+.o-fk p { margin: 5px 0 0; font-size: .84rem; line-height: 1.45;
+          color: var(--o-matt); }
+.o-fk-fuss { display: flex; align-items: center; justify-content: space-between;
+             gap: 10px; margin-top: 12px !important; padding-top: 11px;
+             border-top: 1px solid var(--o-linie); }
+.o-dauer { font-size: .74rem; color: var(--o-matt); white-space: nowrap; }
+.o-ja { appearance: none; -webkit-appearance: none;
+        padding: 7px 15px; border: 1px solid var(--o-ink); border-radius: 999px;
+        background: var(--o-ink); color: #fff; -webkit-text-fill-color: #fff;
+        font-family: inherit; font-size: .8rem; font-weight: 600;
+        cursor: pointer; white-space: nowrap;
+        transition: opacity .15s ease; }
+.o-ja:hover { opacity: .82; }
+
+/* ---- Bewegung ----------------------------------------------------------- */
+.o-bw-raum { display: grid; gap: 8px; }
+.o-bw { border-left: 2px solid var(--o-linie); padding: 2px 0 2px 14px; }
+.o-bw-was { margin: 0; font-size: .92rem; font-weight: 600; line-height: 1.35; }
+.o-bw-folge { margin: 4px 0 0; font-size: .85rem; line-height: 1.5;
+              color: var(--o-matt); }
+.o-bw-kz { margin: 7px 0 0; font-size: .74rem; color: var(--o-matt); }
+
+/* ---- Was ohne Dich laeuft ----------------------------------------------- */
+.o-ohne { margin-top: 20px; padding: 16px 18px; border-radius: 12px;
+          background: var(--o-feld); }
+.o-ohne p { margin: 0; font-size: .86rem; line-height: 1.6;
+            color: var(--o-matt); }
+.o-ohne p + p { margin-top: 5px; }
+.o-ohne .o-tag { color: var(--o-gut); }
+
+.o-spalten2 { display: grid; gap: clamp(26px, 3.4vw, 40px); }
+
+/* ===========================================================================
+   1 Entscheidungen - die Zone bestimmt das Gewicht
+   ========================================================================== */
+.o-zone--1 .o-zonenkopf { border-bottom-width: 2px;
+                          border-bottom-color: var(--o-ink); }
+.o-zone--1 .o-zonenkopf h2 { font-size: 1.4rem; }
+.o-zone--4 .o-zonenkopf h2 { font-size: 1rem; }
+.o-vf-raum--knapp .o-vf { padding: 12px 14px; }
+
+/* ===========================================================================
+   2 Lagebild - Naehe zur Mitte ist Dringlichkeit
+   ========================================================================== */
+.o-radar-raum { display: grid; gap: clamp(22px, 3vw, 34px); }
+.o-radar { width: 100%; height: auto; display: block;
+           max-width: 700px; margin: 0 auto; }
+.o-rr { fill: none; stroke: var(--o-linie); stroke-width: 1; }
+.o-rr-txt { font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+            fill: var(--o-matt); font-weight: 600; }
+.o-rg { stroke: var(--o-linie); stroke-width: 1; stroke-dasharray: 3 4; }
+.o-rs { font-size: 12px; font-weight: 700; fill: var(--o-ink); }
+.o-rmitte { fill: var(--o-ink); }
+.o-rm-zahl { font-size: 28px; font-weight: 700; fill: #fff; }
+.o-rm-txt { font-size: 10px; letter-spacing: .06em; fill: rgba(255,255,255,.72);
+            font-weight: 600; }
+.o-rp circle { fill: #fff; stroke: var(--o-ink); stroke-width: 2.5; }
+.o-rp--laeuft circle { fill: var(--o-gut); stroke: var(--o-gut); }
+.o-rp--wartet circle { fill: #fff; stroke: #c9c3bc; }
+.o-rp--haengt circle { fill: var(--o-rot); stroke: var(--o-rot); }
+.o-rp-n { font-size: 12.5px; font-weight: 600; fill: var(--o-ink); }
+.o-rp-s { font-size: 10.5px; fill: var(--o-matt); }
+.o-rp--haengt .o-rp-s { fill: var(--o-rot); }
+.o-beidir .o-zonenkopf { border-bottom-width: 2px;
+                         border-bottom-color: var(--o-ink); }
+/* Das abgewickelte Lagebild fuer schmale Schirme: dieselbe Ordnung von
+   innen nach aussen, nur untereinander statt im Kreis. */
+.o-naehe { display: grid; gap: 10px; }
+.o-naehe-kern { display: flex; align-items: center; gap: 12px;
+                padding: 14px 18px; border-radius: 12px;
+                background: var(--o-ink); color: #fff; }
+.o-naehe-kern b { font-size: 1.8rem; font-weight: 700; line-height: 1; }
+.o-naehe-kern span { font-size: .84rem; color: rgba(255,255,255,.75); }
+.o-nring { padding-left: 14px; border-left: 2px solid var(--o-linie); }
+.o-nring-tag { margin: 0 0 8px; font-size: .64rem; letter-spacing: .14em;
+               text-transform: uppercase; font-weight: 700;
+               color: var(--o-matt); }
+.o-nring-felder { display: grid; gap: 7px; }
+.o-nf { border: 1px solid var(--o-linie); border-radius: 10px;
+        background: #fff; padding: 11px 13px; }
+.o-nf-n { margin: 0; font-size: .92rem; font-weight: 600; line-height: 1.3; }
+.o-nf-m { margin: 4px 0 0 13px; font-size: .76rem; color: var(--o-matt); }
+@media (min-width: 700px) { .o-naehe { display: none; } }
+@media (max-width: 699px) { .o-radar { display: none; } }
+.o-fk-raum--eng { margin-top: 10px; }
+
+/* ===========================================================================
+   3 Fahrplan - die Zeit laeuft nach rechts
+   ========================================================================== */
+.o-zeitfeld { overflow-x: auto; -webkit-overflow-scrolling: touch;
+              padding-bottom: 4px; margin-bottom: clamp(26px, 3.4vw, 40px); }
+.o-achse, .o-bahn { display: grid; grid-template-columns: repeat(6, 1fr);
+                    min-width: 680px; }
+.o-achse { position: relative; padding-bottom: 8px;
+           border-bottom: 1px solid var(--o-ink); }
+.o-ax { font-size: .68rem; letter-spacing: .1em; text-transform: uppercase;
+        font-weight: 700; color: var(--o-matt); padding-left: 2px; }
+.o-achse .o-ax:first-child { color: var(--o-ink); }
+.o-zbahn { min-width: 680px; padding: 16px 0 10px;
+           border-bottom: 1px solid var(--o-linie); }
+.o-zbahn-kopf { display: flex; align-items: center; gap: 10px; margin: 0 0 10px;
+                font-size: .9rem; }
+.o-zbahn-kopf b { font-weight: 700; }
+.o-bahnen { display: grid; gap: 5px; }
+/* Band und Marken liegen in zwei Zeilen uebereinander - sonst deckt die
+   Raute den Namen zu, den sie erklaeren soll. */
+.o-bahn { position: relative; align-items: center; row-gap: 3px;
+          grid-template-rows: auto auto; }
+/* Ein Band zeigt die Spanne. Es faengt dort an, wo das Vorhaben laeuft,
+   und hoert dort auf, wo es fertig sein soll. */
+.o-band { grid-row: 1; align-self: center; border-radius: 7px;
+          padding: 7px 12px; font-size: .82rem; font-weight: 600;
+          background: var(--o-feld); border: 1px solid var(--o-linie);
+          white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.o-band--haengt { background: #fbeaea; border-color: #e8bfc0;
+                  color: var(--o-rot); }
+.o-band--wartet { background: #fff; border-style: dashed; }
+.o-mk { grid-row: 2; justify-self: start; display: grid; justify-items: start;
+        pointer-events: none; }
+.o-mk i { font-style: normal; font-size: .76rem; line-height: 1; }
+.o-mk em { font-style: normal; font-size: .64rem; white-space: nowrap;
+           color: var(--o-matt); margin-top: 2px; }
+.o-mk--entscheidung i { color: var(--o-warm); }
+.o-mk--ueberfaellig i { color: var(--o-rot); }
+.o-mk--ueberfaellig em { color: var(--o-rot); font-weight: 700; }
+.o-mk--fest i, .o-mk--ziel i { color: var(--o-ink); }
+.o-legende .o-mk { display: inline-grid; margin: 0; }
+.o-legende .o-mk em { display: none; }
+.o-heute { position: absolute; left: 0; top: 0; bottom: -1px; width: 2px;
+           background: var(--o-ink); }
+
+/* ===========================================================================
+   4 Briefing - die Frage steht vor der Antwort
+   ========================================================================== */
+.o-frage { padding-bottom: clamp(28px, 4vw, 44px); margin-bottom: clamp(28px, 4vw, 44px);
+           border-bottom: 1px solid var(--o-linie); }
+.o-frage:last-child { border-bottom: 0; margin-bottom: 0; }
+.o-fr { margin: 0; font-size: .78rem; letter-spacing: .1em;
+        text-transform: uppercase; font-weight: 700; color: var(--o-matt); }
+/* Die Antwort ist das Groesste auf der Tafel. Alles darunter belegt sie nur. */
+.o-frage > h2 { margin: 12px 0 0; font-size: clamp(1.4rem, 3.6vw, 2rem);
+                font-weight: 600; line-height: 1.28; letter-spacing: -.02em;
+                max-width: 24ch; }
+.o-frage > .o-bw-raum, .o-frage > .o-ek-raum, .o-frage > .o-fk-raum,
+.o-frage > .o-belege, .o-frage > .o-nachklapp { margin-top: clamp(18px, 2.4vw, 26px); }
+.o-belege { display: grid; gap: 10px; }
+.o-beleg { display: flex; align-items: center; gap: 12px;
+           border: 1px solid var(--o-linie); border-radius: 12px;
+           background: #fff; padding: 13px 15px; }
+.o-beleg span { display: grid; }
+.o-beleg b { font-size: .92rem; font-weight: 600; }
+.o-beleg small { font-size: .78rem; color: var(--o-matt); margin-top: 2px; }
+.o-nachsatz { margin: 16px 0 0; font-size: .95rem; line-height: 1.6;
+              color: var(--o-matt); max-width: 56ch; }
+
+/* ===========================================================================
+   5 Zielbaum - was traegt worauf bei
+   ========================================================================== */
+.o-krone { padding: clamp(22px, 3vw, 32px) clamp(20px, 3vw, 30px);
+           border-radius: 16px; background: var(--o-ink); color: #fff; }
+.o-krone .o-tag { color: rgba(255,255,255,.55); }
+.o-krone h2 { margin: 0; font-size: clamp(1.3rem, 3.2vw, 1.8rem);
+              font-weight: 600; line-height: 1.32; letter-spacing: -.015em;
+              max-width: 30ch; }
+.o-krone-satz { margin: 14px 0 0; font-size: .92rem; line-height: 1.6;
+                color: rgba(255,255,255,.72); max-width: 54ch; }
+.o-aeste { display: grid; gap: 10px; margin-top: 10px; }
+/* Jeder Ast haengt sichtbar an der Krone darueber. */
+.o-ast { position: relative; padding-top: 22px; }
+.o-ast::before { content: ""; position: absolute; left: 50%; top: 0;
+                 width: 1px; height: 22px; background: var(--o-linie); }
+.o-zielkasten { border: 1px solid var(--o-linie); border-radius: 14px;
+                background: #fff; padding: 16px 18px; }
+.o-zk-kopf { display: flex; align-items: center; justify-content: space-between;
+             gap: 10px; margin: 0; }
+.o-zielkasten h3 { margin: 10px 0 0; font-size: 1.08rem; font-weight: 700;
+                   line-height: 1.3; }
+.o-zk-satz { margin: 7px 0 0; font-size: .88rem; line-height: 1.5;
+             color: var(--o-matt); min-height: calc(.88rem * 1.5 * 2); }
+.o-zk-bew { margin: 10px 0 0; padding-top: 9px;
+            border-top: 1px solid var(--o-linie);
+            font-size: .74rem; color: var(--o-matt); }
+/* Wo eine Entscheidung fehlt, sitzt sie im Ast - nicht in einer Liste
+   woanders. Man sieht, was sie aufhaelt, weil sie davorsteht. */
+.o-sperre { margin: 10px 0 0; padding: 14px 16px; border-radius: 12px;
+            background: #fbeaea; border: 1px solid #e8bfc0; }
+.o-sperre-tag { margin: 0; font-size: .64rem; letter-spacing: .12em;
+                text-transform: uppercase; font-weight: 700; color: var(--o-rot); }
+.o-sperre-frage { margin: 7px 0 0; font-size: .92rem; font-weight: 600;
+                  line-height: 1.4; }
+.o-sperre-wege { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.o-weg { appearance: none; -webkit-appearance: none;
+         padding: 6px 13px; border: 1px solid #e0b0b2; border-radius: 999px;
+         background: #fff; font-family: inherit; font-size: .78rem;
+         font-weight: 600; color: var(--o-rot); cursor: pointer;
+         transition: background-color .15s ease; }
+.o-weg:hover { background: var(--o-rot); color: #fff;
+               -webkit-text-fill-color: #fff; }
+.o-ast-kinder { display: grid; gap: 8px; margin-top: 10px; padding-top: 14px;
+                border-top: 1px dashed var(--o-linie); }
+.o-ast.ist-blockiert .o-zielkasten { border-color: #e8bfc0; }
+.o-ast.ist-blockiert .o-zielkasten .o-ring { color: var(--o-rot); }
+
+/* ===========================================================================
+   Ab hier kommt Platz hinzu
+   ========================================================================== */
+@media (min-width: 620px) {
+  .o-wahl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .o-vf-raum { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .o-fk-raum { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .o-bw-raum { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .o-belege { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .o-beleg { display: grid; justify-items: start; gap: 9px; }
+  .o-ast-kinder { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 950px) {
+  .o-wahl { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .o-pille { grid-template-columns: minmax(0, 1fr); gap: 2px;
+             padding: 11px 15px; }
+  .o-ek-raum { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .o-ek-raum--zwei { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .o-fk-raum { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  /* In einer halben Spalte ist fuer drei Freigaben nebeneinander kein
+     Platz - dort stehen sie untereinander. Die Regel muss hinter der
+     dreispaltigen stehen, sonst gewinnt die. */
+  .o-fk-raum--eng { grid-template-columns: minmax(0, 1fr); }
+  .o-vf-raum { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .o-vf-raum--knapp { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .o-vf-raum--knapp .o-vf-mass small { display: none; }
+  .o-spalten2 { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
+  /* Das Lagebild steht links, was es in der Mitte zeigt, rechts daneben. */
+  .o-radar-raum { grid-template-columns: minmax(0, 1fr) minmax(0, 380px);
+                  grid-template-areas: "bild beidir" "beweg beidir";
+                  align-items: start; }
+  .o-radar-feld { grid-area: bild; }
+  .o-beidir { grid-area: beidir; }
+  .o-radar-raum > .o-zone--3 { grid-area: beweg; margin-bottom: 0; }
+  .o-achse, .o-bahn, .o-zbahn { min-width: 0; }
+  .o-zeitfeld { overflow-x: visible; }
+  /* Stamm aus der Krone, eine Sammellinie, drei Stiele: erst damit haengen
+     die Aeste sichtbar am Zielbild statt daneben zu stehen. */
+  .o-aeste { grid-template-columns: repeat(3, minmax(0, 1fr));
+             align-items: start; position: relative; padding-top: 36px;
+             margin-top: 0; }
+  .o-aeste::after { content: ""; position: absolute; top: 0; left: 50%;
+                    width: 1px; height: 18px; background: #c9c3bc; }
+  .o-aeste::before { content: ""; position: absolute; top: 18px;
+                     left: 16.667%; right: 16.667%; height: 1px;
+                     background: #c9c3bc; }
+  .o-ast { padding-top: 0; }
+  .o-ast::before { top: -18px; height: 18px; background: #c9c3bc; }
+  .o-ast-kinder { grid-template-columns: minmax(0, 1fr); }
+  .o-frage > h2 { font-size: clamp(1.7rem, 2.6vw, 2.2rem); }
+  .o-brief .o-frage > .o-bw-raum, .o-brief .o-frage > .o-belege { max-width: 1000px; }
+}
+
+@media (min-width: 1300px) {
+  .o-lage { font-size: 1.2rem; }
+}

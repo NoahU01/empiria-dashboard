@@ -1,7 +1,13 @@
 {
   "redirects": [
+    { "source": "/", "destination": "/strategie/oekosystem.html", "permanent": false },
+    { "source": "/index.html", "destination": "/strategie/oekosystem.html", "permanent": false },
     { "source": "/zielbild", "destination": "/strategie/zielbild.html", "permanent": false },
     { "source": "/meilensteine", "destination": "/strategie/meilensteine.html", "permanent": false },
-    { "source": "/oekosystem", "destination": "/strategie/oekosystem.html", "permanent": false }
+    { "source": "/oekosystem", "destination": "/strategie/oekosystem.html", "permanent": false },
+    { "source": "/steuerungszentrale", "destination": "/strategie/dashboard.html", "permanent": false },
+    { "source": "/lage", "destination": "/strategie/dashboard-lage.html", "permanent": false },
+    { "source": "/entwuerfe", "destination": "/strategie/dashboard-entwuerfe.html", "permanent": false },
+    { "source": "/entwuerfe-2", "destination": "/strategie/dashboard-entwuerfe-2.html", "permanent": false }
   ]
 }

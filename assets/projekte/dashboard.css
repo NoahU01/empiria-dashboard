@@ -445,9 +445,39 @@
 .aw-reiter { grid-template-columns: auto minmax(0, 1fr) auto auto; }
 .db-abschnitt--eng { margin-top: clamp(28px, 3.2vw, 44px); }
 .db-abschnitt--eng .db-abschnitt-kopf { margin-bottom: clamp(16px, 2vw, 22px); }
-.fl-ziel { max-width: 74ch; }
+/* Das Projektziel traegt Text und Bild nebeneinander. Die Rakete steht
+   rechts und bleibt klein: Sie begleitet den Text, sie fuehrt ihn nicht. */
+.fl-ziel { display: grid; gap: 18px; align-items: start; }
+.fl-ziel-text { max-width: 70ch; }
 .fl-ziel p { margin: 0 0 .9rem; font-size: .98rem; line-height: 1.75; color: var(--grey-70); }
-.fl-ziel p:first-child { color: var(--ink); }
+/* Zwischenueberschriften gliedern den Text. Sie sind klein und in der
+   Grotesk gesetzt - die Serife gehoert der Modulueberschrift darueber. */
+.fl-ziel h3 { margin: 1.6rem 0 .55rem; font-family: var(--font-sans);
+              font-size: .74rem; letter-spacing: .12em; text-transform: uppercase;
+              font-weight: 700; color: var(--ink); }
+.fl-ziel h3:first-child { margin-top: 0; }
+.fl-ziel h3 + p { color: var(--ink); }
+.fl-ziel-liste { margin: 0 0 .9rem; padding: 0; list-style: none; }
+.fl-ziel-liste li { position: relative; padding-left: 18px; margin-bottom: .5rem;
+                    font-size: .98rem; line-height: 1.75; color: var(--grey-70); }
+.fl-ziel-liste li::before { content: ""; position: absolute; left: 0; top: .72em;
+                            width: 6px; height: 6px; border-radius: 50%;
+                            background: var(--hl); }
+.fl-ziel-liste b { color: var(--ink); font-weight: 600; }
+.fl-ziel-bild { display: none; }
+
+@media (min-width: 900px) {
+  /* Die Textspalte endet bei ihrer Lesebreite; die Rakete schliesst direkt
+     an, statt am rechten Kastenrand zu kleben. */
+  .fl-ziel { grid-template-columns: minmax(0, 70ch) clamp(110px, 11vw, 150px);
+             justify-content: start; gap: 30px; }
+  /* Die Rakete sitzt auf Hoehe des ersten Absatzes, nicht der Ueberschrift,
+     und bleibt klein: Sie begleitet den Text, sie fuehrt ihn nicht. */
+  .fl-ziel-bild { display: flex; align-items: flex-start;
+                  justify-content: center; padding-top: 26px; }
+  .fl-ziel-bild img { display: block; width: 100%; height: auto;
+                      max-height: 185px; object-fit: contain; }
+}
 @media (max-width: 760px) { .tl-werkzeug-grid { grid-template-columns: 1fr; } }
 
 

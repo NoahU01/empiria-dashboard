@@ -1,0 +1,316 @@
+/* ===========================================================================
+   Dashboard - die Steuerungszentrale
+   ---------------------------------------------------------------------------
+   Drei Bloecke in fester Reihenfolge: Startklar, Vorhaben, Eingang. Der
+   erste ist der wichtigste und traegt als einziger Farbe - er zeigt, dass
+   gearbeitet wurde, waehrend niemand hingesehen hat.
+
+   An jedem Posten stehen drei Wege: freigeben, besprechen, im Original
+   weitermachen. Mehr Knoepfe gibt es nicht; was sie nicht abdecken, deckt
+   das Gespraech ab.
+
+   Mobile first. Jede Regel gilt zuerst fuer 390 Pixel.
+   ========================================================================== */
+
+.dbx-kopf { display: grid; gap: 18px; }
+.dbx-titel { font-family: var(--font-serif); font-weight: 500; line-height: 1.25;
+             letter-spacing: -.015em; font-size: clamp(1.7rem, 3vw, 2.4rem);
+             margin: .3rem 0 0; }
+.dbx-lead { margin: .6rem 0 0; max-width: 54ch; font-size: .98rem;
+            line-height: 1.6; }
+.dbx-zurueck { color: var(--grey-50); text-decoration: none; }
+.dbx-zurueck:hover { color: var(--ink); }
+
+/* ---- Die Kennzahlen: eine Zeile, drei Werte, kein Diagramm ------------- */
+.dbx-kennzahlen { display: flex; gap: 10px; }
+.dbx-kennzahl { flex: 1; border: 1px solid #e4e1dd; border-radius: 14px;
+                background: #fff; padding: 12px 14px; display: grid; gap: 2px; }
+.dbx-kennzahl b { font-family: var(--font-serif); font-weight: 700;
+                  font-size: 1.6rem; line-height: 1; }
+.dbx-kennzahl span { font-size: .72rem; letter-spacing: .1em;
+                     text-transform: uppercase; font-weight: 700;
+                     color: var(--grey-50); }
+
+/* ---- Die Bloecke ------------------------------------------------------- */
+.dbx-block { margin-top: clamp(30px, 5vw, 48px); }
+.dbx-blockkopf { display: flex; align-items: baseline; gap: 12px; }
+.dbx-blocktitel { margin: 0; font-family: var(--font-serif); font-weight: 700;
+                  font-size: clamp(1.2rem, 2.4vw, 1.5rem); }
+.dbx-blockzahl { margin: 0; display: inline-grid; place-items: center;
+                 min-width: 26px; height: 26px; padding: 0 8px;
+                 border-radius: 999px; background: var(--hl);
+                 font-size: .85rem; font-weight: 700; }
+.dbx-blockzahl--leise { background: #efece8; color: var(--grey-70); }
+.dbx-blocksatz { margin: 6px 0 16px; font-size: .9rem; color: var(--grey-50); }
+
+/* ---- Startklar: der einzige Block mit Farbe ---------------------------- */
+.dbx-karten { display: grid; gap: 10px; }
+.dbx-karte { border: 1px solid #e4e1dd; border-left: 3px solid var(--hl);
+             border-radius: var(--radius-card, 16px); background: #fff;
+             padding: 16px 18px; }
+/* Zwei Zeilen Platz fuer die Kanalzeile, ob sie gebraucht werden oder
+   nicht. Sonst steht der Satz der dritten Karte tiefer als der der ersten
+   und die Reihe verliert ihre Linie. */
+.dbx-karte-kanal { margin: 0; font-size: .72rem; letter-spacing: .1em;
+                   line-height: 1.45; text-transform: uppercase;
+                   font-weight: 700; color: var(--grey-50);
+                   min-height: calc(.72rem * 1.45 * 2);
+                   display: flex; align-items: flex-start; }
+/* Vier Zeilen fuer den Satz - der laengste braucht drei, die Knoepfe
+   stehen damit in jeder Karte auf derselben Hoehe. */
+.dbx-karte-satz { margin: 10px 0 0; font-size: .95rem; line-height: 1.6;
+                  min-height: calc(.95rem * 1.6 * 3); }
+.dbx-karte { display: grid; grid-template-rows: auto auto 1fr; }
+.dbx-karte .dbx-wege { align-self: end; }
+
+/* ---- Die drei Wege ----------------------------------------------------- */
+/* Die drei Wege stehen in einer Zeile und teilen sie sich. Nebeneinander
+   gestreut sahen sie nach Zufall aus; so sind sie eine Leiste. */
+.dbx-wege { display: flex; gap: 6px; margin-top: 16px;
+            padding-top: 14px; border-top: 1px solid #efece8; }
+.dbx-wege > * { flex: 1 1 0; justify-content: center; white-space: nowrap;
+                padding-left: 10px; padding-right: 10px; }
+.dbx-ja, .dbx-weg { appearance: none; -webkit-appearance: none;
+                    display: inline-flex; align-items: center; gap: 7px;
+                    padding: 7px 14px; border-radius: 999px;
+                    font-family: inherit; font-size: .82rem; font-weight: 600;
+                    cursor: pointer; transition: background-color .15s ease,
+                    border-color .15s ease, color .15s ease; }
+.dbx-ja { background: var(--ink); border: 1px solid var(--ink); color: #fff; }
+.dbx-ja:hover { background: #000; }
+.dbx-weg { background: #fff; border: 1px solid #ddd8d2; color: var(--grey-70); }
+.dbx-weg:hover { border-color: var(--ink); color: var(--ink); }
+.dbx-weg span { color: var(--hl-dunkel, #b8a800); font-size: .7rem; }
+
+/* ---- Vorhaben: was von innen kommt ------------------------------------- */
+.dbx-vorhaben { display: grid; gap: 10px; }
+.dbx-vorhabenkarte { border: 1px solid #e4e1dd;
+                     border-radius: var(--radius-card, 16px);
+                     background: #fff; overflow: hidden; }
+/* Der schwarze Kopf wie bei den Projektmodulen der SV Akademie. */
+.dbx-vk-kopf { background: var(--ink); color: #fff; padding: 14px 18px; }
+.dbx-vk-art { margin: 0; font-size: .68rem; letter-spacing: .12em;
+              text-transform: uppercase; font-weight: 700;
+              color: rgba(255,255,255,.6); }
+.dbx-vk-kopf h3 { margin: 3px 0 0; font-family: var(--font-serif);
+                  font-weight: 700; font-size: 1.15rem; line-height: 1.3; }
+.dbx-vk-koerper { padding: 16px 18px; }
+.dbx-vk-zahlen { list-style: none; margin: 0 0 12px; padding: 0;
+                 display: flex; flex-wrap: wrap; gap: 8px; }
+.dbx-vk-zahlen li { display: grid; gap: 1px; padding: 7px 12px;
+                    border-radius: 10px; background: #f4f2ef; }
+.dbx-vk-zahlen b { font-size: .95rem; }
+.dbx-vk-zahlen span { font-size: .68rem; letter-spacing: .08em;
+                      text-transform: uppercase; font-weight: 700;
+                      color: var(--grey-50); }
+.dbx-vk-stand { margin: 0; font-size: .9rem; line-height: 1.55;
+                color: var(--grey-70); }
+.dbx-vk-schritt { margin: 12px 0 0; padding-top: 12px;
+                  border-top: 1px solid #e4e1dd;
+                  font-size: .92rem; line-height: 1.55; }
+.dbx-vk-schritt span { display: block; font-size: .68rem; letter-spacing: .1em;
+                       text-transform: uppercase; font-weight: 700;
+                       color: var(--grey-50); margin-bottom: 3px; }
+
+/* ---- Eingang: die Liste ------------------------------------------------ */
+.dbx-eingang { list-style: none; margin: 0; padding: 0;
+               display: grid; gap: 1px; background: #e4e1dd;
+               border: 1px solid #e4e1dd; border-radius: var(--radius-card, 16px);
+               overflow: hidden; }
+.dbx-ez { display: grid; gap: 2px; padding: 13px 16px; background: #fff;
+          text-decoration: none; color: inherit; }
+a.dbx-ez:hover { background: #faf9f7; }
+.dbx-eingangszeile.ist-dringend .dbx-ez { border-left: 3px solid var(--ink);
+                                          padding-left: 13px; }
+.dbx-ez-feld { font-size: .68rem; letter-spacing: .1em; text-transform: uppercase;
+               font-weight: 700; color: var(--grey-50); }
+.dbx-ez-titel { font-size: .94rem; font-weight: 600; line-height: 1.35; }
+.dbx-ez-wann { font-size: .76rem; color: var(--grey-50); }
+
+.dbx-fuss { margin: clamp(26px, 4vw, 40px) 0 0; padding-top: 16px;
+            border-top: 1px solid #e4e1dd;
+            font-size: .85rem; line-height: 1.6; color: var(--grey-50);
+            max-width: 64ch; }
+
+/* ===========================================================================
+   Die Unterseite: Liste und Detail
+   ---------------------------------------------------------------------------
+   Am Telefon steht beides nicht nebeneinander, sondern nacheinander. Ein
+   Tippen schiebt das Detail ueber die Liste - sonst aendert sich etwas weit
+   unten, das niemand sieht.
+   ========================================================================== */
+.dbx-postfach { margin-top: clamp(20px, 3vw, 30px); position: relative; }
+.dbx-gruppe { display: flex; align-items: baseline; gap: 9px;
+              margin: 22px 0 8px; font-size: .7rem; letter-spacing: .12em;
+              text-transform: uppercase; font-weight: 700; color: var(--grey-50); }
+.dbx-gruppe:first-child { margin-top: 0; }
+.dbx-gruppe span { display: inline-grid; place-items: center;
+                   min-width: 19px; height: 19px; padding: 0 6px;
+                   border-radius: 999px; background: #efece8;
+                   font-size: .7rem; letter-spacing: 0; color: var(--ink); }
+.dbx-liste { list-style: none; margin: 0; padding: 0;
+             display: grid; gap: 1px; background: #e4e1dd;
+             border: 1px solid #e4e1dd; border-radius: 14px; overflow: hidden; }
+.dbx-zeile { display: grid; gap: 2px; width: 100%; text-align: left;
+             padding: 12px 15px; border: 0; background: #fff;
+             font-family: inherit; cursor: pointer;
+             transition: background-color .15s ease; }
+.dbx-zeile:hover { background: #faf9f7; }
+.dbx-zeile-wer { font-size: .68rem; letter-spacing: .08em; text-transform: uppercase;
+                 font-weight: 700; color: var(--grey-50); }
+.dbx-zeile-titel { font-size: .93rem; font-weight: 600; line-height: 1.35; }
+.dbx-zeile-wann { font-size: .74rem; color: var(--grey-50); }
+
+.dbx-detail { display: none; }
+.dbx-postfach.zeigt-detail .dbx-spalte { display: none; }
+.dbx-postfach.zeigt-detail .dbx-detail { display: block; }
+.dbx-detailkarte { border: 1px solid #e4e1dd;
+                   border-radius: var(--radius-card, 16px);
+                   background: #fff; padding: 20px; }
+.dbx-detail-zu { appearance: none; -webkit-appearance: none; border: 0;
+                 background: none; padding: 0 0 14px; font-family: inherit;
+                 font-size: .82rem; font-weight: 600; color: var(--grey-50);
+                 cursor: pointer; }
+.dbx-detail-zu:hover { color: var(--ink); }
+.dbx-detailkarte h2 { margin: 8px 0 0; font-family: var(--font-serif);
+                      font-weight: 700; font-size: 1.35rem; line-height: 1.3; }
+.dbx-detail-satz { margin: 12px 0 0; font-size: .97rem; line-height: 1.65;
+                   color: var(--grey-70); }
+
+/* ===========================================================================
+   Ab hier kommt Platz hinzu
+   ========================================================================== */
+
+/* iPad Mini hochkant aufwaerts */
+@media (min-width: 620px) {
+  .dbx-kopf { grid-template-columns: minmax(0, 1fr) auto; align-items: start;
+              gap: 26px; }
+  .dbx-kennzahlen { gap: 8px; }
+  .dbx-kennzahl { min-width: 104px; }
+  .dbx-vorhaben { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dbx-karten { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* iPad quer, Laptop: Liste und Detail nebeneinander, beides sichtbar */
+@media (min-width: 950px) {
+  .dbx-postfach { display: grid;
+                  grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+                  gap: 20px; align-items: start; }
+  .dbx-postfach .dbx-spalte { display: block; }
+  .dbx-postfach .dbx-detail { display: block; position: sticky; top: 100px; }
+  .dbx-postfach.zeigt-detail .dbx-spalte { display: block; }
+  .dbx-detail-zu { display: none; }
+  .dbx-zeile.is-aktiv { background: var(--ink); color: #fff; }
+  .dbx-zeile.is-aktiv .dbx-zeile-wer,
+  .dbx-zeile.is-aktiv .dbx-zeile-wann { color: rgba(255,255,255,.6); }
+  .dbx-karten { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .dbx-detailkarte { padding: 26px 28px; }
+}
+
+/* Grosser Monitor: die Zeile bleibt lesbar */
+@media (min-width: 1300px) {
+  .dbx-eingang, .dbx-fuss { max-width: 1000px; }
+  .dbx-vorhaben { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* ===========================================================================
+   Der Vorschlag - was das System von sich aus anregt
+   ---------------------------------------------------------------------------
+   Steht oben, noch vor Startklar: Es ist eine Empfehlung, keine Liste, und
+   sie verfaellt. Deshalb traegt sie den schwarzen Grund - einmal auf der
+   Seite, sonst waere es keine Hervorhebung.
+   ========================================================================== */
+.dbx-vorschlag { margin-top: clamp(22px, 3vw, 30px);
+                 border-radius: var(--radius-card, 16px);
+                 background: var(--ink); color: #fff; padding: 20px; }
+.dbx-vorschlag-tag { margin: 0; font-size: .68rem; letter-spacing: .14em;
+                     text-transform: uppercase; font-weight: 700;
+                     color: var(--hl); }
+.dbx-vorschlag-satz { margin: 10px 0 0; font-size: 1rem; line-height: 1.6;
+                      color: rgba(255,255,255,.72); }
+.dbx-vorschlag-satz b { color: #fff; font-weight: 600; }
+.dbx-vorschlag-modus { margin: 12px 0 0; font-family: var(--font-serif);
+                       font-weight: 700; font-size: 1.15rem; line-height: 1.35; }
+.dbx-vorschlag .dbx-ja { background: var(--hl); border-color: var(--hl);
+                         color: var(--ink); }
+.dbx-vorschlag .dbx-ja:hover { background: #fff; border-color: #fff; }
+.dbx-vorschlag .dbx-weg { background: none; border-color: rgba(255,255,255,.28);
+                          color: rgba(255,255,255,.8); }
+.dbx-vorschlag .dbx-weg:hover { border-color: #fff; color: #fff; }
+
+/* ---- Die sechs Modi -----------------------------------------------------
+   Das Mass der Projektmodule: schwarzer Kopf mit Zeichen, Name und Dauer,
+   darunter ein Satz. Was laenger ist, steht im Pop-up - die Karte soll
+   erkennen lassen, nicht erklaeren. */
+.dbx-modi { display: grid; gap: 10px; }
+.dbx-modus { border: 1px solid #e4e1dd; border-radius: var(--radius-card, 16px);
+             background: #fff; overflow: hidden;
+             display: grid; grid-template-rows: auto 1fr auto; }
+.dbx-modus-kopf { display: flex; align-items: center; gap: 10px;
+                  min-height: 52px; padding: 12px 16px;
+                  background: var(--ink); color: #fff; }
+.dbx-modus-zeichen { width: 20px; height: 20px; flex: 0 0 auto;
+                     border-radius: 50%; background: var(--hl);
+                     position: relative; }
+.dbx-modus-zeichen::before { content: ""; position: absolute;
+                             left: 50%; top: 50%; width: 6px; height: 6px;
+                             margin: -3px 0 0 -3px; border-radius: 50%;
+                             background: var(--ink); }
+.dbx-modus h3 { margin: 0; flex: 1 1 auto; font-family: var(--font-serif);
+                font-weight: 700; font-size: 1rem; line-height: 1.25; }
+.dbx-modus-dauer { flex: 0 0 auto; font-size: .68rem; letter-spacing: .08em;
+                   text-transform: uppercase; font-weight: 700;
+                   color: var(--hl); white-space: nowrap; }
+/* Zwei Zeilen Platz, damit der Fuss in jeder Karte gleich hoch sitzt. */
+.dbx-modus-kurz { margin: 0; padding: 14px 16px 10px;
+                  font-size: .9rem; line-height: 1.5; color: var(--grey-70);
+                  min-height: calc(.9rem * 1.5 * 2 + 24px); }
+.dbx-modus-fuss { display: flex; gap: 6px; padding: 0 16px 14px; }
+.dbx-modus-start, .dbx-modus-mehr { appearance: none; -webkit-appearance: none;
+                   flex: 1 1 0; padding: 7px 10px; border-radius: 999px;
+                   font-family: inherit; font-size: .8rem; font-weight: 600;
+                   cursor: pointer; transition: border-color .15s ease,
+                   color .15s ease, background-color .15s ease; }
+.dbx-modus-start { border: 1px solid var(--ink); background: var(--ink);
+                   color: #fff; }
+.dbx-modus-start:hover { background: #000; }
+.dbx-modus-mehr { border: 1px solid #ddd8d2; background: #fff;
+                  color: var(--grey-70); }
+.dbx-modus-mehr:hover { border-color: var(--ink); color: var(--ink); }
+
+/* ---- Das Pop-up zur Regel ---------------------------------------------- */
+.dbx-pop { position: fixed; inset: 0; z-index: 120;
+           background: rgba(26,24,23,.55);
+           display: grid; place-items: center; padding: 20px; }
+.dbx-pop[hidden] { display: none; }
+.dbx-pop-feld { position: relative; width: min(100%, 460px);
+                max-height: 86vh; overflow-y: auto;
+                border-radius: var(--radius-card, 16px); background: #fff;
+                padding: 26px 24px; }
+.dbx-pop-zu { position: absolute; right: 12px; top: 10px;
+              appearance: none; -webkit-appearance: none; border: 0;
+              background: none; font-size: 1.4rem; line-height: 1;
+              color: var(--grey-50); cursor: pointer; padding: 4px 8px; }
+.dbx-pop-zu:hover { color: var(--ink); }
+.dbx-pop-tag { margin: 0; font-size: .68rem; letter-spacing: .12em;
+               text-transform: uppercase; font-weight: 700; color: var(--grey-50); }
+.dbx-pop-feld h3 { margin: 6px 0 0; font-family: var(--font-serif);
+                   font-weight: 700; font-size: 1.4rem; line-height: 1.25; }
+.dbx-pop-satz { margin: 14px 0 0; font-size: .95rem; line-height: 1.65;
+                color: var(--grey-70); }
+.dbx-pop-regel { margin: 16px 0 0; padding: 12px 14px; border-radius: 10px;
+                 background: var(--hl); font-size: .9rem; line-height: 1.5; }
+.dbx-pop-regel span { display: block; font-size: .64rem; letter-spacing: .1em;
+                      text-transform: uppercase; font-weight: 700;
+                      color: rgba(26,24,23,.6); margin-bottom: 3px; }
+.dbx-pop-anlass { margin: 14px 0 18px; font-size: .82rem; color: var(--grey-50); }
+.dbx-pop-feld .dbx-ja { width: 100%; justify-content: center; }
+body.hat-pop { overflow: hidden; }
+
+@media (min-width: 620px) {
+  .dbx-modi { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dbx-vorschlag { padding: 24px 26px; }
+}
+@media (min-width: 950px) {
+  .dbx-modi { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}

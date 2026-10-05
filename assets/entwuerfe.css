@@ -1,0 +1,311 @@
+/* ===========================================================================
+   Dashboard-Entwuerfe - fuenf Haltungen, dieselben Daten
+   ---------------------------------------------------------------------------
+   Hier gilt das empiria-Design absichtlich nicht. Jeder Entwurf folgt einer
+   Schule, und zwar bis in die Schrift: ein Terminal ist in Lora nicht zu
+   bauen, ein Schweizer Raster nicht mit runden Ecken.
+
+   Jede Welt steht fuer sich. Die Klassen beginnen mit einem Buchstaben je
+   Entwurf (t- r- d- l- u-), damit sich nichts vermischt. Geteilt wird nur,
+   was die Seite zusammenhaelt: Titel, Pillen, Umschaltung.
+   ========================================================================== */
+
+/* ---- Was alle fuenf teilen ---------------------------------------------- */
+.e-titel { max-width: 22ch; }
+.e-lead { max-width: 58ch; }
+
+.e-wahl { display: flex; flex-wrap: wrap; gap: 6px;
+          margin-top: clamp(20px, 2.6vw, 30px); }
+.e-pille { appearance: none; -webkit-appearance: none;
+           display: inline-flex; align-items: baseline; gap: 7px;
+           padding: 8px 14px; border: 1px solid #ddd8d2; border-radius: 999px;
+           background: #fff; font-family: inherit; font-size: .84rem;
+           color: var(--grey-70); cursor: pointer;
+           transition: border-color .15s ease, color .15s ease; }
+.e-pille b { font-weight: 700; font-variant-numeric: tabular-nums; }
+.e-pille small { font-size: .7rem; color: var(--grey-50); }
+.e-pille:hover { border-color: var(--ink); color: var(--ink); }
+.e-pille.ist-aktiv { background: var(--ink); border-color: var(--ink);
+                     color: #fff; }
+.e-pille.ist-aktiv small { color: rgba(255,255,255,.6); }
+
+.e-raum { margin-top: clamp(22px, 3vw, 34px); }
+/* Ohne das gewinnt display:grid gegen das hidden-Attribut. */
+.e-tafel[hidden] { display: none !important; }
+
+/* ===========================================================================
+   1 TERMINAL - Bloomberg, Vim
+   ---------------------------------------------------------------------------
+   Dichte statt Luft. Alles steht in einem Raster von Zeichen, jede Zeile
+   gleich hoch, nichts bewegt sich, nichts ist rund. Farbe heisst Warnung.
+   Die Tastatur steht sichtbar unten - wer das hundert Tage benutzt, tippt
+   F2 und nicht mehr auf eine Kachel.
+   ========================================================================== */
+.e-terminal { --t-grund: #0b0c0e; --t-linie: #1e2126; --t-text: #c8ccd2;
+              --t-matt: #6d747e; --t-warn: #ffb020; --t-ja: #4ec9a0; }
+.t-rahmen { background: var(--t-grund); color: var(--t-text);
+            font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo,
+                         Consolas, monospace;
+            font-size: .76rem; line-height: 1.5; overflow-x: auto;
+            -webkit-overflow-scrolling: touch; }
+.t-kopf { display: flex; flex-wrap: wrap; gap: 4px 18px;
+          padding: 9px 14px; border-bottom: 1px solid var(--t-linie);
+          font-size: .68rem; letter-spacing: .1em; color: var(--t-matt);
+          white-space: nowrap; }
+.t-kopf span:first-child { color: var(--t-warn); font-weight: 700; }
+.t-kopf span:last-child { margin-left: auto; }
+
+.t-tabelle { width: 100%; border-collapse: collapse; min-width: 1000px;
+             table-layout: fixed; }
+.t-tabelle th { text-align: left; padding: 7px 14px;
+                font-size: .64rem; letter-spacing: .12em; font-weight: 400;
+                color: var(--t-matt); border-bottom: 1px solid var(--t-linie);
+                white-space: nowrap; }
+.t-tabelle td { padding: 5px 14px; border-bottom: 1px solid rgba(30,33,38,.55);
+                vertical-align: top; }
+.t-tabelle td:first-child { color: var(--t-warn); white-space: nowrap; }
+.t-tabelle td:nth-child(2) { color: #fff; }
+.t-tabelle td:nth-child(3) { color: var(--t-matt); font-variant-numeric: tabular-nums;
+                             white-space: nowrap; }
+.t-tabelle td:last-child { text-align: right; color: var(--t-matt);
+                           white-space: nowrap; }
+/* Die Startklar-Zeilen fassen Spalten zusammen; dort darf der Text
+   umbrechen, sonst schiebt er sich in die Nachbarspalte. Die Regel
+   steht bewusst hinter den nth-child-Regeln. */
+.t-tabelle td[colspan] { white-space: normal; text-align: left;
+                         color: var(--t-text); }
+.t-tabelle tr.ist-blk td:nth-child(6) { color: var(--t-warn); font-weight: 700;
+                                        text-align: center; }
+.t-tabelle tr:hover td { background: #13151a; }
+.t-ja { color: var(--t-ja) !important; }
+
+.t-trenner { padding: 9px 14px; margin-top: 2px;
+             background: #13151a; border-top: 1px solid var(--t-linie);
+             border-bottom: 1px solid var(--t-linie);
+             font-size: .64rem; letter-spacing: .12em; color: var(--t-matt);
+             white-space: nowrap; }
+.t-fuss { padding: 9px 14px; border-top: 1px solid var(--t-linie);
+          font-size: .64rem; letter-spacing: .06em; color: var(--t-matt);
+          white-space: nowrap; }
+
+/* ===========================================================================
+   2 RASTER - Mueller-Brockmann, Vignelli
+   ---------------------------------------------------------------------------
+   Keine Kaesten. Die Ordnung kommt aus Spalten, Linien und einer einzigen
+   Grotesk in drei Groessen. Rot markiert, was haengt - mehr Farbe gibt es
+   nicht. Die Kuerzel stehen gross, weil sie die Spalte oeffnen.
+   ========================================================================== */
+.e-raster { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            color: #000; --r-rot: #d8232a; }
+.r-kopf { display: flex; justify-content: space-between; align-items: baseline;
+          gap: 16px; padding-bottom: 10px;
+          border-bottom: 2px solid #000; }
+.r-kopf h2 { margin: 0; font-size: 1.5rem; font-weight: 700;
+             letter-spacing: -.02em; text-transform: uppercase; }
+.r-kopf p { margin: 0; font-size: .8rem; font-variant-numeric: tabular-nums; }
+
+.r-spalten { display: grid; gap: 0; }
+.r-feld { padding: 18px 0; border-bottom: 1px solid #000; }
+.r-nr { margin: 0; font-size: .68rem; font-weight: 700; letter-spacing: .14em;
+        text-transform: uppercase; }
+.r-feld h3 { margin: 6px 0 0; font-size: 1.1rem; font-weight: 700;
+             line-height: 1.2; letter-spacing: -.01em; }
+.r-meta { margin: 8px 0 0; font-size: .74rem; letter-spacing: .02em; }
+.r-schritt { margin: 12px 0 0; font-size: .86rem; line-height: 1.45;
+             max-width: 34ch; }
+.r-blk { margin: 10px 0 0; font-size: .78rem; line-height: 1.4;
+         color: var(--r-rot); font-weight: 700; max-width: 34ch; }
+.r-feld.ist-blk .r-nr { color: var(--r-rot); }
+.r-kopf--zwei { margin-top: 30px; }
+
+/* ===========================================================================
+   3 DIFF - GitHub, Perplexity
+   ---------------------------------------------------------------------------
+   Vertrauen entsteht nicht durch eine Zusammenfassung, sondern dadurch,
+   dass der Text vor der Freigabe vollstaendig dasteht - und darueber, worauf
+   er beruht. Der Vorschlag steht in Monospace, damit man ihm ansieht, dass
+   er so und nicht anders herausgeht.
+   ========================================================================== */
+.e-diff { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                       Helvetica, Arial, sans-serif;
+          --d-rand: #d8dee4; --d-grund: #f6f8fa; --d-ja: #1f883d;
+          --d-matt: #656d76; }
+.d-ueber { margin: 0 0 16px; font-size: .92rem; line-height: 1.6;
+           color: var(--d-matt); max-width: 62ch; }
+.d-karte { border: 1px solid var(--d-rand); border-radius: 6px;
+           background: #fff; margin-bottom: 14px; overflow: hidden; }
+.d-kopf { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px;
+          padding: 9px 14px; background: var(--d-grund);
+          border-bottom: 1px solid var(--d-rand); font-size: .76rem;
+          color: var(--d-matt); }
+.d-art { border: 1px solid var(--d-rand); border-radius: 999px;
+         padding: 1px 9px; background: #fff; font-weight: 600;
+         color: #24292f; }
+.d-wann { margin-left: auto; font-variant-numeric: tabular-nums; }
+.d-karte h3 { margin: 0; padding: 14px 14px 0; font-size: 1.02rem;
+              font-weight: 600; line-height: 1.35; color: #1f2328; }
+
+.d-quellen { padding: 12px 14px 0; }
+.d-quellen-tag, .d-text-tag { margin: 0 0 7px; font-size: .64rem;
+                              letter-spacing: .1em; text-transform: uppercase;
+                              font-weight: 700; color: var(--d-matt); }
+.d-quellen ol { list-style: none; margin: 0; padding: 0;
+                display: flex; flex-wrap: wrap; gap: 6px; }
+.d-quellen li { display: inline-flex; align-items: center; gap: 6px;
+                border: 1px solid var(--d-rand); border-radius: 999px;
+                padding: 3px 11px 3px 4px; background: var(--d-grund);
+                font-size: .74rem; color: #24292f; }
+.d-quellen li span { display: grid; place-items: center;
+                     width: 17px; height: 17px; border-radius: 50%;
+                     background: #fff; border: 1px solid var(--d-rand);
+                     font-size: .62rem; font-weight: 700;
+                     font-variant-numeric: tabular-nums; }
+
+.d-text { margin: 14px 14px 0; padding: 12px 14px;
+          background: var(--d-grund); border: 1px solid var(--d-rand);
+          border-radius: 6px; border-left: 3px solid var(--d-ja); }
+.d-zeile { display: block;
+           font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo,
+                        Consolas, monospace;
+           font-size: .8rem; line-height: 1.65; color: #1f2328;
+           white-space: pre-wrap; }
+.d-zeile + .d-zeile { margin-top: .65rem; }
+
+.d-wege { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px; }
+.d-ja, .d-weg { appearance: none; -webkit-appearance: none;
+                padding: 6px 15px; border-radius: 6px; font-family: inherit;
+                font-size: .82rem; font-weight: 600; cursor: pointer;
+                transition: background-color .15s ease; }
+.d-ja { background: var(--d-ja); border: 1px solid rgba(31,35,40,.15);
+        color: #fff; -webkit-text-fill-color: #fff; }
+.d-ja:hover { background: #1a7f37; }
+.d-weg { background: var(--d-grund); border: 1px solid var(--d-rand);
+         color: #24292f; -webkit-text-fill-color: #24292f; }
+.d-weg:hover { background: #eaeef2; }
+
+/* ===========================================================================
+   4 LEITSTAND - Cockpit, Tufte
+   ---------------------------------------------------------------------------
+   Instrumente stehen immer am selben Platz und sind im Normalfall farblos.
+   Wer hinsieht, sucht die Abweichung - und findet sie als einziges Rot auf
+   der Tafel. Die Verlaeufe sind so gross wie die Schrift: Datenbild, nicht
+   Diagramm.
+   ========================================================================== */
+.e-leitstand { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                            Roboto, Helvetica, Arial, sans-serif;
+               --l-linie: #e2e0dc; --l-matt: #8a8681; --l-warn: #b4232a;
+               font-variant-numeric: tabular-nums; border-top: 1px solid #1a1817; }
+.l-reihe { display: grid; gap: 10px 16px; padding: 14px 2px;
+           border-bottom: 1px solid var(--l-linie); align-items: center;
+           grid-template-columns: minmax(0, 1fr) auto; }
+.l-reihe--kopf { display: none; }
+.l-name { font-size: .95rem; font-weight: 600; color: #1a1817;
+          line-height: 1.25; }
+.l-name small { display: block; font-size: .64rem; letter-spacing: .1em;
+                text-transform: uppercase; font-weight: 600;
+                color: var(--l-matt); margin-top: 2px; }
+.l-ph { display: inline-flex; gap: 8px; align-items: center; }
+.l-punkt { width: 6px; height: 6px; display: block; background: #e2e0dc; }
+.l-punkt.ist-voll { background: #1a1817; }
+.l-punkt.ist-hier { background: #1a1817; outline: 2px solid #1a1817;
+                    outline-offset: 2px; }
+.l-spark { display: inline-flex; align-items: center; }
+.e-spark { display: block; overflow: visible; }
+.e-spark polyline { fill: none; stroke: #1a1817; stroke-width: 1.25;
+                    stroke-linejoin: round; }
+.l-bew { font-size: .76rem; color: var(--l-matt); white-space: nowrap; }
+.l-warn { font-size: .64rem; letter-spacing: .12em; font-weight: 700;
+          color: var(--l-warn); white-space: nowrap; }
+.l-reihe.ist-blk .e-spark polyline { stroke: var(--l-warn); }
+.l-reihe.ist-blk .l-punkt.ist-hier { background: var(--l-warn);
+                                     outline-color: var(--l-warn); }
+
+.l-leiste { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1px; background: var(--l-linie); margin-top: 22px;
+            border: 1px solid var(--l-linie); }
+.l-wert { background: #fff; padding: 14px 16px; }
+.l-wert b { display: block; font-size: 1.9rem; font-weight: 400;
+            line-height: 1; letter-spacing: -.03em; color: #1a1817; }
+.l-wert span { display: block; margin-top: 5px; font-size: .68rem;
+               letter-spacing: .1em; text-transform: uppercase;
+               color: var(--l-matt); }
+.l-wert--warn b { color: var(--l-warn); }
+
+/* ===========================================================================
+   5 RUHE - Things, Basecamp, Rams
+   ---------------------------------------------------------------------------
+   Eine Sache gross, der Rest klein, und am Ende ein Satz darueber, dass
+   nichts weiter zu tun ist. Die Leere ist hier kein Mangel, sondern das
+   Ergebnis: Wer hier nichts sieht, hat nichts offen.
+   ========================================================================== */
+.e-ruhe { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                       Helvetica, Arial, sans-serif;
+          --u-matt: #8e8a85; --u-blau: #2b6cb0; }
+.u-tag { margin: 0; font-size: .66rem; letter-spacing: .14em;
+         text-transform: uppercase; font-weight: 700; color: var(--u-matt); }
+.u-jetzt { padding: clamp(26px, 5vw, 48px) 0 clamp(30px, 5vw, 52px); }
+.u-jetzt h2 { margin: 14px 0 0; font-size: clamp(1.5rem, 4.6vw, 2.3rem);
+              font-weight: 600; line-height: 1.25; letter-spacing: -.02em;
+              color: #1a1817; max-width: 26ch; }
+.u-wo { margin: 14px 0 0; font-size: .92rem; color: var(--u-matt); }
+.u-blk { margin: 18px 0 0; padding-left: 13px; border-left: 2px solid #e2e0dc;
+         font-size: .9rem; line-height: 1.6; color: var(--u-matt);
+         max-width: 44ch; }
+.u-ja { appearance: none; -webkit-appearance: none; margin-top: 28px;
+        justify-self: start;
+        padding: 11px 26px; border: 0; border-radius: 999px;
+        background: var(--u-blau); color: #fff; -webkit-text-fill-color: #fff;
+        font-family: inherit; font-size: .92rem; font-weight: 600;
+        cursor: pointer; transition: background-color .15s ease; }
+.u-ja:hover { background: #22548a; }
+
+.u-weiter { padding-top: 26px; border-top: 1px solid #ece9e5; }
+.u-liste { list-style: none; margin: 14px 0 0; padding: 0; }
+.u-liste li { padding: 13px 0; border-bottom: 1px solid #f2efeb; }
+.u-liste b { display: block; font-size: .94rem; font-weight: 600;
+             color: #1a1817; }
+.u-liste span { display: block; margin-top: 3px; font-size: .84rem;
+                line-height: 1.45; color: var(--u-matt); }
+.u-ruhig { margin-top: 34px; }
+.u-ruhig p { margin: 0; font-size: .92rem; line-height: 1.65;
+             color: var(--u-matt); max-width: 48ch; }
+
+/* ===========================================================================
+   Ab hier kommt Platz hinzu
+   ========================================================================== */
+@media (min-width: 620px) {
+  .t-rahmen { font-size: .78rem; }
+  .r-spalten { grid-template-columns: repeat(2, minmax(0, 1fr));
+               column-gap: 26px; }
+  .r-feld { border-top: 1px solid #000; border-bottom: 0;
+            margin-top: -1px; }
+  .l-reihe { grid-template-columns: minmax(0, 1fr) auto auto auto;
+             gap: 16px; }
+  .l-leiste { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .u-jetzt h2 { font-size: clamp(1.9rem, 4vw, 2.6rem); }
+}
+
+@media (min-width: 950px) {
+  .t-kopf, .t-trenner, .t-fuss { padding-inline: 20px; }
+  .t-tabelle th, .t-tabelle td { padding-inline: 20px; }
+  .r-spalten { grid-template-columns: repeat(3, minmax(0, 1fr));
+               column-gap: 30px; }
+  .r-spalten--eng { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  /* Die Spalten bekommen jetzt feste Masse, damit die Punkte, die
+     Verlaeufe und die Zeiten untereinander auf einer Linie stehen. */
+  .l-reihe { grid-template-columns: minmax(0, 1fr) 118px 72px 132px 86px; }
+  .l-reihe--kopf { display: grid; padding: 0 2px 8px;
+                   border-bottom: 1px solid var(--l-linie);
+                   font-size: .64rem; letter-spacing: .12em;
+                   text-transform: uppercase; font-weight: 700;
+                   color: var(--l-matt); }
+  .d-karte { max-width: 760px; }
+  .d-ueber { max-width: 760px; }
+  .u-jetzt { display: grid; grid-template-columns: minmax(0, 1fr);
+             max-width: 760px; }
+  .u-weiter, .u-ruhig { max-width: 620px; }
+}
+
+@media (min-width: 1300px) {
+  .e-leitstand, .e-raster { max-width: 1120px; }
+}
