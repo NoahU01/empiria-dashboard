@@ -29,9 +29,12 @@ ersten drei ist in beiden Ständen gleich.
 **Der Inhalt (`<main>`) ist unverändert und byte-identisch zur Quelle.**
 Geändert wurde ausschließlich die Navigation drumherum (siehe unten).
 
-Einzige Ausnahme: Im Ökosystem tragen die Erklärungen zu GitHub und Vercel
-je einen Satz mehr zu den Konten (GitHub auf Noahs Account, Vercel auf einem
-eigenen Account von empiria). Das steht nur hier, nicht im empiria-Repository.
+Ausnahmen im Ökosystem – sie stehen nur hier, nicht im empiria-Repository:
+
+- GitHub und Vercel: je ein Satz mehr zu den Konten (GitHub auf Noahs
+  Account, Vercel auf einem eigenen Account von empiria).
+- Kontakte: liegen in einer Datenbank bei Supabase (statt „Eigene
+  Datenhaltung im Dashboard“).
 
 ## Navigation
 
