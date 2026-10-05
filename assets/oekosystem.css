@@ -299,11 +299,11 @@ body .section--eng:has(.oe-plan) { padding-top: clamp(20px, 2.4vw, 34px); }
    benannt, aber alle Kaesten standen in einer Reihe. Eine Querverbindung
    zwischen Nachbarn liest niemand als "greift darauf zu". */
 .oe-plan--verdrahtung { display: grid; gap: clamp(52px, 7vh, 88px); }
-/* Drei Zeilen, nicht vier: Buffer ist zu den Aktionen gezogen, die vierte
-   Zeile blieb leer stehen und hat die Schiene um ihre Hoehe plus einen
-   Zeilenabstand nach unten geschoben. */
+/* Vier Zeilen: drei fuer die Quellen, die vierte fuer die Datenbank bei
+   Supabase, in der sechs davon zusammenlaufen. (Buffer steht bei den
+   Aktionen, nicht hier.) */
 .oe-quellen { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr));
-              grid-template-rows: auto auto auto;
+              grid-template-rows: auto auto auto auto;
               gap: clamp(26px, 3.4vh, 44px) 8px; position: relative; z-index: 1; }
 /* Die Beschriftung steht vor dem Raster, nicht darin - als Rasterkind
    belegte sie eine vierte Zeile und riss den Abstand zum Knoten auf. */

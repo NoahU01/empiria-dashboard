@@ -35,6 +35,11 @@ Ausnahmen im Ökosystem – sie stehen nur hier, nicht im empiria-Repository:
   Account, Vercel auf einem eigenen Account von empiria).
 - Kontakte: liegen in einer Datenbank bei Supabase (statt „Eigene
   Datenhaltung im Dashboard“).
+- Neuer Knoten „Datenbank · Supabase“ unter den Datenquellen: Google
+  Analytics, Search Console, Linked Helper, LinkedIn-Firmenseiten, Instagram
+  und Facebook laufen dort zusammen, erst von dort geht eine Leitung zur
+  Intelligenzschicht. Hervorheben beim Zeigen läuft durch den Knoten hindurch.
+  Dazu `assets/oekosystem.css`: vierte Rasterzeile in `.oe-quellen`.
 
 ## Navigation
 

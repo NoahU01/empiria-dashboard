@@ -147,6 +147,10 @@
               <span class="oe-knoten-titel">Linked Helper</span>
               <span class="oe-knoten-unter"></span>
             </button>
+            <button type="button" class="oe-knoten oe-knoten--speicher" data-baustein="supabase" data-ebene="4" aria-expanded="false" style="grid-column: 1 / 7; grid-row: 4; order: 13;">
+              <span class="oe-knoten-titel">Datenbank</span>
+              <span class="oe-knoten-unter">Supabase &middot; hier laufen die Kanäle zusammen</span>
+            </button>
             </div>
           </div>
 
@@ -655,6 +659,14 @@
     "schritte": [],
     "offen": []
   },
+  "supabase": {
+    "satz": "Der Sammelpunkt der Kanäle: Google Analytics, Search Console, Linked Helper, die LinkedIn-Firmenseiten, Instagram und Facebook laufen zuerst in eine Datenbank bei Supabase. Erst von dort geht es weiter in die Intelligenzschicht.",
+    "tools": [
+      "Datenbank bei Supabase"
+    ],
+    "schritte": [],
+    "offen": []
+  },
   "kontakte_db": {
     "satz": "Der Bestand: Kontakte, Bestandskunden und was zu jedem gilt. Sie ist weder Quelle noch Ergebnis, sondern beides – der Ausführungsknoten liest aus ihr und schreibt in sie zurück. Deshalb steht sie neben ihm und nicht in der Kette. Die Kontakte liegen in einer Datenbank bei Supabase.",
     "tools": [
@@ -767,6 +779,12 @@
   "chrome": {
     "titel": "Chrome",
     "unter": "Recherche im Netz",
+    "art": "geplant",
+    "band": "Datenquellen"
+  },
+  "supabase": {
+    "titel": "Datenbank",
+    "unter": "Supabase &middot; hier laufen die Kanäle zusammen",
     "art": "geplant",
     "band": "Datenquellen"
   },
@@ -997,9 +1015,9 @@
     if (!plan || !svg) return;
     var knoten = Array.prototype.slice.call(plan.querySelectorAll('.oe-knoten'));
     var richtung = plan.dataset.richtung || 'unten';
-    var LEITUNGEN = [["homepages", "analytics"], ["homepages", "search"], ["linkedin", "salesnav"], ["salesnav", "helper"], ["mail", "schiene"], ["finder", "schiene"], ["chrome", "schiene"], ["instagram", "schiene"], ["facebook", "schiene"], ["li_marken", "schiene"], ["analytics", "schiene"], ["search", "schiene"], ["helper", "schiene"], ["kontakte_db", "schiene"], ["schiene", "knoten"], ["macbook", "knoten"], ["ipad", "knoten"], ["iphone", "knoten"], ["knoten", "dashboard"], ["knoten", "postings"], ["knoten", "korrespondenz"], ["knoten", "webdev"], ["knoten", "cockpits"], ["korrespondenz", "aus_mail", "baum"], ["korrespondenz", "aus_whats", "baum"], ["korrespondenz", "aus_dm", "baum"], ["korrespondenz", "aus_komm", "baum"], ["webdev", "vscode"], ["vscode", "github"], ["github", "vercel"], ["postings", "buffer"], ["buffer", "aus_linkedin", "baum"], ["buffer", "aus_instagram", "baum"], ["buffer", "aus_facebook", "baum"]];
-    var ZUSTAND = {"homepages>analytics": "geplant", "homepages>search": "geplant", "linkedin>salesnav": "geplant", "salesnav>helper": "geplant", "mail>schiene": "geplant", "finder>schiene": "geplant", "chrome>schiene": "geplant", "instagram>schiene": "geplant", "facebook>schiene": "geplant", "li_marken>schiene": "geplant", "analytics>schiene": "geplant", "search>schiene": "geplant", "helper>schiene": "geplant", "kontakte_db>schiene": "geplant", "schiene>knoten": "geplant", "macbook>knoten": "geplant", "ipad>knoten": "geplant", "iphone>knoten": "geplant", "knoten>dashboard": "geplant", "knoten>postings": "geplant", "knoten>korrespondenz": "geplant", "knoten>webdev": "geplant", "knoten>cockpits": "geplant", "korrespondenz>aus_mail": "geplant", "korrespondenz>aus_whats": "geplant", "korrespondenz>aus_dm": "geplant", "korrespondenz>aus_komm": "geplant", "webdev>vscode": "geplant", "vscode>github": "geplant", "github>vercel": "geplant", "postings>buffer": "geplant", "buffer>aus_linkedin": "geplant", "buffer>aus_instagram": "geplant", "buffer>aus_facebook": "geplant"};
-    var AMPEL = {"homepages>analytics": "rot", "homepages>search": "rot", "linkedin>salesnav": "rot", "salesnav>helper": "rot", "mail>schiene": "rot", "finder>schiene": "rot", "chrome>schiene": "rot", "instagram>schiene": "rot", "facebook>schiene": "rot", "li_marken>schiene": "rot", "analytics>schiene": "rot", "search>schiene": "rot", "helper>schiene": "rot", "kontakte_db>schiene": "rot", "schiene>knoten": "rot", "macbook>knoten": "rot", "ipad>knoten": "rot", "iphone>knoten": "rot", "knoten>dashboard": "rot", "knoten>postings": "rot", "knoten>korrespondenz": "rot", "knoten>webdev": "rot", "knoten>cockpits": "rot", "korrespondenz>aus_mail": "rot", "korrespondenz>aus_whats": "rot", "korrespondenz>aus_dm": "rot", "korrespondenz>aus_komm": "rot", "webdev>vscode": "rot", "vscode>github": "rot", "github>vercel": "rot", "postings>buffer": "rot", "buffer>aus_linkedin": "rot", "buffer>aus_instagram": "rot", "buffer>aus_facebook": "rot"};
+    var LEITUNGEN = [["homepages", "analytics"], ["homepages", "search"], ["linkedin", "salesnav"], ["salesnav", "helper"], ["mail", "schiene"], ["finder", "schiene"], ["chrome", "schiene"], ["instagram", "supabase"], ["facebook", "supabase"], ["li_marken", "supabase"], ["analytics", "supabase"], ["search", "supabase"], ["helper", "supabase"], ["kontakte_db", "schiene"], ["supabase", "schiene"], ["schiene", "knoten"], ["macbook", "knoten"], ["ipad", "knoten"], ["iphone", "knoten"], ["knoten", "dashboard"], ["knoten", "postings"], ["knoten", "korrespondenz"], ["knoten", "webdev"], ["knoten", "cockpits"], ["korrespondenz", "aus_mail", "baum"], ["korrespondenz", "aus_whats", "baum"], ["korrespondenz", "aus_dm", "baum"], ["korrespondenz", "aus_komm", "baum"], ["webdev", "vscode"], ["vscode", "github"], ["github", "vercel"], ["postings", "buffer"], ["buffer", "aus_linkedin", "baum"], ["buffer", "aus_instagram", "baum"], ["buffer", "aus_facebook", "baum"]];
+    var ZUSTAND = {"homepages>analytics": "geplant", "homepages>search": "geplant", "linkedin>salesnav": "geplant", "salesnav>helper": "geplant", "mail>schiene": "geplant", "finder>schiene": "geplant", "chrome>schiene": "geplant", "instagram>supabase": "geplant", "facebook>supabase": "geplant", "li_marken>supabase": "geplant", "analytics>supabase": "geplant", "search>supabase": "geplant", "helper>supabase": "geplant", "kontakte_db>schiene": "geplant", "supabase>schiene": "geplant", "schiene>knoten": "geplant", "macbook>knoten": "geplant", "ipad>knoten": "geplant", "iphone>knoten": "geplant", "knoten>dashboard": "geplant", "knoten>postings": "geplant", "knoten>korrespondenz": "geplant", "knoten>webdev": "geplant", "knoten>cockpits": "geplant", "korrespondenz>aus_mail": "geplant", "korrespondenz>aus_whats": "geplant", "korrespondenz>aus_dm": "geplant", "korrespondenz>aus_komm": "geplant", "webdev>vscode": "geplant", "vscode>github": "geplant", "github>vercel": "geplant", "postings>buffer": "geplant", "buffer>aus_linkedin": "geplant", "buffer>aus_instagram": "geplant", "buffer>aus_facebook": "geplant"};
+    var AMPEL = {"homepages>analytics": "rot", "homepages>search": "rot", "linkedin>salesnav": "rot", "salesnav>helper": "rot", "mail>schiene": "rot", "finder>schiene": "rot", "chrome>schiene": "rot", "instagram>supabase": "rot", "facebook>supabase": "rot", "li_marken>supabase": "rot", "analytics>supabase": "rot", "search>supabase": "rot", "helper>supabase": "rot", "kontakte_db>schiene": "rot", "supabase>schiene": "rot", "schiene>knoten": "rot", "macbook>knoten": "rot", "ipad>knoten": "rot", "iphone>knoten": "rot", "knoten>dashboard": "rot", "knoten>postings": "rot", "knoten>korrespondenz": "rot", "knoten>webdev": "rot", "knoten>cockpits": "rot", "korrespondenz>aus_mail": "rot", "korrespondenz>aus_whats": "rot", "korrespondenz>aus_dm": "rot", "korrespondenz>aus_komm": "rot", "webdev>vscode": "rot", "vscode>github": "rot", "github>vercel": "rot", "postings>buffer": "rot", "buffer>aus_linkedin": "rot", "buffer>aus_instagram": "rot", "buffer>aus_facebook": "rot"};
 
     /* Die Klasse einer Leitung: ihr Zustand, nicht der Stand des Kastens
        an ihrem Ende. Die Ampel kommt als zweite Klasse dazu und wird nur
@@ -1245,9 +1263,17 @@
        Weg zur Intelligenzschicht blieb dunkel - obwohl er genau dort
        weitergeht. Wer die Schiene beruehrt, bekommt deshalb auch ihre
        Gegenseite und die Linie selbst mit. */
+    /* Die Datenbank bei Supabase ist ebenfalls ein Durchgang: Was in sie
+       hineinlaeuft, geht ueber ihre Leitung zur Schiene weiter. */
+    var DURCHGAENGE = ['supabase'];
     function wegeFuer(id) {
       var direkt = LEITUNGEN.filter(function (l) {
         return l[0] === id || l[1] === id; });
+      direkt.slice().forEach(function (l) {
+        if (l[0] === id && DURCHGAENGE.indexOf(l[1]) > -1)
+          LEITUNGEN.forEach(function (w) {
+            if (w[0] === l[1] && direkt.indexOf(w) < 0) direkt.push(w); });
+      });
       var anSchiene = direkt.filter(function (l) {
         return l[0] === 'schiene' || l[1] === 'schiene'; });
       if (!anSchiene.length) return { leitungen: direkt, schiene: false };
@@ -1309,8 +1335,8 @@
     /* Sichten: dieselbe Karte, eine andere Frage. Die Knoten einer Sicht
        bleiben stehen, alles andere blendet ab - samt der Leitungen, deren
        beide Enden nicht zur Sicht gehoeren. */
-    var SICHTEN = {"status": {"name": "Status", "satz": "Zwei Fragen in einem Bild. Die Kästen sagen, ob es das schon gibt: grün steht, gelb ist in Arbeit, rot gibt es noch nicht. Die Leitungen sagen, ob der Weg dorthin eingerichtet ist – keiner ist es, deshalb sind sie alle rot. Deswegen hängen grüne Kästen an roten Leitungen: Der Dienst läuft, die Anbindung fehlt.", "ampel": true, "knoten": []}, "stufe1": {"name": "1 Logikblock", "satz": "Der Block, der als Erstes funktionieren muss: die Intelligenzschicht auf dem Always-on-MacBook, die drei Zugänge zu ihr und das Dashboard. Solange der nicht steht, steht nichts.", "knoten": ["knoten", "macbook", "ipad", "iphone", "dashboard"]}, "stufe2": {"name": "2 Anbinden", "satz": "Die Intelligenzschicht wird mit allem verbunden, was es schon gibt: Homepages, Analytics, Search Console, die LinkedIn-Konten mit Sales Navigator und Linked Helper, Instagram, Facebook, das Postfach, das Dateisystem und Chrome. Hier ist nichts neu zu bauen, nur anzuschließen.", "knoten": ["knoten", "homepages", "analytics", "search", "linkedin", "li_marken", "salesnav", "helper", "instagram", "facebook", "mail", "finder", "chrome"]}, "stufe3": {"name": "3 Aktionen", "satz": "Was sich mit den angebundenen Quellen bereits tun lässt: Beiträge über Buffer ausspielen, auf Eingänge und auf das Netzwerk reagieren, an den Webseiten arbeiten, Rechnungen ablegen, Aufträge aller Art übernehmen. Die Kontaktpflege fehlt noch – dafür braucht es Stufe 4.", "knoten": ["knoten", "postings", "buffer", "aus_linkedin", "aus_instagram", "aus_facebook", "korrespondenz", "aus_mail", "aus_whats", "aus_dm", "aus_komm", "cockpits", "webdev", "vscode", "github", "vercel"]}, "stufe4": {"name": "4 Kontakte", "satz": "Die Kontakte werden zu einer sauberen Datenbank: Welche Felder je Person geführt werden, woher der Erstbestand kommt und wie oft Kontakt sinnvoll ist. Damit bekommt die Korrespondenz ihren dritten Anlass – den, der von innen kommt.", "knoten": ["kontakte_db", "korrespondenz", "knoten"]}};
-    var AMPEL_KNOTEN = {"homepages": "gruen", "mail": "gruen", "finder": "gruen", "chrome": "gruen", "instagram": "gruen", "facebook": "gruen", "analytics": "gruen", "search": "gruen", "macbook": "gruen", "ipad": "gruen", "iphone": "gruen", "linkedin": "gruen", "li_marken": "gruen", "salesnav": "gruen", "helper": "gruen", "kontakte_db": "gelb", "knoten": "rot", "dashboard": "rot", "postings": "rot", "buffer": "rot", "korrespondenz": "rot", "cockpits": "rot", "webdev": "rot", "vscode": "gruen", "github": "gruen", "vercel": "gruen", "aus_linkedin": "rot", "aus_instagram": "rot", "aus_facebook": "rot", "aus_mail": "rot", "aus_whats": "rot", "aus_dm": "rot", "aus_komm": "rot"};
+    var SICHTEN = {"status": {"name": "Status", "satz": "Zwei Fragen in einem Bild. Die Kästen sagen, ob es das schon gibt: grün steht, gelb ist in Arbeit, rot gibt es noch nicht. Die Leitungen sagen, ob der Weg dorthin eingerichtet ist – keiner ist es, deshalb sind sie alle rot. Deswegen hängen grüne Kästen an roten Leitungen: Der Dienst läuft, die Anbindung fehlt.", "ampel": true, "knoten": []}, "stufe1": {"name": "1 Logikblock", "satz": "Der Block, der als Erstes funktionieren muss: die Intelligenzschicht auf dem Always-on-MacBook, die drei Zugänge zu ihr und das Dashboard. Solange der nicht steht, steht nichts.", "knoten": ["knoten", "macbook", "ipad", "iphone", "dashboard"]}, "stufe2": {"name": "2 Anbinden", "satz": "Die Intelligenzschicht wird mit allem verbunden, was es schon gibt: Homepages, Analytics, Search Console, die LinkedIn-Konten mit Sales Navigator und Linked Helper, Instagram, Facebook, das Postfach, das Dateisystem und Chrome. Analytics, Search Console, Linked Helper, die Firmenseiten, Instagram und Facebook laufen dabei zuerst in eine Datenbank bei Supabase. Hier ist nichts neu zu bauen, nur anzuschließen.", "knoten": ["knoten", "homepages", "analytics", "search", "linkedin", "li_marken", "salesnav", "helper", "instagram", "facebook", "supabase", "mail", "finder", "chrome"]}, "stufe3": {"name": "3 Aktionen", "satz": "Was sich mit den angebundenen Quellen bereits tun lässt: Beiträge über Buffer ausspielen, auf Eingänge und auf das Netzwerk reagieren, an den Webseiten arbeiten, Rechnungen ablegen, Aufträge aller Art übernehmen. Die Kontaktpflege fehlt noch – dafür braucht es Stufe 4.", "knoten": ["knoten", "postings", "buffer", "aus_linkedin", "aus_instagram", "aus_facebook", "korrespondenz", "aus_mail", "aus_whats", "aus_dm", "aus_komm", "cockpits", "webdev", "vscode", "github", "vercel"]}, "stufe4": {"name": "4 Kontakte", "satz": "Die Kontakte werden zu einer sauberen Datenbank: Welche Felder je Person geführt werden, woher der Erstbestand kommt und wie oft Kontakt sinnvoll ist. Damit bekommt die Korrespondenz ihren dritten Anlass – den, der von innen kommt.", "knoten": ["kontakte_db", "korrespondenz", "knoten"]}};
+    var AMPEL_KNOTEN = {"homepages": "gruen", "mail": "gruen", "finder": "gruen", "chrome": "gruen", "instagram": "gruen", "facebook": "gruen", "analytics": "gruen", "search": "gruen", "macbook": "gruen", "ipad": "gruen", "iphone": "gruen", "linkedin": "gruen", "li_marken": "gruen", "salesnav": "gruen", "helper": "gruen", "kontakte_db": "gelb", "supabase": "rot", "knoten": "rot", "dashboard": "rot", "postings": "rot", "buffer": "rot", "korrespondenz": "rot", "cockpits": "rot", "webdev": "rot", "vscode": "gruen", "github": "gruen", "vercel": "gruen", "aus_linkedin": "rot", "aus_instagram": "rot", "aus_facebook": "rot", "aus_mail": "rot", "aus_whats": "rot", "aus_dm": "rot", "aus_komm": "rot"};
     var SATZ_ALLES = "Der ganze Plan: Was hereinkommt, wo gearbeitet wird und was herausgeht. Status zeigt, was davon heute schon steht. Die vier Stufen zeigen, in welcher Reihenfolge der Rest entsteht.";
     var pillen = Array.prototype.slice.call(document.querySelectorAll('.oe-sicht'));
     var satz = document.getElementById('oeSichtSatz');
