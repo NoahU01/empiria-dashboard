@@ -29,6 +29,10 @@ ersten drei ist in beiden Ständen gleich.
 **Der Inhalt (`<main>`) ist unverändert und byte-identisch zur Quelle.**
 Geändert wurde ausschließlich die Navigation drumherum (siehe unten).
 
+Einzige Ausnahme: Im Ökosystem tragen die Erklärungen zu GitHub und Vercel
+je einen Satz mehr zu den Konten (GitHub auf Noahs Account, Vercel auf einem
+eigenen Account von empiria). Das steht nur hier, nicht im empiria-Repository.
+
 ## Navigation
 
 Die Kopfzeile zeigt nur das empiria-Logo und rechts daneben ein Dreieck.
