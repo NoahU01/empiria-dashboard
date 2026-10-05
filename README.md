@@ -40,6 +40,10 @@ Ausnahmen im Ökosystem – sie stehen nur hier, nicht im empiria-Repository:
   und Facebook laufen dort zusammen, erst von dort geht eine Leitung zur
   Intelligenzschicht. Hervorheben beim Zeigen läuft durch den Knoten hindurch.
   Dazu `assets/oekosystem.css`: vierte Rasterzeile in `.oe-quellen`.
+- Sicht „Status“: grün sind LinkedIn → Sales Navigator → Linked Helper,
+  Homepages → Analytics/Search Console, alle Leitungen in die Datenbank,
+  die Datenbank selbst, Webseiten und ihr Weg VS Code → GitHub → Vercel.
+  Rot bleibt alles an der Intelligenzschicht. Erklärtext der Sicht angepasst.
 
 ## Navigation
 
