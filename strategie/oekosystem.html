@@ -46,34 +46,24 @@
 
       <p class="kicker">Strategie &middot; Entwicklung</p>
       <h1 class="h-serif oe-titel">Das <span class="hl">Ökosystem</span> auf einen Blick.</h1>
-      <div class="oe-pult">
-        <p class="oe-pult-kopf">
-          <span class="oe-pult-zeichen" aria-hidden="true"></span>
-          <span>Menü</span>
-        </p>
-        <div class="oe-pult-koerper">
-          <div class="oe-pult-zeilen">
-            <div class="oe-pult-zeile oe-pult-zeile--sicht">
-              <span class="oe-pult-tag">Sicht</span>
-              <div class="oe-pult-feld">
-            <button type="button" class="pv-pille oe-sicht is-aktiv" data-sicht="alles" aria-pressed="true">Alles</button>
-            <button type="button" class="pv-pille oe-sicht" data-sicht="status" aria-pressed="false">Status</button>
-              </div>
-            </div>
-            <div class="oe-pult-zeile oe-pult-zeile--leitungen">
-              <span class="oe-pult-tag">Leitungen</span>
-              <div class="oe-pult-feld">
-            <span class="oe-legende-posten"><i class="oe-strich oe-strich--eingerichtet"></i>eingerichtet</span>
-            <span class="oe-legende-posten"><i class="oe-strich oe-strich--geplant"></i>geplant</span>
-            <span class="oe-legende-ampel">
+      <div class="oe-leiste">
+        <div class="oe-leiste-gruppe">
+          <span class="oe-leiste-tag">Sicht</span>
+          <div class="oe-umschalter" role="group" aria-label="Sicht">
+            <button type="button" class="oe-sicht is-aktiv" data-sicht="alles" aria-pressed="true">Alles</button>
+            <button type="button" class="oe-sicht" data-sicht="status" aria-pressed="false">Status</button>
+          </div>
+        </div>
+        <span class="oe-leiste-trenner" aria-hidden="true"></span>
+        <div class="oe-leiste-gruppe oe-leiste-gruppe--leitungen">
+          <span class="oe-leiste-tag">Leitungen</span>
+          <span class="oe-legende-posten"><i class="oe-strich oe-strich--eingerichtet"></i>eingerichtet</span>
+          <span class="oe-legende-posten"><i class="oe-strich oe-strich--geplant"></i>geplant</span>
+          <span class="oe-legende-ampel">
             <span class="oe-legende-posten"><i class="oe-strich oe-strich--gruen"></i>steht</span>
             <span class="oe-legende-posten"><i class="oe-strich oe-strich--gelb"></i>in Arbeit</span>
             <span class="oe-legende-posten"><i class="oe-strich oe-strich--rot"></i>fehlt noch</span>
           </span>
-              </div>
-            </div>
-          </div>
-          <div class="oe-pult-satz" id="oeSichtSatz">Der ganze Plan: Was hereinkommt, wo gearbeitet wird und was herausgeht. Status zeigt, was davon heute schon steht.</div>
         </div>
       </div>
 
@@ -1348,11 +1338,9 @@
     /* Sichten: dieselbe Karte, eine andere Frage. Die Knoten einer Sicht
        bleiben stehen, alles andere blendet ab - samt der Leitungen, deren
        beide Enden nicht zur Sicht gehoeren. */
-    var SICHTEN = {"status": {"name": "Status", "satz": "Zwei Fragen in einem Bild. Die Kästen sagen, ob es das schon gibt: grün steht, gelb ist in Arbeit, rot gibt es noch nicht. Die Leitungen sagen, ob der Weg dorthin eingerichtet ist. Grün sind die Wege, die schon bestehen: LinkedIn über Sales Navigator zu Linked Helper, die Homepages zu Analytics und Search Console, die Kanäle in die Datenbank bei Supabase, der Weg von der Intelligenzschicht über die Webseiten bis Vercel, die drei Zugänge zur Intelligenzschicht: Haupt-MacBook, iPad und iPhone, die Wege von E-Mail, Dateisystem und Chrome in die Intelligenzschicht und der Weg von der Intelligenzschicht über die Korrespondenz zu den E-Mails. Rot sind die übrigen Wege an der Intelligenzschicht – dort hängen grüne Kästen an roten Leitungen: Der Dienst läuft, die Anbindung fehlt.", "ampel": true, "knoten": []}};
+    var SICHTEN = {"status": {"name": "Status", "ampel": true, "knoten": []}};
     var AMPEL_KNOTEN = {"homepages": "gruen", "mail": "gruen", "finder": "gruen", "chrome": "gruen", "instagram": "gruen", "facebook": "gruen", "analytics": "gruen", "search": "gruen", "macbook": "gruen", "ipad": "gruen", "iphone": "gruen", "linkedin": "gruen", "li_marken": "gruen", "salesnav": "gruen", "helper": "gruen", "kontakte_db": "gelb", "supabase": "gruen", "knoten": "gruen", "dashboard": "rot", "postings": "rot", "buffer": "rot", "korrespondenz": "gruen", "cockpits": "rot", "webdev": "gruen", "vscode": "gruen", "github": "gruen", "vercel": "gruen", "aus_linkedin": "rot", "aus_instagram": "rot", "aus_facebook": "rot", "aus_mail": "gruen", "aus_whats": "rot", "aus_dm": "rot", "aus_komm": "rot"};
-    var SATZ_ALLES = "Der ganze Plan: Was hereinkommt, wo gearbeitet wird und was herausgeht. Status zeigt, was davon heute schon steht.";
     var pillen = Array.prototype.slice.call(document.querySelectorAll('.oe-sicht'));
-    var satz = document.getElementById('oeSichtSatz');
 
     function sichtSetzen(name) {
       pillen.forEach(function (b) {
@@ -1363,7 +1351,6 @@
       var s = SICHTEN[name];
       plan.classList.toggle('ist-sicht', !!s);
       svg.classList.toggle('ist-gefiltert', !!s);
-      if (satz) satz.textContent = s ? s.satz : SATZ_ALLES;
       /* Die Sicht "Status" faerbt Leitungen und Kaesten. Ein Rahmen in
          Vollfarbe und ein heller Grund sagen auf einen Blick, wie es um
          das einzelne Element steht. */
