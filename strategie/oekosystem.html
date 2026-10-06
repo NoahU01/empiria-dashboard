@@ -2,7 +2,14 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" id="oeViewport">
+<script>
+  /* Auf dem Telefon steht die Seite in voller Desktop-Breite, verkleinert auf
+     den Bildschirm - so ist der ganze Plan zu sehen, und hineingezoomt wird
+     mit zwei Fingern. Der Plan selbst bleibt dabei unangetastet. */
+  if (Math.min(screen.width, screen.height) < 768)
+    document.getElementById('oeViewport').setAttribute('content', 'width=1200');
+</script>
 <title>Ökosystem &middot; Steuerungszentrale &ndash; empiria</title>
 <meta name="description" content="Schaltplan der Steuerungszentrale: Datenquellen, Ausführungsknoten, Dashboard, Aktionen und die drei Marken.">
 <meta name="robots" content="noindex, nofollow">
