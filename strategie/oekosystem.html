@@ -47,18 +47,9 @@
       <p class="kicker">Strategie &middot; Entwicklung</p>
       <h1 class="h-serif oe-titel">Das <span class="hl">Ökosystem</span> auf einen Blick.</h1>
       <div class="oe-leiste">
-        <div class="oe-umschalter" role="group" aria-label="Sicht">
-            <button type="button" class="oe-sicht is-aktiv" data-sicht="alles" aria-pressed="true">Alles</button>
-            <button type="button" class="oe-sicht" data-sicht="status" aria-pressed="false">Status</button>
-        </div>
         <div class="oe-leiste-gruppe" aria-label="Leitungen">
           <span class="oe-legende-posten"><i class="oe-strich oe-strich--eingerichtet"></i>eingerichtet</span>
           <span class="oe-legende-posten"><i class="oe-strich oe-strich--geplant"></i>geplant</span>
-          <span class="oe-legende-ampel">
-            <span class="oe-legende-posten"><i class="oe-strich oe-strich--gruen"></i>steht</span>
-            <span class="oe-legende-posten"><i class="oe-strich oe-strich--gelb"></i>in Arbeit</span>
-            <span class="oe-legende-posten"><i class="oe-strich oe-strich--rot"></i>fehlt noch</span>
-          </span>
         </div>
       </div>
 
@@ -1328,85 +1319,23 @@
     plan.addEventListener('mouseout', function (e) {
       if (e.relatedTarget && plan.contains(e.relatedTarget) &&
           e.relatedTarget.closest('.oe-knoten')) return;
-      if (plan.classList.contains('ist-sicht')) return;
       svg.classList.remove('ist-gefiltert');
       svg.querySelectorAll('path').forEach(function (d) { d.classList.remove('ist-hell'); });
     });
 
-    /* Sichten: dieselbe Karte, eine andere Frage. Die Knoten einer Sicht
-       bleiben stehen, alles andere blendet ab - samt der Leitungen, deren
-       beide Enden nicht zur Sicht gehoeren. */
-    var SICHTEN = {"status": {"name": "Status", "ampel": true, "knoten": []}};
+    /* Der Stand je Kasten. Was noch nicht gruen ist, ist nicht eingerichtet
+       und steht gestrichelt - wie die geplanten Leitungen. */
     var AMPEL_KNOTEN = {"homepages": "gruen", "mail": "gruen", "finder": "gruen", "chrome": "gruen", "instagram": "gruen", "facebook": "gruen", "analytics": "gruen", "search": "gruen", "macbook": "gruen", "ipad": "gruen", "iphone": "gruen", "linkedin": "gruen", "li_marken": "gruen", "salesnav": "gruen", "helper": "gruen", "kontakte_db": "gelb", "supabase": "gruen", "knoten": "gruen", "dashboard": "rot", "postings": "rot", "buffer": "rot", "korrespondenz": "gruen", "cockpits": "rot", "webdev": "gruen", "vscode": "gruen", "github": "gruen", "vercel": "gruen", "aus_linkedin": "rot", "aus_instagram": "rot", "aus_facebook": "rot", "aus_mail": "gruen", "aus_whats": "rot", "aus_dm": "rot", "aus_komm": "rot"};
-    var pillen = Array.prototype.slice.call(document.querySelectorAll('.oe-sicht'));
-
-    function sichtSetzen(name) {
-      pillen.forEach(function (b) {
-        var an = b.dataset.sicht === name;
-        b.classList.toggle('is-aktiv', an);
-        b.setAttribute('aria-pressed', an ? 'true' : 'false');
-      });
-      var s = SICHTEN[name];
-      plan.classList.toggle('ist-sicht', !!s);
-      svg.classList.toggle('ist-gefiltert', !!s);
-      /* Die Sicht "Status" faerbt Leitungen und Kaesten. Ein Rahmen in
-         Vollfarbe und ein heller Grund sagen auf einen Blick, wie es um
-         das einzelne Element steht. */
-      var ampel = !!(s && s.ampel);
-      plan.classList.toggle('ist-ampel', ampel);
-      document.body.classList.toggle('ist-ampel-seite', ampel);
-      svg.classList.toggle('ist-ampel', ampel);
-      if (ampel) svg.classList.remove('ist-gefiltert');
-      var menge = (s && !ampel) ? s.knoten : null;
-      knoten.forEach(function (b) {
-        b.classList.toggle('ist-blass', !!menge && menge.indexOf(b.dataset.baustein) < 0);
-        b.classList.remove('oe-ampel--gruen', 'oe-ampel--gelb', 'oe-ampel--rot');
-        /* In der Sicht "Alles" ist gestrichelt, was im Status noch nicht
-           gruen ist - wie bei den Leitungen. */
-        var stand = AMPEL_KNOTEN[b.dataset.baustein];
-        b.classList.toggle('ist-geplant', !ampel && !!stand && stand !== 'gruen');
-        if (ampel) {
-          var a = AMPEL_KNOTEN[b.dataset.baustein];
-          if (a) b.classList.add('oe-ampel--' + a);
-        }
-      });
-      /* Die Ampelfarbe setzt das Skript direkt auf die Leitung. Ueber das
-         Stylesheet war sie nicht zuverlaessig durchzusetzen, und eine
-         Farbe, die man sehen will, darf nicht an einer Spezifitaetsfrage
-         haengen. */
-      var FARBE = { gruen: '#34b87a', gelb: '#e8a800', rot: '#f0495a' };
-      svg.querySelectorAll('path').forEach(function (d) {
-        var dran = !!menge && menge.indexOf(d.dataset.von) > -1 &&
-                   (menge.indexOf(d.dataset.nach) > -1 || d.dataset.nach === 'schiene');
-        d.classList.toggle('ist-hell', dran);
-        if (ampel) {
-          var art = (d.getAttribute('class') || '').match(/oe-ampel--(\w+)/);
-          if (art) {
-            d.style.stroke = FARBE[art[1]];
-            d.style.strokeWidth = '2.6';
-            d.style.strokeDasharray = 'none';
-          }
-        } else {
-          d.style.stroke = '';
-          d.style.strokeWidth = '';
-          d.style.strokeDasharray = '';
-        }
-      });
-    }
-
-    sichtSetzen('alles');
-
-    pillen.forEach(function (b) {
-      b.addEventListener('click', function () {
-        sichtSetzen(b.classList.contains('is-aktiv') ? 'alles' : b.dataset.sicht);
-      });
+    knoten.forEach(function (b) {
+      var stand = AMPEL_KNOTEN[b.dataset.baustein];
+      b.classList.toggle('ist-geplant', !!stand && stand !== 'gruen');
     });
 
     /* Ein Klick neben die Kaesten loest die Markierung wieder - man soll
        nicht denselben Kasten noch einmal treffen muessen. */
     document.addEventListener('click', function (e) {
       if (e.target.closest('.oe-knoten') || e.target.closest('.oe-feld') ||
-          e.target.closest('.oe-sicht') || e.target.closest('.pv-wahl')) return;
+          e.target.closest('.pv-wahl')) return;
       var offener = plan.querySelector('.oe-knoten.is-offen');
       if (offener) offener.click();
     });

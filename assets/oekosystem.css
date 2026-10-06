@@ -253,31 +253,6 @@ body .section--eng:has(.oe-plan) { padding-top: clamp(20px, 2.4vw, 34px); }
 .oe-draht--eingerichtet { stroke: #8a8783; stroke-width: 2; }
 .oe-draht--geplant      { stroke: #b8b2ab; stroke-width: 1.8; stroke-dasharray: 4 5; }
 
-/* Die Ampel der Sicht "Status" - sichtbar nur in dieser Sicht. */
-.oe-draehte.ist-ampel .oe-draht.oe-ampel--gruen { stroke: #34b87a; stroke-width: 2.6;
-                                                  stroke-dasharray: none; }
-.oe-draehte.ist-ampel .oe-draht.oe-ampel--gelb  { stroke: #e8a800; stroke-width: 2.6;
-                                                  stroke-dasharray: none; }
-.oe-draehte.ist-ampel .oe-draht.oe-ampel--rot   { stroke: #f0495a; stroke-width: 2.6;
-                                                  stroke-dasharray: none; }
-
-/* In der Sicht "Status" traegt jeder Kasten seine Farbe selbst: Rahmen in
-   Vollton, Grund hell. So sieht man den Stand eines Elements, ohne seine
-   Leitungen zu verfolgen. Der Kasten sagt, wie es um den Dienst steht -
-   die Leitung, wie es um den Weg dorthin steht. */
-.oe-plan.ist-ampel .oe-knoten.oe-ampel--gruen { border-color: #34b87a;
-                                        background: rgba(52,184,122,.12); }
-.oe-plan.ist-ampel .oe-knoten.oe-ampel--gelb  { border-color: #e8a800;
-                                        background: rgba(232,168,0,.12); }
-.oe-plan.ist-ampel .oe-knoten.oe-ampel--rot   { border-color: #f0495a;
-                                        background: rgba(240,73,90,.12); }
-.oe-plan.ist-ampel .oe-knoten[class*="oe-ampel--"] { border-width: 2px; }
-/* Auch die beiden grossen Kaesten tragen ihre Farbe in der Flaeche. Der
-   Text wechselt dafuer auf Dunkel - in dieser Sicht zaehlt der Stand, nicht
-   die Mitte des Plans. */
-.oe-plan.ist-ampel .oe-knoten--gross[class*="oe-ampel--"] { color: var(--ink); }
-.oe-plan.ist-ampel .oe-knoten--gross[class*="oe-ampel--"] .oe-knoten-unter {
-                     color: var(--grey-70); }
 .oe-draehte.ist-gefiltert .oe-draht { opacity: .12; }
 .oe-draehte.ist-gefiltert .oe-draht.ist-hell { opacity: 1; stroke: var(--ink);
                                                stroke-width: 2.6; stroke-dasharray: none; }
@@ -409,35 +384,19 @@ body .section--eng:has(.oe-plan) { padding-top: clamp(20px, 2.4vw, 34px); }
 .oe-strich--gelb         { border-color: #e8a800; }
 .oe-strich--rot          { border-color: #f0495a; }
 
-/* Die Ampel steht nur in der Legende, wenn die Sicht "Status" laeuft. */
-.oe-legende-ampel { display: none; align-items: center; gap: 8px 20px; }
-.ist-ampel-seite .oe-legende-ampel { display: inline-flex; }
-.ist-ampel-seite .oe-leiste-gruppe > .oe-legende-posten { display: none; }
 
-/* ---- Die Leiste: Sicht und Legende in einer Zeile ----------------------
-   Vorher stand hier ein Kasten mit Kopf, Schaltern und einem erklaerenden
-   Satz. Gebraucht wird nur das Umschalten und die Zeichensprache der
-   Leitungen - beides passt in eine Zeile zwischen Headline und Plan. */
-/* Ohne Tags und Linien: links der Umschalter, mit festem Abstand die
-   Legende. Der Abstand ist der, den vorher Trennstrich und Tag fuellten. */
-.oe-leiste { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 147px;
+/* ---- Die Leiste: die Legende in einer Zeile ---------------------------
+   Sichten gibt es nicht mehr - der Plan zeigt den Stand selbst: durchgezogen
+   ist eingerichtet, gestrichelt ist geplant. Unter der Headline steht nur
+   noch diese Zeichensprache, linksbuendig. Die Hoehe ist die der Leiste mit
+   Umschalter, damit der Plan nicht nach oben rutscht. */
+.oe-leiste { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px;
              margin: clamp(22px, 2.6vw, 32px) 0 clamp(26px, 3vw, 38px);
-             padding: 12px 0; }
+             padding: 12px 0; min-height: 57px; box-sizing: border-box; }
 .oe-leiste-gruppe { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
 .oe-leiste .oe-legende-posten { font-size: .8rem; gap: 8px; }
 .oe-leiste .oe-strich { width: 22px; }
-.oe-leiste .oe-legende-ampel { gap: 8px 18px; }
 
-/* Der Umschalter: eine Schiene, darin die gewaehlte Sicht als dunkle Pille. */
-.oe-umschalter { display: inline-flex; padding: 3px; gap: 2px; border-radius: 999px;
-                 background: #f1efec; box-shadow: inset 0 0 0 1px #e4e1dd; }
-.oe-umschalter .oe-sicht { appearance: none; border: 0; margin: 0; cursor: pointer;
-                           padding: 6px 16px; border-radius: 999px; background: transparent;
-                           font: inherit; font-size: .8rem; font-weight: 600; line-height: 1.2;
-                           color: var(--grey-70); transition: background .15s, color .15s; }
-.oe-umschalter .oe-sicht:hover { color: var(--ink); }
-.oe-umschalter .oe-sicht.is-aktiv { background: var(--ink); color: #fff; }
-.oe-umschalter .oe-sicht:focus-visible { outline: 2px solid var(--hl); outline-offset: 2px; }
 
 
 /* Die Leitungen waren hier ausgeblendet, weil sie im schmalen Fenster
@@ -483,10 +442,6 @@ body .section--eng:has(.oe-plan) { padding-top: clamp(20px, 2.4vw, 34px); }
   background: #fff; display: inline-block; padding: 1px 6px; margin-left: 0;
   border-radius: 4px; }
 
-/* ---- Sichten: dieselbe Karte, eine andere Frage ------------------------ */
-.oe-sicht { cursor: pointer; font-family: inherit; }
-.oe-knoten.ist-blass { opacity: .25; filter: grayscale(1); }
-.ist-sicht .oe-knoten:not(.ist-blass) { border-color: var(--ink); }
 
 /* Die vierte Reihe im Plan faellt weg, dadurch rutscht alles enger. */
 
