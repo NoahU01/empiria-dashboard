@@ -998,9 +998,12 @@
     /* Die Klasse einer Leitung: ihr Zustand, nicht der Stand des Kastens
        an ihrem Ende. Die Ampel kommt als zweite Klasse dazu und wird nur
        in der Sicht "Status" sichtbar. */
+    /* Was im Status gruen ist, steht schon - in der Sicht "Alles" ist die
+       Leitung dann eingerichtet, also durchgezogen. */
     function klasse(l) {
       var k = l[0] + '>' + l[1];
-      return 'oe-draht oe-draht--' + (ZUSTAND[k] || 'geplant') +
+      var zustand = AMPEL[k] === 'gruen' ? 'eingerichtet' : (ZUSTAND[k] || 'geplant');
+      return 'oe-draht oe-draht--' + zustand +
              ' oe-ampel--' + (AMPEL[k] || 'rot') +
              (l[2] === 'beide' ? ' oe-draht--beide' : '');
     }
@@ -1221,7 +1224,7 @@
           var weg = abX !== null && gruenX.some(function (gx) {
             return Math.min(gx, abX) <= x1 + 0.5 && x2 - 0.5 <= Math.max(gx, abX); });
           teile.push('<path class="oe-draht oe-draht--schiene' +
-            (weg ? ' oe-ampel--gruen' : ' oe-ampel--rot') + '" data-x1="' +
+            (weg ? ' oe-draht--eingerichtet oe-ampel--gruen' : ' oe-ampel--rot') + '" data-x1="' +
             punkte[i].toFixed(1) + '" data-x2="' + punkte[i + 1].toFixed(1) +
             '" d="M' + punkte[i] + ',' + m2 + 'L' + punkte[i + 1] + ',' + m2 + '"/>');
         }

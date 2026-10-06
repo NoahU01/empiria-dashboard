@@ -618,6 +618,8 @@ body .section--eng:has(.oe-plan) { padding-top: clamp(20px, 2.4vw, 34px); }
 /* Die Schiene ist so stark wie die Leitungen, die auf ihr ankommen. */
 .oe-draht--schiene { stroke: #b8b2ab; stroke-width: 2;
                      stroke-dasharray: 4 5; }
+/* Ein Abschnitt, ueber den ein bestehender Weg laeuft, ist eingerichtet. */
+.oe-draht--schiene.oe-draht--eingerichtet { stroke: #8a8783; stroke-dasharray: none; }
 
 /* Die vier uebrigen Aktionen teilen sich den Platz rechts vom Strang zu
    gleichen Teilen - in einem eigenen Raster, damit sie nicht an die
