@@ -611,17 +611,10 @@ body .section--eng:has(.oe-plan) { padding-top: clamp(20px, 2.4vw, 34px); }
    sich aus, die Seite verbietet es nicht. Die Form bleibt lesbar, auch
    wenn man sie in zwei Zuegen abfahren muss.
    ========================================================================== */
-.oe-schiebehinweis { display: none; align-items: center; gap: 8px;
-                     margin: 0 0 10px; font-size: .78rem; color: var(--grey-50); }
-.oe-schiebehinweis::before { content: ""; width: 26px; height: 0;
-                             border-top: 1px dashed #b8b2ab; }
-
 @media (max-width: 1100px) {
   .oe-raum { overflow-x: auto; overflow-y: hidden;
              -webkit-overflow-scrolling: touch;
              padding-bottom: 6px; }
   .oe-plan { min-width: 1050px; }
-  /* Der Hinweis steht nur dort, wo geschoben werden muss. */
-  .oe-schiebehinweis { display: flex; }
 }
 
