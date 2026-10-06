@@ -392,8 +392,8 @@ body .section--eng:has(.oe-plan) { padding-top: clamp(20px, 2.4vw, 34px); }
    sondern eine Pille mit gestricheltem Rand. */
 /* Kasten mit runden Ecken, nicht Pille - rund wirkt sonst zu weich. Der
    gestrichelte Rand bleibt: Geraete liefern nichts, sie bedienen. */
-.oe-knoten--geraet { border-radius: 12px; border-style: solid;
-                     border-color: #c8c4bf; background: #fff; }
+/* Die Zugaenge stehen - sie sehen aus wie jeder eingerichtete Kasten. */
+.oe-knoten--geraet { border-radius: 12px; }
 .oe-knoten--geraet .oe-knoten-unter { display: none; }
 .oe-knoten--geraet .oe-marke { background: none; color: var(--grey-50);
                                box-shadow: inset 0 0 0 1px #ddd8d2; margin-top: 2px; }
@@ -538,9 +538,9 @@ body .section--eng:has(.oe-plan) { padding-top: clamp(20px, 2.4vw, 34px); }
    Leitungen. Der Speicher bleibt blau, nur gestrichelt. Der dunkle Kasten
    wird hell: Schwarz gestrichelt waere auf schwarzem Grund unsichtbar.
    Die gelbe Marke bleibt. */
-.oe-knoten.ist-geplant:not(.is-offen) { border: 1.5px dashed #b8b2ab; }
+.oe-knoten.ist-geplant:not(.is-offen) { border: 1.5px dashed #b8b2ab; background: #fff; }
 .oe-knoten--speicher.ist-geplant:not(.is-offen) { border: 2px dashed #0B9FBD; }
-.oe-knoten--gross.ist-geplant:not(.is-offen) { background: #faf9f7; color: var(--ink); }
+.oe-knoten--gross.ist-geplant:not(.is-offen) { background: #fff; color: var(--ink); }
 .oe-knoten--gross.ist-geplant:not(.is-offen) .oe-knoten-unter { color: var(--grey-50); }
 .oe-knoten.ist-geplant:not(.is-offen):hover { border-color: var(--ink); background: #fff; }
 .oe-knoten--speicher.ist-geplant:not(.is-offen):hover { border-color: #0B9FBD;
