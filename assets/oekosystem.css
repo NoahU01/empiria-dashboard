@@ -621,15 +621,13 @@ body .section--eng:has(.oe-plan) { padding-top: clamp(20px, 2.4vw, 34px); }
    geht verloren - untereinander steht dann alles, aber nichts sagt mehr,
    was wohin laeuft.
 
-   Deshalb behaelt der Plan seine Breite und wird geschoben wie eine Karte.
-   Aufziehen vergroessert, wischen verschiebt; beides kann das Telefon von
-   sich aus, die Seite verbietet es nicht. Die Form bleibt lesbar, auch
-   wenn man sie in zwei Zuegen abfahren muss.
+   Deshalb behaelt der Plan seine Desktop-Breite und wird als Ganzes auf die
+   Breite des Schirms verkleinert (das Skript setzt den Faktor). Man sieht
+   sofort das ganze Bild; zum Lesen wird mit zwei Fingern aufgezogen.
+   Menueband, Headline und Footer bleiben normal gross.
    ========================================================================== */
 @media (max-width: 1100px) {
-  .oe-raum { overflow-x: auto; overflow-y: hidden;
-             -webkit-overflow-scrolling: touch;
-             padding-bottom: 6px; }
-  .oe-plan { min-width: 1050px; }
+  .oe-raum { overflow: hidden; }
+  .oe-plan { width: 1080px; min-width: 1080px; transform-origin: 0 0; }
 }
 
