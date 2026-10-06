@@ -531,6 +531,20 @@ body .section--eng:has(.oe-plan) { padding-top: clamp(20px, 2.4vw, 34px); }
 .oe-knoten--speicher .oe-marke { background: rgba(11,159,189,.12); color: #0B9FBD;
                                  box-shadow: none; }
 .oe-knoten--speicher:hover { background: rgba(11,159,189,.06); }
+
+/* ---- Noch nicht eingerichtet: gestrichelt ------------------------------
+   In der Sicht "Alles" tragen die Kaesten, die im Status nicht gruen sind,
+   einen gestrichelten Rahmen - dieselbe Sprache wie die geplanten
+   Leitungen. Der Speicher bleibt blau, nur gestrichelt. Der dunkle Kasten
+   wird hell: Schwarz gestrichelt waere auf schwarzem Grund unsichtbar.
+   Die gelbe Marke bleibt. */
+.oe-knoten.ist-geplant:not(.is-offen) { border: 1.5px dashed #b8b2ab; }
+.oe-knoten--speicher.ist-geplant:not(.is-offen) { border: 2px dashed #0B9FBD; }
+.oe-knoten--gross.ist-geplant:not(.is-offen) { background: #faf9f7; color: var(--ink); }
+.oe-knoten--gross.ist-geplant:not(.is-offen) .oe-knoten-unter { color: var(--grey-50); }
+.oe-knoten.ist-geplant:not(.is-offen):hover { border-color: var(--ink); background: #fff; }
+.oe-knoten--speicher.ist-geplant:not(.is-offen):hover { border-color: #0B9FBD;
+                                                        background: rgba(11,159,189,.06); }
 .oe-knoten--speicher.is-offen { background: #0B9FBD; border-color: #0B9FBD; }
 .oe-knoten--speicher.is-offen .oe-knoten-titel { color: #fff; }
 .oe-knoten--speicher.is-offen .oe-knoten-unter { color: rgba(255,255,255,.75); }

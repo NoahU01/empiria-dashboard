@@ -1361,6 +1361,10 @@
       knoten.forEach(function (b) {
         b.classList.toggle('ist-blass', !!menge && menge.indexOf(b.dataset.baustein) < 0);
         b.classList.remove('oe-ampel--gruen', 'oe-ampel--gelb', 'oe-ampel--rot');
+        /* In der Sicht "Alles" ist gestrichelt, was im Status noch nicht
+           gruen ist - wie bei den Leitungen. */
+        var stand = AMPEL_KNOTEN[b.dataset.baustein];
+        b.classList.toggle('ist-geplant', !ampel && !!stand && stand !== 'gruen');
         if (ampel) {
           var a = AMPEL_KNOTEN[b.dataset.baustein];
           if (a) b.classList.add('oe-ampel--' + a);
@@ -1389,6 +1393,8 @@
         }
       });
     }
+
+    sichtSetzen('alles');
 
     pillen.forEach(function (b) {
       b.addEventListener('click', function () {
