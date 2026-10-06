@@ -431,11 +431,11 @@ body .section--eng:has(.oe-plan) { padding-top: clamp(20px, 2.4vw, 34px); }
 /* Der Koerper hat eine feste Hoehe. Der Satz rechts ist je Sicht
    verschieden lang - wuchse der Kasten mit, spraenge der Plan darunter
    bei jedem Umschalten. Was nicht hineinpasst, scrollt im Satz. */
-.oe-pult-koerper { display: grid; grid-template-columns: minmax(0, 480px) minmax(0, 1fr);
+.oe-pult-koerper { display: grid; grid-template-columns: 290px minmax(0, 1fr);
                    height: 220px; }
 .oe-pult-zeilen { display: flex; flex-direction: column;
                   border-right: 1px solid #e4e1dd; }
-.oe-pult-satz { margin: 0; padding: 13px 20px; align-self: stretch;
+.oe-pult-satz { margin: 0; padding: 16px 24px; align-self: stretch;
                 min-height: 0; overflow-y: auto;
                 font-size: .88rem; line-height: 1.6; color: var(--grey-70); }
 /* Ein schmaler Balken, der immer zu sehen ist - auf dem Mac blendet das
@@ -459,14 +459,27 @@ body .section--eng:has(.oe-plan) { padding-top: clamp(20px, 2.4vw, 34px); }
 .oe-pult-zeichen::after  { top: 13px; }
 /* Der Koerper fuellt, was die Kopfzeile uebrig laesst - die Zeilen teilen
    sich den Rest, damit der Kasten bis zur Unterkante des Leads traegt. */
+/* Links steht wenig - zwei Schalter, drei Striche. Die Spalte ist deshalb
+   schmal, Tag und Inhalt stehen oben, der Inhalt untereinander. So bekommt
+   der Satz rechts die Breite, die er braucht. */
 .oe-pult-zeile { flex: 1 1 auto; display: grid;
-                 grid-template-columns: 70px minmax(0, 1fr);
-                 align-items: center; gap: 0 16px; padding: 9px 18px; }
+                 grid-template-columns: 80px minmax(0, 1fr);
+                 align-items: start; gap: 0 14px; padding: 16px 18px; }
 /* Die Sichten stehen nebeneinander, alle Pillen gleich breit.
    Ihr Tag steht oben, weil die Zeile hoch ist - mittig haengt das Wort
    sonst neben der zweiten Reihe und zeigt auf nichts. */
+.oe-pult-zeile--sicht .oe-pult-tag { padding-top: 7px; }
 .oe-pult-zeile--sicht .oe-pult-feld { display: grid; gap: 6px;
-                                     grid-template-columns: 1fr 1fr; }
+                                     grid-template-columns: 1fr; }
+/* Die Sicht behaelt ihre Hoehe, die Leitungen nehmen den Rest. Die
+   Legende hat je Sicht zwei oder drei Posten - Platz ist fuer drei, damit
+   weder die Trennlinie noch der Kasten beim Umschalten wandert. */
+.oe-pult-zeile--sicht { flex: 0 0 auto; }
+.oe-pult-zeile--leitungen .oe-pult-tag { padding-top: 3px; }
+.oe-pult-zeile--leitungen .oe-pult-feld { min-height: 80px; justify-content: flex-start; }
+.oe-pult-zeile--leitungen .oe-pult-feld,
+.oe-pult .oe-legende-ampel { flex-direction: column; align-items: flex-start;
+                             gap: 8px; }
 .oe-pult-zeile--sicht .pv-pille { width: 100%; justify-content: center;
                                  text-align: center; }
 /* Im Kopf steht das Pult in einer schmalen Spalte - die Pillen tragen
@@ -488,7 +501,8 @@ body .section--eng:has(.oe-plan) { padding-top: clamp(20px, 2.4vw, 34px); }
                               color: #fff; }
 
 @media (max-width: 800px) {
-  .oe-pult-zeile { grid-template-columns: 1fr; gap: 6px; }
+  .oe-pult-zeile { grid-template-columns: 1fr; gap: 8px; }
+  .oe-pult-zeile .oe-pult-tag { padding-top: 0; }
 }
 
 /* Die Leitungen waren hier ausgeblendet, weil sie im schmalen Fenster
@@ -679,7 +693,12 @@ body .section--eng:has(.oe-plan) { padding-top: clamp(20px, 2.4vw, 34px); }
 
 @media (max-width: 820px) {
   .oe-pult-koerper { grid-template-columns: 1fr; height: auto; }
-  .oe-pult-zeilen { border-right: none; border-bottom: 1px solid #e4e1dd; }
+  /* Schmal stehen Sicht und Leitungen nebeneinander - untereinander
+     wuerde der Kasten hoeher als der Bildschirm Platz hat. */
+  .oe-pult-zeilen { border-right: none; border-bottom: 1px solid #e4e1dd;
+                    flex-direction: row; }
+  .oe-pult-zeilen .oe-pult-zeile { flex: 1 1 0; min-width: 0; }
+  .oe-pult-zeile + .oe-pult-zeile { border-top: none; border-left: 1px solid #e4e1dd; }
   .oe-pult-satz { height: 150px; }
 }
 
