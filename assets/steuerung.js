@@ -47,14 +47,18 @@
 
   /* ---------- Projekte: Index je Marke ---------- */
   function projekte() {
-    function liste(l) { return l.map(function (p) { return '<a href="/strategie/projekte.html#p=' + p.id + '"' + (p.status === "pausiert" ? ' class="st4-pause"' : "") + ">" + esc(p.name) + "</a>"; }).join('<i aria-hidden="true">·</i>'); }
-    return ["empiria", "sofortsichtbar", "Müller&Ströbel."].map(function (m) {
-      var l = D.projekte.filter(function (p) { return (p.marke || "empiria") === m && p.status !== "abgeschlossen"; }).sort(function (a, b) { return a.name.localeCompare(b.name); });
-      var k = l.filter(function (p) { return p.typ !== "intern"; }), n = l.filter(function (p) { return p.typ === "intern"; });
-      return '<div class="st4-marke"><h4>' + esc(m) + "</h4>" +
-        '<p><span class="st4-art">Kunden</span>' + (k.length ? liste(k) : '<em>–</em>') + "</p>" +
-        '<p><span class="st4-art">Intern</span>' + (n.length ? liste(n) : '<em>–</em>') + "</p></div>";
-    }).join("");
+    function liste(l) {
+      if (!l.length) return '<span class="st4-leer2">–</span>';
+      return l.map(function (p) { return '<a href="/strategie/projekte.html#p=' + p.id + '"' + (p.status === "pausiert" ? ' class="st4-pause"' : "") + ">" + esc(p.name) + "</a>"; })
+        .join(' <span class="st4-sep" aria-hidden="true">·</span> ');
+    }
+    return '<div class="st4-idx-kopf"><span></span><span>Kunden</span><span>Intern</span></div>' +
+      ["empiria", "sofortsichtbar", "Müller&Ströbel."].map(function (m) {
+        var l = D.projekte.filter(function (p) { return (p.marke || "empiria") === m && p.status !== "abgeschlossen"; }).sort(function (a, b) { return a.name.localeCompare(b.name); });
+        return '<div class="st4-idx-zeile"><span class="st4-idx-marke">' + esc(m) + "</span>" +
+          '<span class="st4-idx-zelle"><em>Kunden</em><span>' + liste(l.filter(function (p) { return p.typ !== "intern"; })) + "</span></span>" +
+          '<span class="st4-idx-zelle"><em>Intern</em><span>' + liste(l.filter(function (p) { return p.typ === "intern"; })) + "</span></span></div>";
+      }).join("");
   }
 
   /* ---------- Vorlagen ---------- */
@@ -73,7 +77,7 @@
   /* ---------- Sparring ---------- */
   function sparring() {
     return SPARRING.map(function (s) {
-      return '<button type="button" class="st4-spar" data-spar="' + s.k + '" title="Regel: ' + esc(s.r) + '"><span class="st4-play" aria-hidden="true"></span><span class="st4-spar-text"><b>' + esc(s.n) + '</b><span class="st4-spar-s">' + esc(s.s) + '</span></span><span class="st4-spar-z">' + s.z + "</span></button>";
+      return '<button type="button" class="st4-spar" data-spar="' + s.k + '" title="Regel: ' + esc(s.r) + '"><span class="st4-spar-z">' + s.z + '</span><b>' + esc(s.n).replace("Entscheidungssprint", "Entscheidungs&shy;sprint") + '</b><span class="st4-spar-s">' + esc(s.s) + '</span><span class="st4-spar-los">Starten <i aria-hidden="true">→</i></span></button>';
     }).join("");
   }
 
@@ -101,9 +105,7 @@
     var offen = D.vorlagen.filter(function (v) { return v.status === "offen" && v.entscheidung !== "spaeter"; });
     var weg = D.vorlagen.filter(function (v) { return v.status === "entschieden" || v.entscheidung === "spaeter"; });
     wurzel.innerHTML =
-      '<nav class="st4-nav" aria-label="Hauptseiten">' + [["Projekte", "/strategie/projekte.html"], ["Aufgaben", "/strategie/aufgaben.html"], ["Korrespondenz", "/strategie/korrespondenz-beta.html"], ["Kontakte", "/strategie/kontakte.html"]]
-        .map(function (x) { return '<a href="' + x[1] + '">' + x[0] + " →</a>"; }).join("") + "</nav>" +
-      '<section class="st4-projekte">' + projekte() + "</section>" +
+      '<section class="st4-index" aria-label="Projekte">' + projekte() + "</section>" +
       '<section class="st4-block"><h2 class="st4-h">Auf deinem Tisch</h2>' +
         (offen.length ? '<div class="st4-karten">' + offen.map(karte).join("") + "</div>" : '<p class="st4-leer">Nichts zu entscheiden.</p>') +
         (weg.length ? '<p class="st4-entschieden">' + weg.map(function (v) {
@@ -111,6 +113,10 @@
       "</section>" +
       '<section class="st4-block"><h2 class="st4-h">Sparring starten</h2><div class="st4-sparring">' + sparring() + '</div><p class="st4-hinweis" data-spar-hinweis hidden></p></section>' +
       '<section class="st4-block"><h2 class="st4-h">Die nächsten Wochen</h2><div class="st4-wochen" tabindex="0" aria-label="Wochen – seitlich wischen">' + wochen() + "</div></section>";
+    var kopf = document.querySelector(".db-kopf");
+    if (kopf && !kopf.querySelector(".st4-nav")) kopf.insertAdjacentHTML("beforeend", '<nav class="st4-nav" aria-label="Hauptseiten">' +
+      [["Projekte", "/strategie/projekte.html"], ["Aufgaben", "/strategie/aufgaben.html"], ["Korrespondenz", "/strategie/korrespondenz-beta.html"], ["Kontakte", "/strategie/kontakte.html"]]
+        .map(function (x) { return '<a href="' + x[1] + '">' + x[0] + "</a>"; }).join("") + "</nav>");
     verdrahten();
   }
 

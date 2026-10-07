@@ -1190,3 +1190,52 @@ a.sm-k:hover { box-shadow: 0 0 0 1.5px var(--ink); }
 .st4-e-titel { -webkit-line-clamp: 3; }
 @media (max-width: 900px) { .st4-wochen { grid-template-columns: none; grid-auto-columns: 78%; } .st4-woche:nth-child(2n+1) { border-left: 1px solid #f2f1ef; padding-left: 16px; } .st4-woche:first-child { border-left: 0; padding-left: 0; } }
 .st4-marke p a { white-space: nowrap; } .st4-marke p i { color: var(--grey-50); }
+/* ===== Steuerung v6 – Kopf, Index, Sparring (sauber neu) ===== */
+/* Absprünge rechts im Seitenkopf, ruhig */
+.db-kopf .st4-nav { display: flex; flex-wrap: wrap; gap: 4px 0; margin: 0 0 10px; padding: 0; }
+.db-kopf .st4-nav a { padding: 0 14px; border-left: 1px solid #e4e1dd; border-radius: 0; background: none; font-family: var(--font-sans); font-size: .88rem; font-weight: 500; color: var(--grey-70); text-decoration: none; }
+.db-kopf .st4-nav a:first-child { border-left: 0; }
+.db-kopf .st4-nav a:last-child { padding-right: 0; }
+.db-kopf .st4-nav a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; text-decoration-color: #c9c5c0; background: none; }
+@media (max-width: 700px) { .db-kopf .st4-nav { margin: 4px 0 0; } .db-kopf .st4-nav a:first-child { padding-left: 0; } }
+/* Projekt-Index: Tabelle Marke | Kunden | Intern */
+.st4-index { margin-top: 26px; border-top: 1px solid #e4e1dd; border-bottom: 1px solid #e4e1dd; }
+.st4-idx-kopf, .st4-idx-zeile { display: grid; grid-template-columns: 150px minmax(0, 1fr) minmax(0, 1fr); column-gap: 32px; }
+.st4-idx-kopf { padding: 12px 0 6px; font-size: .7rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--grey-50); }
+.st4-idx-zeile { padding: 10px 0; border-top: 1px solid #f0eeeb; align-items: baseline; }
+.st4-idx-marke { font-size: .8rem; font-weight: 600; color: var(--ink-2); }
+.st4-idx-zelle { font-size: .9rem; line-height: 1.6; color: var(--ink); }
+.st4-idx-zelle em { display: none; }
+.st4-idx-zelle a { color: var(--ink); text-decoration: none; white-space: nowrap; }
+.st4-idx-zelle a:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #c9c5c0; }
+.st4-idx-zelle a.st4-pause { color: var(--grey-50); }
+.st4-sep { margin: 0 4px; color: #c9c5c0; }
+.st4-leer2 { color: #c9c5c0; }
+@media (max-width: 760px) {
+  .st4-idx-kopf { display: none; }
+  .st4-idx-zeile { grid-template-columns: minmax(0, 1fr); row-gap: 4px; }
+  .st4-idx-zelle em { display: inline-block; min-width: 56px; font-style: normal; font-size: .72rem; font-weight: 600; color: var(--grey-50); }
+}
+/* Sparring: ruhige Karten, „Starten →“ immer sichtbar */
+.st4-sparring { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 0; }
+@media (min-width: 1000px) { .st4-sparring { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.st4-spar { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-height: 0; padding: 18px 20px 16px; border: 1px solid #e9e7e4; border-radius: 16px; background: #fff; text-align: left; color: var(--ink); cursor: pointer; transition: border-color .15s ease; }
+.st4-spar:hover { border-color: var(--ink); background: #fff; color: var(--ink); box-shadow: none; }
+.st4-spar .st4-spar-z { order: 0; font-size: .7rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-50); opacity: 1 !important; }
+.st4-spar b { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; line-height: 1.25; }
+.st4-spar .st4-spar-s { display: block !important; margin-bottom: 10px; font-size: .84rem; font-weight: 300; line-height: 1.45; color: var(--grey-70); }
+.st4-spar .st4-spar-los { display: inline-block !important; margin-top: auto; font-size: .82rem; font-weight: 600; color: var(--ink); opacity: 1 !important; }
+.st4-spar .st4-spar-los i { display: inline-block; font-style: normal; transition: transform .15s ease; }
+.st4-spar:hover .st4-spar-los i { transform: translateX(4px); }
+.st4-play { display: none; }
+@media (max-width: 700px) {
+  .db-kopf .st4-nav { gap: 6px 18px; }
+  .db-kopf .st4-nav a { padding: 0; border-left: 0; }
+}
+@media (max-width: 760px) {
+  .st4-idx-zelle { display: grid; grid-template-columns: 56px minmax(0, 1fr); align-items: baseline; }
+  .st4-idx-zelle em { min-width: 0; }
+  .st4-idx-zelle > :not(em) { grid-column: 2; }
+  .st4-idx-zelle { column-gap: 8px; }
+}
+.st4-spar .st4-spar-z, .st4-spar .st4-spar-los { align-self: flex-start !important; } .st4-spar b { hyphens: manual; overflow-wrap: normal; max-width: 100%; }
