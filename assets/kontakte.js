@@ -10,6 +10,11 @@
   var wurzel = document.querySelector("[data-kontakte]");
   var kopfKonto = document.querySelector("[data-kb-konto]");
   var alle = [], vorschlaege = [], aufgaben = [], zustand = { tab: "alle", suche: "", gewaehlt: null };
+  (function () {
+    var h = location.hash.replace("#", "");
+    if (/^k=\d+$/.test(h)) zustand.gewaehlt = +h.slice(2);
+    else if (h) zustand.tab = h;
+  })();
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
   function datum(d) { return d ? new Date(d).toLocaleDateString("de-DE", { day: "numeric", month: "short", year: "numeric" }) : "–"; }

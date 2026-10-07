@@ -164,7 +164,7 @@
   function knoepfe(m) {
     var e = B.entscheidungLesen(m);
     return '<div class="kb-entscheid" data-entscheid="' + esc(m.id) + '">' +
-      [["freigeben", "Freigeben"], ["pruefen", "Prüfen"], ["zurueck", "Zurückstellen"]].map(function (k) {
+      [["freigeben", "Freigeben"], ["pruefen", "Prüfen"], ["zurueck", "Zurückstellen"], ["erledigt", "Schon erledigt"]].map(function (k) {
         return '<button type="button" data-e="' + k[0] + '" aria-pressed="' + (e === k[0]) + '">' + k[1] + "</button>";
       }).join("") + "</div>";
   }
@@ -253,6 +253,7 @@
           box.classList.add("laedt");
           B.entscheiden(m, b.getAttribute("data-e")).then(function (e) {
             box.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", String(x.getAttribute("data-e") === e)); });
+            if (e === "erledigt") { var karte = box.closest(".kb-karte"); if (karte) { karte.classList.add("kb-erledigt"); setTimeout(function () { karte.remove(); }, 900); } }
           }).catch(function (f) { alert("Konnte nicht gespeichert werden: " + f.message); })
             .then(function () { box.classList.remove("laedt"); });
         });

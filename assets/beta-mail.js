@@ -175,7 +175,8 @@
       m.beantwortet = (letzteAntwort[m.conversationId] || 0) > +new Date(m.receivedDateTime);
       m.neueste = letzterEingang[m.conversationId].id === m.id;
       m.analyse = analyse(m);
-      var offen = k.handlung && m.neueste && !m.beantwortet;
+      // „Schon erledigt“ (z. B. per WhatsApp oder Telefon beantwortet) nimmt die Mail aus dem Handlungsbedarf
+      var offen = k.handlung && m.neueste && !m.beantwortet && entscheidungLesen(m) !== "erledigt";
       if (m.analyse) m.handlung = offen && m.analyse.kategorie !== "keine" && !!ARTEN[m.analyse.kategorie];
       else m.handlung = offen && (m.claude || m.markiert || (m.relevant && m.direkt && !m.automatisch && m.alter <= TAGE_HANDLUNG));
       if (m.handlung) { m.grund = grund(m); m.vorschlag = vorschlag(m); }
@@ -251,7 +252,7 @@
   /* ---------- Entscheidung: Freigeben · Prüfen · Zurückstellen ----------
      Wird als Outlook-Kategorie an der Mail gesetzt (z. B. „Freigegeben“). Claude
      liest das und sendet freigegebene Entwürfe erst, wenn Daniel es im Chat sagt. */
-  var ENTSCHEIDUNG = { freigeben: "Freigegeben", pruefen: "Prüfen", zurueck: "Zurückgestellt" };
+  var ENTSCHEIDUNG = { freigeben: "Freigegeben", pruefen: "Prüfen", zurueck: "Zurückgestellt", erledigt: "Schon erledigt" };
   function entscheidungLesen(m) {
     for (var k in ENTSCHEIDUNG) if ((m.categories || []).indexOf(ENTSCHEIDUNG[k]) > -1) return k;
     return null;

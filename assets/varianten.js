@@ -56,7 +56,8 @@
   // Entscheidung je Mail (hier nur zum Ausprobieren, nichts wird gespeichert)
   function knoepfe() {
     return '<div class="kb-entscheid" data-probe><button type="button" data-e="freigeben" aria-pressed="false">Freigeben</button>' +
-      '<button type="button" data-e="pruefen" aria-pressed="false">Prüfen</button><button type="button" data-e="zurueck" aria-pressed="false">Zurückstellen</button></div>';
+      '<button type="button" data-e="pruefen" aria-pressed="false">Prüfen</button><button type="button" data-e="zurueck" aria-pressed="false">Zurückstellen</button>' +
+      '<button type="button" data-e="erledigt" aria-pressed="false">Schon erledigt</button></div>';
   }
   document.addEventListener("click", function (ev) {
     var b = ev.target.closest("[data-probe] button");
@@ -110,8 +111,8 @@
         '<p class="vc-worum">' + esc(m.worum) + "</p>" + original(m) + '<p class="kb-label" style="margin-top:16px">Mein Vorschlag</p><p class="vc-vorschlag">' + esc(m.vorschlag) + "</p>" +
         (m.entwurf ? '<div class="kb-entwurf"><p class="kb-label">Antwortentwurf</p><pre>' + esc(m.entwurf) + "</pre></div>" : "") + "</article>" +
         '<div class="vc-knoepfe"><button type="button" class="kb-knopf vc-ja" data-weiter>Freigeben</button>' +
-        '<button type="button" class="vc-neben" data-weiter>Prüfen</button><button type="button" class="vc-neben" data-weiter>Zurückstellen</button></div>' +
-        '<p class="kb-gruppe-hinweis">Oder per Sprache: „freigeben“, „prüfen“, „zurückstellen“.</p>';
+        '<button type="button" class="vc-neben" data-weiter>Prüfen</button><button type="button" class="vc-neben" data-weiter>Zurückstellen</button><button type="button" class="vc-neben" data-weiter>Schon erledigt</button></div>' +
+        '<p class="kb-gruppe-hinweis">Oder per Sprache: „freigeben“, „prüfen“, „zurückstellen“, „schon erledigt“.</p>';
       wurzel.querySelectorAll("[data-weiter]").forEach(function (k) { k.onclick = function () { i++; zeichnen(); }; });
     }
     setTimeout(zeichnen);

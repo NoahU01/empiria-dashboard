@@ -383,3 +383,20 @@ a.db-chip:hover { background: #e2e0dd; color: var(--ink); }
 .kt-todo b { font-weight: 500; } .kt-todo span { display: block; font-size: .85rem; color: var(--grey-50); }
 .kt-todo p { margin: 4px 0 0; font-size: .88rem; font-weight: 300; color: var(--ink-2); }
 .kt-todo button { flex: none; height: 32px; padding: 0 14px; border: 1.5px solid var(--ink); border-radius: 999px; background: #fff; font-size: .8rem; font-weight: 500; }
+.kb-entscheid button[data-e="erledigt"] { border-color: #d6d3cf; color: var(--grey-70); }
+.kb-karte.kb-erledigt { opacity: .35; transition: opacity .8s ease; }
+.vc-neben { flex: 1 1 40%; }
+
+/* Startseite: Termine, Aufgaben, Wieder dran */
+.st-liste { list-style: none; margin: 0; padding: 0; }
+.st-liste li { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; align-items: start; padding: 9px 0; }
+.st-liste li + li { border-top: 1px solid #f2f1ef; }
+.st-liste b { display: block; font-weight: 500; font-size: .9rem; line-height: 1.35; overflow-wrap: anywhere; }
+.st-liste small { display: block; margin-top: 2px; font-size: .8rem; color: var(--grey-50); overflow-wrap: anywhere; }
+.st-liste a { color: var(--ink); text-decoration: none; } .st-liste a:hover b { text-decoration: underline; text-underline-offset: 2px; }
+.st-wann { font-size: .78rem; line-height: 1.35; color: var(--grey-70); }
+.st-aufgaben li, .st-liste li:has(.st-prio) { grid-template-columns: 28px minmax(0, 1fr); }
+.st-haken { width: 22px; height: 22px; margin-top: 1px; border: 1.5px solid var(--ink); border-radius: 6px; background: #fff; padding: 0; }
+.st-haken:hover { background: var(--hl); }
+.st-weg { opacity: .3; text-decoration: line-through; }
+.st-prio { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: var(--grey-bg); font-size: .75rem; font-weight: 600; }

@@ -85,15 +85,17 @@
       </article>
 
       <div class="db-seite">
-        <article class="db-karte db-karte--folgt">
-          <div class="db-karte-kopf"><h2>Termine</h2><small>folgt</small></div>
-          <p class="db-folgt">Die n&auml;chsten Termine aus dem Kalender.</p>
-          <div class="db-folgt-zeilen" aria-hidden="true"><span></span><span></span><span></span></div>
+        <article class="db-karte">
+          <div class="db-karte-kopf"><h2>Termine</h2><small>als N&auml;chstes</small></div>
+          <div data-start-termine><p class="db-folgt">&hellip;</p></div>
         </article>
-        <article class="db-karte db-karte--folgt">
-          <div class="db-karte-kopf"><h2>Aufgaben</h2><small>folgt</small></div>
-          <p class="db-folgt">Offene Aufgaben &ndash; aus dem Auftragskasten Assistenz.</p>
-          <div class="db-folgt-zeilen" aria-hidden="true"><span></span><span></span><span></span></div>
+        <article class="db-karte">
+          <div class="db-karte-kopf"><h2>Aufgaben</h2><small>offen</small></div>
+          <div data-start-aufgaben><p class="db-folgt">&hellip;</p></div>
+        </article>
+        <article class="db-karte">
+          <div class="db-karte-kopf"><h2>Wieder dran</h2><small>Beziehungspflege</small></div>
+          <div data-start-dran><p class="db-folgt">&hellip;</p></div>
         </article>
       </div>
     </div>
@@ -114,6 +116,7 @@
 <script src="/assets/db.js"></script>
 <script src="/assets/beta-mail.js"></script>
 <script src="/assets/beta-seiten.js"></script>
+<script src="/assets/beta-start.js"></script>
 <script>
   (function () { var d = document.querySelector("[data-db-datum]"); var h = new Date().getHours();
     d.textContent = new Date().toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" });
