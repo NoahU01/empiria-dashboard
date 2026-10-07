@@ -1025,3 +1025,67 @@ main.pr-look-schwarz .pr-ziel-leer .pr-ziel-kopf h3::before { content: ""; width
 @media (max-width: 900px) { .st3-wochen { grid-template-columns: repeat(2, minmax(0, 1fr)); } .st3-woche:nth-child(2n+1) { border-left: 0; padding-left: 0; } }
 
 .st3-anders[hidden] { display: none; }
+/* ===== Steuerung v3: Index, ausgerichtete Karten (Subgrid), Sparring, Wochen ===== */
+.st4-h { margin: 0 0 16px; font-family: var(--font-serif); font-size: 1.35rem; font-weight: 600; }
+.st4-block { margin-top: 56px; }
+/* Projekte: ruhiger Index, drei Marken nebeneinander */
+.st4-projekte { display: grid; gap: 18px 40px; margin-top: 26px; padding: 18px 0; border-top: 1px solid #e9e7e4; border-bottom: 1px solid #e9e7e4; }
+@media (min-width: 800px) { .st4-projekte { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.st4-marke h4 { margin: 0 0 6px; font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--grey-50); }
+.st4-marke ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.st4-marke a { font-size: .92rem; color: var(--ink); text-decoration: none; }
+.st4-marke a:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #c9c5c0; }
+.st4-marke a.st4-pause { color: var(--grey-50); }
+/* Karten: Subgrid – Kopf, Titel, Kern, Vorschlag, Knöpfe liegen in allen Karten einer Reihe auf gleicher Höhe */
+.st4-karten { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 760px) { .st4-karten { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1180px) { .st4-karten { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.st4-karte { position: relative; display: grid; grid-row: span 5; grid-template-rows: subgrid; row-gap: 0; padding: 20px 22px 18px; border-radius: 18px; background: #fff; box-shadow: 0 0 0 1px #ebe9e6; transition: opacity .25s ease; }
+.st4-karte.laedt { opacity: .5; pointer-events: none; } .st4-karte.st4-weg { opacity: 0; }
+.st4-kopf { display: flex; align-items: center; gap: 8px; min-height: 22px; margin-bottom: 10px; }
+.st4-frist { padding: 2px 8px; border-radius: 6px; background: #f2f1ef; font-size: .7rem; font-weight: 600; color: var(--ink-2); }
+.st4-frist--jetzt { background: var(--hl); color: var(--ink); }
+.st4-frist--leer { display: none; }
+.st4-wo { font-size: .72rem; color: var(--grey-50); }
+.st4-karte h3 { margin: 0 0 8px; font-family: var(--font-serif); font-size: 1.3rem; font-weight: 600; line-height: 1.2; }
+.st4-karte h3 a { color: inherit; text-decoration: none; }
+.st4-kern { margin: 0 0 16px; font-size: .84rem; font-weight: 300; line-height: 1.5; color: var(--grey-70);
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.st4-vorschlag { align-self: start; margin: 0 0 18px; padding-left: 12px; border-left: 3px solid var(--hl); font-size: .9rem; line-height: 1.5; color: var(--ink); }
+.st4-knoepfe { align-self: end; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+.st4-knoepfe button { height: 36px; border: 1px solid #e4e1dd; border-radius: 10px; background: #fff; font-size: .82rem; font-weight: 500; color: var(--ink); }
+.st4-knoepfe button:hover { border-color: var(--ink); }
+.st4-knoepfe .st4-ja { border-color: var(--ink); background: var(--ink); color: #fff; }
+.st4-anders { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; gap: 8px; padding: 20px 22px 18px; border-radius: 18px; background: #fff; box-shadow: 0 0 0 1.5px var(--ink); }
+.st4-anders[hidden] { display: none; }
+.st4-anders textarea { flex: 1; width: 100%; padding: 10px 12px; border: 1px solid #e4e1dd; border-radius: 10px; font: inherit; font-size: .9rem; resize: none; }
+.st4-anders div { display: grid; grid-template-columns: 2fr 1fr; gap: 6px; }
+.st4-anders button { height: 36px; border: 1px solid #e4e1dd; border-radius: 10px; background: #fff; font-size: .82rem; }
+.st4-anders button[type="submit"] { border-color: var(--ink); background: var(--ink); color: #fff; }
+.st4-entschieden { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 16px 0 0; font-size: .76rem; color: var(--grey-50); }
+.st4-entschieden span::before { content: "✓ "; color: var(--ink); }
+.st4-leer { font-size: .9rem; color: var(--grey-50); }
+/* Sparring: sechs Kacheln, Regel erscheint beim Zeigen */
+.st4-sparring { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 900px) { .st4-sparring { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+.st4-spar { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-height: 132px; padding: 16px; border: 0; border-radius: 16px; background: #f4f2ef; text-align: left; color: var(--ink); cursor: pointer; transition: background-color .15s ease; }
+.st4-spar:hover { background: var(--ink); color: #fff; }
+.st4-spar-z { font-size: .7rem; font-weight: 600; color: var(--grey-50); }
+.st4-spar b { font-family: var(--font-serif); font-size: 1.05rem; font-weight: 600; line-height: 1.2; }
+.st4-spar > span:not(.st4-spar-z) { font-size: .78rem; font-weight: 300; line-height: 1.4; }
+.st4-spar small { display: none; font-size: .74rem; line-height: 1.4; color: var(--hl); }
+.st4-spar:hover small { display: block; } .st4-spar:hover > span:not(.st4-spar-z) { display: none; } .st4-spar:hover .st4-spar-z { color: rgba(255,255,255,.6); }
+.st4-hinweis { margin: 12px 0 0; font-size: .82rem; color: var(--ink-2); }
+/* Sechs Wochen */
+.st4-wochen { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border-top: 1px solid #e9e7e4; }
+.st4-woche { min-width: 0; padding: 10px 10px 4px; border-left: 1px solid #f2f1ef; }
+.st4-woche:first-child { border-left: 0; padding-left: 0; }
+.st4-woche h4 { margin: 0 0 10px; font-size: .72rem; font-weight: 600; color: var(--grey-50); }
+.st4-e { display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 4px; margin-bottom: 8px; font-size: .76rem; line-height: 1.3; color: inherit; text-decoration: none; }
+.st4-e-tag { color: var(--grey-50); }
+.st4-e-titel { padding-left: 7px; border-left: 3px solid #d6d3cf; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.st4-e--frist .st4-e-titel { border-left-color: var(--hl); font-weight: 500; }
+.st4-e--ziel .st4-e-titel { border-left-color: var(--ink); font-weight: 600; }
+.st4-e:hover .st4-e-titel { text-decoration: underline; text-underline-offset: 2px; }
+@media (max-width: 900px) { .st4-wochen { grid-template-columns: repeat(2, minmax(0, 1fr)); } .st4-woche:nth-child(2n+1) { border-left: 0; padding-left: 0; } }
+.st4-spar b { font-size: .95rem; hyphens: auto; overflow-wrap: anywhere; } .st4-spar { min-width: 0; }
