@@ -932,3 +932,40 @@ main.pr-look-grau .pr-kb-spalte { background: #f4f2ef; }
 main.pr-look-schwarz .pr-ziel-leer .pr-ziel-kopf { background: var(--ink); color: #fff; border-radius: 16px; }
 main.pr-look-schwarz .pr-ziel-leer .pr-ziel-kopf h3 { display: flex; align-items: center; gap: 12px; color: #fff; }
 main.pr-look-schwarz .pr-ziel-leer .pr-ziel-kopf h3::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--hl, #fff400); }
+/* ===== Steuerung: reagieren · entscheiden · Bewegung · nächste sechs Wochen ===== */
+.st2-lage { max-width: 60ch; margin: 22px 0 4px; font-family: var(--font-serif); font-size: clamp(1.25rem, 2.2vw, 1.6rem); line-height: 1.4; font-weight: 500; color: var(--ink); }
+.st2-lage-stand { margin: 0 0 34px; font-size: .76rem; color: var(--grey-50); }
+.st2-drei { display: grid; gap: 34px; }
+@media (min-width: 1000px) { .st2-drei { grid-template-columns: 1fr 1fr 1.25fr; column-gap: 48px; } }
+.st2-drei h3, .st2-zeit h3 { margin: 0 0 6px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); font-family: var(--font-sans); font-size: .82rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.st2-liste { list-style: none; margin: 0; padding: 0; }
+.st2-liste > li { border-bottom: 1px solid #eeece9; }
+.st2-liste a { display: block; padding: 11px 0; color: inherit; text-decoration: none; }
+.st2-liste a:hover b { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #c9c5c0; }
+.st2-liste b { display: block; font-size: .92rem; font-weight: 500; line-height: 1.4; }
+.st2-liste small { display: block; margin-top: 2px; font-size: .78rem; font-weight: 300; line-height: 1.45; color: var(--grey-70); }
+.st2-jetzt a { box-shadow: inset 3px 0 0 var(--hl); padding-left: 12px; }
+.st2-frage b { font-weight: 400; }
+.st2-leise { padding: 11px 0; font-size: .86rem; color: var(--grey-50); }
+.st2-leise button { padding: 0; border: 0; background: none; font: inherit; color: var(--ink); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.st2-mehr a { font-size: .82rem; color: var(--grey-70); }
+.st2-projekt a { display: grid; grid-template-columns: 1fr auto; gap: 1px 10px; }
+.st2-projekt b { font-family: var(--font-serif); font-size: 1rem; font-weight: 600; }
+.st2-marke { align-self: center; font-size: .7rem; color: var(--grey-50); }
+.st2-spur { grid-column: 1 / -1; font-size: .8rem; font-weight: 300; line-height: 1.45; color: var(--ink-2); }
+.st2-spur i { display: inline-block; min-width: 92px; font-style: normal; font-size: .72rem; color: var(--grey-50); }
+.st2-spur em { font-style: normal; color: var(--grey-50); }
+.st2-stillstand { grid-column: 1 / -1; justify-self: start; margin-top: 4px; padding: 1px 8px; border-radius: 6px; background: #fff8bf; font-size: .72rem; font-weight: 500; color: #6b5a00; }
+.st2-zeit { margin-top: 54px; }
+.st2-wochen { display: grid; gap: 22px 40px; margin-top: 14px; }
+@media (min-width: 900px) { .st2-wochen { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.st2-woche h4 { margin: 0 0 6px; font-size: .74rem; font-weight: 600; color: var(--grey-50); }
+.st2-woche ul { list-style: none; margin: 0; padding: 0; }
+.st2-woche li a { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 8px; padding: 7px 0; border-top: 1px solid #f2f1ef; color: inherit; text-decoration: none; }
+.st2-woche li a:hover b { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #c9c5c0; }
+.st2-tag { font-size: .76rem; color: var(--grey-70); padding-top: 1px; }
+.st2-woche b { display: block; font-size: .86rem; font-weight: 500; line-height: 1.35; }
+.st2-woche small { display: block; font-size: .74rem; font-weight: 300; color: var(--grey-50); }
+.st2-ziel b::before { content: "◆ "; font-size: .7rem; color: var(--ink); }
+.st2-frist .st2-tag { color: var(--ink); font-weight: 600; }
+.st2-vorb { color: #6b5a00 !important; font-weight: 500 !important; }

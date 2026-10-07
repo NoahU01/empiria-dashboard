@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Korrespondenz &ndash; Dashboard Beta</title>
-<meta name="description" content="Korrespondenz – alle Konten, nach Handlungsbedarf.">
+<title>Steuerung &ndash; empiria</title>
+<meta name="description" content="Steuerung: reagieren, entscheiden, Bewegung der Projekte, nächste sechs Wochen.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="/styles.css">
 <link rel="stylesheet" href="/assets/dashboard-nav.css">
@@ -34,9 +34,9 @@
         </div>
         <div class="sn-sub"><a href="/strategie/dashboard-beta.html" class="sn-link"><span class="sn-tag">DB</span><span class="sn-txt"><b>Dashboard Beta</b><small>Der Stand, der wirklich l&auml;uft</small></span></a><button class="sn-sub-toggle" type="button" aria-expanded="false" aria-controls="snKinderDB" aria-label="Unterseiten anzeigen"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
         <div class="sn-kinder" id="snKinderDB">
-          <a href="/strategie/steuerung.html" class="sn-link"><span class="sn-tag">ST</span><span class="sn-txt"><b>Steuerung</b><small>Reagieren, entscheiden, Bewegung</small></span></a>
+          <a href="/strategie/steuerung.html" class="sn-link" aria-current="page"><span class="sn-tag">ST</span><span class="sn-txt"><b>Steuerung</b><small>Reagieren, entscheiden, Bewegung</small></span></a>
           <a href="/strategie/dashboard-varianten.html" class="sn-link"><span class="sn-tag">DV</span><span class="sn-txt"><b>Dashboard-Varianten</b><small>Entw&uuml;rfe zur Unternehmenssteuerung</small></span></a>
-          <a href="/strategie/korrespondenz-beta.html" class="sn-link" aria-current="page"><span class="sn-tag">KO</span><span class="sn-txt"><b>Korrespondenz</b><small>Alle Konten, nach Handlungsbedarf</small></span></a>
+          <a href="/strategie/korrespondenz-beta.html" class="sn-link"><span class="sn-tag">KO</span><span class="sn-txt"><b>Korrespondenz</b><small>Alle Konten, nach Handlungsbedarf</small></span></a>
           <a href="/strategie/korrespondenz-variante-a.html" class="sn-link"><span class="sn-tag">VA</span><span class="sn-txt"><b>Variante A: Karten</b><small>Alles offen untereinander</small></span></a>
           <a href="/strategie/korrespondenz-variante-c.html" class="sn-link"><span class="sn-tag">VC</span><span class="sn-txt"><b>Variante C: Entscheidungs-Sprint</b><small>Eine Mail nach der anderen – fürs iPhone</small></span></a>
           <a href="/strategie/korrespondenz-variante-e.html" class="sn-link"><span class="sn-tag">VE</span><span class="sn-txt"><b>Variante E: Liste und Detail</b><small>Zwei Spalten – für MacBook und iPad</small></span></a>
@@ -55,15 +55,13 @@
 
 <main>
   <section class="db"><div class="container">
-    <a class="kb-zurueck" href="/strategie/dashboard-beta.html"><span aria-hidden="true">&larr;</span> Dashboard Beta</a>
     <div class="db-kopf">
       <div>
-        <p class="kicker">Alle Konten &middot; letzte 30 Tage</p>
-        <h1 class="h-serif"><span class="hl">Korrespondenz.</span></h1>
+        <p class="kicker" data-st2-datum>Steuerung</p>
+        <h1 class="h-serif"><span class="hl">Steuerung.</span></h1>
       </div>
-      <div class="db-konto" data-kb-konto></div>
     </div>
-    <div data-kb="seite"><div data-kb-inhalt></div></div>
+    <div data-steuerung><div class="kb-laedt"><span></span><span></span></div></div>
   </div></section>
 </main>
 
@@ -75,11 +73,13 @@
 </footer>
 
 <script src="/script.js"></script>
-<script src="/assets/dashboard-nav.js"></script>
 <script src="/assets/vendor/msal-browser.min.js"></script>
 <script src="/assets/vendor/supabase.js"></script>
 <script src="/assets/db.js"></script>
+<script src="/assets/aufgaben-details.js"></script>
 <script src="/assets/beta-mail.js"></script>
-<script src="/assets/beta-seiten.js"></script>
+<script src="/assets/steuerung.js"></script>
+<script>(function(){var k=document.querySelector("[data-st2-datum]");if(k)k.textContent=new Date().toLocaleDateString("de-DE",{weekday:"long",day:"numeric",month:"long"});})();</script>
+<script src="/assets/dashboard-nav.js"></script>
 </body>
 </html>
