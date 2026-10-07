@@ -832,3 +832,27 @@ span.pr-auf-titel:hover span, button.pr-auf-titel:hover span { text-decoration: 
 .pr-auf-details p { margin: 0; font-size: .88rem; font-weight: 300; line-height: 1.55; color: var(--ink-2); }
 .pr-auf-details { padding-top: 0; }
 @media (min-width: 601px) { .pr-aufgaben .pr-auf-details { padding-left: 122px; padding-right: 34px; } }
+/* Aufgaben: Umschalter Liste · Kanban im Kopf */
+.pr-aufgaben > .pr-tl-kopf { margin-bottom: 10px; }
+.pr-aufgaben > .pr-tl-kopf h3 { margin: 0; }
+main.pr-look-schwarz .pr-aufgaben > .pr-tl-kopf { margin: -16px -18px 16px; padding: 8px 14px 8px 18px; }
+/* Kanban-Board: vier ruhige Spalten, Karten zum Ziehen */
+.pr-aufgaben.pr-auf-kanban { height: auto; }
+.pr-kanban { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 900px) { .pr-kanban { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .pr-kanban { grid-template-columns: 1fr; } }
+.pr-kb-spalte { min-height: 140px; padding: 10px; border-radius: 14px; background: #f7f6f4; transition: background-color .15s ease, box-shadow .15s ease; }
+.pr-kb-spalte.ziel { background: #efede9; box-shadow: inset 0 0 0 1.5px var(--ink); }
+.pr-kb-kopf { margin: 2px 4px 10px; font-size: .78rem; font-weight: 600; letter-spacing: .04em; color: var(--grey-70); }
+.pr-kb-karte { margin-bottom: 8px; padding: 10px 12px; border-radius: 10px; background: #fff; box-shadow: 0 0 0 1px #e9e7e4; cursor: grab; }
+.pr-kb-karte.zieht { opacity: .4; }
+.pr-kb-karte .pr-auf-titel { font-size: .9rem; line-height: 1.4; }
+.pr-kb-karte .pr-auf-titel .tl-dreieck { top: 9px; margin-top: 0; right: 2px; }
+.pr-kb-karte .pr-auf-titel[aria-expanded="true"] .tl-dreieck { top: 13px; }
+.pr-kb-meta { display: flex; justify-content: space-between; gap: 8px; margin: 6px 0 0; font-size: .76rem; color: var(--grey-50); }
+.pr-kb-meta .pr-frist, .pr-kb-meta .pr-wer { font-size: .76rem; }
+.pr-kb-karte .pr-auf-details { padding: 8px 0 0 !important; }
+.pr-kb-fertig .pr-auf-titel span:first-child { color: var(--grey-50); text-decoration: line-through; text-decoration-color: #c9c5c0; }
+main.pr-look-grau .pr-kb-spalte { background: #f4f2ef; }
+.pr-module .pr-kb-spalte { background: #f7f6f4; }
+.pr-kurs.pr-kurs-breit { height: auto; } .pr-kurs-breit .pr-ueb-knoepfe { margin-top: 10px; }

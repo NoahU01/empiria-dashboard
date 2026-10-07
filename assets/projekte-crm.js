@@ -69,7 +69,7 @@
       db.from("projekt_beteiligte").select("id, seite, rolle, name, kontakte(id, vorname, nachname, position)").eq("projekt_id", id),
       db.from("projekt_ereignisse").select("id, datum, art, titel, quelle, format, ort, teilnehmer, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("datum", { ascending: false }),
       db.from("projekt_punkte").select("id, ereignis_id, art, text, angelegt_am, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am", { ascending: false }),
-      db.from("aufgaben").select("id, titel, beschreibung, status, faellig_am, ereignis_id, zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
+      db.from("aufgaben").select("id, titel, beschreibung, status, spalte, faellig_am, erledigt_am, ereignis_id, zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
     ]).then(function (r) {
       if (r[0].error) { wurzel.innerHTML = '<p class="kb-leer">Fehler: ' + esc(r[0].error.message) + "</p>"; return; }
       zeichnen(r[0].data, r[1].data || [], r[2].data || [], r[3].data || [], r[4].data || []);
@@ -114,15 +114,43 @@
       '<button type="button" class="pr-speichern" data-ueb-speichern hidden>Speichern</button></div></section>';
     // Aufgaben: immer mit Frist, nach Datum
     var offen = auf.filter(function (a) { return a.status === "offen"; }).sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });
-    h += '<section class="kt3-box pr-aufgaben"><h3>Aufgaben</h3>' + (offen.length ? '<ul class="pr-auf2">' + offen.map(function (a) {
-      var ueber = a.faellig_am && new Date(a.faellig_am) < new Date(new Date().toDateString());
-      return '<li data-a="' + a.id + '"><div class="pr-auf-zeile"><button type="button" class="st-haken" aria-label="Erledigt"></button>' +
-        '<span class="pr-frist' + (ueber ? " pr-ueber" : "") + '">' + (a.faellig_am ? kurz(a.faellig_am) : "ohne Termin") + "</span>" +
-        (a.beschreibung ? '<button type="button" class="pr-auf-titel" data-auf-auf aria-expanded="false"><span>' + esc(a.titel) + '</span><span class="tl-dreieck" aria-hidden="true"></span></button>'
-          : '<span class="pr-auf-titel">' + esc(a.titel) + "</span>") +
-        '<span class="pr-wer">' + esc(wer(a) || "offen") + "</span></div>" +
-        (a.beschreibung ? '<div class="pr-auf-details" hidden><p>' + esc(a.beschreibung).replace(/\n/g, "<br>") + "</p></div>" : "") + "</li>";
-      }).join("") + "</ul>" : '<p class="kt3-leise">Nichts offen.</p>') + "</section>";
+    // Aufgaben als Liste oder Kanban-Board (Backlog · To-do · In Arbeit · Erledigt)
+    var aav = "liste";
+    try { aav = localStorage.getItem("pr-auf-ansicht") === "kanban" ? "kanban" : "liste"; } catch (x) {}
+    function frist(a) {
+      var ueber = a.status === "offen" && a.faellig_am && new Date(a.faellig_am) < new Date(new Date().toDateString());
+      return '<span class="pr-frist' + (ueber ? " pr-ueber" : "") + '">' + (a.faellig_am ? kurz(a.faellig_am) : "ohne Termin") + "</span>";
+    }
+    function titel(a) {
+      return a.beschreibung ? '<button type="button" class="pr-auf-titel" data-auf-auf aria-expanded="false"><span>' + esc(a.titel) + '</span><span class="tl-dreieck" aria-hidden="true"></span></button>'
+        : '<span class="pr-auf-titel">' + esc(a.titel) + "</span>";
+    }
+    function details(a) { return a.beschreibung ? '<div class="pr-auf-details" hidden><p>' + esc(a.beschreibung).replace(/\n/g, "<br>") + "</p></div>" : ""; }
+    var wahl = '<span class="pr-tl-wahl">' + [["liste", "Liste"], ["kanban", "Kanban"]].map(function (v) {
+      return '<button type="button" data-aav="' + v[0] + '" aria-pressed="' + (v[0] === aav) + '">' + v[1] + "</button>"; }).join("") + "</span>";
+    var aufInhalt;
+    if (aav === "kanban") {
+      var vor14 = Date.now() - 14 * 864e5;
+      var SPALTEN = [["backlog", "Backlog"], ["todo", "To-do"], ["arbeit", "In Arbeit"], ["erledigt", "Erledigt"]];
+      aufInhalt = '<div class="pr-kanban">' + SPALTEN.map(function (sp) {
+        var karten = auf.filter(function (a) {
+          if (sp[0] === "erledigt") return a.status === "erledigt" && (!a.erledigt_am || new Date(a.erledigt_am) >= vor14);
+          return a.status === "offen" && (a.spalte || "todo") === sp[0];
+        }).sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });
+        return '<div class="pr-kb-spalte" data-spalte="' + sp[0] + '"><p class="pr-kb-kopf">' + sp[1] + "</p>" + karten.map(function (a) {
+          return '<div class="pr-kb-karte' + (a.status === "erledigt" ? " pr-kb-fertig" : "") + '" draggable="true" data-a="' + a.id + '">' + titel(a) +
+            '<p class="pr-kb-meta">' + frist(a) + '<span class="pr-wer">' + esc(wer(a) || "offen") + "</span></p>" + details(a) + "</div>";
+        }).join("") + "</div>";
+      }).join("") + "</div>";
+    } else {
+      var offen = auf.filter(function (a) { return a.status === "offen"; }).sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });
+      aufInhalt = offen.length ? '<ul class="pr-auf2">' + offen.map(function (a) {
+        return '<li data-a="' + a.id + '"><div class="pr-auf-zeile"><button type="button" class="st-haken" aria-label="Erledigt"></button>' + frist(a) + titel(a) +
+          '<span class="pr-wer">' + esc(wer(a) || "offen") + "</span></div>" + details(a) + "</li>";
+      }).join("") + "</ul>" : '<p class="kt3-leise">Nichts offen.</p>';
+    }
+    if (aav === "kanban") h = h.replace('<section class="kt3-box pr-kurs">', '<section class="kt3-box kt3-breit pr-kurs pr-kurs-breit">');
+    h += '<section class="kt3-box pr-aufgaben' + (aav === "kanban" ? " kt3-breit pr-auf-kanban" : "") + '"><div class="pr-tl-kopf"><h3>Aufgaben</h3>' + wahl + "</div>" + aufInhalt + "</section>";
     // Timeline: drei Darstellungen zum Vergleich – ohne äußeren Kasten, mit viel Luft
     var jetzt = Date.now(), tlv = "seite";
     try { tlv = localStorage.getItem("pr-tl-ansicht") || "seite"; } catch (x) {}
@@ -183,7 +211,7 @@
       liste.appendChild(sek);
     }
     function ohneTitel(el, sel) { if (el) { var t = el.querySelector(sel); if (t) t.remove(); } return el; }
-    var kurs = ohneTitel(r.querySelector(".pr-kurs"), ":scope > h3"), auf = ohneTitel(r.querySelector(".pr-aufgaben"), ":scope > h3"),
+    var kurs = ohneTitel(r.querySelector(".pr-kurs"), ":scope > h3"), auf = ohneTitel(r.querySelector(".pr-aufgaben"), ".pr-tl-kopf > h3"),
         tl = ohneTitel(r.querySelector(".pr-tl-frei"), ".pr-tl-kopf > h3"), ziel = r.querySelector(".pr-ziel"), team = r.querySelector(".pr-bet-zeile");
     modul("kurs", "Stoßrichtung", "Wohin wir das Projekt steuern.", [kurs]);
     modul("auf", "Aufgaben", "Was als Nächstes ansteht.", [auf]);
@@ -221,9 +249,30 @@
     });
     if (aufklappen) wurzel.querySelectorAll(".tl-auf [data-ev].an").forEach(function (x) { x.classList.remove("an"); });
     var an = wurzel.querySelector("[data-ev].an"); if (an && !aufklappen) detailEreignis(+an.getAttribute("data-ev"));
+    wurzel.querySelectorAll("[data-aav]").forEach(function (b) {
+      b.onclick = function () { try { localStorage.setItem("pr-auf-ansicht", b.getAttribute("data-aav")); } catch (x) {} projekt(p.id); };
+    });
+    // Kanban: Karte in eine andere Spalte ziehen
+    var gezogen = null;
+    wurzel.querySelectorAll(".pr-kb-karte").forEach(function (k) {
+      k.ondragstart = function (e) { gezogen = k; k.classList.add("zieht"); e.dataTransfer.effectAllowed = "move"; try { e.dataTransfer.setData("text/plain", k.getAttribute("data-a")); } catch (x) {} };
+      k.ondragend = function () { k.classList.remove("zieht"); wurzel.querySelectorAll(".pr-kb-spalte").forEach(function (s) { s.classList.remove("ziel"); }); };
+    });
+    wurzel.querySelectorAll(".pr-kb-spalte").forEach(function (sp) {
+      sp.ondragover = function (e) { if (!gezogen) return; e.preventDefault(); sp.classList.add("ziel"); };
+      sp.ondragleave = function (e) { if (!sp.contains(e.relatedTarget)) sp.classList.remove("ziel"); };
+      sp.ondrop = function (e) {
+        e.preventDefault(); sp.classList.remove("ziel");
+        var k = gezogen; gezogen = null; if (!k || k.parentNode === sp) return;
+        var ziel = sp.getAttribute("data-spalte"), fertig = ziel === "erledigt";
+        sp.appendChild(k); k.classList.toggle("pr-kb-fertig", fertig);
+        var neu = fertig ? { status: "erledigt", erledigt_am: new Date().toISOString() } : { status: "offen", erledigt_am: null, spalte: ziel };
+        db.from("aufgaben").update(neu).eq("id", +k.getAttribute("data-a")).then(function (r) { if (r.error) { alert("Nicht gespeichert: " + r.error.message); projekt(p.id); } });
+      };
+    });
     // Aufgaben mit Details: Dreieck wie in der Timeline, klappt ohne Kasten nach unten auf
     wurzel.querySelectorAll("[data-auf-auf]").forEach(function (b) {
-      var det = b.closest("li").querySelector(".pr-auf-details");
+      var det = b.closest("[data-a]").querySelector(".pr-auf-details");
       b.onclick = function () { det.hidden = !det.hidden; b.setAttribute("aria-expanded", String(!det.hidden)); };
     });
     var ta = wurzel.querySelector("[data-ueb]"), sp = wurzel.querySelector("[data-ueb-speichern]"), bt = wurzel.querySelector("[data-ueb-bearbeiten]"), tx = wurzel.querySelector("[data-ueb-text]");
