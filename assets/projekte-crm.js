@@ -53,7 +53,7 @@
       db.from("projekt_beteiligte").select("id, seite, rolle, name, kontakte(id, vorname, nachname, position)").eq("projekt_id", id),
       db.from("projekt_ereignisse").select("id, datum, art, titel, quelle, format, ort, teilnehmer, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("datum", { ascending: false }),
       db.from("projekt_punkte").select("id, ereignis_id, art, text, angelegt_am, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am", { ascending: false }),
-      db.from("aufgaben").select("id, titel, status, faellig_am, ereignis_id, zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
+      db.from("aufgaben").select("id, titel, beschreibung, status, faellig_am, ereignis_id, zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
     ]).then(function (r) {
       if (r[0].error) { wurzel.innerHTML = '<p class="kb-leer">Fehler: ' + esc(r[0].error.message) + "</p>"; return; }
       zeichnen(r[0].data, r[1].data || [], r[2].data || [], r[3].data || [], r[4].data || []);
@@ -61,7 +61,24 @@
   }
 
   function wer(a) { return a.zustaendig_name || name(a.kontakte) || ""; }
+  function format(e) { return e.format === "vor Ort" ? "vor Ort" + (e.ort ? ": " + e.ort : "") : e.format === "offen" ? e.art + " · Ort offen" : e.art + (e.format ? " · " + e.format : ""); }
+  function teiln(e) { return (e.teilnehmer || []).length ? "mit " + e.teilnehmer.join(", ") : (e.kontakte ? "mit " + name(e.kontakte) : ""); }
+  var STAND = {};
+  function detailEreignis(id) {
+    var e = STAND.ere.filter(function (x) { return x.id === id; })[0], ziel = wurzel.querySelector("[data-ev-detail]");
+    if (!e || !ziel) return;
+    var p2 = STAND.pkt.filter(function (x) { return x.ereignis_id === id; }), a2 = STAND.auf.filter(function (x) { return x.ereignis_id === id; });
+    function block(t, l) { return l.length ? '<h4>' + t + '</h4><ul>' + l.join("") + "</ul>" : ""; }
+    ziel.innerHTML = '<p class="pr-d">' + datum(e.datum) + " · " + new Date(e.datum).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + '</p><h3 class="pr-det-titel">' + esc(e.titel) + "</h3>" +
+      '<p class="pr-det-meta">' + esc(format(e)) + (teiln(e) ? "<br>" + esc(teiln(e)) : "") + "</p>" +
+      (p2.length || a2.length ?
+        block("Notizen", p2.filter(function (x) { return x.art === "Protokoll"; }).map(function (x) { return "<li>" + esc(x.text) + "</li>"; })) +
+        block("Entscheidungen", p2.filter(function (x) { return x.art === "Entscheidung"; }).map(function (x) { return "<li>" + esc(x.text) + "</li>"; })) +
+        block("Aufgaben", a2.map(function (x) { return "<li>" + esc(x.titel) + ' <span class="kt3-leise">· ' + esc(wer(x)) + (x.faellig_am ? ", bis " + kurz(x.faellig_am) : "") + "</span>" + (x.status === "erledigt" ? " ✓" : "") + "</li>"; }))
+        : '<p class="kt3-leise">Noch kein Protokoll. Diktiere mir einfach, was besprochen wurde.</p>');
+  }
   function zeichnen(p, bet, ere, pkt, auf) {
+    STAND = { ere: ere, pkt: pkt, auf: auf };
     var h = '<a class="kb-zurueck" href="#"><span aria-hidden="true">&larr;</span> Projekte</a>';
     h += '<div class="kt3-kopf"><div><h2 class="kt3-name">' + esc(p.name) + '</h2><p class="kt3-sub">' +
       [p.organisationen ? '<a href="/strategie/kontakte.html#f=' + p.organisationen.id + '">' + esc(p.organisationen.name) + "</a>" : "", esc(p.marke || ""), esc(p.phase || ""),
@@ -81,25 +98,23 @@
     // Aufgaben mit Zuständigkeit
     var offen = auf.filter(function (a) { return a.status === "offen"; });
     var namen = ["Daniel"].concat(bet.map(function (b) { return b.name || name(b.kontakte); })).filter(function (x, i, l) { return x && l.indexOf(x) === i; });
-    h += '<section class="kt3-box kt3-breit"><h3>Aufgaben</h3>' + (offen.length ? '<ul class="kt3-todo pr-auf">' + offen.map(function (a) {
-      return '<li data-a="' + a.id + '"><button type="button" class="st-haken" aria-label="Erledigt"></button><span>' + esc(a.titel) + '</span><span class="pr-wer">' + esc(wer(a) || "offen") +
-        (a.faellig_am ? " · bis " + kurz(a.faellig_am) : "") + "</span></li>"; }).join("") + "</ul>" : '<p class="kt3-leise">Nichts offen.</p>') +
+    h += '<section class="kt3-box kt3-breit"><h3>Aufgaben</h3>' + (offen.length ? '<ul class="pr-auf2">' + offen.map(function (a) {
+      return '<li data-a="' + a.id + '"><div class="pr-auf-zeile"><button type="button" class="st-haken" aria-label="Erledigt"></button>' +
+        '<button type="button" class="pr-auf-titel" data-auf-auf aria-expanded="false"><span>' + esc(a.titel) + "</span>" + (a.beschreibung ? '<i class="pr-hat-details" title="Details vorhanden"></i>' : "") + "</button>" +
+        '<span class="pr-wer">' + esc(wer(a) || "offen") + (a.faellig_am ? " · bis " + kurz(a.faellig_am) : "") + "</span></div>" +
+        '<div class="pr-auf-details" hidden><textarea data-det placeholder="Details, Hintergrund, Links …">' + esc(a.beschreibung || "") + '</textarea><button type="button" class="pr-speichern" data-det-speichern hidden>Speichern</button></div></li>';
+      }).join("") + "</ul>" : '<p class="kt3-leise">Nichts offen.</p>') +
       '<form class="kt3-neu pr-neu" data-neu><input type="text" placeholder="Neue Aufgabe …" data-titel><input type="text" list="pr-namen" placeholder="Wer?" data-wer class="pr-wer-feld">' +
       '<datalist id="pr-namen">' + namen.map(function (n) { return '<option value="' + esc(n) + '">'; }).join("") + '</datalist><button type="submit">+</button></form></section>';
-    // Timeline
+    // Timeline: links durchscrollbar, rechts die Details zum gewählten Termin
     var jetzt = Date.now();
-    h += '<section class="kt3-box kt3-breit"><h3>Timeline</h3><ol class="pr-tl">' + ere.map(function (e, i) {
-      var p2 = pkt.filter(function (x) { return x.ereignis_id === e.id; }), a2 = auf.filter(function (x) { return x.ereignis_id === e.id; });
-      var zuk = new Date(e.datum) > jetzt;
-      var zeit = new Date(e.datum).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
-      var fmt = e.format === "vor Ort" ? "vor Ort" + (e.ort ? ": " + e.ort : "") : e.format === "offen" ? "Ort offen" : (e.format || e.art);
-      var tn = (e.teilnehmer || []).length ? (e.teilnehmer || []).join(", ") : (e.kontakte ? name(e.kontakte) : "");
-      return "<li" + (i >= 6 ? " hidden data-mehr" : "") + ' class="' + (zuk ? "pr-zuk" : "") + '"><span class="pr-d">' + (zuk ? "geplant · " : "") + kurz(e.datum) + "<br>" + zeit + "</span><div><b>" + esc(e.titel) + "</b>" +
-        '<p class="pr-meta"><span class="pr-art">' + esc(e.art) + "</span>" + esc(fmt) + (tn ? " · mit " + esc(tn) : "") + "</p>" +
-        p2.filter(function (x) { return x.art === "Protokoll"; }).map(function (x) { return '<p class="pr-prot">' + esc(x.text) + "</p>"; }).join("") +
-        p2.filter(function (x) { return x.art === "Entscheidung"; }).map(function (x) { return '<p class="pr-e"><span>Entscheidung</span>' + esc(x.text) + "</p>"; }).join("") +
-        a2.map(function (x) { return '<p class="pr-a"><span>Aufgabe</span>' + esc(x.titel) + ' <i>' + esc(wer(x)) + "</i>" + (x.status === "erledigt" ? " ✓" : "") + "</p>"; }).join("") + "</div></li>";
-    }).join("") + "</ol>" + (ere.length > 6 ? '<button type="button" class="kt3-klapp" data-klapp-knopf aria-expanded="false">Alle zeigen</button>' : "") + "</section>";
+    var start = ere.filter(function (e) { return new Date(e.datum) <= jetzt; })[0] || ere[0];
+    h += '<section class="kt3-box kt3-breit"><h3>Timeline</h3><div class="pr-tl2"><ol class="pr-tl2-liste">' + ere.map(function (e) {
+      var zuk = new Date(e.datum) > jetzt, hat = pkt.some(function (x) { return x.ereignis_id === e.id; }) || auf.some(function (x) { return x.ereignis_id === e.id; });
+      return '<li><button type="button" data-ev="' + e.id + '" class="' + (zuk ? "pr-zuk " : "") + (start && e.id === start.id ? "an" : "") + '"><span class="pr-d">' + (zuk ? "geplant · " : "") + kurz(e.datum) + " · " +
+        new Date(e.datum).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + (hat ? ' <i class="pr-hat-details" title="Protokoll vorhanden"></i>' : "") + "</span><b>" + esc(e.titel) + "</b>" +
+        '<small>' + esc(format(e)) + "</small>" + (teiln(e) ? "<small>" + esc(teiln(e)) + "</small>" : "") + "</button></li>";
+    }).join("") + '</ol><div class="pr-tl2-detail" data-ev-detail></div></div></section>';
     // Beteiligte
     function seite(s) {
       var l = bet.filter(function (b) { return b.seite === s; });
@@ -113,6 +128,15 @@
   }
 
   function verdrahten(p) {
+    var knoepfe = wurzel.querySelectorAll("[data-ev]");
+    knoepfe.forEach(function (b) { b.onclick = function () { knoepfe.forEach(function (x) { x.classList.toggle("an", x === b); }); detailEreignis(+b.getAttribute("data-ev")); }; });
+    var an = wurzel.querySelector("[data-ev].an"); if (an) detailEreignis(+an.getAttribute("data-ev"));
+    wurzel.querySelectorAll("[data-auf-auf]").forEach(function (b) {
+      var li = b.closest("li"), det = li.querySelector(".pr-auf-details"), ta = det.querySelector("textarea"), sp = det.querySelector("[data-det-speichern]");
+      b.onclick = function () { det.hidden = !det.hidden; b.setAttribute("aria-expanded", String(!det.hidden)); };
+      ta.oninput = function () { sp.hidden = false; };
+      sp.onclick = function () { sp.disabled = true; db.from("aufgaben").update({ beschreibung: ta.value }).eq("id", +li.getAttribute("data-a")).then(function (r) { sp.disabled = false; if (r.error) alert(r.error.message); else sp.hidden = true; }); };
+    });
     var ta = wurzel.querySelector("[data-ueb]"), sp = wurzel.querySelector("[data-ueb-speichern]");
     ta.oninput = function () { sp.hidden = false; };
     sp.onclick = function () { sp.disabled = true; db.from("projekte").update({ ueberlegungen: ta.value }).eq("id", p.id).then(function (r) { sp.disabled = false; if (r.error) alert(r.error.message); else sp.hidden = true; }); };
