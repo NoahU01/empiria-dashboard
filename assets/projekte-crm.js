@@ -126,20 +126,20 @@
     // Timeline: drei Darstellungen zum Vergleich – ohne äußeren Kasten, mit viel Luft
     var jetzt = Date.now(), tlv = "seite";
     try { tlv = localStorage.getItem("pr-tl-ansicht") || "seite"; } catch (x) {}
+    if (tlv !== "auf") tlv = "seite";
     var start = ere.filter(function (e) { return new Date(e.datum) <= jetzt; })[0] || ere[0];
-    function eintrag(e, mitPersonen, dreieck, knapp) {
+    function eintrag(e, mitPersonen, dreieck) {
       var zuk = new Date(e.datum) > jetzt, hat = pkt.some(function (x) { return x.ereignis_id === e.id; }) || auf.some(function (x) { return x.ereignis_id === e.id; });
-      return '<button type="button" data-ev="' + e.id + '" class="' + (zuk ? "pr-zuk " : "") + (start && e.id === start.id ? "an" : "") + '"><span class="pr-d">' + (zuk && !knapp ? "geplant · " : "") + kurz(e.datum) +
+      return '<button type="button" data-ev="' + e.id + '" class="' + (zuk ? "pr-zuk " : "") + (start && e.id === start.id ? "an" : "") + '"><span class="pr-d">' + (zuk ? "geplant · " : "") + kurz(e.datum) +
         zeit(e.datum, " · ") + (hat ? ' <i class="pr-hat-details" title="Protokoll vorhanden"></i>' : "") + "</span><b>" + esc(e.titel) + "</b>" +
-        (knapp ? "" : '<small>' + esc(format(e)) + (mitPersonen && personen(e) ? " (" + esc(personen(e)) + ")" : "") + "</small>") +
+        '<small>' + esc(format(e)) + (mitPersonen && personen(e) ? " (" + esc(personen(e)) + ")" : "") + "</small>" +
         (dreieck && hat ? '<span class="tl-dreieck" aria-hidden="true"></span>' : "") + "</button>";
     }
     var tl;
     if (tlv === "auf") tl = '<ol class="tl-auf">' + ere.map(function (e) { return "<li>" + eintrag(e, true, true) + '<div class="tl-auf-det" data-ev-detail="' + e.id + '" hidden></div></li>'; }).join("") + "</ol>";
-    else if (tlv === "oben") tl = '<ol class="tl-oben">' + ere.map(function (e) { return "<li>" + eintrag(e, false, false, true) + "</li>"; }).join("") + '</ol><div class="tl-oben-det" data-ev-detail=""></div>';
     else tl = '<div class="tl-seite"><ol class="tl-seite-liste">' + ere.map(function (e) { return "<li>" + eintrag(e) + "</li>"; }).join("") + '</ol><div class="tl-seite-det" data-ev-detail=""></div></div>';
     h += '<section class="kt3-box kt3-breit pr-tl-frei"><div class="pr-tl-kopf"><h3>Timeline</h3><span class="pr-tl-wahl">' +
-      [["seite", "Nebeneinander"], ["auf", "Aufklappen"], ["oben", "Zeitleiste oben"]].map(function (v) {
+      [["seite", "Nebeneinander"], ["auf", "Aufklappen"]].map(function (v) {
         return '<button type="button" data-tlv="' + v[0] + '" aria-pressed="' + (v[0] === tlv) + '">' + v[1] + "</button>"; }).join("") + "</span></div><div class='pr-tl-inhalt'>" + tl + "</div></section>";
     // Projektziel: schmal, aufklappbar – Kernsatz immer sichtbar, Details beim Aufklappen
     if (p.ziel || (p.ziel_details || []).length) {
