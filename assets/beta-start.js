@@ -70,7 +70,7 @@
           var seit = k.letzter_kontakt ? "letzter Kontakt vor " + Math.round((Date.now() - new Date(k.letzter_kontakt)) / 864e5) + " Tagen" : "noch kein Kontakt erfasst";
           return '<li><span class="st-prio">' + esc(k.prioritaet || "–") + '</span><div><a href="/strategie/kontakte.html#k=' + k.id + '"><b>' + esc(name(k)) + "</b></a><small>" +
             esc([k.organisation, seit].filter(Boolean).join(" · ")) + "</small></div></li>";
-        }).join("") + '</ul><a class="db-mehr" href="/strategie/kontakte.html#faellig">Alle fälligen Kontakte <span aria-hidden="true">&rarr;</span></a>'
+        }).join("") + "</ul>"
           : '<p class="db-folgt">Niemand ist gerade fällig.</p>';
       });
   }

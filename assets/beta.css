@@ -412,3 +412,36 @@ a.db-chip:hover { background: #e2e0dd; color: var(--ink); }
 .kb-anweisung { margin: 14px 0 0; padding: 4px 0 4px 14px; box-shadow: inset 3px 0 0 var(--ink); font-size: .9rem; font-weight: 300; }
 .kb-anweisung span { display: block; font-size: .78rem; font-weight: 500; color: var(--grey-70); }
 .kb-anweisung small { color: var(--grey-50); }
+
+/* ---------- Termine – Konzept ---------- */
+.tk-woche { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 6px 0 10px; }
+@media (min-width: 760px) { .tk-woche { grid-template-columns: repeat(4, 1fr); } }
+.tk-woche div { padding: 14px 16px; border-radius: 16px; background: var(--grey-bg); }
+.tk-woche b { display: block; font-family: var(--font-serif); font-size: 1.7rem; line-height: 1.1; }
+.tk-woche span { font-size: .8rem; color: var(--grey-70); }
+.tk-woche .tk-achtung { background: var(--ink); color: #fff; } .tk-woche .tk-achtung b { color: var(--hl); } .tk-woche .tk-achtung span { color: #d6d3cf; }
+.tk-tag { margin-top: 30px; }
+.tk-tag h2 { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 0 6px; font-family: var(--font-sans); font-size: .95rem; font-weight: 600; }
+.tk-last { display: inline-flex; align-items: center; gap: 8px; font-size: .78rem; font-weight: 400; color: var(--grey-50); }
+.tk-last i { display: block; width: 80px; height: 4px; border-radius: 2px; background: var(--grey-bg); position: relative; }
+.tk-last i { background: linear-gradient(var(--ink), var(--ink)) no-repeat left / var(--w, 0) 100%, var(--grey-bg); }
+.tk-t { border-top: 1px solid #eeece9; }
+.tk-t summary { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 4px 16px; padding: 14px 0; cursor: pointer; list-style: none; }
+@media (min-width: 760px) { .tk-t summary { grid-template-columns: 90px minmax(0, 1fr) 170px; } }
+.tk-t summary::-webkit-details-marker { display: none; }
+.tk-zeit { font-size: .85rem; color: var(--grey-70); line-height: 1.35; } .tk-zeit b { display: block; color: var(--ink); font-size: .95rem; }
+.tk-zeit small { display: block; margin-top: 2px; font-size: .75rem; color: var(--grey-50); }
+.tk-mitte { min-width: 0; } .tk-mitte b { display: block; font-weight: 500; font-size: .98rem; line-height: 1.35; }
+.tk-mitte small { display: block; margin-top: 3px; font-size: .82rem; color: var(--grey-50); font-weight: 300; }
+.tk-art { display: block; font-size: .75rem; color: var(--grey-50); margin-bottom: 2px; }
+.tk-vorb { grid-column: 2; font-size: .8rem; color: var(--grey-50); }
+@media (min-width: 760px) { .tk-vorb { grid-column: 3; text-align: right; padding-top: 2px; } }
+.tk-vorb--noetig { color: var(--ink); font-weight: 600; } .tk-vorb--noetig::before { content: "● "; color: #d0453b; }
+.tk-vorb--bereit::before { content: "✓ "; color: #2e9e5b; }
+.tk-lang summary { box-shadow: inset 4px 0 0 var(--hl); padding-left: 12px; }
+.tk-w .tk-art, .tk-lang .tk-art { color: var(--ink); font-weight: 600; }
+.tk-brief { display: grid; gap: 14px; margin: 0 0 18px; padding: 16px 18px; border-radius: 14px; background: #f7f6f4; }
+@media (min-width: 760px) { .tk-brief { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-left: 106px; } }
+.tk-brief h3 { margin: 0 0 4px; font-family: var(--font-sans); font-size: .8rem; font-weight: 600; color: var(--grey-70); }
+.tk-brief p, .tk-brief ul { margin: 0; font-size: .9rem; font-weight: 300; line-height: 1.55; } .tk-brief ul { padding-left: 1.1em; }
+.tk-tun { grid-column: 1 / -1; padding-top: 10px; border-top: 1px solid #e6e3df; } .tk-tun p { font-weight: 500; }
