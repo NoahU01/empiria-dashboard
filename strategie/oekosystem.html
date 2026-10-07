@@ -101,19 +101,19 @@
               <span class="oe-knoten-titel">Facebook</span>
               <span class="oe-knoten-unter">sofortsichtbar</span>
             </button>
-            <button type="button" class="oe-knoten" data-baustein="mail" data-ebene="1" aria-expanded="false" style="grid-column: 7; grid-row: 1; order: 9;">
+            <button type="button" class="oe-knoten" data-baustein="mail" data-ebene="1" aria-expanded="false" style="grid-column: 8; grid-row: 1; order: 10;">
               <span class="oe-knoten-titel">E-Mail</span>
               <span class="oe-knoten-unter">Outlook 365 &middot; drei Marken</span>
             </button>
-            <button type="button" class="oe-knoten" data-baustein="finder" data-ebene="1" aria-expanded="false" style="grid-column: 8; grid-row: 1; order: 10;">
+            <button type="button" class="oe-knoten" data-baustein="finder" data-ebene="1" aria-expanded="false" style="grid-column: 9; grid-row: 1; order: 11;">
               <span class="oe-knoten-titel">Datei&shy;system</span>
               <span class="oe-knoten-unter">Mac und Nextcloud</span>
             </button>
-            <button type="button" class="oe-knoten" data-baustein="chrome" data-ebene="1" aria-expanded="false" style="grid-column: 9; grid-row: 1; order: 11;">
+            <button type="button" class="oe-knoten" data-baustein="chrome" data-ebene="1" aria-expanded="false" style="grid-column: 10; grid-row: 1; order: 12;">
               <span class="oe-knoten-titel">Chrome</span>
               <span class="oe-knoten-unter">Recherche im Netz</span>
             </button>
-            <button type="button" class="oe-knoten oe-knoten--speicher" data-baustein="kontakte_db" data-ebene="1" aria-expanded="false" style="grid-column: 10; grid-row: 1; order: 12;">
+            <button type="button" class="oe-knoten oe-knoten--speicher" data-baustein="kontakte_db" data-ebene="1" aria-expanded="false" style="grid-column: 7; grid-row: 1; order: 9;">
               <span class="oe-knoten-titel">Kontakte</span>
               <span class="oe-knoten-unter">wird gelesen und beschrieben</span>
             </button>
@@ -128,6 +128,10 @@
             <button type="button" class="oe-knoten oe-knoten--speicher" data-baustein="supabase" data-ebene="4" aria-expanded="false" style="grid-column: 1 / 7; grid-row: 4; order: 13;">
               <span class="oe-knoten-titel">Datenbank</span>
               <span class="oe-knoten-unter">Supabase &middot; hier laufen die Kanäle zusammen</span>
+            </button>
+            <button type="button" class="oe-knoten oe-knoten--speicher" data-baustein="db_kontakte" data-ebene="4" aria-expanded="false" style="grid-column: 7; grid-row: 4; order: 14;">
+              <span class="oe-knoten-titel">Datenbank</span>
+              <span class="oe-knoten-unter">Kontakte &middot; Projekte &middot; Aufgaben</span>
             </button>
             </div>
           </div>
@@ -649,19 +653,25 @@
     "schritte": [],
     "offen": []
   },
-  "kontakte_db": {
-    "satz": "Der Bestand: Kontakte, Bestandskunden und was zu jedem gilt. Sie ist weder Quelle noch Ergebnis, sondern beides – der Ausführungsknoten liest aus ihr und schreibt in sie zurück. Deshalb steht sie neben ihm und nicht in der Kette. Die Kontakte liegen in einer Datenbank bei Supabase.",
+  "db_kontakte": {
+    "satz": "Die Datenbank, in der Kontakte, Firmen, Projekte, Aufgaben und Mail-Einschätzungen liegen. Von hier liest die Intelligenzschicht – und schreibt zurück, was entschieden, protokolliert und angelegt wird. Die Verbindung steht.",
     "tools": [
-      "Datenbank bei Supabase"
+      "Kontaktdatenbank (CRM)",
+      "Projekte und Aufgaben"
+    ],
+    "schritte": [],
+    "offen": []
+  },
+  "kontakte_db": {
+    "satz": "Der Bestand: Personen, Firmen, Kontaktwege, Marken und was zu jedem gilt. Eingerichtet als Kontaktdatenbank (CRM) – Excel-Bestand, Kalender- und Mail-Historie sind übernommen. Die Intelligenzschicht liest daraus und schreibt zurück (Notizen, Aufgaben, Klärfälle).",
+    "tools": [
+      "Kontaktdatenbank (CRM) in der Datenbank"
     ],
     "schritte": [
-      "Festlegen, welche Felder je Person geführt werden",
-      "Kontaktfrequenz je Person hinterlegen"
+      "LinkedIn-Kontakte (Export Teil 2) als Vorschläge übernehmen",
+      "Kontaktpflege-Strategie auf eigener Unterseite"
     ],
-    "offen": [
-      "Woher der Erstbestand kommt – Outlook, LinkedIn oder beides",
-      "Kundendaten berühren das Rechte- und Sicherheitskonzept, das noch nicht besprochen ist"
-    ]
+    "offen": []
   },
   "facebook": {
     "satz": "Die Seite der Marken auf Facebook. Gelesen und bespielt wird sie über Buffer, nicht direkt.",
@@ -748,10 +758,16 @@
     "art": "geplant",
     "band": "Datenquellen"
   },
+  "db_kontakte": {
+    "titel": "Datenbank",
+    "unter": "Kontakte &middot; Projekte &middot; Aufgaben",
+    "art": "bestand",
+    "band": "Datenquellen"
+  },
   "kontakte_db": {
     "titel": "Kontakte",
     "unter": "wird gelesen und beschrieben",
-    "art": "geplant",
+    "art": "bestand",
     "band": "Datenquellen"
   },
   "analytics": {
@@ -963,9 +979,9 @@
     if (!plan || !svg) return;
     var knoten = Array.prototype.slice.call(plan.querySelectorAll('.oe-knoten'));
     var richtung = plan.dataset.richtung || 'unten';
-    var LEITUNGEN = [["homepages", "analytics"], ["homepages", "search"], ["mail", "schiene"], ["finder", "schiene"], ["chrome", "schiene"], ["instagram", "supabase"], ["facebook", "supabase"], ["li_marken", "supabase"], ["analytics", "supabase"], ["search", "supabase"], ["linkedin", "supabase"], ["kontakte_db", "schiene"], ["supabase", "schiene"], ["schiene", "knoten"], ["macbook", "knoten"], ["ipad", "knoten"], ["iphone", "knoten"], ["knoten", "dashboard"], ["knoten", "postings"], ["knoten", "korrespondenz"], ["knoten", "webdev"], ["knoten", "cockpits"], ["korrespondenz", "aus_mail", "baum"], ["korrespondenz", "aus_whats", "baum"], ["korrespondenz", "aus_dm", "baum"], ["korrespondenz", "aus_komm", "baum"], ["webdev", "vscode"], ["vscode", "github"], ["github", "vercel"], ["postings", "buffer"], ["buffer", "aus_linkedin", "baum"], ["buffer", "aus_instagram", "baum"], ["buffer", "aus_facebook", "baum"]];
-    var ZUSTAND = {"homepages>analytics": "geplant", "homepages>search": "geplant", "mail>schiene": "geplant", "finder>schiene": "geplant", "chrome>schiene": "geplant", "instagram>supabase": "geplant", "facebook>supabase": "geplant", "li_marken>supabase": "geplant", "analytics>supabase": "geplant", "search>supabase": "geplant", "linkedin>supabase": "geplant", "kontakte_db>schiene": "geplant", "supabase>schiene": "geplant", "schiene>knoten": "geplant", "macbook>knoten": "geplant", "ipad>knoten": "geplant", "iphone>knoten": "geplant", "knoten>dashboard": "geplant", "knoten>postings": "geplant", "knoten>korrespondenz": "geplant", "knoten>webdev": "geplant", "knoten>cockpits": "geplant", "korrespondenz>aus_mail": "geplant", "korrespondenz>aus_whats": "geplant", "korrespondenz>aus_dm": "geplant", "korrespondenz>aus_komm": "geplant", "webdev>vscode": "geplant", "vscode>github": "geplant", "github>vercel": "geplant", "postings>buffer": "geplant", "buffer>aus_linkedin": "geplant", "buffer>aus_instagram": "geplant", "buffer>aus_facebook": "geplant"};
-    var AMPEL = {"homepages>analytics": "gruen", "homepages>search": "gruen", "mail>schiene": "gruen", "finder>schiene": "gruen", "chrome>schiene": "gruen", "instagram>supabase": "gruen", "facebook>supabase": "gruen", "li_marken>supabase": "gruen", "analytics>supabase": "gruen", "search>supabase": "gruen", "linkedin>supabase": "gruen", "kontakte_db>schiene": "rot", "supabase>schiene": "rot", "schiene>knoten": "gruen", "macbook>knoten": "gruen", "ipad>knoten": "gruen", "iphone>knoten": "gruen", "knoten>dashboard": "rot", "knoten>postings": "rot", "knoten>korrespondenz": "gruen", "knoten>webdev": "gruen", "knoten>cockpits": "rot", "korrespondenz>aus_mail": "gruen", "korrespondenz>aus_whats": "rot", "korrespondenz>aus_dm": "rot", "korrespondenz>aus_komm": "rot", "webdev>vscode": "gruen", "vscode>github": "gruen", "github>vercel": "gruen", "postings>buffer": "rot", "buffer>aus_linkedin": "rot", "buffer>aus_instagram": "rot", "buffer>aus_facebook": "rot"};
+    var LEITUNGEN = [["homepages", "analytics"], ["homepages", "search"], ["mail", "schiene"], ["finder", "schiene"], ["chrome", "schiene"], ["instagram", "supabase"], ["facebook", "supabase"], ["li_marken", "supabase"], ["analytics", "supabase"], ["search", "supabase"], ["linkedin", "supabase"], ["kontakte_db", "db_kontakte"], ["db_kontakte", "schiene"], ["supabase", "schiene"], ["schiene", "knoten"], ["macbook", "knoten"], ["ipad", "knoten"], ["iphone", "knoten"], ["knoten", "dashboard"], ["knoten", "postings"], ["knoten", "korrespondenz"], ["knoten", "webdev"], ["knoten", "cockpits"], ["korrespondenz", "aus_mail", "baum"], ["korrespondenz", "aus_whats", "baum"], ["korrespondenz", "aus_dm", "baum"], ["korrespondenz", "aus_komm", "baum"], ["webdev", "vscode"], ["vscode", "github"], ["github", "vercel"], ["postings", "buffer"], ["buffer", "aus_linkedin", "baum"], ["buffer", "aus_instagram", "baum"], ["buffer", "aus_facebook", "baum"]];
+    var ZUSTAND = {"homepages>analytics": "geplant", "homepages>search": "geplant", "mail>schiene": "geplant", "finder>schiene": "geplant", "chrome>schiene": "geplant", "instagram>supabase": "geplant", "facebook>supabase": "geplant", "li_marken>supabase": "geplant", "analytics>supabase": "geplant", "search>supabase": "geplant", "linkedin>supabase": "geplant", "kontakte_db>db_kontakte": "eingerichtet", "db_kontakte>schiene": "eingerichtet", "supabase>schiene": "geplant", "schiene>knoten": "geplant", "macbook>knoten": "geplant", "ipad>knoten": "geplant", "iphone>knoten": "geplant", "knoten>dashboard": "geplant", "knoten>postings": "geplant", "knoten>korrespondenz": "geplant", "knoten>webdev": "geplant", "knoten>cockpits": "geplant", "korrespondenz>aus_mail": "geplant", "korrespondenz>aus_whats": "geplant", "korrespondenz>aus_dm": "geplant", "korrespondenz>aus_komm": "geplant", "webdev>vscode": "geplant", "vscode>github": "geplant", "github>vercel": "geplant", "postings>buffer": "geplant", "buffer>aus_linkedin": "geplant", "buffer>aus_instagram": "geplant", "buffer>aus_facebook": "geplant"};
+    var AMPEL = {"homepages>analytics": "gruen", "homepages>search": "gruen", "mail>schiene": "gruen", "finder>schiene": "gruen", "chrome>schiene": "gruen", "instagram>supabase": "gruen", "facebook>supabase": "gruen", "li_marken>supabase": "gruen", "analytics>supabase": "gruen", "search>supabase": "gruen", "linkedin>supabase": "gruen", "kontakte_db>db_kontakte": "gruen", "db_kontakte>schiene": "gruen", "supabase>schiene": "rot", "schiene>knoten": "gruen", "macbook>knoten": "gruen", "ipad>knoten": "gruen", "iphone>knoten": "gruen", "knoten>dashboard": "rot", "knoten>postings": "rot", "knoten>korrespondenz": "gruen", "knoten>webdev": "gruen", "knoten>cockpits": "rot", "korrespondenz>aus_mail": "gruen", "korrespondenz>aus_whats": "rot", "korrespondenz>aus_dm": "rot", "korrespondenz>aus_komm": "rot", "webdev>vscode": "gruen", "vscode>github": "gruen", "github>vercel": "gruen", "postings>buffer": "rot", "buffer>aus_linkedin": "rot", "buffer>aus_instagram": "rot", "buffer>aus_facebook": "rot"};
 
     /* Die Klasse einer Leitung: ihr Zustand, nicht der Stand des Kastens
        an ihrem Ende. Die Ampel kommt als zweite Klasse dazu und wird nur
@@ -1257,7 +1273,7 @@
        Gegenseite und die Linie selbst mit. */
     /* Die Datenbank bei Supabase ist ebenfalls ein Durchgang: Was in sie
        hineinlaeuft, geht ueber ihre Leitung zur Schiene weiter. */
-    var DURCHGAENGE = ['supabase'];
+    var DURCHGAENGE = ['supabase', 'db_kontakte'];
     function wegeFuer(id) {
       var direkt = LEITUNGEN.filter(function (l) {
         return l[0] === id || l[1] === id; });
@@ -1325,7 +1341,7 @@
 
     /* Der Stand je Kasten. Was noch nicht gruen ist, ist nicht eingerichtet
        und steht gestrichelt - wie die geplanten Leitungen. */
-    var AMPEL_KNOTEN = {"homepages": "gruen", "mail": "gruen", "finder": "gruen", "chrome": "gruen", "instagram": "gruen", "facebook": "gruen", "analytics": "gruen", "search": "gruen", "macbook": "gruen", "ipad": "gruen", "iphone": "gruen", "linkedin": "gruen", "li_marken": "gruen", "kontakte_db": "gelb", "supabase": "gruen", "knoten": "gruen", "dashboard": "rot", "postings": "rot", "buffer": "rot", "korrespondenz": "gruen", "cockpits": "rot", "webdev": "gruen", "vscode": "gruen", "github": "gruen", "vercel": "gruen", "aus_linkedin": "rot", "aus_instagram": "rot", "aus_facebook": "rot", "aus_mail": "gruen", "aus_whats": "rot", "aus_dm": "rot", "aus_komm": "rot"};
+    var AMPEL_KNOTEN = {"homepages": "gruen", "mail": "gruen", "finder": "gruen", "chrome": "gruen", "instagram": "gruen", "facebook": "gruen", "analytics": "gruen", "search": "gruen", "macbook": "gruen", "ipad": "gruen", "iphone": "gruen", "linkedin": "gruen", "li_marken": "gruen", "kontakte_db": "gruen", "db_kontakte": "gruen", "supabase": "gruen", "knoten": "gruen", "dashboard": "rot", "postings": "rot", "buffer": "rot", "korrespondenz": "gruen", "cockpits": "rot", "webdev": "gruen", "vscode": "gruen", "github": "gruen", "vercel": "gruen", "aus_linkedin": "rot", "aus_instagram": "rot", "aus_facebook": "rot", "aus_mail": "gruen", "aus_whats": "rot", "aus_dm": "rot", "aus_komm": "rot"};
     knoten.forEach(function (b) {
       var stand = AMPEL_KNOTEN[b.dataset.baustein];
       b.classList.toggle('ist-geplant', !!stand && stand !== 'gruen');
