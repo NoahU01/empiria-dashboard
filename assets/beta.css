@@ -731,3 +731,4 @@ body.kt3-detail .db-kopf { min-height: 0; }
 .tlv-d .pr-tl2-detail .pr-d, .tlv-d .pr-tl2-detail .pr-det-meta, .tlv-d .pr-tl2-detail .kt3-leise { color: #b9b5b0; }
 .tlv-d .pr-tl2-detail h4 { color: var(--hl); } .tlv-d .pr-tl2-detail .pr-det-titel { color: #fff; }
 .tlv-b .pr-tl2-detail { top: 0; }
+@media (min-width: 1000px) { .pr-zwei { column-gap: 64px; } }
