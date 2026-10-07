@@ -110,9 +110,7 @@
     // Timeline: links durchscrollbar, rechts die Details zum gewählten Termin
     var jetzt = Date.now();
     var start = ere.filter(function (e) { return new Date(e.datum) <= jetzt; })[0] || ere[0];
-    var tlv = "a"; try { tlv = localStorage.getItem("pr-tl-variante") || "a"; } catch (x) {}
-    h += '<section class="kt3-box kt3-breit"><div class="pr-tl-kopf"><h3>Timeline</h3><span class="pr-tl-wahl">' + ["a", "b", "c", "d"].map(function (v) {
-      return '<button type="button" data-tlv="' + v + '" aria-pressed="' + (v === tlv) + '">' + v.toUpperCase() + "</button>"; }).join("") + '</span></div><div class="pr-tl2 tlv-' + tlv + '"><ol class="pr-tl2-liste">' + ere.map(function (e) {
+    h += '<section class="kt3-box kt3-breit"><h3>Timeline</h3><div class="pr-tl2 pr-reiter"><ol class="pr-tl2-liste">' + ere.map(function (e) {
       var zuk = new Date(e.datum) > jetzt, hat = pkt.some(function (x) { return x.ereignis_id === e.id; }) || auf.some(function (x) { return x.ereignis_id === e.id; });
       return '<li><button type="button" data-ev="' + e.id + '" class="' + (zuk ? "pr-zuk " : "") + (start && e.id === start.id ? "an" : "") + '"><span class="pr-d">' + (zuk ? "geplant · " : "") + kurz(e.datum) + " · " +
         new Date(e.datum).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + (hat ? ' <i class="pr-hat-details" title="Protokoll vorhanden"></i>' : "") + "</span><b>" + esc(e.titel) + "</b>" +
@@ -131,14 +129,6 @@
   }
 
   function verdrahten(p) {
-    wurzel.querySelectorAll("[data-tlv]").forEach(function (b) {
-      b.onclick = function () {
-        var v = b.getAttribute("data-tlv"), tl = wurzel.querySelector(".pr-tl2");
-        tl.className = "pr-tl2 tlv-" + v;
-        wurzel.querySelectorAll("[data-tlv]").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
-        try { localStorage.setItem("pr-tl-variante", v); } catch (x) {}
-      };
-    });
     var knoepfe = wurzel.querySelectorAll("[data-ev]");
     knoepfe.forEach(function (b) { b.onclick = function () { knoepfe.forEach(function (x) { x.classList.toggle("an", x === b); }); detailEreignis(+b.getAttribute("data-ev")); }; });
     var an = wurzel.querySelector("[data-ev].an"); if (an) detailEreignis(+an.getAttribute("data-ev"));
