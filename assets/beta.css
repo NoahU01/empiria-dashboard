@@ -916,3 +916,9 @@ main.pr-look-grau .pr-kb-spalte { background: #f4f2ef; }
 .pr-tl-frei + .pr-ziel, .pr-ziel + .pr-team, .pr-tl-frei + .pr-team { margin-top: 0; }
 .pr-module .pr-bet-spalte h4 { margin-top: 0; }
 .ad-link a { color: var(--ink); text-decoration: underline; text-decoration-color: #c9c5c0; text-underline-offset: 2px; } .ad-link a:hover { text-decoration-color: var(--ink); }
+/* Seite Aufgaben: Marken als eigene Auswahl, leicht abgesetzt */
+.ab-filter .ab-marke-knopf { min-width: 150px; justify-content: flex-start; background: #fff8bf; border-color: #f0e488; font-weight: 600; color: var(--ink); text-align: left; }
+.ab-filter .ab-marke-knopf:hover { border-color: #d9cc5f; }
+.ab-filter .ab-marke-knopf[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--hl, #fff400); }
+@media (max-width: 700px) { .ab-filter .ab-marke-knopf { min-width: 0; } }
+.ab-filter .ab-marke { min-width: 150px; }

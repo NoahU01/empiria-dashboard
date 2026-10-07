@@ -1,5 +1,5 @@
 /* Aufgaben – Kanban-Board über alle Projekte und die operativen Aufgaben ohne Projekt.
-   Oben ein Filter: Alle, Operativ oder einzelne/mehrere Projekte (merkt sich die Auswahl).
+   Oben ein Filter: Alle, Operativ, ganze Marken oder einzelne/mehrere Projekte (merkt sich die Auswahl).
    Spalten: Backlog · To-do · In Arbeit · Review/Prüfung · Erledigt (letzte 14 Tage). Karten zum Ziehen.
    Anmeldung wie auf der Kontaktseite (Login-Link). */
 (function () {
@@ -29,7 +29,7 @@
       if (r[1].error) { wurzel.innerHTML = '<p class="kb-leer">Fehler: ' + esc(r[1].error.message) + "</p>"; return; }
       projekte = r[0].data || []; aufgaben = r[1].data || [];
       var ids = projekte.map(function (p) { return p.id; });
-      wahl = wahl.filter(function (w) { return w === "op" || ids.indexOf(w) > -1; });
+      wahl = wahl.filter(function (w) { return w === "op" || ids.indexOf(w) > -1 || (typeof w === "string" && MARKEN.indexOf(w.slice(2)) > -1); });
       zeichnen();
     });
   }
@@ -37,7 +37,9 @@
   function projektVon(a) { return projekte.filter(function (p) { return p.id === a.projekt_id; })[0]; }
   function sichtbar(a) {
     if (!wahl.length) return true;
-    return a.projekt_id ? wahl.indexOf(a.projekt_id) > -1 : wahl.indexOf("op") > -1;
+    if (!a.projekt_id) return wahl.indexOf("op") > -1;
+    var p = projektVon(a);
+    return wahl.indexOf(a.projekt_id) > -1 || (!!p && wahl.indexOf("m:" + (p.marke || "empiria")) > -1);
   }
   function wer(a) { return a.zustaendig_name || name(a.kontakte) || a.verantwortlich || ""; }
 
@@ -49,7 +51,8 @@
     MARKEN.forEach(function (m) {
       var l = projekte.filter(function (p) { return (p.marke || "empiria") === m && p.status !== "abgeschlossen"; });
       if (!l.length) return;
-      h += '<div class="ab-filter-zeile"><span class="ab-marke">' + esc(m) + "</span>" + l.map(function (p) {
+      // Marke selbst ist auch auswählbar (alle Projekte dieser Marke)
+      h += '<div class="ab-filter-zeile">' + knopf("m:" + m, m, wahl.indexOf("m:" + m) > -1).replace("<button", '<button class="ab-marke-knopf"') + l.map(function (p) {
         return knopf(p.id, p.name, wahl.indexOf(p.id) > -1).replace("<button", mitAufgaben[p.id] ? "<button" : '<button class="ab-leer"');
       }).join("") + "</div>";
     });
@@ -86,7 +89,7 @@
         var f = b.getAttribute("data-f");
         if (f === "alle") wahl = [];
         else {
-          var w = f === "op" ? "op" : +f, i = wahl.indexOf(w);
+          var w = f === "op" || f.indexOf("m:") === 0 ? f : +f, i = wahl.indexOf(w);
           if (i > -1) wahl.splice(i, 1); else wahl.push(w);
         }
         try { localStorage.setItem("ab-filter", JSON.stringify(wahl)); } catch (x) {}
