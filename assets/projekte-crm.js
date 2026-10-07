@@ -39,11 +39,11 @@
         function von(l) { return l.filter(function (x) { return (x.marke || "empiria") === m; }); }
         var k = von(kunde), i = von(intern);
         return '<section class="pr-marke-sek"><h2 class="pr-h2">' + esc(m) + '</h2><div class="pr-zwei">' +
-          '<table class="kt3-tab pr-tab"><colgroup><col style="width:36%"><col style="width:30%"><col style="width:34%"></colgroup>' +
+          '<table class="kt3-tab pr-tab"><colgroup><col style="width:34%"><col style="width:48%"><col style="width:18%"></colgroup>' +
           "<thead><tr><th>Kundenprojekt</th><th>Kunde</th><th>Nächster Termin</th></tr></thead><tbody>" + (k.length ? k.map(function (x) {
             var n = nae[x.id];
             return '<tr data-href="#p=' + x.id + '"><td>' + name_(x) + "</td><td>" + esc(x.organisationen ? x.organisationen.name : "") + "</td><td>" +
-              (n ? kurz(n.datum) + '<br><span class="kt3-leise">' + esc(n.titel) + "</span>" : '<span class="kt3-leise">keiner geplant</span>') + "</td></tr>";
+              (n ? kurz(n.datum) : '<span class="kt3-leise">–</span>') + "</td></tr>";
           }).join("") : '<tr><td colspan="3" class="kt3-leise">Keine Kundenprojekte.</td></tr>') + "</tbody></table>" +
           '<table class="kt3-tab pr-tab"><thead><tr><th>Internes Projekt</th></tr></thead><tbody>' + (i.length ? i.map(function (x) {
             return '<tr data-href="#p=' + x.id + '"><td>' + name_(x) + "</td></tr>";
