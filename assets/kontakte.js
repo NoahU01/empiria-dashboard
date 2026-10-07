@@ -56,7 +56,6 @@
     ["alle", "Alle", function () { return true; }],
     ["klaeren", "Klärfälle", klaerfall],
     ["faellig", "Wieder dran", faellig],
-    ["marke", "Markencheck offen", markeOffen],
     ["a", "Priorität A", function (k) { return k.prioritaet === "A"; }]
   ];
 
