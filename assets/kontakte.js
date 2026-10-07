@@ -180,7 +180,7 @@
         "Nichts offen.", '<form class="kt3-neu" data-neu-todo data-org="' + id + '"><input type="text" placeholder="Nächsten Schritt notieren …"><button type="submit">+</button></form>');
       var news = meld.filter(function (m) { return m.art === "Meldung"; }), anl = meld.filter(function (m) { return m.art === "Anlass"; });
       h += '<section class="kt3-box kt3-breit"><h3>Was gerade passiert</h3>' + (news.length ? '<ul class="kt3-news">' + news.map(function (m, i) {
-          return "<li" + (i >= 3 ? " hidden data-mehr" : "") + '><span class="kt3-d">' + esc(m.datum || "") + "</span><div>" +
+          return "<li" + (i >= 3 ? " hidden data-mehr" : "") + '><span class="kt3-d">' + (/^\d{4}-\d{2}-\d{2}$/.test(m.datum || "") ? datum(m.datum) : esc(m.datum || "")) + "</span><div>" +
             (m.quelle_url ? '<a href="' + esc(m.quelle_url) + '" target="_blank" rel="noopener"><b>' + esc(m.titel) + "</b></a>" : "<b>" + esc(m.titel) + "</b>") +
             (m.quelle_name ? ' <span class="kt3-leise">· ' + esc(m.quelle_name) + "</span>" : "") +
             (m.relevanz ? "<p>" + esc(m.relevanz) + "</p>" : "") + (m.aufhaenger ? '<p class="kt3-aufh"><span>Aufhänger</span>' + esc(m.aufhaenger) + "</p>" : "") + "</div></li>";
