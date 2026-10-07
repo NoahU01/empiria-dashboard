@@ -61,15 +61,14 @@
 
   /* ---------- Kachel auf dem Dashboard ---------- */
   function kachel() {
-    var z = document.querySelector("[data-kb-anzahl]");
-    if (z) z.textContent = daten.handlung.length;
+
     var chip = document.querySelector("[data-kb-kontakt]");
     if (chip && !daten.fehler.some(function (f) { return f.konto.key === "kontakt"; })) {
       chip.classList.remove("db-chip--leer");
       chip.innerHTML = '<i class="' + (daten.kontaktNeu ? "an" : "") + '"></i>kontakt@ <b>' + daten.kontaktNeu + " neu</b>";
     }
     var top = daten.handlung.slice(0, 5);
-    var html = artZaehler();
+    var html = "";
     html += top.length ? '<ul class="kb-liste">' + top.map(function (m) {
       return '<li class="kb-mail' + (m.isRead ? "" : " ungelesen") + '"><div class="kb-zeile">' +
         '<span class="kb-von">' + esc(B.absender(m)) + '</span><span class="kb-zeit">' + zeit(m) + "</span>" +
@@ -196,13 +195,10 @@
       ["relevant", "alle", relUngelesen, "Relevant, ungelesen"],
       ["relevant", "kontakt", daten.kontaktNeu, "kontakt@ neu"]
     ];
-    var html = '<div class="kb-zahlen">' + kacheln.map(function (k) {
-      var aktiv = zustand.tab === k[0] && zustand.konto === k[1];
-      return '<button type="button" class="kb-kachel' + (aktiv ? " aktiv" : "") + '" data-tab="' + k[0] + '" data-konto="' + k[1] + '"><b>' + k[2] + "</b><span>" + k[3] + "</span></button>";
-    }).join("") + "</div>";
+    var html = "";
 
     html += '<div class="kb-tabs" role="tablist">' + TABS.map(function (x) {
-      return '<button type="button" role="tab" class="kb-tab" data-tab="' + x.key + '" aria-selected="' + (x.key === zustand.tab) + '">' + x.name + "<em>" + daten[x.liste].length + "</em></button>";
+      return '<button type="button" role="tab" class="kb-tab" data-tab="' + x.key + '" aria-selected="' + (x.key === zustand.tab) + '">' + x.name + "</button>";
     }).join("") + "</div>";
 
     html += '<div class="kb-filter"><button type="button" data-konto="alle" aria-pressed="' + (zustand.konto === "alle") + '">Alle Konten</button>' +
@@ -223,7 +219,7 @@
     return t.gruppen.map(function (g) {
       var teil = mails.filter(function (m) { return m.vorschlag && m.vorschlag.art === g[0]; });
       if (!teil.length) return "";
-      var kopf = '<p class="kb-gruppe">' + g[1] + " · " + teil.length + "</p>" + (t.karten && HINWEIS[g[0]] ? '<p class="kb-gruppe-hinweis">' + esc(HINWEIS[g[0]]) + "</p>" : "");
+      var kopf = '<p class="kb-gruppe">' + g[1] + "</p>" + (t.karten && HINWEIS[g[0]] ? '<p class="kb-gruppe-hinweis">' + esc(HINWEIS[g[0]]) + "</p>" : "");
       return kopf + (t.karten ? '<ol class="kb-karten">' + teil.map(function (m, i) { return karte(m, i + 1); }).join("") + "</ol>"
                               : '<ul class="kb-liste">' + teil.map(zeileSeite).join("") + "</ul>");
     }).join("");

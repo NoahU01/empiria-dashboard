@@ -223,7 +223,7 @@
       var n = t[0] === "vorschlaege" ? vorschlaege.length : t[0] === "todo" ? aufgaben.length : alle.filter(t[2]).length;
       if (t[0] === "todo" && !n && zustand.tab !== t[0]) return "";
       if (t[0] === "vorschlaege" && !n && zustand.tab !== t[0]) return "";
-      return '<button type="button" data-tab="' + t[0] + '" aria-pressed="' + (zustand.tab === t[0]) + '">' + t[1] + " <span>" + n + "</span></button>";
+      return '<button type="button" data-tab="' + t[0] + '" aria-pressed="' + (zustand.tab === t[0]) + '">' + t[1] + "</button>";
     }).join("") + "</div>";
   }
   function tabsVerdrahten() {

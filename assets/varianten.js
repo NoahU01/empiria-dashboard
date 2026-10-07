@@ -80,8 +80,8 @@
 
   /* A – Karten: alles offen untereinander */
   function a() {
-    return zaehler() + gruppen(function (g, teil) {
-      return '<p class="kb-gruppe">' + ARTEN[g] + " · " + teil.length + '</p><ol class="kb-karten">' + teil.map(function (m, i) {
+    return gruppen(function (g, teil) {
+      return '<p class="kb-gruppe">' + ARTEN[g] + '</p><ol class="kb-karten">' + teil.map(function (m, i) {
         return '<li class="kb-karte"><div class="kb-karte-kopf"><span class="kb-nr">' + (i + 1) + '</span><div class="kb-karte-titel"><span class="kb-von">' +
           esc(m.von) + '</span><span class="kb-betreff">' + esc(m.betreff) + '</span></div><span class="kb-zeit">' + m.wann + "</span></div>" +
           '<div class="kb-block"><p class="kb-label">Worum es geht</p><p>' + esc(m.worum) + "</p></div>" +
@@ -143,7 +143,7 @@
     });
     var i = 0;
     return '<div class="ve"><div class="ve-liste">' + gruppen(function (g, teil) {
-      return '<p class="ve-gruppe">' + ARTEN[g] + " <span>" + teil.length + "</span></p>" + teil.map(function (m) {
+      return '<p class="ve-gruppe">' + ARTEN[g] + "</p>" + teil.map(function (m) {
         var n = i++;
         return '<button type="button" class="ve-eintrag' + (n ? "" : " aktiv") + '" data-i="' + n + '"><span class="ve-name">' + esc(m.von) +
           '</span><span class="ve-zeit">' + m.wann + '</span><span class="ve-betreff">' + esc(m.betreff) + "</span></button>";
