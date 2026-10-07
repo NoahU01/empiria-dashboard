@@ -14,7 +14,7 @@
   // In Entra ist nur diese eine Adresse hinterlegt. Wer sich auf einer
   // anderen Seite anmeldet, landet kurz hier und wird von MSAL zurückgeschickt.
   var RUECKSPRUNG = location.origin + "/strategie/dashboard-beta.html";
-  var SCOPES = ["User.Read", "Mail.ReadWrite", "Mail.ReadWrite.Shared"];
+  var SCOPES = ["User.Read", "Mail.ReadWrite", "Mail.ReadWrite.Shared", "Mail.Send", "Mail.Send.Shared"];
   var GRAPH = "https://graph.microsoft.com/v1.0";
 
   // Postfächer. handlung:false = wird gelesen und gezählt, landet aber nie
@@ -102,7 +102,11 @@
     var ich = graph("/me?$select=mail,displayName,proxyAddresses").catch(function () { return {}; });
     var je = KONTEN.map(function (k) {
       return Promise.all([ordner(k, "inbox", "receivedDateTime", FELDER_EIN), ordner(k, "sentitems", "sentDateTime", FELDER_AUS)])
-        .then(function (r) { return { konto: k, ein: r[0], aus: r[1] }; })
+        .then(function (r) {
+          return graph(k.pfad + "/mailFolders/drafts/messages?$top=50&$orderby=lastModifiedDateTime desc&$select=id,subject,toRecipients,ccRecipients,lastModifiedDateTime,bodyPreview,hasAttachments,webLink")
+            .then(function (d) { return d.value || []; }).catch(function () { return []; })
+            .then(function (ent) { return { konto: k, ein: r[0], aus: r[1], entwuerfe: ent }; });
+        })
         .catch(function (e) { if (e.anmelden) throw e; return { konto: k, fehler: e.status || "?" }; });
     });
     return Promise.all([ich].concat(je)).then(function (r) {
@@ -155,12 +159,13 @@
   function tageAlt(d) { return Math.floor((Date.now() - new Date(d)) / 864e5); }
 
   function auswerten(roh) {
-    var ein = [], aus = [], fehler = [], letzteAntwort = {}, letzterEingang = {};
+    var ein = [], aus = [], fehler = [], letzteAntwort = {}, letzterEingang = {}, entwuerfe = [];
 
     roh.postfaecher.forEach(function (p) {
       if (p.fehler) { fehler.push({ konto: p.konto, status: p.fehler }); return; }
       p.ein.forEach(function (m) { m.konto = p.konto; ein.push(m); });
       p.aus.forEach(function (m) { m.konto = p.konto; aus.push(m); });
+      (p.entwuerfe || []).forEach(function (m) { m.konto = p.konto; m.entwurf = true; m.alter = tageAlt(m.lastModifiedDateTime); entwuerfe.push(m); });
     });
     // Antworten zählen postfachübergreifend: Wer aus Outlook „als“ sofort
     // sichtbar antwortet, hat die Mail oft im eigenen Gesendet-Ordner.
@@ -221,6 +226,8 @@
       relevant: ein.filter(function (m) { return m.relevant; }),
       nichtRelevant: ein.filter(function (m) { return !m.relevant; }),
       warten: warten,
+      entwuerfe: entwuerfe.filter(function (m) { return (m.toRecipients || []).length; })
+        .sort(function (a, b) { return new Date(b.lastModifiedDateTime) - new Date(a.lastModifiedDateTime); }),
       kontaktNeu: kontakt.filter(function (m) { return !m.isRead; }).length,
       kontaktWoche: kontakt.filter(function (m) { return m.alter < 7; }).length
     };
@@ -291,6 +298,14 @@
     });
   }
 
+  /* ---------- Entwurf senden (nur durch Daniels Klick) ---------- */
+  function senden(m) {
+    if (demo) return Promise.resolve();
+    return token().then(function (t) {
+      return fetch(GRAPH + m.konto.pfad + "/messages/" + m.id + "/send", { method: "POST", headers: { Authorization: "Bearer " + t } });
+    }).then(function (r) { if (r.status !== 202 && !r.ok) throw new Error("Graph " + r.status); });
+  }
+
   /* ---------- Volltext beim Aufklappen ---------- */
   function volltext(m) {
     if (demo) return Promise.resolve(m.bodyPreview + "\n\n(Beispieltext – im echten Betrieb steht hier die ganze Mail.)");
@@ -354,6 +369,6 @@
     return { ich: { displayName: "Daniel Ströbel" }, adressen: adressen, postfaecher: KONTEN.map(function (k) { return nach[k.key]; }) };
   }
 
-  window.BetaMail = { arten: ARTEN, entscheiden: entscheiden, anweisen: anweisen, entscheidungLesen: entscheidungLesen, start: start, anmelden: anmelden, abmelden: abmelden, laden: laden, volltext: volltext,
+  window.BetaMail = { senden: senden, arten: ARTEN, entscheiden: entscheiden, anweisen: anweisen, entscheidungLesen: entscheidungLesen, start: start, anmelden: anmelden, abmelden: abmelden, laden: laden, volltext: volltext,
     konten: KONTEN, esc: esc, wann: wann, badge: badge, absender: absender, istDemo: function () { return demo; } };
 })();

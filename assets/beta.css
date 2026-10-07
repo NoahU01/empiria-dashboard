@@ -445,3 +445,6 @@ a.db-chip:hover { background: #e2e0dd; color: var(--ink); }
 .tk-brief h3 { margin: 0 0 4px; font-family: var(--font-sans); font-size: .8rem; font-weight: 600; color: var(--grey-70); }
 .tk-brief p, .tk-brief ul { margin: 0; font-size: .9rem; font-weight: 300; line-height: 1.55; } .tk-brief ul { padding-left: 1.1em; }
 .tk-tun { grid-column: 1 / -1; padding-top: 10px; border-top: 1px solid #e6e3df; } .tk-tun p { font-weight: 500; }
+.kb-entscheid[data-senden] { align-items: center; }
+.kb-entscheid.laedt { opacity: .5; pointer-events: none; }
+.kb-gesendet { margin: 0; font-weight: 500; color: #2e9e5b; }

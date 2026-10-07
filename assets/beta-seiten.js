@@ -100,7 +100,8 @@
       gruppen: [["nobrainer", "No-Brainer"], ["termin", "Terminvorschlag nötig"], ["aufgabe", "Aufgabe"], ["tiefer", "Tiefer reinschauen"], ["offen", "Noch nicht eingeschätzt"]] },
     { key: "relevant", name: "Relevant", liste: "relevant" },
     { key: "nicht", name: "Nicht relevant", liste: "nichtRelevant" },
-    { key: "warten", name: "Wartet auf Antwort", liste: "warten", gruppen: [["nachfassen", "Nachfassen"], ["warten", "Noch abwarten"]] }
+    { key: "warten", name: "Wartet auf Antwort", liste: "warten", gruppen: [["nachfassen", "Nachfassen"], ["warten", "Noch abwarten"]] },
+    { key: "entwuerfe", name: "Entwürfe", liste: "entwuerfe", entwurfKarten: true }
   ];
   var HINWEIS = {
     nobrainer: "Antwort ist klar und vorformuliert. Freigabe gebündelt im Chat, z. B. „No-Brainer 1 bis 3 senden“.",
@@ -174,6 +175,18 @@
       '<div><button type="submit" class="kb-knopf kb-knopf--klein">An Claude geben</button><button type="button" class="kb-anders-abbruch">Abbrechen</button></div></form>';
   }
 
+  function entwurfKarte(m) {
+    var an = (m.toRecipients || []).map(function (e) { return e.emailAddress.name || e.emailAddress.address; }).join(", ");
+    var cc = (m.ccRecipients || []).map(function (e) { return e.emailAddress.name || e.emailAddress.address; }).join(", ");
+    return '<li class="kb-karte" data-id="' + esc(m.id) + '"><div class="kb-karte-kopf"><span class="kb-nr">✎</span><div class="kb-karte-titel">' +
+      '<span class="kb-von">An ' + esc(an) + '</span><span class="kb-betreff">' + esc(m.subject || "(ohne Betreff)") + "</span>" +
+      (cc ? '<span class="kb-zeit">Cc: ' + esc(cc) + "</span>" : "") + '</div><span class="kb-zeit">' + B.wann(m.lastModifiedDateTime) + "</span></div>" +
+      '<div class="kb-block"><pre class="v-original" data-kb-voll="' + esc(m.id) + '">' + esc(m.bodyPreview) + "</pre></div>" +
+      '<div class="kb-entscheid" data-senden="' + esc(m.id) + '"><button type="button" data-e="freigeben">Freigeben und senden</button>' +
+      outlookLink(m, "kb-oeffnen", "In Outlook bearbeiten") + "</div>" +
+      '<div class="kb-karte-fuss">' + B.badge(m.konto) + (m.hasAttachments ? "<span>mit Anhang</span>" : "") + "</div></li>";
+  }
+
   function seite() {
     var t = TABS.filter(function (x) { return x.key === zustand.tab; })[0];
     var relUngelesen = daten.relevant.filter(function (m) { return !m.isRead && m.konto.key !== "kontakt"; }).length;
@@ -204,6 +217,8 @@
   function liste(t) {
     var mails = gefiltert(t);
     if (!mails.length) return '<p class="kb-leer">' + (zustand.suche ? "Nichts gefunden." : "Hier ist gerade nichts.") + "</p>";
+    if (t.entwurfKarten) return '<p class="kb-gruppe-hinweis">Entwürfe aus deinen Postfächern. Senden geht nur mit deinem Klick – mit Signatur und Anhängen, so wie sie in Outlook liegen.</p>' +
+      '<ol class="kb-karten">' + mails.map(entwurfKarte).join("") + "</ol>";
     if (!t.gruppen) return '<ul class="kb-liste">' + mails.slice(0, 120).map(zeileSeite).join("") + "</ul>";
     return t.gruppen.map(function (g) {
       var teil = mails.filter(function (m) { return m.vorschlag && m.vorschlag.art === g[0]; });
@@ -214,7 +229,7 @@
     }).join("");
   }
 
-  function alleMails() { return daten.handlung.concat(daten.relevant, daten.nichtRelevant, daten.warten); }
+  function alleMails() { return daten.handlung.concat(daten.relevant, daten.nichtRelevant, daten.warten, daten.entwuerfe || []); }
 
   function verdrahten() {
     var z = ziel();
@@ -251,6 +266,18 @@
 
   function zeilenVerdrahten() {
     volltexteLaden();
+    ziel().querySelectorAll("[data-senden]").forEach(function (box) {
+      var m = alleMails().filter(function (x) { return x.id === box.getAttribute("data-senden"); })[0];
+      box.querySelector("button").addEventListener("click", function () {
+        var an = (m.toRecipients || []).map(function (e) { return e.emailAddress.address; }).join(", ");
+        if (!confirm("Jetzt senden an " + an + "?\n\n„" + (m.subject || "") + "“")) return;
+        box.classList.add("laedt");
+        B.senden(m).then(function () {
+          var karte = box.closest(".kb-karte"); karte.innerHTML = '<p class="kb-gesendet">✓ Gesendet an ' + esc(an) + "</p>";
+          daten.entwuerfe = daten.entwuerfe.filter(function (x) { return x.id !== m.id; });
+        }).catch(function (f) { box.classList.remove("laedt"); alert("Nicht gesendet: " + f.message + (/(401|403)/.test(f.message) ? " – bitte einmal neu anmelden." : "")); });
+      });
+    });
     ziel().querySelectorAll("[data-entscheid]").forEach(function (box) {
       var m = alleMails().filter(function (x) { return x.id === box.getAttribute("data-entscheid"); })[0];
       var form = box.nextElementSibling, andersB = box.querySelector("[data-anders]");
