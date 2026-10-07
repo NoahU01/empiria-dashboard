@@ -63,8 +63,8 @@
       '<div class="st4-kopf">' + frist(v.frist) + '<span class="st4-wo">' + esc(p ? p.name : "Operativ") + "</span></div>" +
       '<h3><a href="' + esc(v.link || "#") + '">' + esc(v.titel) + "</a></h3>" +
       '<p class="st4-kern">' + esc(v.kern) + "</p>" +
-      '<p class="st4-vorschlag">' + esc(v.vorschlag) + "</p>" +
-      '<div class="st4-knoepfe"><button type="button" class="st4-ja" data-e="ja">Ja</button><button type="button" data-anders>Anders</button><button type="button" data-e="spaeter">Später</button></div>' +
+      '<div class="st4-unten"><p class="st4-vorschlag"><span>Mein Vorschlag</span>' + esc(v.vorschlag) + "</p>" +
+      '<div class="st4-knoepfe"><button type="button" class="st4-ja" data-e="ja">Ja</button><button type="button" data-anders>Anders</button><button type="button" data-e="spaeter">Später</button></div></div>' +
       '<form class="st4-anders" hidden><textarea rows="4" placeholder="Was soll stattdessen passieren?"></textarea><div><button type="submit">An Claude geben</button><button type="button" data-zu>Abbrechen</button></div></form>' +
       "</article>";
   }
@@ -72,7 +72,7 @@
   /* ---------- Sparring ---------- */
   function sparring() {
     return SPARRING.map(function (s) {
-      return '<button type="button" class="st4-spar" data-spar="' + s.k + '"><span class="st4-spar-z">' + s.z + "</span><b lang=\"de\">" + esc(s.n.replace("Entscheidungssprint", "Entscheidungs\u00adsprint")) + "</b><span>" + esc(s.s) + '</span><small>' + esc(s.r) + "</small></button>";
+      return '<button type="button" class="st4-spar" data-spar="' + s.k + '" title="Regel: ' + esc(s.r) + '"><b>' + esc(s.n) + '</b><span class="st4-spar-z">' + s.z + "</span><span class=\"st4-spar-s\">" + esc(s.s) + '</span><span class="st4-spar-los">Starten →</span></button>';
     }).join("");
   }
 

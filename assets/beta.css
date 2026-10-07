@@ -1119,3 +1119,31 @@ a.sm-k:hover { box-shadow: 0 0 0 1.5px var(--ink); }
 .sm-quer i { font-style: normal; color: var(--grey-50); text-align: center; }
 .sm-neben { display: grid; gap: 12px; margin-top: 12px; }
 @media (min-width: 760px) { .sm-neben { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+/* ===== Steuerung v4: Vorschlag als Fußbereich, Projekte als Liste, Sparring als Liste ===== */
+.st4-karte { grid-row: span 4; padding-bottom: 0; overflow: hidden; }
+.st4-unten { grid-row: span 1; display: flex; flex-direction: column; margin: 0 -22px; padding: 14px 22px 16px; background: #f7f6f4; border-top: 1px solid #efedea; }
+.st4-vorschlag { flex: 1; margin: 0 0 14px; padding: 0; border: 0; font-size: .88rem; line-height: 1.5; color: var(--ink); }
+.st4-vorschlag span { display: block; margin-bottom: 4px; font-size: .68rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--grey-50); }
+.st4-knoepfe { margin-top: auto; }
+.st4-knoepfe button { background: #fff; }
+.st4-kern { margin-bottom: 18px; }
+/* Projekte: je Marke eine Liste, jedes Projekt eigene Zeile */
+.st4-marke ul { display: block; }
+.st4-marke li { border-top: 1px solid #f0eeeb; }
+.st4-marke li:first-child { border-top: 0; }
+.st4-marke a { display: block; padding: 7px 0; font-size: .9rem; }
+.st4-projekte { padding: 20px 0 14px; }
+.st4-marke h4 { padding-bottom: 6px; border-bottom: 1px solid #e4e1dd; margin-bottom: 0; }
+/* Sparring: ruhige Liste in drei Spalten, kein Kasten */
+.st4-sparring { display: grid; gap: 0 40px; grid-template-columns: minmax(0, 1fr); border-top: 1px solid #e4e1dd; }
+@media (min-width: 900px) { .st4-sparring { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.st4-spar { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; min-height: 0; padding: 14px 0; border: 0; border-bottom: 1px solid #f0eeeb; border-radius: 0; background: none; text-align: left; color: var(--ink); }
+.st4-spar:hover { background: none; color: var(--ink); }
+.st4-spar b { font-family: var(--font-serif); font-size: 1.05rem; font-weight: 600; hyphens: manual; overflow-wrap: normal; }
+.st4-spar .st4-spar-z { align-self: center; font-size: .74rem; font-weight: 500; color: var(--grey-50); }
+.st4-spar .st4-spar-s { grid-column: 1; font-size: .8rem; font-weight: 300; color: var(--grey-70); }
+.st4-spar .st4-spar-los { grid-column: 2; grid-row: 2; align-self: center; font-size: .76rem; font-weight: 600; color: var(--ink); opacity: 0; transition: opacity .15s ease; }
+.st4-spar:hover .st4-spar-los, .st4-spar:focus-visible .st4-spar-los { opacity: 1; }
+.st4-spar:hover .st4-spar-z { opacity: 0; }
+.st4-spar small { display: none !important; }
+.st4-unten .st4-knoepfe { align-self: stretch; }
