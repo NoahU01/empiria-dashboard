@@ -738,7 +738,7 @@ body.kt3-detail .db-kopf { min-height: 0; }
 
 /* Timeline – im Kasten wie die anderen, mehr Luft danach */
 .pr-tl-frei { margin-top: 0; padding: 18px 22px 22px; }
-.pr-tl-frei + .pr-bet-zeile { margin-top: 40px; }
+.pr-tl-frei + .pr-bet-zeile { margin-top: 0; }
 .pr-tl-kopf h3 { font-family: var(--font-sans); font-size: .88rem; }
 /* Aufklappen: Dreieck rechts, wenn es Details gibt */
 .tl-auf [data-ev] { position: relative; padding-right: 40px !important; }
@@ -747,3 +747,11 @@ body.kt3-detail .db-kopf { min-height: 0; }
 .tl-auf { max-width: none; }
 /* Zeitleiste oben: Neuestes links, feste Höhe, Inhalt scrollt */
 .tl-oben-det { max-width: none; height: 360px; overflow-y: auto; padding-right: 8px; }
+/* Timeline: gleiche Kastenhöhe in allen drei Darstellungen, Inhalt scrollt */
+@media (min-width: 900px) {
+  .pr-tl-inhalt { height: 520px; display: flex; flex-direction: column; }
+  .pr-tl-inhalt > .tl-seite { flex: 1; min-height: 0; height: auto; }
+  .pr-tl-inhalt > .tl-auf { flex: 1; min-height: 0; overflow-y: auto; padding-right: 8px; }
+  .pr-tl-inhalt > .tl-oben { flex: 0 0 auto; }
+  .pr-tl-inhalt > .tl-oben-det { flex: 1; min-height: 0; height: auto; }
+}

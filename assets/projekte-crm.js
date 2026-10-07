@@ -127,7 +127,7 @@
     else tl = '<div class="tl-seite"><ol class="tl-seite-liste">' + ere.map(function (e) { return "<li>" + eintrag(e) + "</li>"; }).join("") + '</ol><div class="tl-seite-det" data-ev-detail=""></div></div>';
     h += '<section class="kt3-box kt3-breit pr-tl-frei"><div class="pr-tl-kopf"><h3>Timeline</h3><span class="pr-tl-wahl">' +
       [["seite", "Nebeneinander"], ["auf", "Aufklappen"], ["oben", "Zeitleiste oben"]].map(function (v) {
-        return '<button type="button" data-tlv="' + v[0] + '" aria-pressed="' + (v[0] === tlv) + '">' + v[1] + "</button>"; }).join("") + "</span></div>" + tl + "</section>";
+        return '<button type="button" data-tlv="' + v[0] + '" aria-pressed="' + (v[0] === tlv) + '">' + v[1] + "</button>"; }).join("") + "</span></div><div class='pr-tl-inhalt'>" + tl + "</div></section>";
     // Beteiligte
     function seite(s) {
       var l = bet.filter(function (b) { return b.seite === s; });
