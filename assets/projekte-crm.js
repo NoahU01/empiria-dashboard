@@ -100,8 +100,7 @@
     STAND = { ere: ere, pkt: pkt, auf: auf };
     var h = '<a class="kb-zurueck" href="#"><span aria-hidden="true">&larr;</span> Projekte</a>';
     h += '<div class="kt3-kopf"><div><h2 class="kt3-name">' + esc(p.name) + '</h2><p class="kt3-sub">' +
-      [p.organisationen ? '<a href="/strategie/kontakte.html#f=' + p.organisationen.id + '">' + esc(p.organisationen.name) + "</a>" : "", esc(p.marke || ""), esc(p.phase || ""),
-       '<span class="pr-st ' + STATUS[p.status] + '">' + esc(p.status) + "</span>"].filter(Boolean).join(" · ") + "</p>" +
+      (p.organisationen ? '<a href="/strategie/kontakte.html#f=' + p.organisationen.id + '">' + esc(p.organisationen.name) + "</a>" : esc(p.marke || "")) + "</p>" +
       (p.thema ? '<p class="pr-thema">' + esc(p.thema) + "</p>" : "") +
       (p.typ === "intern" && p.naechstes_gate ? '<p class="pr-gate"><span>Nächstes Gate</span>' + esc(p.naechstes_gate) + (p.gate_datum ? " · bis " + kurz(p.gate_datum) : "") + "</p>" : "") + "</div><span class=\"pr-tl-wahl pr-look-wahl\">" + [["weiss", "Weiß"], ["grau", "Grau"], ["schwarz", "Schwarz"]].map(function (v) {
         return '<button type="button" data-look="' + v[0] + '" aria-pressed="' + (v[0] === lookWert()) + '">' + v[1] + "</button>"; }).join("") + "</span></div>";
@@ -114,7 +113,6 @@
       '<button type="button" class="pr-speichern" data-ueb-speichern hidden>Speichern</button></div></section>';
     // Aufgaben: immer mit Frist, nach Datum
     var offen = auf.filter(function (a) { return a.status === "offen"; }).sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });
-    var namen = ["Daniel"].concat(bet.map(function (b) { return b.name || name(b.kontakte); })).filter(function (x, i, l) { return x && l.indexOf(x) === i; });
     h += '<section class="kt3-box pr-aufgaben"><h3>Aufgaben</h3>' + (offen.length ? '<ul class="pr-auf2">' + offen.map(function (a) {
       var ueber = a.faellig_am && new Date(a.faellig_am) < new Date(new Date().toDateString());
       return '<li data-a="' + a.id + '"><div class="pr-auf-zeile"><button type="button" class="st-haken" aria-label="Erledigt"></button>' +
@@ -122,9 +120,7 @@
         '<button type="button" class="pr-auf-titel" data-auf-auf aria-expanded="false"><span>' + esc(a.titel) + "</span>" + (a.beschreibung ? '<i class="pr-hat-details" title="Details vorhanden"></i>' : "") + "</button>" +
         '<span class="pr-wer">' + esc(wer(a) || "offen") + "</span></div>" +
         '<div class="pr-auf-details" hidden><textarea data-det placeholder="Details, Hintergrund, Links …">' + esc(a.beschreibung || "") + '</textarea><button type="button" class="pr-speichern" data-det-speichern hidden>Speichern</button></div></li>';
-      }).join("") + "</ul>" : '<p class="kt3-leise">Nichts offen.</p>') +
-      '<form class="kt3-neu pr-neu" data-neu><input type="text" placeholder="Neue Aufgabe …" data-titel><input type="text" list="pr-namen" placeholder="Wer?" data-wer class="pr-wer-feld"><input type="date" data-frist class="pr-frist-feld" aria-label="Frist">' +
-      '<datalist id="pr-namen">' + namen.map(function (n) { return '<option value="' + esc(n) + '">'; }).join("") + '</datalist><button type="submit">+</button></form></section>';
+      }).join("") + "</ul>" : '<p class="kt3-leise">Nichts offen.</p>') + "</section>";
     // Timeline: drei Darstellungen zum Vergleich – ohne äußeren Kasten, mit viel Luft
     var jetzt = Date.now(), tlv = "seite";
     try { tlv = localStorage.getItem("pr-tl-ansicht") || "seite"; } catch (x) {}
@@ -143,6 +139,16 @@
     h += '<section class="kt3-box kt3-breit pr-tl-frei"><div class="pr-tl-kopf"><h3>Timeline</h3><span class="pr-tl-wahl">' +
       [["seite", "Nebeneinander"], ["auf", "Aufklappen"], ["oben", "Zeitleiste oben"]].map(function (v) {
         return '<button type="button" data-tlv="' + v[0] + '" aria-pressed="' + (v[0] === tlv) + '">' + v[1] + "</button>"; }).join("") + "</span></div><div class='pr-tl-inhalt'>" + tl + "</div></section>";
+    // Projektziel: schmal, aufklappbar – Kernsatz immer sichtbar, Details beim Aufklappen
+    if (p.ziel || (p.ziel_details || []).length) {
+      var zd = p.ziel_details || [];
+      h += '<section class="kt3-box kt3-breit pr-ziel"><button type="button" class="pr-ziel-kopf" data-ziel aria-expanded="false"' + (zd.length ? "" : " disabled") + '><h3>Projektziel</h3>' +
+        '<span class="pr-ziel-satz">' + esc(p.ziel || "") + "</span>" + (zd.length ? '<span class="tl-dreieck" aria-hidden="true"></span>' : "") + "</button>" +
+        '<div class="pr-ziel-det" hidden>' + zd.map(function (z) {
+          return "<h4>" + esc(z.titel) + "</h4>" + (z.text ? "<p>" + esc(z.text) + "</p>" : "") +
+            ((z.punkte || []).length ? "<ul>" + z.punkte.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "");
+        }).join("") + "</div></section>";
+    }
     // Beteiligte
     function seite(s) {
       var l = bet.filter(function (b) { return b.seite === s; });
@@ -156,6 +162,8 @@
   }
 
   function verdrahten(p) {
+    var zk = wurzel.querySelector("[data-ziel]");
+    if (zk) zk.onclick = function () { var auf = zk.getAttribute("aria-expanded") !== "true"; zk.setAttribute("aria-expanded", String(auf)); zk.nextElementSibling.hidden = !auf; };
     wurzel.querySelectorAll("[data-look]").forEach(function (b) {
       b.onclick = function () { try { localStorage.setItem("pr-look", b.getAttribute("data-look")); } catch (x) {} look(true);
         wurzel.querySelectorAll("[data-look]").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); }); };
@@ -190,14 +198,6 @@
       b.onclick = function () { var li = b.closest("li"); li.classList.add("st-weg");
         db.from("aufgaben").update({ status: "erledigt", erledigt_am: new Date().toISOString() }).eq("id", +li.getAttribute("data-a")).then(function (r) { if (r.error) { li.classList.remove("st-weg"); alert(r.error.message); } }); };
     });
-    var f = wurzel.querySelector("[data-neu]");
-    f.onsubmit = function (e) {
-      e.preventDefault();
-      var t = f.querySelector("[data-titel]").value.trim(), w = f.querySelector("[data-wer]").value.trim(); if (!t) return;
-      f.classList.add("laedt");
-      var fr = f.querySelector("[data-frist]").value || null;
-      db.from("aufgaben").insert({ titel: t, projekt_id: p.id, zustaendig_name: w || "Daniel", faellig_am: fr, bereich: "Projekt" }).then(function (r) { if (r.error) { f.classList.remove("laedt"); alert(r.error.message); } else projekt(p.id); });
-    };
   }
   document.addEventListener("click", function (e) {
     var b = e.target.closest("[data-klapp-knopf]"); if (!b || !wurzel.contains(b)) return;

@@ -780,3 +780,26 @@ main.pr-look-schwarz .pr-tl-kopf .pr-tl-wahl button[aria-pressed="true"] { backg
 .vc-entscheid { max-width: 680px; }
 .vx-entscheid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .vx-entscheid button { padding: 0 10px; }
+/* Projektkopf: Satz ohne Einzelwort-Umbruch */
+.kt3-kopf > div:first-child { flex: 1 1 520px; min-width: 0; }
+.pr-thema { max-width: none; text-wrap: balance; }
+/* Projektziel: schmal, aufklappbar */
+.pr-ziel { padding: 0; }
+.pr-ziel-kopf { position: relative; display: flex; align-items: baseline; gap: 18px; width: 100%; padding: 16px 48px 16px 18px; border: 0; background: none; text-align: left; color: inherit; }
+.pr-ziel-kopf h3 { flex: 0 0 auto; margin: 0; }
+.pr-ziel-satz { min-width: 0; font-size: .92rem; font-weight: 300; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pr-ziel-kopf[aria-expanded="true"] .pr-ziel-satz { white-space: normal; }
+.pr-ziel-kopf .tl-dreieck { top: 19px; right: 20px; }
+.pr-ziel-kopf[aria-expanded="true"] .tl-dreieck { transform: rotate(-135deg); top: 23px; }
+.pr-ziel-det { padding: 0 18px 18px; max-width: 900px; }
+.pr-ziel-det h4 { margin: 14px 0 4px; font-size: .84rem; font-weight: 600; }
+.pr-ziel-det p { margin: 0; font-size: .92rem; font-weight: 300; line-height: 1.6; }
+.pr-ziel-det ul { margin: 6px 0 0; padding-left: 1.15em; } .pr-ziel-det li { font-size: .92rem; font-weight: 300; line-height: 1.55; margin-bottom: 4px; }
+main.pr-look-schwarz .pr-ziel-kopf { background: var(--ink); color: #fff; border-radius: 16px; }
+main.pr-look-schwarz .pr-ziel-kopf[aria-expanded="true"] { border-radius: 16px 16px 0 0; }
+main.pr-look-schwarz .pr-ziel-kopf h3 { display: flex; align-items: center; gap: 12px; color: #fff; }
+main.pr-look-schwarz .pr-ziel-kopf h3::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--hl, #fff400); }
+main.pr-look-schwarz .pr-ziel-satz { color: rgba(255,255,255,.75); }
+main.pr-look-schwarz .pr-ziel-kopf .tl-dreieck { border-color: #fff; }
+main.pr-look-schwarz .pr-ziel-det { padding-top: 14px; }
+@media (max-width: 700px) { .pr-ziel-kopf { flex-wrap: wrap; gap: 4px; } .pr-ziel-satz { white-space: normal; } }
