@@ -692,3 +692,4 @@ body.kt3-detail .db-kopf { min-height: 0; }
 .pr-gate { margin: 8px 0 0; font-size: .9rem; } .pr-gate span { display: inline-block; margin-right: 8px; padding: 0 8px; border-radius: 4px; background: var(--hl); font-size: .74rem; font-weight: 600; }
 .pr-zwei { margin-top: 28px; }
 .pr-tab td { overflow-wrap: normal; word-break: normal; hyphens: auto; }
+@media (min-width: 1000px) { .pr-zwei { grid-template-columns: 2fr 1fr; } }

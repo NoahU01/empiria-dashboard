@@ -40,11 +40,9 @@
           return '<tr data-href="#p=' + x.id + '"><td>' + name_(x) + "</td><td>" + esc(x.organisationen ? x.organisationen.name : "") + "</td><td>" +
             (n ? kurz(n.datum) + '<br><span class="kt3-leise">' + esc(n.titel) + "</span>" : '<span class="kt3-leise">keiner geplant</span>') + "</td></tr>";
         }).join("") + "</tbody></table></section>" +
-        '<section><h2 class="pr-h2">Interne Projekte</h2><table class="kt3-tab pr-tab"><colgroup><col style="width:36%"><col style="width:64%"></colgroup>' +
-        "<thead><tr><th>Projekt</th><th>Nächstes Gate</th></tr></thead><tbody>" + (intern.length ? intern.map(function (x) {
-          return '<tr data-href="#p=' + x.id + '"><td>' + name_(x) + "</td><td>" + (x.naechstes_gate ? esc(x.naechstes_gate) : '<span class="kt3-leise">noch offen</span>') +
-            (x.gate_datum ? '<br><span class="kt3-leise">bis ' + kurz(x.gate_datum) + "</span>" : "") + "</td></tr>";
-        }).join("") : '<tr><td colspan="2" class="kt3-leise">Noch keine internen Projekte.</td></tr>') + "</tbody></table></section></div>";
+        '<section><h2 class="pr-h2">Interne Projekte</h2><table class="kt3-tab pr-tab"><thead><tr><th>Projekt</th></tr></thead><tbody>' + (intern.length ? intern.map(function (x) {
+          return '<tr data-href="#p=' + x.id + '"><td>' + name_(x) + "</td></tr>";
+        }).join("") : '<tr><td class="kt3-leise">Noch keine internen Projekte.</td></tr>') + "</tbody></table></section></div>";
       wurzel.querySelectorAll("tr[data-href]").forEach(function (tr) { tr.onclick = function (e) { if (!e.target.closest("a")) location.hash = tr.getAttribute("data-href"); }; });
     });
   }
