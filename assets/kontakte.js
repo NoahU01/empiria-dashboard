@@ -101,7 +101,7 @@
   }
 
   // Marken: alle Kontakte auf einen Blick, nach Firma, ein Klick setzt/entfernt eine Marke
-  var MARKEN = ["empiria", "sofort sichtbar", "Müller & Ströbel"];
+  var MARKEN = ["empiria", "sofort sichtbar", "Müller & Ströbel", "außerhalb Versicherung"];
   function markenHtml() {
     var q = zustand.suche.toLowerCase();
     var liste = alle.filter(function (k) {
@@ -114,7 +114,7 @@
       '<table class="kt-marken"><thead><tr><th>Kontakt</th>' + MARKEN.map(function (m) { return "<th>" + esc(m) + "</th>"; }).join("") + "</tr></thead><tbody>";
     liste.forEach(function (k) {
       var firma = k.organisationen ? k.organisationen.name : "ohne Firma";
-      if (firma !== zuletzt) { h += '<tr class="kt-marken-firma"><td colspan="4">' + esc(firma) + "</td></tr>"; zuletzt = firma; }
+      if (firma !== zuletzt) { h += '<tr class="kt-marken-firma"><td colspan="5">' + esc(firma) + "</td></tr>"; zuletzt = firma; }
       var hat = (k.kontakt_marken || []).map(function (m) { return m.marke; });
       h += "<tr><td>" + esc(name(k)) + "</td>" + MARKEN.map(function (m) {
         return '<td><input type="checkbox" aria-label="' + esc(m) + '" data-k="' + k.id + '" data-m="' + esc(m) + '"' + (hat.indexOf(m) > -1 ? " checked" : "") + "></td>";
