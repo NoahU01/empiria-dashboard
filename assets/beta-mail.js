@@ -219,6 +219,27 @@
     return "Antworten";
   }
 
+  /* ---------- Entscheidung: Freigeben · Prüfen · Zurückstellen ----------
+     Wird als Outlook-Kategorie an der Mail gesetzt (z. B. „Freigegeben“). Claude
+     liest das und sendet freigegebene Entwürfe erst, wenn Daniel es im Chat sagt. */
+  var ENTSCHEIDUNG = { freigeben: "Freigegeben", pruefen: "Prüfen", zurueck: "Zurückgestellt" };
+  function entscheidungLesen(m) {
+    for (var k in ENTSCHEIDUNG) if ((m.categories || []).indexOf(ENTSCHEIDUNG[k]) > -1) return k;
+    return null;
+  }
+  function entscheiden(m, art) {
+    var neu = (m.categories || []).filter(function (c) { for (var k in ENTSCHEIDUNG) if (c === ENTSCHEIDUNG[k]) return false; return true; });
+    if (art && art !== entscheidungLesen(m)) neu.push(ENTSCHEIDUNG[art]);
+    if (demo) { m.categories = neu; return Promise.resolve(entscheidungLesen(m)); }
+    return token().then(function (t) {
+      return fetch(GRAPH + m.konto.pfad + "/messages/" + m.id, { method: "PATCH",
+        headers: { Authorization: "Bearer " + t, "Content-Type": "application/json" }, body: JSON.stringify({ categories: neu }) });
+    }).then(function (r) {
+      if (!r.ok) throw new Error("Graph " + r.status);
+      m.categories = neu; return entscheidungLesen(m);
+    });
+  }
+
   /* ---------- Volltext beim Aufklappen ---------- */
   function volltext(m) {
     if (demo) return Promise.resolve(m.bodyPreview + "\n\n(Beispieltext – im echten Betrieb steht hier die ganze Mail.)");
@@ -282,6 +303,6 @@
     return { ich: { displayName: "Daniel Ströbel" }, adressen: adressen, postfaecher: KONTEN.map(function (k) { return nach[k.key]; }) };
   }
 
-  window.BetaMail = { arten: ARTEN, start: start, anmelden: anmelden, abmelden: abmelden, laden: laden, volltext: volltext,
+  window.BetaMail = { arten: ARTEN, entscheiden: entscheiden, entscheidungLesen: entscheidungLesen, start: start, anmelden: anmelden, abmelden: abmelden, laden: laden, volltext: volltext,
     konten: KONTEN, esc: esc, wann: wann, badge: badge, absender: absender, istDemo: function () { return demo; } };
 })();

@@ -53,6 +53,18 @@
     return zu ? '<details class="v-ganz"><summary>Ganze Mail</summary>' + inhalt + "</details>"
               : '<div class="kb-block"><p class="kb-label">Originalmail</p>' + inhalt + "</div>";
   }
+  // Entscheidung je Mail (hier nur zum Ausprobieren, nichts wird gespeichert)
+  function knoepfe() {
+    return '<div class="kb-entscheid" data-probe><button type="button" data-e="freigeben" aria-pressed="false">Freigeben</button>' +
+      '<button type="button" data-e="pruefen" aria-pressed="false">Prüfen</button><button type="button" data-e="zurueck" aria-pressed="false">Zurückstellen</button></div>';
+  }
+  document.addEventListener("click", function (ev) {
+    var b = ev.target.closest("[data-probe] button");
+    if (!b) return;
+    var an = b.getAttribute("aria-pressed") !== "true";
+    b.parentNode.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", "false"); });
+    b.setAttribute("aria-pressed", String(an));
+  });
   function gruppen(fn) {
     return REIHE.map(function (a) {
       var teil = MAILS.filter(function (m) { return m.art === a; });
@@ -72,22 +84,11 @@
         return '<li class="kb-karte"><div class="kb-karte-kopf"><span class="kb-nr">' + (i + 1) + '</span><div class="kb-karte-titel"><span class="kb-von">' +
           esc(m.von) + '</span><span class="kb-betreff">' + esc(m.betreff) + '</span></div><span class="kb-zeit">' + m.wann + "</span></div>" +
           '<div class="kb-block"><p class="kb-label">Worum es geht</p><p>' + esc(m.worum) + "</p></div>" +
-          original(m) +
           '<div class="kb-block"><p class="kb-label">Vorschlag</p><p class="kb-vorschlag-text">' + esc(m.vorschlag) + "</p></div>" +
           (m.entwurf ? '<div class="kb-entwurf"><p class="kb-label">Antwortentwurf</p><pre>' + esc(m.entwurf) + "</pre></div>" : "") +
+          knoepfe() + original(m) +
           '<div class="kb-karte-fuss">' + konto(m.konto) + "</div></li>";
       }).join("") + "</ol>";
-    });
-  }
-
-  /* B – Kompakte Liste: eine Zeile je Mail, Entwurf klein darunter */
-  function b() {
-    return zaehler() + gruppen(function (g, teil) {
-      return '<p class="kb-gruppe">' + ARTEN[g] + " · " + teil.length + '</p><div class="vb-liste">' + teil.map(function (m, i) {
-        return '<div class="vb-zeile"><span class="kb-nr">' + (i + 1) + '</span><div class="vb-wer"><b>' + esc(m.von) + "</b><small>" + esc(m.betreff) + "</small>" + konto(m.konto) + "</div>" +
-          '<div class="vb-worum">' + esc(m.worum) + original(m, true) + '</div><div class="vb-tun">→ ' + esc(m.vorschlag) +
-          (m.entwurf ? '<details class="vb-entwurf"><summary>Entwurf ansehen</summary><pre>' + esc(m.entwurf) + "</pre></details>" : "") + "</div></div>";
-      }).join("") + "</div>";
     });
   }
 
@@ -108,53 +109,46 @@
         '<article class="vc-karte"><p class="kb-zeit">' + esc(m.von) + " · " + m.wann + " · " + esc(m.konto) + '</p><h2 class="h-serif">' + esc(m.betreff) + "</h2>" +
         '<p class="vc-worum">' + esc(m.worum) + "</p>" + original(m) + '<p class="kb-label" style="margin-top:16px">Mein Vorschlag</p><p class="vc-vorschlag">' + esc(m.vorschlag) + "</p>" +
         (m.entwurf ? '<div class="kb-entwurf"><p class="kb-label">Antwortentwurf</p><pre>' + esc(m.entwurf) + "</pre></div>" : "") + "</article>" +
-        '<div class="vc-knoepfe"><button type="button" class="kb-knopf vc-ja" data-weiter>' + (m.entwurf ? "Freigeben" : "Erledigt") + '</button>' +
-        '<button type="button" class="vc-neben" data-weiter>Ändern</button><button type="button" class="vc-neben" data-weiter>Später</button></div>' +
-        '<p class="kb-gruppe-hinweis">Oder per Sprache: „freigeben“, „ändern: …“, „später“.</p>';
+        '<div class="vc-knoepfe"><button type="button" class="kb-knopf vc-ja" data-weiter>Freigeben</button>' +
+        '<button type="button" class="vc-neben" data-weiter>Prüfen</button><button type="button" class="vc-neben" data-weiter>Zurückstellen</button></div>' +
+        '<p class="kb-gruppe-hinweis">Oder per Sprache: „freigeben“, „prüfen“, „zurückstellen“.</p>';
       wurzel.querySelectorAll("[data-weiter]").forEach(function (k) { k.onclick = function () { i++; zeichnen(); }; });
     }
     setTimeout(zeichnen);
     return "";
   }
 
-  /* D – Briefing: wie ein kurzes Memo zum Lesen */
-  function d() {
-    var n = 0;
-    return '<div class="vd-memo"><p class="vd-anrede">Guten Morgen, Daniel. <b>' + MAILS.length + " Mails</b> brauchen dich – davon " +
-      MAILS.filter(function (m) { return m.art === "nobrainer"; }).length + " sofort freigebbar.</p>" +
-      gruppen(function (g, teil) {
-        return '<h3 class="vd-titel">' + ARTEN[g] + "</h3><ol>" + teil.map(function (m) {
-          n++;
-          return "<li><p><b>" + esc(m.von) + "</b> – " + esc(m.worum) + ' <span class="vd-tun">Vorschlag: ' + esc(m.vorschlag) + "</span></p>" + original(m, true) +
-            (m.entwurf ? '<details class="vb-entwurf"><summary>Entwurf</summary><pre>' + esc(m.entwurf) + "</pre></details>" : "") + "</li>";
-        }).join("") + "</ol>";
-      }) + '<p class="vd-schluss">Zum Freigeben einfach sagen: „No-Brainer 1 bis 3 senden.“</p></div>';
-  }
-
-  /* E – Liste links, Einschätzung rechts (wie Outlook) */
+  /* E – Liste und Detail: ruhig, links nach Art gruppiert, rechts alles zur Mail */
   function e() {
     var liste = REIHE.reduce(function (l, a) { return l.concat(MAILS.filter(function (m) { return m.art === a; })); }, []);
     function detail(m) {
-      return '<p class="kb-zeit">' + esc(m.von) + " · " + m.wann + "</p><h2 class=\"h-serif ve-titel\">" + esc(m.betreff) + "</h2>" + art(m.art) + " " + konto(m.konto) +
-        '<div class="kb-block"><p class="kb-label">Worum es geht</p><p>' + esc(m.worum) + "</p></div>" + original(m) +
+      return '<p class="ve-meta">' + ARTEN[m.art] + " · " + esc(m.konto) + " · " + m.wann + '</p><h2 class="h-serif ve-titel">' + esc(m.betreff) + "</h2>" +
+        '<p class="ve-von">' + esc(m.von) + "</p>" +
+        '<div class="kb-block"><p class="kb-label">Worum es geht</p><p>' + esc(m.worum) + "</p></div>" +
         '<div class="kb-block"><p class="kb-label">Vorschlag</p><p class="kb-vorschlag-text">' + esc(m.vorschlag) + "</p></div>" +
-        (m.entwurf ? '<div class="kb-entwurf"><p class="kb-label">Antwortentwurf</p><pre>' + esc(m.entwurf) + "</pre></div>" : "");
+        (m.entwurf ? '<div class="ve-entwurf"><p class="kb-label">Antwortentwurf</p><pre>' + esc(m.entwurf) + "</pre></div>" : "") +
+        knoepfe() +
+        '<div class="kb-block ve-orig"><p class="kb-label">Originalmail</p><pre>' + esc(m.text) + "</pre></div>";
     }
     setTimeout(function () {
-      var knoepfe = wurzel.querySelectorAll(".ve-eintrag"), rechts = wurzel.querySelector(".ve-detail");
-      knoepfe.forEach(function (k, i) {
+      var knoepfe_ = wurzel.querySelectorAll(".ve-eintrag"), rechts = wurzel.querySelector(".ve-detail");
+      knoepfe_.forEach(function (k) {
         k.onclick = function () {
-          knoepfe.forEach(function (x) { x.classList.remove("aktiv"); }); k.classList.add("aktiv");
-          rechts.innerHTML = detail(liste[i]);
+          knoepfe_.forEach(function (x) { x.classList.remove("aktiv"); }); k.classList.add("aktiv");
+          rechts.innerHTML = detail(liste[+k.getAttribute("data-i")]);
           if (window.innerWidth < 900) rechts.scrollIntoView({ behavior: "smooth" });
         };
       });
     });
-    return '<div class="ve"><div class="ve-liste">' + liste.map(function (m, i) {
-      return '<button type="button" class="ve-eintrag' + (i ? "" : " aktiv") + '"><span class="kb-von">' + esc(m.von) + '</span><span class="kb-zeit">' + m.wann + "</span>" +
-        '<span class="kb-betreff">' + esc(m.betreff) + '</span><span class="kb-meta">' + art(m.art) + "</span></button>";
-    }).join("") + '</div><div class="ve-detail">' + detail(liste[0]) + "</div></div>";
+    var i = 0;
+    return '<div class="ve"><div class="ve-liste">' + gruppen(function (g, teil) {
+      return '<p class="ve-gruppe">' + ARTEN[g] + " <span>" + teil.length + "</span></p>" + teil.map(function (m) {
+        var n = i++;
+        return '<button type="button" class="ve-eintrag' + (n ? "" : " aktiv") + '" data-i="' + n + '"><span class="ve-name">' + esc(m.von) +
+          '</span><span class="ve-zeit">' + m.wann + '</span><span class="ve-betreff">' + esc(m.betreff) + "</span></button>";
+      }).join("");
+    }) + '</div><div class="ve-detail">' + detail(liste[0]) + "</div></div>";
   }
 
-  wurzel.innerHTML = { a: a, b: b, c: c, d: d, e: e }[wurzel.getAttribute("data-variante")]();
+  wurzel.innerHTML = { a: a, c: c, e: e }[wurzel.getAttribute("data-variante")]();
 })();
