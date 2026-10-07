@@ -773,3 +773,10 @@ main.pr-look-schwarz .kt3-raster .kt3-box > h3::before,
 main.pr-look-schwarz .pr-tl-kopf h3::before { content: ""; flex: 0 0 auto; width: 10px; height: 10px; border-radius: 50%; background: var(--hl, #fff400); }
 main.pr-look-schwarz .pr-tl-kopf .pr-tl-wahl button { color: rgba(255,255,255,.62); }
 main.pr-look-schwarz .pr-tl-kopf .pr-tl-wahl button[aria-pressed="true"] { background: rgba(255,255,255,.14); color: #fff; }
+/* Varianten C/E mit echten Mails: Blättern und Entscheidung nebeneinander */
+.vc-blaettern { display: flex; justify-content: space-between; gap: 10px; max-width: 680px; margin: 18px 0 0; }
+.vc-blaettern button { width: 54px; height: 46px; border: 1.5px solid var(--ink); border-radius: 999px; background: #fff; font-size: 1.15rem; color: var(--ink); }
+.vc-blaettern button:disabled { border-color: #e4e1dd; color: #c9c5c0; }
+.vc-entscheid { max-width: 680px; }
+.vx-entscheid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.vx-entscheid button { padding: 0 10px; }
