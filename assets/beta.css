@@ -636,3 +636,20 @@ body.kt3-detail .db-kopf { min-height: 0; }
 .pr-auf-titel { display: flex; align-items: center; gap: 6px; border: 0; background: none; padding: 0; text-align: left; font-size: .92rem; color: var(--ink); }
 .pr-auf-titel:hover span { text-decoration: underline; text-underline-offset: 2px; }
 .pr-auf-details { padding: 0 0 10px 36px; } .pr-auf-details textarea { width: 100%; min-height: 80px; padding: 10px 12px; border: 1px solid #e4e1dd; border-radius: 10px; font: inherit; font-size: .88rem; font-weight: 300; line-height: 1.5; }
+
+/* Projekte – oberer Bereich kompakt */
+.pr-thema { margin: 8px 0 0; max-width: 70ch; font-size: .95rem; font-weight: 300; color: var(--ink-2); }
+.pr-next { background: var(--ink); color: #fff; box-shadow: none; }
+.pr-next h3 { color: #fff; display: flex; justify-content: space-between; } .pr-next h3 span { font-weight: 500; font-size: .74rem; color: var(--hl); }
+.pr-next ul, .pr-ent2 { margin: 0; padding-left: 1.1em; } .pr-next li { margin-bottom: 7px; font-size: .9rem; font-weight: 300; line-height: 1.5; }
+.pr-ent2 li { margin-bottom: 7px; font-size: .9rem; line-height: 1.5; } .pr-ent2 li::marker { color: #c9b800; }
+.pr-ueb-box summary { display: flex; align-items: baseline; gap: 12px; cursor: pointer; list-style: none; } .pr-ueb-box summary::-webkit-details-marker { display: none; }
+.pr-ueb-box summary h3 { margin: 0; } .pr-ueb-box summary::after { content: "▾"; margin-left: auto; color: var(--grey-50); } .pr-ueb-box[open] summary::after { content: "▴"; }
+.pr-ueb-text { margin-top: 10px; } .pr-ueb-text p { margin: 0 0 8px; font-size: .92rem; font-weight: 300; line-height: 1.6; max-width: 80ch; }
+.pr-ueb-knoepfe { display: flex; gap: 12px; align-items: center; margin-top: 6px; }
+.pr-auf-zeile { grid-template-columns: 28px 92px minmax(0, 1fr) auto; }
+.pr-frist { font-size: .8rem; color: var(--grey-70); white-space: nowrap; } .pr-frist.pr-ueber { color: #d0453b; font-weight: 600; }
+.pr-auf-details { padding-left: 128px; } @media (max-width: 600px) { .pr-auf-zeile { grid-template-columns: 28px minmax(0, 1fr); } .pr-frist, .pr-wer { grid-column: 2; } .pr-auf-details { padding-left: 36px; } }
+.pr-frist-feld { flex: 0 0 150px; height: 36px; padding: 0 10px; border: 1px solid #dedbd7; border-radius: 10px; font: inherit; font-size: .85rem; }
+.kt3-neu input.pr-frist-feld { flex: 0 0 150px; } .kt3-neu input.pr-wer-feld { flex: 0 0 140px; }
+.pr-ueb-box summary .kt3-leise { font-size: .8rem; }

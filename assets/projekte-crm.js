@@ -82,29 +82,35 @@
     var h = '<a class="kb-zurueck" href="#"><span aria-hidden="true">&larr;</span> Projekte</a>';
     h += '<div class="kt3-kopf"><div><h2 class="kt3-name">' + esc(p.name) + '</h2><p class="kt3-sub">' +
       [p.organisationen ? '<a href="/strategie/kontakte.html#f=' + p.organisationen.id + '">' + esc(p.organisationen.name) + "</a>" : "", esc(p.marke || ""), esc(p.phase || ""),
-       '<span class="pr-st ' + STATUS[p.status] + '">' + esc(p.status) + "</span>"].filter(Boolean).join(" · ") + "</p></div></div>";
-    // Claude-Impuls ganz oben
-    h += '<section class="pr-impuls"><p class="pr-impuls-kopf">Claude – was jetzt ansteht</p><p>' + (p.claude_impuls ? esc(p.claude_impuls) :
-      "Noch kein Impuls. Diktiere mir, was im Projekt passiert ist – ich halte Protokoll, Entscheidungen und Aufgaben fest und sage dir, was als Nächstes dran ist.") + "</p>" +
-      (p.impuls_stand ? '<p class="kt3-stand-klein">Stand ' + datum(p.impuls_stand) + "</p>" : "") + "</section>";
+       '<span class="pr-st ' + STATUS[p.status] + '">' + esc(p.status) + "</span>"].filter(Boolean).join(" · ") + "</p>" +
+      (p.thema ? '<p class="pr-thema">' + esc(p.thema) + "</p>" : "") + "</div></div>";
     h += '<div class="kt3-raster">';
-    h += '<section class="kt3-box"><h3>Thema</h3><p class="kt3-t">' + esc(p.thema || "–") + '</p><h3 class="pr-h3b">Überlegungen</h3>' +
-      '<textarea class="pr-ueb" data-ueb placeholder="Deine Überlegungen zum Projekt …">' + esc(p.ueberlegungen || "") + '</textarea><button type="button" class="pr-speichern" data-ueb-speichern hidden>Speichern</button></section>';
+    // Als Nächstes (Claude) | Entscheidungen – beides als kurze Punkte
+    var impuls = (p.claude_impuls || "").split("\n").map(function (x) { return x.trim(); }).filter(Boolean);
+    h += '<section class="kt3-box pr-next"><h3>Als Nächstes <span>Claude</span></h3>' + (impuls.length ? "<ul>" + impuls.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"
+      : '<p class="kt3-leise">Diktiere mir, was passiert ist – ich sage dir, was als Nächstes dran ist.</p>') + "</section>";
     var ent = pkt.filter(function (x) { return x.art === "Entscheidung"; });
-    h += '<section class="kt3-box"><h3>Entscheidungen</h3>' + (ent.length ? '<ul class="pr-ent">' + ent.map(function (e) {
+    h += '<section class="kt3-box"><h3>Entscheidungen</h3>' + (ent.length ? '<ul class="pr-ent2">' + ent.map(function (e) {
       var ev = ere.filter(function (x) { return x.id === e.ereignis_id; })[0];
-      return "<li><p>" + esc(e.text) + '</p><span class="kt3-leise">' + esc([ev ? kurz(ev.datum) + " · " + ev.titel : datum(e.angelegt_am), name(e.kontakte)].filter(Boolean).join(" · ")) + "</span></li>"; }).join("") + "</ul>"
+      return "<li>" + esc(e.text) + ' <span class="kt3-leise">· ' + (ev ? kurz(ev.datum) : datum(e.angelegt_am)) + "</span></li>"; }).join("") + "</ul>"
       : '<p class="kt3-leise">Noch keine Entscheidungen festgehalten.</p>') + "</section>";
-    // Aufgaben mit Zuständigkeit
-    var offen = auf.filter(function (a) { return a.status === "offen"; });
+    // Überlegungen: lesbar, aufklappbar, Bearbeiten auf Klick
+    h += '<details class="kt3-box kt3-breit pr-ueb-box"><summary><h3>Überlegungen</h3><span class="kt3-leise">' + (p.ueberlegungen ? "aufklappen" : "noch leer") + "</span></summary>" +
+      '<div class="pr-ueb-text" data-ueb-text>' + (p.ueberlegungen ? esc(p.ueberlegungen).split(/\n+/).map(function (x) { return "<p>" + x + "</p>"; }).join("") : '<p class="kt3-leise">Noch keine Überlegungen.</p>') + "</div>" +
+      '<textarea class="pr-ueb" data-ueb hidden>' + esc(p.ueberlegungen || "") + '</textarea><div class="pr-ueb-knoepfe"><button type="button" class="kt3-klapp" data-ueb-bearbeiten>Bearbeiten</button>' +
+      '<button type="button" class="pr-speichern" data-ueb-speichern hidden>Speichern</button></div></details>';
+    // Aufgaben: immer mit Frist, nach Datum
+    var offen = auf.filter(function (a) { return a.status === "offen"; }).sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });
     var namen = ["Daniel"].concat(bet.map(function (b) { return b.name || name(b.kontakte); })).filter(function (x, i, l) { return x && l.indexOf(x) === i; });
     h += '<section class="kt3-box kt3-breit"><h3>Aufgaben</h3>' + (offen.length ? '<ul class="pr-auf2">' + offen.map(function (a) {
+      var ueber = a.faellig_am && new Date(a.faellig_am) < new Date(new Date().toDateString());
       return '<li data-a="' + a.id + '"><div class="pr-auf-zeile"><button type="button" class="st-haken" aria-label="Erledigt"></button>' +
+        '<span class="pr-frist' + (ueber ? " pr-ueber" : "") + '">' + (a.faellig_am ? kurz(a.faellig_am) : "ohne Termin") + "</span>" +
         '<button type="button" class="pr-auf-titel" data-auf-auf aria-expanded="false"><span>' + esc(a.titel) + "</span>" + (a.beschreibung ? '<i class="pr-hat-details" title="Details vorhanden"></i>' : "") + "</button>" +
-        '<span class="pr-wer">' + esc(wer(a) || "offen") + (a.faellig_am ? " · bis " + kurz(a.faellig_am) : "") + "</span></div>" +
+        '<span class="pr-wer">' + esc(wer(a) || "offen") + "</span></div>" +
         '<div class="pr-auf-details" hidden><textarea data-det placeholder="Details, Hintergrund, Links …">' + esc(a.beschreibung || "") + '</textarea><button type="button" class="pr-speichern" data-det-speichern hidden>Speichern</button></div></li>';
       }).join("") + "</ul>" : '<p class="kt3-leise">Nichts offen.</p>') +
-      '<form class="kt3-neu pr-neu" data-neu><input type="text" placeholder="Neue Aufgabe …" data-titel><input type="text" list="pr-namen" placeholder="Wer?" data-wer class="pr-wer-feld">' +
+      '<form class="kt3-neu pr-neu" data-neu><input type="text" placeholder="Neue Aufgabe …" data-titel><input type="text" list="pr-namen" placeholder="Wer?" data-wer class="pr-wer-feld"><input type="date" data-frist class="pr-frist-feld" aria-label="Frist">' +
       '<datalist id="pr-namen">' + namen.map(function (n) { return '<option value="' + esc(n) + '">'; }).join("") + '</datalist><button type="submit">+</button></form></section>';
     // Timeline: links durchscrollbar, rechts die Details zum gewählten Termin
     var jetzt = Date.now();
@@ -137,9 +143,9 @@
       ta.oninput = function () { sp.hidden = false; };
       sp.onclick = function () { sp.disabled = true; db.from("aufgaben").update({ beschreibung: ta.value }).eq("id", +li.getAttribute("data-a")).then(function (r) { sp.disabled = false; if (r.error) alert(r.error.message); else sp.hidden = true; }); };
     });
-    var ta = wurzel.querySelector("[data-ueb]"), sp = wurzel.querySelector("[data-ueb-speichern]");
-    ta.oninput = function () { sp.hidden = false; };
-    sp.onclick = function () { sp.disabled = true; db.from("projekte").update({ ueberlegungen: ta.value }).eq("id", p.id).then(function (r) { sp.disabled = false; if (r.error) alert(r.error.message); else sp.hidden = true; }); };
+    var ta = wurzel.querySelector("[data-ueb]"), sp = wurzel.querySelector("[data-ueb-speichern]"), bt = wurzel.querySelector("[data-ueb-bearbeiten]"), tx = wurzel.querySelector("[data-ueb-text]");
+    bt.onclick = function () { ta.hidden = false; tx.hidden = true; bt.hidden = true; sp.hidden = false; ta.focus(); };
+    sp.onclick = function () { sp.disabled = true; db.from("projekte").update({ ueberlegungen: ta.value }).eq("id", p.id).then(function (r) { sp.disabled = false; if (r.error) alert(r.error.message); else projekt(p.id); }); };
     wurzel.querySelectorAll("[data-a] .st-haken").forEach(function (b) {
       b.onclick = function () { var li = b.closest("li"); li.classList.add("st-weg");
         db.from("aufgaben").update({ status: "erledigt", erledigt_am: new Date().toISOString() }).eq("id", +li.getAttribute("data-a")).then(function (r) { if (r.error) { li.classList.remove("st-weg"); alert(r.error.message); } }); };
@@ -149,7 +155,8 @@
       e.preventDefault();
       var t = f.querySelector("[data-titel]").value.trim(), w = f.querySelector("[data-wer]").value.trim(); if (!t) return;
       f.classList.add("laedt");
-      db.from("aufgaben").insert({ titel: t, projekt_id: p.id, zustaendig_name: w || "Daniel", bereich: "Projekt" }).then(function (r) { if (r.error) { f.classList.remove("laedt"); alert(r.error.message); } else projekt(p.id); });
+      var fr = f.querySelector("[data-frist]").value || null;
+      db.from("aufgaben").insert({ titel: t, projekt_id: p.id, zustaendig_name: w || "Daniel", faellig_am: fr, bereich: "Projekt" }).then(function (r) { if (r.error) { f.classList.remove("laedt"); alert(r.error.message); } else projekt(p.id); });
     };
   }
   document.addEventListener("click", function (e) {
