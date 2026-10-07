@@ -121,7 +121,7 @@
       var l = bet.filter(function (b) { return b.seite === s; });
       return l.length ? '<ul class="pr-bet">' + l.map(function (b) {
         return "<li>" + (b.kontakte ? '<a href="/strategie/kontakte.html#k=' + b.kontakte.id + '">' + esc(name(b.kontakte)) + "</a>" : esc(b.name)) +
-          '<span class="kt3-leise">' + esc(b.rolle || (b.kontakte && b.kontakte.position) || "") + "</span></li>"; }).join("") + "</ul>" : '<p class="kt3-leise">–</p>';
+          (s === "Kunde" ? "" : '<span class="kt3-leise">' + esc(b.rolle || (b.kontakte && b.kontakte.position) || "") + "</span>") + "</li>"; }).join("") + "</ul>" : '<p class="kt3-leise">–</p>';
     }
     h += '<div class="kt3-breit pr-bet-zeile"><section class="kt3-box"><h3>Beteiligte beim Kunden</h3>' + seite("Kunde") + '</section><section class="kt3-box"><h3>Team empiria</h3>' + seite("empiria") + seite("Partner").replace('<p class="kt3-leise">–</p>', "") + "</section></div>";
     wurzel.innerHTML = h + "</div>";
