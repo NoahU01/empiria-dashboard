@@ -693,3 +693,41 @@ body.kt3-detail .db-kopf { min-height: 0; }
 .pr-zwei { margin-top: 28px; }
 .pr-tab td { overflow-wrap: normal; word-break: normal; hyphens: auto; }
 @media (min-width: 1000px) { .pr-zwei { grid-template-columns: 2fr 1fr; } }
+
+/* Timeline-Varianten zum Ausprobieren (A Zeitstrahl · B Angedockt · C Linie · D Dunkel) */
+.pr-tl-kopf { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; } .pr-tl-kopf h3 { margin: 0 !important; }
+.pr-tl-wahl { display: flex; gap: 4px; }
+.pr-tl-wahl button { width: 28px; height: 26px; border: 0; border-radius: 6px; background: var(--grey-bg); font-size: .74rem; font-weight: 600; color: var(--grey-70); }
+.pr-tl-wahl button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+
+/* A – Zeitstrahl + weiße Karte mit schwarzem Kopfband */
+.tlv-a .pr-tl2-liste { position: relative; padding-left: 22px; }
+.tlv-a .pr-tl2-liste::before { content: ""; position: absolute; left: 8px; top: 8px; bottom: 8px; width: 2px; background: #e6e3df; }
+.tlv-a .pr-tl2-liste button { position: relative; background: none; box-shadow: none; border-radius: 8px; }
+.tlv-a .pr-tl2-liste button::before { content: ""; position: absolute; left: -19px; top: 14px; width: 10px; height: 10px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2px #c9c5c0; }
+.tlv-a .pr-tl2-liste button.an { background: none; } .tlv-a .pr-tl2-liste button.an b { font-weight: 600; }
+.tlv-a .pr-tl2-liste button.an::before { background: var(--hl); box-shadow: 0 0 0 2px var(--ink); }
+.tlv-a .pr-tl2-detail { background: #fff; padding: 0; overflow: hidden; border: 1px solid #e4e1dd; border-radius: 16px; }
+.tlv-a .pr-tl2-detail > .pr-d, .tlv-a .pr-tl2-detail > .pr-det-titel, .tlv-a .pr-tl2-detail > .pr-det-meta { background: var(--ink); color: #fff; margin: 0 !important; padding: 0 22px; }
+.tlv-a .pr-tl2-detail > .pr-d { padding-top: 16px; color: var(--hl); } .tlv-a .pr-tl2-detail > .pr-det-meta { padding-bottom: 16px; color: #cfcbc6; }
+.tlv-a .pr-tl2-detail > h4, .tlv-a .pr-tl2-detail > ul, .tlv-a .pr-tl2-detail > p.kt3-leise { margin-left: 22px; margin-right: 22px; }
+
+/* B – angedockte Karte */
+.tlv-b .pr-tl2-liste button { background: none; box-shadow: none; } .tlv-b .pr-tl2-liste button.an { background: none; }
+.tlv-b .pr-tl2-liste button.an b { background: var(--hl); padding: 0 .15em; border-radius: 4px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.tlv-b .pr-tl2-detail { position: relative; background: #fff; box-shadow: 0 12px 34px rgba(0,0,0,.08), 0 0 0 1px #ece9e5; }
+.tlv-b .pr-tl2-detail::before { content: ""; position: absolute; left: -8px; top: 34px; width: 16px; height: 16px; background: #fff; transform: rotate(45deg); box-shadow: -1px 1px 0 #ece9e5; }
+
+/* C – feine Linie, viel Weiß */
+@media (min-width: 900px) { .tlv-c .pr-tl2-liste { border-right: 1px solid #e6e3df; } }
+.tlv-c .pr-tl2-liste button, .tlv-c .pr-tl2-liste button.an { background: none; box-shadow: none; }
+.tlv-c .pr-tl2-liste button.an b { font-weight: 600; text-decoration: underline; text-decoration-color: var(--hl); text-decoration-thickness: 5px; text-underline-offset: -1px; text-decoration-skip-ink: none; }
+.tlv-c .pr-tl2-detail { background: none; padding: 4px 8px 4px 20px; }
+.tlv-c .pr-det-titel { font-size: 1.5rem !important; }
+
+/* D – dunkle Detailfläche */
+.tlv-d .pr-tl2-liste button.an { background: none; box-shadow: inset 3px 0 0 var(--hl); } .tlv-d .pr-tl2-liste button.an b { font-weight: 600; }
+.tlv-d .pr-tl2-detail { background: var(--ink); color: #f2f0ec; }
+.tlv-d .pr-tl2-detail .pr-d, .tlv-d .pr-tl2-detail .pr-det-meta, .tlv-d .pr-tl2-detail .kt3-leise { color: #b9b5b0; }
+.tlv-d .pr-tl2-detail h4 { color: var(--hl); } .tlv-d .pr-tl2-detail .pr-det-titel { color: #fff; }
+.tlv-b .pr-tl2-detail { top: 0; }
