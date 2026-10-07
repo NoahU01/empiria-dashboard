@@ -16,9 +16,17 @@
     route();
   });
   window.addEventListener("hashchange", function () { route(); window.scrollTo(0, 0); });
+  // Darstellung der Projektansicht: weiß (Standard), grau, schwarz – zur Auswahl
+  function lookWert() { try { return localStorage.getItem("pr-look") || "weiss"; } catch (x) { return "weiss"; } }
+  function look(an) {
+    var m = document.querySelector("main"); if (!m) return;
+    m.classList.remove("pr-look-grau", "pr-look-schwarz");
+    if (an && lookWert() !== "weiss") m.classList.add("pr-look-" + lookWert());
+  }
   function route() {
     var h = location.hash.replace("#", "");
     document.body.classList.toggle("kt3-detail", /^p=\d+$/.test(h));
+    look(/^p=\d+$/.test(h));
     if (/^p=\d+$/.test(h)) projekt(+h.slice(2)); else liste();
   }
 
@@ -95,7 +103,8 @@
       [p.organisationen ? '<a href="/strategie/kontakte.html#f=' + p.organisationen.id + '">' + esc(p.organisationen.name) + "</a>" : "", esc(p.marke || ""), esc(p.phase || ""),
        '<span class="pr-st ' + STATUS[p.status] + '">' + esc(p.status) + "</span>"].filter(Boolean).join(" · ") + "</p>" +
       (p.thema ? '<p class="pr-thema">' + esc(p.thema) + "</p>" : "") +
-      (p.typ === "intern" && p.naechstes_gate ? '<p class="pr-gate"><span>Nächstes Gate</span>' + esc(p.naechstes_gate) + (p.gate_datum ? " · bis " + kurz(p.gate_datum) : "") + "</p>" : "") + "</div></div>";
+      (p.typ === "intern" && p.naechstes_gate ? '<p class="pr-gate"><span>Nächstes Gate</span>' + esc(p.naechstes_gate) + (p.gate_datum ? " · bis " + kurz(p.gate_datum) : "") + "</p>" : "") + "</div><span class=\"pr-tl-wahl pr-look-wahl\">" + [["weiss", "Weiß"], ["grau", "Grau"], ["schwarz", "Schwarz"]].map(function (v) {
+        return '<button type="button" data-look="' + v[0] + '" aria-pressed="' + (v[0] === lookWert()) + '">' + v[1] + "</button>"; }).join("") + "</span></div>";
     h += '<div class="kt3-raster">';
     // Links: Stoßrichtung (Gesamtblick über alle Termine) – rechts: Aufgaben
     var punkte = (p.ueberlegungen || "").split("\n").map(function (x) { return x.trim(); }).filter(Boolean);
@@ -147,6 +156,10 @@
   }
 
   function verdrahten(p) {
+    wurzel.querySelectorAll("[data-look]").forEach(function (b) {
+      b.onclick = function () { try { localStorage.setItem("pr-look", b.getAttribute("data-look")); } catch (x) {} look(true);
+        wurzel.querySelectorAll("[data-look]").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); }); };
+    });
     wurzel.querySelectorAll("[data-tlv]").forEach(function (b) {
       b.onclick = function () { try { localStorage.setItem("pr-tl-ansicht", b.getAttribute("data-tlv")); } catch (x) {} projekt(p.id); };
     });

@@ -759,3 +759,17 @@ body.kt3-detail .db-kopf { min-height: 0; }
 .pr-marke-sek + .pr-marke-sek { margin-top: 56px; }
 .pr-marke-sek:first-child { margin-top: 36px; }
 .pr-marke-sek .pr-zwei { margin-top: 0; }
+/* Projektansicht – Darstellung zur Auswahl: Weiß · Grau · Schwarz */
+.pr-look-wahl { align-self: flex-end; }
+main.pr-look-grau { background: #f4f2ef; }
+main.pr-look-grau .kt3-box { box-shadow: none; }
+main.pr-look-grau .pr-tl-wahl button[aria-pressed="true"] { background: #fff; box-shadow: 0 0 0 1px #e4e1dd; }
+main.pr-look-schwarz .kt3-raster .kt3-box > h3,
+main.pr-look-schwarz .pr-tl-kopf { display: flex; align-items: center; gap: 12px; margin: -16px -18px 16px; padding: 14px 18px; min-height: 52px;
+  background: var(--ink); color: #fff; border-radius: 16px 16px 0 0; }
+main.pr-look-schwarz .pr-tl-kopf { margin: -18px -22px 18px; padding: 8px 14px 8px 22px; }
+main.pr-look-schwarz .pr-tl-kopf h3 { display: flex; align-items: center; gap: 12px; margin: 0; color: #fff; }
+main.pr-look-schwarz .kt3-raster .kt3-box > h3::before,
+main.pr-look-schwarz .pr-tl-kopf h3::before { content: ""; flex: 0 0 auto; width: 10px; height: 10px; border-radius: 50%; background: var(--hl, #fff400); }
+main.pr-look-schwarz .pr-tl-kopf .pr-tl-wahl button { color: rgba(255,255,255,.62); }
+main.pr-look-schwarz .pr-tl-kopf .pr-tl-wahl button[aria-pressed="true"] { background: rgba(255,255,255,.14); color: #fff; }
