@@ -22,19 +22,55 @@
   });
 })();
 
-/* Unterseiten auf- und zuklappen. Liegt die aktuelle Seite darunter,
-   ist der Bereich beim Öffnen schon aufgeklappt. */
+/* Unterseiten: Klick auf das Dreieck (oder Zeigen mit der Maus) öffnet die
+   zweite Ebene rechts neben der Liste. Auf dem Telefon ersetzt sie die Liste,
+   mit „Zurück“ geht es wieder nach oben. */
 (function () {
   "use strict";
-  document.querySelectorAll(".sn-sub-toggle").forEach(function (b) {
+  var panel = document.getElementById("snPanel");
+  if (!panel) return;
+  var schmal = window.matchMedia("(max-width: 900px)");
+  var paare = [];
+
+  function zu() {
+    paare.forEach(function (p) { p.kinder.classList.remove("is-open"); p.sub.classList.remove("is-open"); p.b.setAttribute("aria-expanded", "false"); });
+    panel.classList.remove("zeigt-kinder");
+  }
+  function auf(p) {
+    zu();
+    if (!schmal.matches) p.kinder.style.top = Math.max(0, p.sub.offsetTop - 11) + "px";
+    p.kinder.classList.add("is-open"); p.sub.classList.add("is-open"); p.b.setAttribute("aria-expanded", "true");
+    if (schmal.matches) { panel.classList.add("zeigt-kinder"); panel.scrollTop = 0; }
+  }
+
+  panel.querySelectorAll(".sn-sub-toggle").forEach(function (b) {
     var kinder = document.getElementById(b.getAttribute("aria-controls"));
     if (!kinder) return;
-    if (kinder.querySelector('[aria-current="page"]')) { kinder.classList.add("is-open"); b.setAttribute("aria-expanded", "true"); }
+    var p = { b: b, sub: b.parentNode, kinder: kinder, t: null };
+    paare.push(p);
+    if (kinder.querySelector('[aria-current="page"]')) p.sub.classList.add("hat-aktuelle");
+
+    var titel = p.sub.querySelector(".sn-txt b").textContent;
+    var zurueck = document.createElement("button");
+    zurueck.type = "button"; zurueck.className = "sn-zurueck";
+    zurueck.innerHTML = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Zur\u00fcck \u00b7 ' + titel;
+    zurueck.addEventListener("click", function (e) { e.stopPropagation(); zu(); });
+    kinder.insertBefore(zurueck, kinder.firstChild);
+
     b.addEventListener("click", function (e) {
       e.stopPropagation();
-      var auf = !kinder.classList.contains("is-open");
-      kinder.classList.toggle("is-open", auf);
-      b.setAttribute("aria-expanded", auf ? "true" : "false");
+      if (kinder.classList.contains("is-open")) zu(); else auf(p);
+    });
+    // Desktop: mit der Maus über die Zeile öffnen, kurz verzögert schließen
+    [p.sub, kinder].forEach(function (el) {
+      el.addEventListener("mouseenter", function () { if (schmal.matches) return; clearTimeout(p.t); if (!kinder.classList.contains("is-open")) auf(p); });
+      el.addEventListener("mouseleave", function () { if (schmal.matches) return; p.t = setTimeout(function () { if (kinder.classList.contains("is-open")) zu(); }, 250); });
     });
   });
+  panel.querySelectorAll(":scope > a.sn-link").forEach(function (a) {
+    a.addEventListener("mouseenter", function () { if (!schmal.matches) zu(); });
+  });
+  // Menü geschlossen → zweite Ebene auch zu
+  var dd = document.querySelector("[data-sn-dd]");
+  if (dd) new MutationObserver(function () { if (!dd.classList.contains("is-open")) zu(); }).observe(dd, { attributes: true, attributeFilter: ["class"] });
 })();

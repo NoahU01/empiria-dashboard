@@ -42,19 +42,33 @@ a.sn-link:hover, a.sn-link[aria-current="page"] { background: var(--grey-bg); co
 .sn-txt b { font-weight: 500; font-size: 14px; }
 .sn-txt small { font-size: 12px; color: var(--grey-50); margin-top: 1px; }
 
-/* Zweite Ebene: ein Eintrag mit Unterseiten klappt auf (Klick auf das Dreieck),
-   die Unterseiten stehen eingerückt darunter – funktioniert auch mobil. */
-.sn-sub { display: flex; align-items: stretch; }
+/* Zweite Ebene: Unterseiten öffnen sich als eigenes Fenster rechts neben der
+   Liste (Desktop) bzw. ersetzen die Liste mit „Zurück“ (Telefon) – so bleibt
+   die erste Ebene kurz. */
+.sn-sub { display: flex; align-items: stretch; border-radius: 10px; }
 .sn-sub > a.sn-link { flex: 1 1 auto; }
+.sn-sub.hat-aktuelle > a.sn-link { background: var(--grey-bg); }
 .sn-sub-toggle { flex: 0 0 36px; display: inline-flex; align-items: center; justify-content: center;
   border: 0; background: none; border-radius: 10px; color: var(--grey-50); cursor: pointer; }
-.sn-sub-toggle:hover { background: var(--grey-bg); color: var(--ink); }
-.sn-sub-toggle svg { width: 12px; height: 12px; transition: transform .2s ease; }
-.sn-sub-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
-.sn-kinder { display: none; margin: 2px 0 6px 22px; padding-left: 10px; box-shadow: inset 2px 0 0 var(--grey-bg); }
+.sn-sub-toggle:hover, .sn-sub.is-open .sn-sub-toggle { background: var(--grey-bg); color: var(--ink); }
+.sn-sub-toggle svg { width: 12px; height: 12px; transform: rotate(-90deg); }
+.sn-kinder { display: none; position: absolute; left: calc(100% + 8px); width: 300px;
+  padding: 10px; background: #fff; border: 1px solid var(--grey-bg); border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.14); }
 .sn-kinder.is-open { display: block; }
 .sn-kinder a.sn-link { padding: 7px 8px; }
 .sn-kinder .sn-tag { flex-basis: 28px; height: 28px; font-size: 11px; background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink); }
+.sn-zurueck { display: none; }
+@media (min-width: 901px) { .sn-panel { overflow: visible; max-height: none; } }
+
+@media (max-width: 900px) {
+  .sn-kinder { position: static; width: auto; padding: 0; border: 0; box-shadow: none; }
+  .sn-panel.zeigt-kinder > *:not(.sn-kinder.is-open) { display: none; }
+  .sn-zurueck { display: flex; align-items: center; gap: 8px; width: 100%; margin: 0 0 6px; padding: 8px;
+    border: 0; border-radius: 10px; background: none; font-size: 13px; color: var(--grey-50); text-align: left; }
+  .sn-zurueck:hover { background: var(--grey-bg); color: var(--ink); }
+  .sn-zurueck svg { width: 12px; height: 12px; transform: rotate(90deg); }
+}
 
 @media (max-width: 900px) {
   /* Mobil haengt das Panel nicht am Dreieck, sondern an der Kopfzeile (.nav)
