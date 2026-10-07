@@ -28,6 +28,14 @@
   KONTEN.forEach(function (k) { if (!k.pfad) k.pfad = "/users/" + k.adresse; });
 
   var CLAUDE_KATEGORIE = "Claude: Handlungsbedarf";
+  // Einschätzung von Claude: unsichtbar an der Mail gespeichert (Outlook-Eigenschaft),
+  // geschrieben von ~/AlwaysOn/outlook/korrespondenz.py. Inhalt (JSON):
+  // { kategorie: nobrainer|termin|aufgabe|tiefer|keine, zusammenfassung, vorschlag, entwurf?, stand }
+  var ANALYSE = "String {8d3f2a61-5c7e-4b9a-a1d2-6e0f4c8b7a19} Name ClaudeAnalyse";
+  var ARTEN = {
+    nobrainer: "No-Brainer", termin: "Terminvorschlag nötig", aufgabe: "Aufgabe", tiefer: "Tiefer reinschauen",
+    offen: "Noch nicht eingeschätzt", nachfassen: "Nachfassen", warten: "Noch abwarten"
+  };
   var TAGE_LADEN = 30;        // so weit zurück wird gelesen
   var TAGE_HANDLUNG = 14;     // ältere unbeantwortete Mails gelten als erledigt
   var TAGE_NACHFASSEN = 5;    // ab hier „Nachfassen“ bei eigenen Mails
@@ -82,7 +90,8 @@
 
   function ordner(k, name, feld, felder) {
     return graph(k.pfad + "/mailFolders/" + name + "/messages?$top=150&$select=" + felder +
-      "&$filter=" + feld + " ge " + seit(TAGE_LADEN) + "&$orderby=" + feld + " desc")
+      "&$filter=" + feld + " ge " + seit(TAGE_LADEN) + "&$orderby=" + feld + " desc" +
+      (name === "inbox" ? "&$expand=singleValueExtendedProperties($filter=id eq '" + ANALYSE + "')" : ""))
       .then(function (d) { return d.value || []; });
   }
 
@@ -137,8 +146,10 @@
       m.claude = (m.categories || []).indexOf(CLAUDE_KATEGORIE) > -1;
       m.beantwortet = (letzteAntwort[m.conversationId] || 0) > +new Date(m.receivedDateTime);
       m.neueste = letzterEingang[m.conversationId].id === m.id;
-      m.handlung = k.handlung && m.neueste && !m.beantwortet &&
-        (m.claude || m.markiert || (m.relevant && m.direkt && !m.automatisch && m.alter <= TAGE_HANDLUNG));
+      m.analyse = analyse(m);
+      var offen = k.handlung && m.neueste && !m.beantwortet;
+      if (m.analyse) m.handlung = offen && m.analyse.kategorie !== "keine" && !!ARTEN[m.analyse.kategorie];
+      else m.handlung = offen && (m.claude || m.markiert || (m.relevant && m.direkt && !m.automatisch && m.alter <= TAGE_HANDLUNG));
       if (m.handlung) { m.grund = grund(m); m.vorschlag = vorschlag(m); }
     });
 
@@ -158,9 +169,9 @@
       }
     });
 
+    var REIHE = ["nobrainer", "termin", "aufgabe", "tiefer", "offen"];
     var handlung = ein.filter(function (m) { return m.handlung; }).sort(function (a, b) {
-      var pa = a.claude || a.markiert ? 1 : 0, pb = b.claude || b.markiert ? 1 : 0;
-      return pb - pa || b.alter - a.alter || new Date(b.receivedDateTime) - new Date(a.receivedDateTime);
+      return REIHE.indexOf(a.vorschlag.art) - REIHE.indexOf(b.vorschlag.art) || b.alter - a.alter;
     });
     ein.sort(function (a, b) { return new Date(b.receivedDateTime) - new Date(a.receivedDateTime); });
     warten.sort(function (a, b) { return b.alter - a.alter; });
@@ -177,6 +188,12 @@
     };
   }
 
+  function analyse(m) {
+    var e = (m.singleValueExtendedProperties || [])[0];
+    if (!e || !e.value) return null;
+    try { return JSON.parse(e.value); } catch (x) { return null; }
+  }
+
   function grund(m) {
     if (m.claude) return "Von Claude als Handlungsbedarf markiert";
     if (m.markiert) {
@@ -190,12 +207,16 @@
   // Erster, einfacher Vorschlag für den nächsten Schritt – nach Stichworten.
   // Später ersetzt der Always-on-Mac das durch eine echte Einschätzung.
   function vorschlag(m) {
+    if (m.analyse) return { art: m.analyse.kategorie, text: m.analyse.vorschlag || ARTEN[m.analyse.kategorie] };
+    return { art: "offen", text: stichwort(m) };
+  }
+  function stichwort(m) {
     var t = (m.subject + " " + m.bodyPreview).toLowerCase();
-    if (m.markiert && !m.direkt) return { art: "verfolgen", text: "Nachverfolgen" };
-    if (/termin|uhrzeit|kalender|meeting|call\b|telefonat|treffen|verschieben|zeitfenster|wann passt/.test(t)) return { art: "termin", text: "Termin klären" };
-    if (/angebot|rechnung|vertrag|freigabe|unterschrift|kosten|preis|budget/.test(t)) return { art: "pruefen", text: "Prüfen und freigeben" };
-    if (m.markiert) return { art: "verfolgen", text: "Nachverfolgen" };
-    return { art: "antworten", text: "Antworten" };
+    if (m.markiert && !m.direkt) return "Nachverfolgen";
+    if (/termin|uhrzeit|kalender|meeting|call\b|telefonat|treffen|verschieben|zeitfenster|wann passt/.test(t)) return "Termin klären";
+    if (/angebot|rechnung|vertrag|freigabe|unterschrift|kosten|preis|budget/.test(t)) return "Prüfen und freigeben";
+    if (m.markiert) return "Nachverfolgen";
+    return "Antworten";
   }
 
   /* ---------- Volltext beim Aufklappen ---------- */
@@ -229,15 +250,21 @@
       x = x || {};
       return { id: "d" + (++i), conversationId: "c" + i, subject: betreff, bodyPreview: text, from: von, toRecipients: [an], ccRecipients: [],
         receivedDateTime: h(st), isRead: !!x.gelesen, inferenceClassification: x.sonst ? "other" : "focused",
-        flag: { flagStatus: x.flag ? "flagged" : "notFlagged" }, categories: x.claude ? [CLAUDE_KATEGORIE] : [], webLink: "#", importance: "normal" };
+        flag: { flagStatus: x.flag ? "flagged" : "notFlagged" }, categories: x.claude ? [CLAUDE_KATEGORIE] : [], webLink: "#", importance: "normal",
+        singleValueExtendedProperties: x.a ? [{ id: ANALYSE, value: JSON.stringify(x.a) }] : [] };
     }
     var ein = [
-      e(p("Anna Beispiel", "anna@beispiel-gmbh.de"), me, "Rückfrage zum Angebot Strategieworkshop", "Hallo Daniel, danke für das Angebot. Kurze Frage zu Position 3: Ist der Vorbereitungstag im Tagessatz enthalten?", 70),
-      e(p("Jonas Muster", "j.muster@muster-ag.de"), me, "Termin für das Kick-off", "Hi Daniel, wann passt es dir nächste Woche für das Kick-off? Dienstag oder Donnerstag Vormittag wären bei uns frei.", 30, { gelesen: true }),
-      e(p("Petra Probe", "probe@verband-beispiel.de"), me, "Strategiepapier – Ihre Einschätzung", "Sehr geehrter Herr Ströbel, anbei der Entwurf. Wir würden uns über Ihre Einschätzung bis Ende der Woche freuen.", 120, { flag: true }),
+      e(p("Anna Beispiel", "anna@beispiel-gmbh.de"), me, "Rückfrage zum Angebot Strategieworkshop", "Hallo Daniel, danke für das Angebot. Kurze Frage zu Position 3: Ist der Vorbereitungstag im Tagessatz enthalten?", 70,
+        { a: { kategorie: "nobrainer", zusammenfassung: "Anna fragt zum Angebot Strategieworkshop, ob der Vorbereitungstag (Position 3) im Tagessatz enthalten ist.", vorschlag: "Kurz bestätigen: Vorbereitung ist enthalten.", entwurf: "Hallo Anna,\n\nja, der Vorbereitungstag ist im Tagessatz enthalten – da kommt nichts dazu.\n\nViele Grüße\nDaniel" } }),
+      e(p("Jonas Muster", "j.muster@muster-ag.de"), me, "Termin für das Kick-off", "Hi Daniel, wann passt es dir nächste Woche für das Kick-off? Dienstag oder Donnerstag Vormittag wären bei uns frei.", 30,
+        { gelesen: true, a: { kategorie: "termin", zusammenfassung: "Jonas möchte das Kick-off nächste Woche machen und bietet Dienstag oder Donnerstag Vormittag an.", vorschlag: "Einen der beiden Vormittage zusagen – laut Kalender ist Dienstag frei." } }),
+      e(p("Petra Probe", "probe@verband-beispiel.de"), me, "Strategiepapier – Ihre Einschätzung", "Sehr geehrter Herr Ströbel, anbei der Entwurf. Wir würden uns über Ihre Einschätzung bis Ende der Woche freuen.", 120,
+        { flag: true, a: { kategorie: "tiefer", zusammenfassung: "Der Verband schickt den Entwurf seines Strategiepapiers und bittet bis Ende der Woche um deine fachliche Einschätzung.", vorschlag: "Entwurf lesen und Kernpunkte einschätzen – ich kann dir eine Zusammenfassung des Anhangs vorbereiten." } }),
       e(p("Lea Test", "lea@test-praxis.de"), ss, "Website-Check sofort sichtbar", "Hallo, wir haben den Check gemacht und hätten gerne ein Gespräch zu den Ergebnissen.", 20),
-      e(p("Max Vorlage", "max@vorlage-hr.de"), ms, "Vertrag zur Durchsicht", "Hallo Daniel, anbei der Vertrag zur Durchsicht. Bitte kurz Freigabe, dann geht er raus.", 50, { claude: true }),
-      e(p("Kurt Kunde", "kurt@kunde.de"), me, "Kurze Frage zur Rechnung", "Moin Daniel, auf der Rechnung fehlt die Bestellnummer, kannst du die ergänzen?", 6),
+      e(p("Max Vorlage", "max@vorlage-hr.de"), ms, "Vertrag zur Durchsicht", "Hallo Daniel, anbei der Vertrag zur Durchsicht. Bitte kurz Freigabe, dann geht er raus.", 50,
+        { a: { kategorie: "aufgabe", zusammenfassung: "Max schickt den Vertrag zur Durchsicht und wartet auf deine Freigabe, bevor er rausgeht.", vorschlag: "Vertrag durchsehen und freigeben." } }),
+      e(p("Kurt Kunde", "kurt@kunde.de"), me, "Kurze Frage zur Rechnung", "Moin Daniel, auf der Rechnung fehlt die Bestellnummer, kannst du die ergänzen?", 6,
+        { a: { kategorie: "nobrainer", zusammenfassung: "Kurt bittet, die Bestellnummer auf der Rechnung zu ergänzen.", vorschlag: "Rechnung mit Bestellnummer neu erstellen (Papierkram) und schicken.", entwurf: "Moin Kurt,\n\nsorry, da hat die Bestellnummer gefehlt – die korrigierte Rechnung hängt an.\n\nViele Grüße\nDaniel" } }),
       e(p("Newsletter Beispiel", "newsletter@beispiel.de"), me, "Die Woche im Überblick", "Die wichtigsten Themen dieser Woche …", 10, { sonst: true }),
       e(p("LinkedIn", "notifications-noreply@linkedin.com"), me, "Sie haben 4 neue Profilaufrufe", "Sehen Sie, wer Ihr Profil besucht hat.", 15, { sonst: true }),
       e(p("Interessent Neu", "neu@interessent.de"), ko, "Anfrage über die Website", "Guten Tag, wir interessieren uns für Ihr Angebot und bitten um Rückruf.", 4),
@@ -255,6 +282,6 @@
     return { ich: { displayName: "Daniel Ströbel" }, adressen: adressen, postfaecher: KONTEN.map(function (k) { return nach[k.key]; }) };
   }
 
-  window.BetaMail = { start: start, anmelden: anmelden, abmelden: abmelden, laden: laden, volltext: volltext,
+  window.BetaMail = { arten: ARTEN, start: start, anmelden: anmelden, abmelden: abmelden, laden: laden, volltext: volltext,
     konten: KONTEN, esc: esc, wann: wann, badge: badge, absender: absender, istDemo: function () { return demo; } };
 })();

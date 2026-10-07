@@ -68,29 +68,47 @@
       chip.innerHTML = '<i class="' + (daten.kontaktNeu ? "an" : "") + '"></i>kontakt@ <b>' + daten.kontaktNeu + " neu</b>";
     }
     var top = daten.handlung.slice(0, 5);
-    var html = top.length ? '<ul class="kb-liste">' + top.map(function (m) {
+    var html = artZaehler();
+    html += top.length ? '<ul class="kb-liste">' + top.map(function (m) {
       return '<li class="kb-mail' + (m.isRead ? "" : " ungelesen") + '"><div class="kb-zeile">' +
         '<span class="kb-von">' + esc(B.absender(m)) + '</span><span class="kb-zeit">' + zeit(m) + "</span>" +
         '<span class="kb-betreff">' + esc(m.subject || "(ohne Betreff)") + "</span>" +
-        '<span class="kb-meta">' + B.badge(m.konto) + "<span>" + esc(m.grund) + "</span>" + outlookLink(m, "kb-oeffnen") + "</span></div></li>";
+        (m.analyse ? '<span class="kb-kurz">' + esc(m.analyse.zusammenfassung) + "</span>" : "") +
+        '<span class="kb-meta">' + artBadge(m) + B.badge(m.konto) + "<span>" + esc(m.grund) + "</span></span></div></li>";
     }).join("") + "</ul>" : '<p class="kb-leer">Gerade nichts offen. Alles beantwortet.</p>';
     if (daten.handlung.length > 5) html += '<p class="kb-fehler">' + (daten.handlung.length - 5) + " weitere auf der Unterseite.</p>";
     ziel().innerHTML = html + fehlerZeile() + stand();
     standVerdrahten();
   }
 
+  function artBadge(m) {
+    var a = m.vorschlag && m.vorschlag.art;
+    return a ? '<span class="kb-art kb-art--' + a + '">' + esc(B.arten[a] || a) + "</span>" : "";
+  }
+  function artZaehler() {
+    var n = {};
+    daten.handlung.forEach(function (m) { n[m.vorschlag.art] = (n[m.vorschlag.art] || 0) + 1; });
+    var teile = ["nobrainer", "termin", "aufgabe", "tiefer", "offen"].filter(function (a) { return n[a]; })
+      .map(function (a) { return "<span><b>" + n[a] + "</b> " + esc(B.arten[a]) + "</span>"; });
+    return teile.length ? '<p class="kb-zaehler">' + teile.join("") + "</p>" : "";
+  }
+
   /* ---------- Unterseite ---------- */
   var TABS = [
-    { key: "handlung", name: "Handlungsbedarf", liste: "handlung", gruppen: [["antworten", "Antworten"], ["termin", "Termin klären"], ["pruefen", "Prüfen und freigeben"], ["verfolgen", "Nachverfolgen"]] },
+    { key: "handlung", name: "Handlungsbedarf", liste: "handlung", karten: true,
+      gruppen: [["nobrainer", "No-Brainer"], ["termin", "Terminvorschlag nötig"], ["aufgabe", "Aufgabe"], ["tiefer", "Tiefer reinschauen"], ["offen", "Noch nicht eingeschätzt"]] },
     { key: "relevant", name: "Relevant", liste: "relevant" },
     { key: "nicht", name: "Nicht relevant", liste: "nichtRelevant" },
     { key: "warten", name: "Wartet auf Antwort", liste: "warten", gruppen: [["nachfassen", "Nachfassen"], ["warten", "Noch abwarten"]] }
   ];
+  var HINWEIS = {
+    nobrainer: "Antwort ist klar und vorformuliert. Freigabe gebündelt im Chat, z. B. „No-Brainer 1 bis 3 senden“.",
+    termin: "Es braucht einen Termin – zusagen, absagen oder Zeit vorschlagen.",
+    aufgabe: "Hier ist etwas zu erledigen, eine Antwort allein reicht nicht.",
+    tiefer: "Braucht deine inhaltliche Einschätzung.",
+    offen: "Von Claude noch nicht gelesen – hier steht nur der Anfang der Mail."
+  };
   var ERKLAERUNG = {
-    antworten: "Direkt an dich, noch keine Antwort von dir im Gespräch.",
-    termin: "Es geht um einen Termin – Zeit vorschlagen oder zusagen.",
-    pruefen: "Angebot, Rechnung oder Vertrag – prüfen und freigeben.",
-    verfolgen: "Von dir zur Nachverfolgung markiert.",
     nachfassen: "Deine Mail ist seit einigen Tagen ohne Rückmeldung – kurz nachhaken.",
     warten: "Noch frisch – Rückmeldung abwarten."
   };
@@ -128,6 +146,19 @@
       outlookLink(m, "kb-knopf kb-knopf--klein") + "</div></div></li>";
   }
 
+  function karte(m, nr) {
+    var a = m.analyse, html = '<li class="kb-karte" data-id="' + esc(m.id) + '">' +
+      '<div class="kb-karte-kopf"><span class="kb-nr">' + nr + '</span><div class="kb-karte-titel">' +
+      '<span class="kb-von">' + esc(B.absender(m)) + '</span><span class="kb-betreff">' + esc(m.subject || "(ohne Betreff)") + "</span></div>" +
+      '<span class="kb-zeit">' + zeit(m) + "</span></div>";
+    html += '<div class="kb-block"><p class="kb-label">' + (a ? "Worum es geht" : "Anfang der Mail") + "</p><p>" + esc(a ? a.zusammenfassung : m.bodyPreview) + "</p></div>";
+    html += '<div class="kb-block"><p class="kb-label">Vorschlag</p><p class="kb-vorschlag-text">' + esc(m.vorschlag.text) + "</p></div>";
+    if (a && a.entwurf) html += '<div class="kb-entwurf"><p class="kb-label">Antwortentwurf</p><pre>' + esc(a.entwurf) + "</pre></div>";
+    html += '<div class="kb-karte-fuss">' + B.badge(m.konto) + "<span>" + esc(m.grund) + '</span><button type="button" class="kb-ganz" aria-expanded="false">Ganze Mail</button>' +
+      outlookLink(m, "kb-oeffnen") + '</div><pre class="kb-text kb-text--ganz" data-kb-text hidden></pre></li>';
+    return html;
+  }
+
   function seite() {
     var t = TABS.filter(function (x) { return x.key === zustand.tab; })[0];
     var relUngelesen = daten.relevant.filter(function (m) { return !m.isRead && m.konto.key !== "kontakt"; }).length;
@@ -161,11 +192,14 @@
     if (!t.gruppen) return '<ul class="kb-liste">' + mails.slice(0, 120).map(zeileSeite).join("") + "</ul>";
     return t.gruppen.map(function (g) {
       var teil = mails.filter(function (m) { return m.vorschlag && m.vorschlag.art === g[0]; });
-      return teil.length ? '<p class="kb-gruppe">' + g[1] + " · " + teil.length + '</p><ul class="kb-liste">' + teil.map(zeileSeite).join("") + "</ul>" : "";
+      if (!teil.length) return "";
+      var kopf = '<p class="kb-gruppe">' + g[1] + " · " + teil.length + "</p>" + (t.karten && HINWEIS[g[0]] ? '<p class="kb-gruppe-hinweis">' + esc(HINWEIS[g[0]]) + "</p>" : "");
+      return kopf + (t.karten ? '<ol class="kb-karten">' + teil.map(function (m, i) { return karte(m, i + 1); }).join("") + "</ol>"
+                              : '<ul class="kb-liste">' + teil.map(zeileSeite).join("") + "</ul>");
     }).join("");
   }
 
-  function alleMails() { return daten.relevant.concat(daten.nichtRelevant, daten.warten); }
+  function alleMails() { return daten.handlung.concat(daten.relevant, daten.nichtRelevant, daten.warten); }
 
   function verdrahten() {
     var z = ziel();
@@ -191,6 +225,17 @@
   }
 
   function zeilenVerdrahten() {
+    ziel().querySelectorAll(".kb-karte .kb-ganz").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var li = b.closest(".kb-karte"), pre = li.querySelector("[data-kb-text]"), auf = pre.hidden;
+        pre.hidden = !auf; b.setAttribute("aria-expanded", auf ? "true" : "false"); b.textContent = auf ? "Mail ausblenden" : "Ganze Mail";
+        var m = alleMails().filter(function (x) { return x.id === li.getAttribute("data-id"); })[0];
+        if (auf && m) {
+          pre.textContent = m.volltext ? m.volltext.slice(0, 6000) : "Wird geladen …";
+          if (!m.volltext) B.volltext(m).then(function (t) { m.volltext = t; pre.textContent = t.slice(0, 6000); }).catch(function () { pre.textContent = m.bodyPreview; });
+        }
+      });
+    });
     ziel().querySelectorAll(".kb-mail > .kb-zeile").forEach(function (b) {
       b.addEventListener("click", function () {
         var li = b.parentNode, id = li.getAttribute("data-id"), auf = !li.classList.contains("offen");
