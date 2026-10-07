@@ -3,20 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Entw&uuml;rfe Dashboard &ndash; empiria</title>
-<meta name="description" content="Die Entwürfe des Dashboards im Überblick.">
+<title>Projekte &ndash; empiria</title>
+<meta name="description" content="Kontaktdatenbank – Prüfung der Excel-Struktur und Vorschlag für Supabase.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="/styles.css">
 <link rel="stylesheet" href="/assets/dashboard-nav.css">
-<style>
-.ed-gitter{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
-.ed-karte{display:flex;flex-direction:column;gap:8px;padding:24px;border-radius:18px;background:var(--grey-bg);color:var(--ink);text-decoration:none;transition:transform .15s ease,box-shadow .15s ease}
-.ed-karte:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.08)}
-.ed-karte .sn-tag{width:36px;height:36px;flex:none}
-.ed-karte b{font-family:var(--font-serif);font-weight:500;font-size:1.3rem;margin-top:6px}
-.ed-karte span.u{font-size:.92rem;color:var(--grey-70)}
-.db-leer{margin-top:28px;padding:40px;border-radius:18px;border:1.5px dashed #c8c4bf;color:var(--grey-70);max-width:720px}
-</style>
+<link rel="stylesheet" href="/assets/beta.css">
 </head>
 <body>
 
@@ -33,7 +25,7 @@
         <nav class="sn-panel" id="snPanel" aria-label="Seiten">
         <p class="sn-group">Strategie</p>
         <a href="/strategie/oekosystem.html" class="sn-link"><span class="sn-tag">&Ouml;S</span><span class="sn-txt"><b>&Ouml;kosystem</b><small>Schaltplan der Steuerungszentrale</small></span></a>
-        <div class="sn-sub"><a href="/strategie/entwuerfe-dashboard.html" class="sn-link" aria-current="page"><span class="sn-tag">ED</span><span class="sn-txt"><b>Entw&uuml;rfe Dashboard</b><small>Vier Entw&uuml;rfe im Vergleich</small></span></a><button class="sn-sub-toggle" type="button" aria-expanded="false" aria-controls="snKinderED" aria-label="Unterseiten anzeigen"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+        <div class="sn-sub"><a href="/strategie/entwuerfe-dashboard.html" class="sn-link"><span class="sn-tag">ED</span><span class="sn-txt"><b>Entw&uuml;rfe Dashboard</b><small>Vier Entw&uuml;rfe im Vergleich</small></span></a><button class="sn-sub-toggle" type="button" aria-expanded="false" aria-controls="snKinderED" aria-label="Unterseiten anzeigen"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
         <div class="sn-kinder" id="snKinderED">
           <a href="/strategie/dashboard.html" class="sn-link"><span class="sn-tag">SZ</span><span class="sn-txt"><b>Steuerungszentrale</b><small>Sechs Vorhaben als Kacheln</small></span></a>
           <a href="/strategie/dashboard-lage.html" class="sn-link"><span class="sn-tag">AL</span><span class="sn-txt"><b>Aktuelle Lage</b><small>Startklar, Eingang, Sparring</small></span></a>
@@ -49,7 +41,7 @@
           <a href="/strategie/korrespondenz-variante-c.html" class="sn-link"><span class="sn-tag">VC</span><span class="sn-txt"><b>Variante C: Entscheidungs-Sprint</b><small>Eine Mail nach der anderen – fürs iPhone</small></span></a>
           <a href="/strategie/korrespondenz-variante-e.html" class="sn-link"><span class="sn-tag">VE</span><span class="sn-txt"><b>Variante E: Liste und Detail</b><small>Zwei Spalten – für MacBook und iPad</small></span></a>
         </div>
-        <a href="/strategie/projekte.html" class="sn-link"><span class="sn-tag">PR</span><span class="sn-txt"><b>Projekte</b><small>Steckbrief, Timeline, Protokoll</small></span></a>
+        <a href="/strategie/projekte.html" class="sn-link" aria-current="page"><span class="sn-tag">PR</span><span class="sn-txt"><b>Projekte</b><small>Steckbrief, Timeline, Protokoll</small></span></a>
         <div class="sn-sub"><a href="/strategie/kontakte.html" class="sn-link"><span class="sn-tag">KT</span><span class="sn-txt"><b>Kontakte</b><small>Kontaktdatenbank (CRM)</small></span></a><button class="sn-sub-toggle" type="button" aria-expanded="false" aria-controls="snKinderKT" aria-label="Unterseiten anzeigen"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
         <div class="sn-kinder" id="snKinderKT">
           <a href="/strategie/kontaktdatenbank.html" class="sn-link"><span class="sn-tag">KD</span><span class="sn-txt"><b>Aufbau der Datenbank</b><small>Pr&uuml;fung und Struktur</small></span></a>
@@ -61,11 +53,14 @@
 </header>
 
 <main>
-  <section class="section section--eng"><div class="container">
-      <p class="kicker">Entwicklung</p>
-      <h1 class="h-serif">Entw&uuml;rfe <span class="hl">Dashboard.</span></h1>
-      <p class="lead" style="max-width:62ch">Vier Wege, dieselbe Lage zu zeigen &ndash; zum Vergleichen und Weiterdenken.</p>
-      <div class="ed-gitter"><a class="ed-karte" href="/strategie/dashboard.html"><span class="sn-tag">SZ</span><b>Steuerungszentrale</b><span class="u">Sechs Vorhaben als Kacheln</span></a><a class="ed-karte" href="/strategie/dashboard-lage.html"><span class="sn-tag">AL</span><b>Aktuelle Lage</b><span class="u">Startklar, Eingang, Sparring</span></a><a class="ed-karte" href="/strategie/dashboard-entwuerfe.html"><span class="sn-tag">EN</span><b>Entw&uuml;rfe I</b><span class="u">F&uuml;nf Haltungen, dieselben Daten</span></a><a class="ed-karte" href="/strategie/dashboard-entwuerfe-2.html"><span class="sn-tag">E2</span><b>Entw&uuml;rfe II</b><span class="u">F&uuml;nf Ordnungen f&uuml;r dieselbe Lage</span></a></div>
+  <section class="db"><div class="container">
+    <div class="db-kopf">
+      <div>
+        <p class="kicker">Steuerung</p>
+        <h1 class="h-serif"><span class="hl">Projekte.</span></h1>
+      </div>
+    </div>
+    <div data-projekte><div class="kb-laedt"><span></span><span></span></div></div>
   </div></section>
 </main>
 
@@ -77,6 +72,9 @@
 </footer>
 
 <script src="/script.js"></script>
+<script src="/assets/vendor/supabase.js"></script>
+<script src="/assets/db.js"></script>
+<script src="/assets/projekte-crm.js"></script>
 <script src="/assets/dashboard-nav.js"></script>
 </body>
 </html>
