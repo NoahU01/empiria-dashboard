@@ -31,6 +31,7 @@
     ]).then(function (r) {
       var p = r[0].data || [], nae = {};
       (r[1].data || []).forEach(function (e) { if (!nae[e.projekt_id]) nae[e.projekt_id] = e; });
+      var MARKEN = ["empiria", "sofort sichtbar", "Müller & Ströbel"];
       var kunde = p.filter(function (x) { return x.typ !== "intern"; }), intern = p.filter(function (x) { return x.typ === "intern"; });
       function name_(x) { return '<a class="kt3-p" href="#p=' + x.id + '">' + esc(x.name) + "</a>" + (x.status !== "läuft" ? ' <span class="pr-st ' + STATUS[x.status] + '">' + esc(x.status) + "</span>" : ""); }
       wurzel.innerHTML = '<div class="pr-zwei">' +
@@ -40,9 +41,12 @@
           return '<tr data-href="#p=' + x.id + '"><td>' + name_(x) + "</td><td>" + esc(x.organisationen ? x.organisationen.name : "") + "</td><td>" +
             (n ? kurz(n.datum) + '<br><span class="kt3-leise">' + esc(n.titel) + "</span>" : '<span class="kt3-leise">keiner geplant</span>') + "</td></tr>";
         }).join("") + "</tbody></table></section>" +
-        '<section><h2 class="pr-h2">Interne Projekte</h2><table class="kt3-tab pr-tab"><thead><tr><th>Projekt</th></tr></thead><tbody>' + (intern.length ? intern.map(function (x) {
-          return '<tr data-href="#p=' + x.id + '"><td>' + name_(x) + "</td></tr>";
-        }).join("") : '<tr><td class="kt3-leise">Noch keine internen Projekte.</td></tr>') + "</tbody></table></section></div>";
+        '<section><h2 class="pr-h2">Interne Projekte</h2>' + MARKEN.map(function (m) {
+          var l = intern.filter(function (x) { return (x.marke || "empiria") === m; });
+          return '<table class="kt3-tab pr-tab pr-marke"><thead><tr><th>' + esc(m) + "</th></tr></thead><tbody>" + (l.length ? l.map(function (x) {
+            return '<tr data-href="#p=' + x.id + '"><td>' + name_(x) + "</td></tr>";
+          }).join("") : '<tr><td class="kt3-leise">Noch keine internen Projekte.</td></tr>') + "</tbody></table>";
+        }).join("") + "</section></div>";
       wurzel.querySelectorAll("tr[data-href]").forEach(function (tr) { tr.onclick = function (e) { if (!e.target.closest("a")) location.hash = tr.getAttribute("data-href"); }; });
     });
   }

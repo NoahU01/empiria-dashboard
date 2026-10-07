@@ -755,3 +755,5 @@ body.kt3-detail .db-kopf { min-height: 0; }
   .pr-tl-inhalt > .tl-oben { flex: 0 0 auto; }
   .pr-tl-inhalt > .tl-oben-det { flex: 1; min-height: 0; height: auto; }
 }
+/* Interne Projekte: je Marke eine Tabelle */
+.pr-marke + .pr-marke { margin-top: 28px; }
