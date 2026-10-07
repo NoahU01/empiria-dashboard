@@ -513,7 +513,6 @@ nav.kt-tabs a[aria-current="page"] { background: var(--ink); color: #fff; }
 .kt3-pos { color: var(--ink-2); }
 .kt3-p, .kt3-f { color: var(--ink); text-decoration: none; } .kt3-p { font-weight: 500; }
 .kt3-p:hover, .kt3-f:hover { text-decoration: underline; text-underline-offset: 2px; }
-@media (max-width: 700px) { .kt3-tab th:nth-child(2), .kt3-tab td.kt3-pos:nth-child(2) { display: none; } }
 .kt3-kopf { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px 30px; margin-top: 6px; }
 .kt3-name { margin: 0; font-family: var(--font-serif); font-weight: 600; font-size: clamp(1.7rem, 4vw, 2.3rem); line-height: 1.15; }
 .kt3-sub { margin: 4px 0 0; color: var(--ink-2); } .kt3-sub a { color: var(--ink); }
@@ -557,3 +556,17 @@ body.kt3-detail .db-kopf { min-height: 0; }
 /* Kästen kurz, auf- und zuklappbar */
 .kt3-klapp { margin-top: 10px; border: 0; background: none; padding: 0; font-size: .84rem; font-weight: 500; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 .kt3-klapp::after { content: " ▾"; } .kt3-klapp[aria-expanded="true"]::after { content: " ▴"; }
+
+/* Kontakte – Spaltenbreiten */
+.kt3-tab--personen, .kt3-tab--firmen, .kt3-tab--klaer { table-layout: fixed; }
+.kt3-tab--personen .c-name { width: 26%; } .kt3-tab--personen .c-firma { width: 32%; } .kt3-tab--personen .c-pos { width: 24%; } .kt3-tab--personen .c-letzt { width: 18%; }
+.kt3-tab--firmen .c-firma { width: 40%; } .kt3-tab--firmen .c-leute { width: 40%; } .kt3-tab--firmen .c-letzt { width: 20%; }
+.kt3-tab--klaer .c-name { width: 26%; } .kt3-tab--klaer .c-firma { width: 32%; } .kt3-tab--klaer .c-text { width: 42%; }
+.kt3-letzt { white-space: nowrap; }
+.kt3-tab td { overflow-wrap: anywhere; }
+.kt3-tab--personen .kt3-pos { font-size: .84rem; color: var(--grey-70); }
+@media (max-width: 700px) {
+  .kt3-tab--personen .c-pos, .kt3-tab--personen th:nth-child(3), .kt3-tab--personen td:nth-child(3) { display: none; }
+  .kt3-tab--personen .c-name { width: 40%; } .kt3-tab--personen .c-firma { width: 35%; } .kt3-tab--personen .c-letzt { width: 25%; }
+  .kt3-letzt { white-space: normal; }
+}

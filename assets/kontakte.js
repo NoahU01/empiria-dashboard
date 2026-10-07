@@ -112,10 +112,11 @@
 
   function personenTabelle(liste) {
     if (!liste.length) return '<p class="kb-leer">Nichts gefunden.</p>';
-    return '<table class="kt3-tab"><thead><tr><th>Name</th><th>Position</th><th>Firma</th><th>Letzter Kontakt</th></tr></thead><tbody>' +
+    return '<table class="kt3-tab kt3-tab--personen"><colgroup><col class="c-name"><col class="c-firma"><col class="c-pos"><col class="c-letzt"></colgroup>' +
+      '<thead><tr><th>Name</th><th>Firma</th><th>Position</th><th>Letzter Kontakt</th></tr></thead><tbody>' +
       liste.slice(0, 300).map(function (k) {
         return '<tr data-href="#k=' + k.id + '"><td>' + lk(k) + (k.kontaktstopp ? ' <small class="kt-stopp">Stopp</small>' : "") +
-          '</td><td class="kt3-pos">' + esc(k.position || "") + "</td><td>" + lf(k.organisationen) + "</td><td>" + zuletzt(k.letzter_kontakt) + "</td></tr>";
+          "</td><td>" + lf(k.organisationen) + '</td><td class="kt3-pos">' + esc(k.position || "") + '</td><td class="kt3-letzt">' + zuletzt(k.letzter_kontakt) + "</td></tr>";
       }).join("") + "</tbody></table>";
   }
 
@@ -133,18 +134,20 @@
     var q = zustand.suche.toLowerCase();
     var liste = firmenListe().filter(function (f) { return !q || (f.org.name + " " + (f.org.gruppe || "")).toLowerCase().indexOf(q) > -1; })
       .sort(function (a, b) { return a.org.name.localeCompare(b.org.name, "de"); });
-    return '<table class="kt3-tab"><thead><tr><th>Firma</th><th>Wichtigste Personen</th><th>Letzter Kontakt</th></tr></thead><tbody>' + liste.map(function (f) {
+    return '<table class="kt3-tab kt3-tab--firmen"><colgroup><col class="c-firma"><col class="c-leute"><col class="c-letzt"></colgroup>' +
+      '<thead><tr><th>Firma</th><th>Wichtigste Personen</th><th>Letzter Kontakt</th></tr></thead><tbody>' + liste.map(function (f) {
       var top = f.leute.slice().sort(function (a, b) { return ebeneRang(a) - ebeneRang(b) || (a.prioritaet || "Z").localeCompare(b.prioritaet || "Z"); }).slice(0, 3);
       return '<tr data-href="#f=' + f.org.id + '"><td>' + lf(f.org) + (f.org.gruppe && f.org.gruppe !== f.org.name ? '<small class="kt3-leise kt3-block">' + esc(f.org.gruppe) + "</small>" : "") +
         "</td><td>" + top.map(function (k) { return lk(k) + (k.position ? ' <span class="kt3-leise">· ' + esc(k.position) + "</span>" : ""); }).join("<br>") +
-        "</td><td>" + zuletzt(f.letzt) + "</td></tr>";
+        '</td><td class="kt3-letzt">' + zuletzt(f.letzt) + "</td></tr>";
     }).join("") + "</tbody></table>";
   }
 
   function klaerHtml() {
     var p = alle.filter(function (k) { return k.klaeren; }).sort(nachNachname);
     if (!p.length) return '<p class="kb-leer">Keine Klärfälle.</p>';
-    return '<table class="kt3-tab"><thead><tr><th>Person</th><th>Firma</th><th>Zu klären</th></tr></thead><tbody>' + p.map(function (k) {
+    return '<table class="kt3-tab kt3-tab--klaer"><colgroup><col class="c-name"><col class="c-firma"><col class="c-text"></colgroup>' +
+      '<thead><tr><th>Person</th><th>Firma</th><th>Zu klären</th></tr></thead><tbody>' + p.map(function (k) {
       return '<tr data-href="#k=' + k.id + '"><td>' + lk(k) + "</td><td>" + lf(k.organisationen) + '</td><td class="kt3-pos">' + esc(k.klaeren) + "</td></tr>";
     }).join("") + "</tbody></table>";
   }
