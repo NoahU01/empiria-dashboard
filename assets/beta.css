@@ -1,0 +1,127 @@
+/* Dashboard Beta und Korrespondenz – zuerst fürs Telefon gebaut.
+   Positionen bleiben fest, die Inhalte in den Kacheln wechseln später.
+   Weiß als Grund, Schwarz und Gelb als Akzent (Corporate Design 2026). */
+
+.db { padding-block: 28px 72px; }
+.db-kopf { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; }
+.db-kopf .kicker { margin-bottom: .4rem; font-size: 1rem; color: var(--grey-50); }
+.db-kopf h1 { font-size: clamp(2rem, 6vw, 3rem); }
+.db-konto { display: flex; align-items: center; gap: 10px; font-size: .85rem; color: var(--grey-50); }
+.db-konto button { border: 0; background: none; padding: 0; font-size: inherit; color: var(--grey-50); text-decoration: underline; text-underline-offset: 2px; }
+.db-konto button:hover { color: var(--ink); }
+
+/* ---------- Statusleiste: klein, wischbar auf dem Telefon ---------- */
+.db-status { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 22px calc(-1 * var(--pad-x)) 0;
+             padding: 2px var(--pad-x) 4px; -webkit-overflow-scrolling: touch; }
+.db-status::-webkit-scrollbar { display: none; }
+.db-chip { flex: none; display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 12px; border-radius: 999px;
+           background: var(--grey-bg); font-size: .78rem; color: var(--ink-2); white-space: nowrap; text-decoration: none; }
+a.db-chip:hover { background: #e2e0dd; color: var(--ink); }
+.db-chip b { font-weight: 600; }
+.db-chip i { width: 7px; height: 7px; border-radius: 50%; background: #c8c4bf; flex: none; }
+.db-chip i.an { background: #2e9e5b; } .db-chip i.aus { background: #d0453b; }
+.db-chip--leer { background: none; box-shadow: inset 0 0 0 1px #d8d5d1; color: var(--grey-50); }
+.db-chip--trenn { background: none; padding: 0 2px 0 6px; color: var(--grey-50); font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; }
+
+/* ---------- Raster ---------- */
+.db-raster { display: grid; gap: 18px; margin-top: 22px; }
+@media (min-width: 960px) { .db-raster { grid-template-columns: 2fr 1fr; align-items: start; } }
+.db-seite { display: grid; gap: 18px; }
+
+.db-karte { background: #fff; border-radius: 20px; box-shadow: 0 0 0 1px #e9e7e4, 0 10px 30px rgba(0,0,0,.04); padding: 20px; }
+@media (min-width: 640px) { .db-karte { padding: 26px 28px; } }
+.db-karte--folgt { box-shadow: none; border: 1.5px dashed #cfcbc6; background: #fff; }
+.db-karte-kopf { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.db-karte-kopf h2 { font-family: var(--font-serif); font-weight: 600; font-size: 1.45rem; margin: 0; }
+.db-karte-kopf small { font-size: .8rem; color: var(--grey-50); white-space: nowrap; }
+.db-zahl { display: inline-flex; align-items: center; justify-content: center; min-width: 26px; height: 26px; padding: 0 8px; margin-left: 8px;
+           border-radius: 999px; background: var(--hl); font-family: var(--font-sans); font-size: .82rem; font-weight: 600; vertical-align: 3px; }
+.db-folgt { font-size: .9rem; color: var(--grey-50); margin: 0; }
+.db-folgt-zeilen { display: grid; gap: 8px; margin-top: 14px; }
+.db-folgt-zeilen span { height: 12px; border-radius: 6px; background: #f2f1ef; }
+.db-folgt-zeilen span:nth-child(2) { width: 78%; } .db-folgt-zeilen span:nth-child(3) { width: 56%; }
+
+.db-mehr { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; font-size: .9rem; font-weight: 500; color: var(--ink); text-decoration: none; }
+.db-mehr:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* Anmelden / Hinweise in der Kachel */
+.kb-hinweis { padding: 22px; border-radius: 14px; background: #f7f6f4; font-size: .92rem; color: var(--ink-2); }
+.kb-hinweis p { margin: 0 0 14px; }
+.kb-knopf { display: inline-flex; align-items: center; gap: 10px; height: 46px; padding: 0 20px; border: 0; border-radius: 999px;
+            background: var(--ink); color: #fff; font-size: .92rem; font-weight: 500; }
+.kb-knopf:hover { background: #000; }
+.kb-knopf svg { width: 16px; height: 16px; }
+.kb-fehler { margin-top: 12px; font-size: .78rem; color: var(--grey-50); }
+.kb-demo { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 6px; background: var(--hl); font-size: .72rem; font-weight: 600; color: var(--ink); vertical-align: 2px; }
+.kb-laedt { display: grid; gap: 10px; }
+.kb-laedt span { height: 64px; border-radius: 14px; background: linear-gradient(90deg, #f3f2f0 0%, #faf9f8 50%, #f3f2f0 100%); background-size: 200% 100%; animation: kbSchimmer 1.2s linear infinite; }
+@keyframes kbSchimmer { to { background-position: -200% 0; } }
+
+/* ---------- Mail-Zeilen (Kachel und Unterseite) ---------- */
+.kb-liste { list-style: none; margin: 0; padding: 0; }
+.kb-mail { position: relative; padding: 14px 0; }
+.kb-liste > li + li { box-shadow: inset 0 1px 0 #eeece9; }
+.kb-zeile { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; width: 100%; border: 0; background: none; padding: 0; text-align: left; color: inherit; }
+.kb-von { font-weight: 500; font-size: .95rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kb-mail.ungelesen .kb-von::before { content: ""; display: inline-block; width: 7px; height: 7px; margin: 0 7px 1px 0; border-radius: 50%; background: var(--ink); }
+.kb-zeit { font-size: .78rem; color: var(--grey-50); white-space: nowrap; }
+.kb-betreff { grid-column: 1 / -1; font-size: .92rem; color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kb-meta { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 6px; font-size: .78rem; color: var(--grey-50); }
+.kb-konto { display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 6px; font-size: .7rem; font-weight: 600; letter-spacing: .01em; white-space: nowrap; }
+.kb-konto--empiria { background: var(--ink); color: #fff; }
+.kb-konto--ss { background: var(--hl); color: var(--ink); }
+.kb-konto--ms { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.3px var(--ink); }
+.kb-konto--kontakt { background: var(--grey-bg); color: var(--ink-2); }
+.kb-oeffnen { font-size: .78rem; font-weight: 500; color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
+.kb-vorschlag { display: inline-flex; align-items: center; gap: 6px; font-weight: 500; color: var(--ink); }
+.kb-vorschlag::before { content: ""; width: 8px; height: 8px; transform: rotate(45deg); background: var(--hl); box-shadow: 0 0 0 1px var(--ink); }
+
+/* Aufgeklappt (Unterseite) */
+.kb-auf { display: none; margin-top: 12px; padding: 16px; border-radius: 14px; background: #f7f6f4; }
+.kb-mail.offen .kb-auf { display: block; }
+.kb-mail.offen .kb-betreff { white-space: normal; }
+.kb-an { font-size: .78rem; color: var(--grey-50); margin: 0 0 10px; }
+.kb-text { white-space: pre-wrap; font-size: .88rem; line-height: 1.6; color: var(--ink-2); max-height: 340px; overflow: auto; margin: 0; }
+.kb-schritt { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: 14px; padding-top: 14px; border-top: 1px solid #e6e3df; font-size: .85rem; }
+.kb-schritt small { color: var(--grey-50); }
+.kb-knopf--klein { height: 36px; padding: 0 14px; font-size: .82rem; text-decoration: none; }
+
+/* ---------- Unterseite Korrespondenz ---------- */
+.kb-zurueck { display: inline-flex; align-items: center; gap: 6px; font-size: .88rem; color: var(--grey-50); text-decoration: none; margin-bottom: 10px; }
+.kb-zurueck:hover { color: var(--ink); }
+.kb-zahlen { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 22px; }
+@media (min-width: 760px) { .kb-zahlen { grid-template-columns: repeat(4, 1fr); } }
+.kb-kachel { padding: 14px 16px; border-radius: 16px; background: var(--grey-bg); border: 0; text-align: left; color: var(--ink); }
+.kb-kachel b { display: block; font-family: var(--font-serif); font-size: 1.7rem; font-weight: 600; line-height: 1.1; }
+.kb-kachel span { font-size: .78rem; color: var(--grey-70); }
+.kb-kachel.aktiv { background: var(--ink); color: #fff; }
+.kb-kachel.aktiv span { color: #d6d3cf; }
+.kb-kachel.aktiv b { color: var(--hl); }
+
+.kb-tabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; margin: 26px calc(-1 * var(--pad-x)) 0; padding: 0 var(--pad-x); border-bottom: 1px solid #e6e3df; }
+.kb-tabs::-webkit-scrollbar { display: none; }
+.kb-tab { flex: none; border: 0; background: none; padding: 12px 12px 13px; font-size: .9rem; color: var(--grey-50); box-shadow: inset 0 -2px 0 transparent; }
+.kb-tab:hover { color: var(--ink); }
+.kb-tab[aria-selected="true"] { color: var(--ink); font-weight: 500; box-shadow: inset 0 -3px 0 var(--ink); }
+.kb-tab em { font-style: normal; margin-left: 4px; color: var(--grey-50); font-size: .8rem; }
+
+.kb-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 16px 0 6px; }
+.kb-filter button { height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: var(--grey-bg); font-size: .8rem; color: var(--ink-2); }
+.kb-filter button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+.kb-suche { flex: 1 1 200px; min-width: 0; height: 36px; padding: 0 14px; border: 1px solid #dedbd7; border-radius: 999px; font: inherit; font-size: .85rem; background: #fff; }
+.kb-suche:focus { outline: 2px solid var(--ink); outline-offset: 1px; }
+
+.kb-gruppe { margin: 26px 0 2px; display: flex; align-items: center; gap: 10px; font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: var(--grey-50); font-weight: 600; }
+.kb-gruppe::after { content: ""; flex: 1; height: 1px; background: #eeece9; }
+.kb-leer { padding: 28px 0; color: var(--grey-50); font-size: .92rem; }
+.kb-stand { margin-top: 24px; font-size: .76rem; color: var(--grey-50); }
+.kb-stand button { border: 0; background: none; padding: 0; font-size: inherit; color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+
+/* Breite Schirme: Statusleiste bricht um statt zu wischen */
+@media (min-width: 960px) { .db-status { flex-wrap: wrap; overflow: visible; margin-inline: 0; padding-inline: 0; } }
+.db-karte-kopf h2 { white-space: nowrap; }
+.kb-text { font-family: var(--font-sans); font-weight: 300; }
+@media (min-width: 960px) { .kb-tabs { margin-inline: 0; padding-inline: 0; } }
+.db-raster > * { min-width: 0; }
+.db-karte-kopf { flex-wrap: wrap; }
+.db-zahl:empty { display: none; }

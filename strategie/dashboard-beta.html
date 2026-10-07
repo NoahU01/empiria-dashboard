@@ -8,15 +8,7 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="/styles.css">
 <link rel="stylesheet" href="/assets/dashboard-nav.css">
-<style>
-.ed-gitter{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
-.ed-karte{display:flex;flex-direction:column;gap:8px;padding:24px;border-radius:18px;background:var(--grey-bg);color:var(--ink);text-decoration:none;transition:transform .15s ease,box-shadow .15s ease}
-.ed-karte:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.08)}
-.ed-karte .sn-tag{width:36px;height:36px;flex:none}
-.ed-karte b{font-family:var(--font-serif);font-weight:500;font-size:1.3rem;margin-top:6px}
-.ed-karte span.u{font-size:.92rem;color:var(--grey-70)}
-.db-leer{margin-top:28px;padding:40px;border-radius:18px;border:1.5px dashed #c8c4bf;color:var(--grey-70);max-width:720px}
-</style>
+<link rel="stylesheet" href="/assets/beta.css">
 </head>
 <body>
 
@@ -31,6 +23,7 @@
           <svg class="sn-chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <nav class="sn-panel" id="snPanel" aria-label="Seiten">
+        <p class="sn-group">Strategie</p>
         <a href="/strategie/oekosystem.html" class="sn-link"><span class="sn-tag">&Ouml;S</span><span class="sn-txt"><b>&Ouml;kosystem</b><small>Schaltplan der Steuerungszentrale</small></span></a>
         <div class="sn-sub"><a href="/strategie/entwuerfe-dashboard.html" class="sn-link"><span class="sn-tag">ED</span><span class="sn-txt"><b>Entw&uuml;rfe Dashboard</b><small>Vier Entw&uuml;rfe im Vergleich</small></span></a><button class="sn-sub-toggle" type="button" aria-expanded="false" aria-controls="snKinderED" aria-label="Unterseiten anzeigen"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
         <div class="sn-kinder" id="snKinderED">
@@ -39,7 +32,10 @@
           <a href="/strategie/dashboard-entwuerfe.html" class="sn-link"><span class="sn-tag">EN</span><span class="sn-txt"><b>Entw&uuml;rfe I</b><small>F&uuml;nf Haltungen, dieselben Daten</small></span></a>
           <a href="/strategie/dashboard-entwuerfe-2.html" class="sn-link"><span class="sn-tag">E2</span><span class="sn-txt"><b>Entw&uuml;rfe II</b><small>F&uuml;nf Ordnungen f&uuml;r dieselbe Lage</small></span></a>
         </div>
-        <a href="/strategie/dashboard-beta.html" class="sn-link" aria-current="page"><span class="sn-tag">DB</span><span class="sn-txt"><b>Dashboard Beta</b><small>Der Stand, der wirklich l&auml;uft</small></span></a>
+        <div class="sn-sub"><a href="/strategie/dashboard-beta.html" class="sn-link" aria-current="page"><span class="sn-tag">DB</span><span class="sn-txt"><b>Dashboard Beta</b><small>Der Stand, der wirklich l&auml;uft</small></span></a><button class="sn-sub-toggle" type="button" aria-expanded="false" aria-controls="snKinderDB" aria-label="Unterseiten anzeigen"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+        <div class="sn-kinder" id="snKinderDB">
+          <a href="/strategie/korrespondenz-beta.html" class="sn-link"><span class="sn-tag">KO</span><span class="sn-txt"><b>Korrespondenz</b><small>Alle Konten, nach Handlungsbedarf</small></span></a>
+        </div>
         </nav>
       </div>
     </div>
@@ -47,11 +43,53 @@
 </header>
 
 <main>
-  <section class="section section--eng"><div class="container">
-      <p class="kicker">Dashboard</p>
-      <h1 class="h-serif">Dashboard <span class="hl">Beta.</span></h1>
-      <p class="lead" style="max-width:62ch">Hier entsteht das Dashboard, mit dem wir wirklich arbeiten &ndash; Schritt f&uuml;r Schritt, mit echten Daten.</p>
-      <div class="db-leer">Noch leer. Die ersten Bausteine kommen hierher, sobald wir sie gemeinsam festgelegt haben.</div>
+  <section class="db"><div class="container">
+    <div class="db-kopf">
+      <div>
+        <p class="kicker" data-db-datum>Dashboard Beta</p>
+        <h1 class="h-serif">Guten Tag, <span class="hl">Daniel.</span></h1>
+      </div>
+      <div class="db-konto" data-kb-konto></div>
+    </div>
+
+    <!-- Statusleiste: Platzhalter, bis die Anbindungen stehen -->
+    <div class="db-status" aria-label="Status">
+      <span class="db-chip db-chip--leer" title="Platzhalter – Anbindung folgt"><i></i>Linked Helper <b>&ndash;</b></span>
+      <span class="db-chip db-chip--leer" title="Platzhalter – Anbindung folgt"><i></i>Kampagne <b>&ndash;</b></span>
+      <span class="db-chip db-chip--leer" title="Platzhalter – Anbindung folgt">LinkedIn Follower <b>&ndash;</b></span>
+      <span class="db-chip db-chip--leer" title="Platzhalter – Anbindung folgt">LinkedIn Kontakte <b>&ndash;</b></span>
+      <a class="db-chip db-chip--leer" href="/strategie/korrespondenz-beta.html#relevant/kontakt" data-kb-kontakt><i></i>kontakt@ <b>&ndash;</b></a>
+      <span class="db-chip db-chip--trenn">Projekte</span>
+      <span class="db-chip">SV Akademie</span>
+      <span class="db-chip">SV Schadenmanagement</span>
+      <span class="db-chip">MSP Digitaler Vertrieb</span>
+      <span class="db-chip">MSP Landing Page</span>
+      <span class="db-chip">VVDE Strategie</span>
+    </div>
+
+    <div class="db-raster">
+      <article class="db-karte" data-kb="kachel">
+        <div class="db-karte-kopf">
+          <h2>Korrespondenz<span class="db-zahl" data-kb-anzahl></span></h2>
+          <small>Handlungsbedarf</small>
+        </div>
+        <div data-kb-inhalt></div>
+        <a class="db-mehr" href="/strategie/korrespondenz-beta.html">Alle Mails ansehen <span aria-hidden="true">&rarr;</span></a>
+      </article>
+
+      <div class="db-seite">
+        <article class="db-karte db-karte--folgt">
+          <div class="db-karte-kopf"><h2>Termine</h2><small>folgt</small></div>
+          <p class="db-folgt">Die n&auml;chsten Termine aus dem Kalender.</p>
+          <div class="db-folgt-zeilen" aria-hidden="true"><span></span><span></span><span></span></div>
+        </article>
+        <article class="db-karte db-karte--folgt">
+          <div class="db-karte-kopf"><h2>Aufgaben</h2><small>folgt</small></div>
+          <p class="db-folgt">Offene Aufgaben &ndash; aus dem Auftragskasten Assistenz.</p>
+          <div class="db-folgt-zeilen" aria-hidden="true"><span></span><span></span><span></span></div>
+        </article>
+      </div>
+    </div>
   </div></section>
 </main>
 
@@ -64,5 +102,13 @@
 
 <script src="/script.js"></script>
 <script src="/assets/dashboard-nav.js"></script>
+<script src="/assets/vendor/msal-browser.min.js"></script>
+<script src="/assets/beta-mail.js"></script>
+<script src="/assets/beta-seiten.js"></script>
+<script>
+  (function () { var d = document.querySelector("[data-db-datum]"); var h = new Date().getHours();
+    d.textContent = new Date().toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" });
+    document.querySelector(".db-kopf h1").innerHTML = (h < 11 ? "Guten Morgen, " : h < 18 ? "Guten Tag, " : "Guten Abend, ") + '<span class="hl">Daniel.</span>'; })();
+</script>
 </body>
 </html>

@@ -44,6 +44,11 @@
       "source": "/beta",
       "destination": "/strategie/dashboard-beta.html",
       "permanent": false
+    },
+    {
+      "source": "/korrespondenz",
+      "destination": "/strategie/korrespondenz-beta.html",
+      "permanent": false
     }
   ]
 }

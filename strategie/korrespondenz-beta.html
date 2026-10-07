@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Meilensteine &middot; empiria</title>
-<meta name="description" content="Meilensteine auf dem Weg zum Zielbild.">
+<title>Korrespondenz &ndash; Dashboard Beta</title>
+<meta name="description" content="Korrespondenz – alle Konten, nach Handlungsbedarf.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="/styles.css">
-<link rel="stylesheet" href="/assets/projekte/projekte.css">
 <link rel="stylesheet" href="/assets/dashboard-nav.css">
+<link rel="stylesheet" href="/assets/beta.css">
 </head>
 <body>
 
@@ -34,7 +34,7 @@
         </div>
         <div class="sn-sub"><a href="/strategie/dashboard-beta.html" class="sn-link"><span class="sn-tag">DB</span><span class="sn-txt"><b>Dashboard Beta</b><small>Der Stand, der wirklich l&auml;uft</small></span></a><button class="sn-sub-toggle" type="button" aria-expanded="false" aria-controls="snKinderDB" aria-label="Unterseiten anzeigen"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
         <div class="sn-kinder" id="snKinderDB">
-          <a href="/strategie/korrespondenz-beta.html" class="sn-link"><span class="sn-tag">KO</span><span class="sn-txt"><b>Korrespondenz</b><small>Alle Konten, nach Handlungsbedarf</small></span></a>
+          <a href="/strategie/korrespondenz-beta.html" class="sn-link" aria-current="page"><span class="sn-tag">KO</span><span class="sn-txt"><b>Korrespondenz</b><small>Alle Konten, nach Handlungsbedarf</small></span></a>
         </div>
         </nav>
       </div>
@@ -43,62 +43,17 @@
 </header>
 
 <main>
-
-  <section class="hero pj-hero">
-    <div class="container">
-      <div class="hero-grid">
-        <div class="hero-head">
-          <p class="kicker">Strategie &middot; empiria</p>
-          <h1 class="h-serif">Die Schritte <span class="hl">dorthin.</span></h1>
-        </div>
-        <div class="hero-copy lead">
-          <p>Der Weg zum Zielbild in Wegmarken: was bis wann steht, wer es verantwortet und woran man erkennt, dass eine Marke erreicht ist.</p>
-        </div>
+  <section class="db"><div class="container">
+    <a class="kb-zurueck" href="/strategie/dashboard-beta.html"><span aria-hidden="true">&larr;</span> Dashboard Beta</a>
+    <div class="db-kopf">
+      <div>
+        <p class="kicker">Alle Konten &middot; letzte 30 Tage</p>
+        <h1 class="h-serif"><span class="hl">Korrespondenz.</span></h1>
       </div>
+      <div class="db-konto" data-kb-konto></div>
     </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <div class="pj-kopfzeile">
-        <p class="kicker">Die Wegmarken</p>
-        <h2 class="h-serif">Was sind die <span class="hl">Schritte?</span></h2>
-        <p class="lead">Wenige Marken mit einem klaren Ergebnis sind mehr wert als ein voller Plan, den niemand mehr liest.</p>
-      </div>
-      <div style="margin-top:clamp(26px,3.2vw,40px)">
-      <div class="formate-accordion">
-        <details class="formate-acc-item formate-acc--magenta" name="bst-meilensteine" open>
-          <summary><span>Dieses Jahr</span></summary>
-          <div class="formate-acc-body">
-            <p>Noch offen &ndash; was bis zum 31.12. stehen soll.</p>
-          </div>
-        </details>
-
-        <details class="formate-acc-item formate-acc--violet" name="bst-meilensteine">
-          <summary><span>Erstes Halbjahr 2027</span></summary>
-          <div class="formate-acc-body">
-            <p>Noch offen &ndash; die Schritte, die auf dem aufsetzen, was dieses Jahr fertig wird.</p>
-          </div>
-        </details>
-
-        <details class="formate-acc-item formate-acc--cyan" name="bst-meilensteine">
-          <summary><span>Zweites Halbjahr 2027</span></summary>
-          <div class="formate-acc-body">
-            <p>Noch offen &ndash; was erst sinnvoll ist, wenn das Vorherige steht.</p>
-          </div>
-        </details>
-
-        <details class="formate-acc-item formate-acc--emerald" name="bst-meilensteine">
-          <summary><span>Daueraufgaben</span></summary>
-          <div class="formate-acc-body">
-            <p>Noch offen &ndash; was nie fertig wird, aber regelm&auml;&szlig;ig Aufmerksamkeit braucht.</p>
-          </div>
-        </details>
-      </div>
-      </div>
-    </div>
-  </section>
-
+    <div data-kb="seite"><div data-kb-inhalt></div></div>
+  </div></section>
 </main>
 
 <footer class="site-footer">
@@ -110,5 +65,8 @@
 
 <script src="/script.js"></script>
 <script src="/assets/dashboard-nav.js"></script>
+<script src="/assets/vendor/msal-browser.min.js"></script>
+<script src="/assets/beta-mail.js"></script>
+<script src="/assets/beta-seiten.js"></script>
 </body>
 </html>
