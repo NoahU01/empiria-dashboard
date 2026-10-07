@@ -59,7 +59,9 @@
         return konto;
       });
   }
-  function anmelden() { if (pca) pca.loginRedirect({ scopes: SCOPES, prompt: "select_account" }); }
+  // Direkt zum empiria-Firmenkonto: Zur Adresse gibt es auch ein privates Microsoft-Konto,
+  // das sonst (z. B. auf dem iPad) gewählt wird und dann mit AADSTS50020 scheitert.
+  function anmelden() { if (pca) pca.loginRedirect({ scopes: SCOPES, domainHint: "empiria.de", loginHint: "daniel.stroebel@empiria.de" }); }
   function abmelden() { if (pca) pca.logoutRedirect({ account: konto, postLogoutRedirectUri: location.href }); }
 
   function token() {
