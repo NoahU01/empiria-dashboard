@@ -668,3 +668,17 @@ body.kt3-detail .db-kopf { min-height: 0; }
 .pr-aufgaben .pr-auf-details { padding-left: 114px; }
 .pr-aufgaben .pr-neu { flex-wrap: wrap; } .pr-aufgaben .pr-neu input[data-titel] { flex: 1 1 100%; }
 @media (max-width: 600px) { .pr-aufgaben .pr-auf-zeile { grid-template-columns: 28px minmax(0, 1fr); } .pr-aufgaben .pr-wer, .pr-aufgaben .pr-frist { grid-column: 2; } .pr-aufgaben .pr-auf-details { padding-left: 36px; } }
+/* Projekte: obere Kästen flach mit Innen-Scroll, Beteiligte 2/3 – Team 1/3 */
+@media (min-width: 900px) {
+  .pr-kurs, .pr-aufgaben { height: 300px; display: flex; flex-direction: column; }
+  .pr-kurs > ul, .pr-kurs > p, .pr-aufgaben > ul, .pr-aufgaben > p { flex: 1; min-height: 0; overflow-y: auto; margin-right: -6px; padding-right: 6px; }
+  .pr-kurs > ul { padding-left: 1.3em; }
+  .pr-kurs .pr-ueb { flex: 1; min-height: 0; }
+}
+.pr-aufgaben .pr-neu { margin-top: 8px; padding-top: 8px; border-top: 1px solid #f2f1ef; flex-wrap: nowrap; }
+.pr-aufgaben .pr-neu input[data-titel] { flex: 1 1 auto; } .pr-aufgaben .kt3-neu input.pr-wer-feld { flex: 0 0 90px; } .pr-aufgaben .kt3-neu input.pr-frist-feld { flex: 0 0 130px; }
+@media (max-width: 600px) { .pr-aufgaben .pr-neu { flex-wrap: wrap; } .pr-aufgaben .pr-neu input[data-titel] { flex: 1 1 100%; } }
+.pr-bet-zeile { display: grid; gap: 14px; } @media (min-width: 900px) { .pr-bet-zeile { grid-template-columns: 2fr 1fr; } }
+.pr-bet-zeile .kt3-box:first-child .pr-bet { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; }
+.pr-bet-zeile .kt3-box:first-child .pr-bet li:nth-child(2) { border-top: 0; }
+@media (max-width: 700px) { .pr-bet-zeile .kt3-box:first-child .pr-bet { grid-template-columns: 1fr; } }
