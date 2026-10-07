@@ -653,3 +653,10 @@ body.kt3-detail .db-kopf { min-height: 0; }
 .pr-frist-feld { flex: 0 0 150px; height: 36px; padding: 0 10px; border: 1px solid #dedbd7; border-radius: 10px; font: inherit; font-size: .85rem; }
 .kt3-neu input.pr-frist-feld { flex: 0 0 150px; } .kt3-neu input.pr-wer-feld { flex: 0 0 140px; }
 .pr-ueb-box summary .kt3-leise { font-size: .8rem; }
+/* Timeline: feste Höhe, damit beim Wechsel des Termins nichts springt */
+@media (min-width: 900px) {
+  .pr-tl2 { height: 540px; align-items: stretch; }
+  .pr-tl2-liste { max-height: none; height: 100%; }
+  .pr-tl2-detail { position: static; height: 100%; min-height: 0; overflow-y: auto; }
+}
+@media (max-width: 899px) { .pr-tl2-liste { max-height: 320px; } .pr-tl2-detail { height: 420px; overflow-y: auto; } }
