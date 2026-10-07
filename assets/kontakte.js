@@ -178,7 +178,7 @@
       var td = aufgaben.filter(function (a) { return a.organisation_id === id || (a.kontakt_id && ids.indexOf(a.kontakt_id) > -1); });
       h += box("Nächste Schritte", td.length ? '<ul class="kt3-todo">' + td.map(function (a) {
           return '<li data-a="' + a.id + '"><button type="button" class="st-haken" aria-label="Erledigt"></button><span>' + esc(a.titel) + (a.kontakte ? ' <span class="kt3-leise">· ' + esc(name(a.kontakte)) + "</span>" : "") + "</span></li>"; }).join("") + "</ul>" : "",
-        "Nichts offen.", '<form class="kt3-neu" data-neu-todo data-org="' + id + '"><input type="text" placeholder="Nächsten Schritt notieren …"><button type="submit">+</button></form>');
+        "Nichts offen.");
       var news = meld.filter(function (m) { return m.art === "Meldung"; }), anl = meld.filter(function (m) { return m.art === "Anlass"; });
       h += '<section class="kt3-box kt3-breit"><h3>Was gerade passiert</h3>' + (news.length ? '<ul class="kt3-news">' + news.map(function (m, i) {
           return "<li" + (i >= 3 ? " hidden data-mehr" : "") + '><span class="kt3-d">' + (/^\d{4}-\d{2}-\d{2}$/.test(m.datum || "") ? datum(m.datum) : esc(m.datum || "")) + "</span><div>" +
@@ -264,7 +264,7 @@
       "Noch keine Ansatzpunkte erfasst.");
     h += box("Nächste Schritte", todos.length ? '<ul class="kt3-todo">' + todos.map(function (a) {
         return '<li data-a="' + a.id + '"><button type="button" class="st-haken" aria-label="Erledigt"></button><span>' + esc(a.titel) + "</span></li>"; }).join("") + "</ul>" : "",
-      "Nichts offen.", '<form class="kt3-neu" data-neu-todo data-kontakt="' + k.id + '"><input type="text" placeholder="Nächsten Schritt notieren …"><button type="submit">+</button></form>');
+      "Nichts offen.");
     var akt = einmal((k.aktivitaeten || []).slice().sort(function (a, b) { return new Date(b.datum) - new Date(a.datum); }));
     h += box("Termine", liste(akt.filter(istTermin)), "Keine Termine erfasst.");
     h += box("Kommunikation", liste(akt.filter(function (a) { return !istTermin(a); })), "Noch nichts erfasst – einfach diktieren, z. B. „Habe heute mit " + esc(k.vorname || name(k)) + " telefoniert …“.");
@@ -303,20 +303,6 @@
     });
   }
   function neuTodoVerdrahten() {
-    wurzel.querySelectorAll("[data-neu-todo]").forEach(function (f) {
-      f.addEventListener("submit", function (e) {
-        e.preventDefault();
-        var t = f.querySelector("input").value.trim(); if (!t) return;
-        var zeile = { titel: t, bereich: "Kontakte" };
-        if (f.getAttribute("data-kontakt")) zeile.kontakt_id = +f.getAttribute("data-kontakt");
-        if (f.getAttribute("data-org")) zeile.organisation_id = +f.getAttribute("data-org");
-        f.classList.add("laedt");
-        db.from("aufgaben").insert(zeile).then(function (r) {
-          if (r.error) { f.classList.remove("laedt"); alert("Nicht gespeichert: " + r.error.message); return; }
-          db.from("aufgaben").select(AUFGABEN_FELDER).eq("status", "offen").order("angelegt_am").then(function (a) { aufgaben = a.data || aufgaben; route(); });
-        });
-      });
-    });
   }
 
   /* ---------- To-dos ---------- */

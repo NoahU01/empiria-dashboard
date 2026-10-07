@@ -109,7 +109,7 @@
     // Links: Stoßrichtung (Gesamtblick über alle Termine) – rechts: Aufgaben
     var punkte = (p.ueberlegungen || "").split("\n").map(function (x) { return x.trim(); }).filter(Boolean);
     h += '<section class="kt3-box kt3-breit pr-kurs pr-kurs-breit"><h3>Stoßrichtung</h3>' + (punkte.length ? '<ul data-ueb-text>' + punkte.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"
-        : '<p class="kt3-leise" data-ueb-text>Noch keine Stoßrichtung – diktiere sie mir oder trage sie ein.</p>') +
+        : '<p data-ueb-text><span class="pr-offen">Noch keine Stoßrichtung – bitte diktieren.</span></p>') +
       '<textarea class="pr-ueb" data-ueb hidden placeholder="Ein Punkt pro Zeile">' + esc(p.ueberlegungen || "") + '</textarea><div class="pr-ueb-knoepfe"><button type="button" class="kt3-klapp" data-ueb-bearbeiten>Bearbeiten</button>' +
       '<button type="button" class="pr-speichern" data-ueb-speichern hidden>Speichern</button></div></section>';
     // Aufgaben: immer mit Frist, nach Datum
@@ -181,6 +181,10 @@
           return "<h4>" + esc(z.titel) + "</h4>" + (z.text ? "<p>" + esc(z.text) + "</p>" : "") +
             ((z.punkte || []).length ? "<ul>" + z.punkte.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "");
         }).join("") + "</div></section>";
+    } else {
+      // Kein Projektziel: trotzdem zeigen – deutlich als offen markiert
+      h += '<section class="kt3-box kt3-breit pr-ziel pr-ziel-leer"><div class="pr-ziel-kopf"><h3>Projektziel</h3>' +
+        '<span class="pr-offen">Noch kein Projektziel – bitte diktieren.</span></div></section>';
     }
     // Beteiligte
     function seite(s) {
@@ -219,10 +223,14 @@
     modul("kurs", "Stoßrichtung", "Wohin wir das Projekt steuern.", [kurs]);
     modul("auf", "Aufgaben", "Was als Nächstes ansteht.", [auf]);
     modul("tl", "Timeline", "Termine mit Protokoll, Entscheidungen und Aufgaben.", [tl]);
-    if (ziel) {
-      var det = ziel.querySelector(".pr-ziel-det"); det.hidden = false;
-      modul("ziel", "Projektziel", p.ziel || "", [det]); ziel.remove();
+    var det = ziel && ziel.querySelector(".pr-ziel-det");
+    if (det) { det.hidden = false; modul("ziel", "Projektziel", p.ziel || "", [det]); }
+    else {
+      var leer = document.createElement("p"); leer.innerHTML = '<span class="pr-offen">Noch kein Projektziel – bitte diktieren.</span>';
+      modul("ziel", "Projektziel", "Noch nicht definiert", [leer]);
+      liste.lastChild.classList.add("pr-modul-offen");
     }
+    if (ziel) ziel.remove();
     modul("team", "Projektteam", "Beteiligte beim Kunden und Team empiria.", [team]);
     r.innerHTML = ""; r.appendChild(liste);
   }

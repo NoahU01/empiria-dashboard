@@ -922,3 +922,13 @@ main.pr-look-grau .pr-kb-spalte { background: #f4f2ef; }
 .ab-filter .ab-marke-knopf[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--hl, #fff400); }
 @media (max-width: 700px) { .ab-filter .ab-marke-knopf { min-width: 0; } }
 .ab-filter .ab-marke { min-width: 150px; }
+/* Abstand zwischen gelb hinterlegter Überschrift und den Reitern/Filtern darunter */
+[data-kontakte] nav.kt-tabs { margin-top: 30px; }
+.ab-filter { margin-top: 26px; }
+/* Offene Pflichtangaben (z. B. Projektziel fehlt): deutlich, aber ruhig markiert */
+.pr-offen { display: inline-block; padding: 2px 10px; border-radius: 6px; background: #fff8bf; font-size: .86rem; font-weight: 500; color: #6b5a00; }
+.pr-ziel-leer .pr-ziel-kopf { cursor: default; }
+.pr-module .pr-modul-offen .fl-kopf-text small { display: inline-block; margin-top: 4px; padding: 1px 8px; border-radius: 6px; background: #fff8bf; color: #6b5a00; font-weight: 500; }
+main.pr-look-schwarz .pr-ziel-leer .pr-ziel-kopf { background: var(--ink); color: #fff; border-radius: 16px; }
+main.pr-look-schwarz .pr-ziel-leer .pr-ziel-kopf h3 { display: flex; align-items: center; gap: 12px; color: #fff; }
+main.pr-look-schwarz .pr-ziel-leer .pr-ziel-kopf h3::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--hl, #fff400); }
