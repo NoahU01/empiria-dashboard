@@ -682,3 +682,7 @@ body.kt3-detail .db-kopf { min-height: 0; }
 .pr-bet-zeile .kt3-box:first-child .pr-bet { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; }
 .pr-bet-zeile .kt3-box:first-child .pr-bet li:nth-child(2) { border-top: 0; }
 @media (max-width: 700px) { .pr-bet-zeile .kt3-box:first-child .pr-bet { grid-template-columns: 1fr; } }
+/* Beteiligte und Team wieder halb/halb, je eine Spalte */
+@media (min-width: 900px) { .pr-bet-zeile { grid-template-columns: 1fr 1fr; } }
+.pr-bet-zeile .kt3-box:first-child .pr-bet { display: block; }
+.pr-bet-zeile .kt3-box:first-child .pr-bet li:nth-child(2) { border-top: 1px solid #f2f1ef; }
