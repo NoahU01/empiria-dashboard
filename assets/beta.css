@@ -829,3 +829,13 @@ main.pr-look-sva { background: #f4f2ef; }
 .pr-module .pr-ziel-det h4:first-child { margin-top: 0; }
 .pr-module .pr-bet-zeile { margin-top: 0; column-gap: 40px; }
 .pr-module .fl-kopf-nr { min-width: 1.6em; }
+/* Aufgaben: Details ohne Kasten, Dreieck rechts wie in der Timeline */
+.pr-auf-titel { position: relative; width: 100%; font-size: .92rem; }
+button.pr-auf-titel { padding-right: 34px; cursor: pointer; }
+span.pr-auf-titel { cursor: default; }
+span.pr-auf-titel:hover span, button.pr-auf-titel:hover span { text-decoration: none; }
+.pr-auf-titel .tl-dreieck { top: 50%; right: 8px; margin-top: -7px; }
+.pr-auf-titel[aria-expanded="true"] .tl-dreieck { transform: rotate(-135deg); margin-top: -2px; }
+.pr-auf-details p { margin: 0; font-size: .88rem; font-weight: 300; line-height: 1.55; color: var(--ink-2); }
+.pr-auf-details { padding-top: 0; }
+@media (min-width: 601px) { .pr-aufgaben .pr-auf-details { padding-left: 122px; padding-right: 34px; } }

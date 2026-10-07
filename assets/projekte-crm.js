@@ -117,9 +117,10 @@
       var ueber = a.faellig_am && new Date(a.faellig_am) < new Date(new Date().toDateString());
       return '<li data-a="' + a.id + '"><div class="pr-auf-zeile"><button type="button" class="st-haken" aria-label="Erledigt"></button>' +
         '<span class="pr-frist' + (ueber ? " pr-ueber" : "") + '">' + (a.faellig_am ? kurz(a.faellig_am) : "ohne Termin") + "</span>" +
-        '<button type="button" class="pr-auf-titel" data-auf-auf aria-expanded="false"><span>' + esc(a.titel) + "</span>" + (a.beschreibung ? '<i class="pr-hat-details" title="Details vorhanden"></i>' : "") + "</button>" +
+        (a.beschreibung ? '<button type="button" class="pr-auf-titel" data-auf-auf aria-expanded="false"><span>' + esc(a.titel) + '</span><span class="tl-dreieck" aria-hidden="true"></span></button>'
+          : '<span class="pr-auf-titel">' + esc(a.titel) + "</span>") +
         '<span class="pr-wer">' + esc(wer(a) || "offen") + "</span></div>" +
-        '<div class="pr-auf-details" hidden><textarea data-det placeholder="Details, Hintergrund, Links …">' + esc(a.beschreibung || "") + '</textarea><button type="button" class="pr-speichern" data-det-speichern hidden>Speichern</button></div></li>';
+        (a.beschreibung ? '<div class="pr-auf-details" hidden><p>' + esc(a.beschreibung).replace(/\n/g, "<br>") + "</p></div>" : "") + "</li>";
       }).join("") + "</ul>" : '<p class="kt3-leise">Nichts offen.</p>') + "</section>";
     // Timeline: drei Darstellungen zum Vergleich – ohne äußeren Kasten, mit viel Luft
     var jetzt = Date.now(), tlv = "seite";
@@ -219,11 +220,10 @@
     });
     if (aufklappen) wurzel.querySelectorAll(".tl-auf [data-ev].an").forEach(function (x) { x.classList.remove("an"); });
     var an = wurzel.querySelector("[data-ev].an"); if (an && !aufklappen) detailEreignis(+an.getAttribute("data-ev"));
+    // Aufgaben mit Details: Dreieck wie in der Timeline, klappt ohne Kasten nach unten auf
     wurzel.querySelectorAll("[data-auf-auf]").forEach(function (b) {
-      var li = b.closest("li"), det = li.querySelector(".pr-auf-details"), ta = det.querySelector("textarea"), sp = det.querySelector("[data-det-speichern]");
+      var det = b.closest("li").querySelector(".pr-auf-details");
       b.onclick = function () { det.hidden = !det.hidden; b.setAttribute("aria-expanded", String(!det.hidden)); };
-      ta.oninput = function () { sp.hidden = false; };
-      sp.onclick = function () { sp.disabled = true; db.from("aufgaben").update({ beschreibung: ta.value }).eq("id", +li.getAttribute("data-a")).then(function (r) { sp.disabled = false; if (r.error) alert(r.error.message); else sp.hidden = true; }); };
     });
     var ta = wurzel.querySelector("[data-ueb]"), sp = wurzel.querySelector("[data-ueb-speichern]"), bt = wurzel.querySelector("[data-ueb-bearbeiten]"), tx = wurzel.querySelector("[data-ueb-text]");
     bt.onclick = function () { ta.hidden = false; tx.hidden = true; bt.hidden = true; sp.hidden = false; ta.focus(); };
