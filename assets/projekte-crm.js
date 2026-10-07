@@ -85,15 +85,16 @@
        '<span class="pr-st ' + STATUS[p.status] + '">' + esc(p.status) + "</span>"].filter(Boolean).join(" · ") + "</p>" +
       (p.thema ? '<p class="pr-thema">' + esc(p.thema) + "</p>" : "") + "</div></div>";
     h += '<div class="kt3-raster">';
-    // Überlegungen: lesbar, aufklappbar, Bearbeiten auf Klick
-    h += '<details class="kt3-box kt3-breit pr-ueb-box"><summary><h3>Überlegungen</h3><span class="kt3-leise">' + (p.ueberlegungen ? "aufklappen" : "noch leer") + "</span></summary>" +
-      '<div class="pr-ueb-text" data-ueb-text>' + (p.ueberlegungen ? esc(p.ueberlegungen).split(/\n+/).map(function (x) { return "<p>" + x + "</p>"; }).join("") : '<p class="kt3-leise">Noch keine Überlegungen.</p>') + "</div>" +
-      '<textarea class="pr-ueb" data-ueb hidden>' + esc(p.ueberlegungen || "") + '</textarea><div class="pr-ueb-knoepfe"><button type="button" class="kt3-klapp" data-ueb-bearbeiten>Bearbeiten</button>' +
-      '<button type="button" class="pr-speichern" data-ueb-speichern hidden>Speichern</button></div></details>';
+    // Links: Stoßrichtung (Gesamtblick über alle Termine) – rechts: Aufgaben
+    var punkte = (p.ueberlegungen || "").split("\n").map(function (x) { return x.trim(); }).filter(Boolean);
+    h += '<section class="kt3-box pr-kurs"><h3>Stoßrichtung</h3>' + (punkte.length ? '<ul data-ueb-text>' + punkte.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"
+        : '<p class="kt3-leise" data-ueb-text>Noch keine Stoßrichtung – diktiere sie mir oder trage sie ein.</p>') +
+      '<textarea class="pr-ueb" data-ueb hidden placeholder="Ein Punkt pro Zeile">' + esc(p.ueberlegungen || "") + '</textarea><div class="pr-ueb-knoepfe"><button type="button" class="kt3-klapp" data-ueb-bearbeiten>Bearbeiten</button>' +
+      '<button type="button" class="pr-speichern" data-ueb-speichern hidden>Speichern</button></div></section>';
     // Aufgaben: immer mit Frist, nach Datum
     var offen = auf.filter(function (a) { return a.status === "offen"; }).sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });
     var namen = ["Daniel"].concat(bet.map(function (b) { return b.name || name(b.kontakte); })).filter(function (x, i, l) { return x && l.indexOf(x) === i; });
-    h += '<section class="kt3-box kt3-breit"><h3>Aufgaben</h3>' + (offen.length ? '<ul class="pr-auf2">' + offen.map(function (a) {
+    h += '<section class="kt3-box pr-aufgaben"><h3>Aufgaben</h3>' + (offen.length ? '<ul class="pr-auf2">' + offen.map(function (a) {
       var ueber = a.faellig_am && new Date(a.faellig_am) < new Date(new Date().toDateString());
       return '<li data-a="' + a.id + '"><div class="pr-auf-zeile"><button type="button" class="st-haken" aria-label="Erledigt"></button>' +
         '<span class="pr-frist' + (ueber ? " pr-ueber" : "") + '">' + (a.faellig_am ? kurz(a.faellig_am) : "ohne Termin") + "</span>" +
