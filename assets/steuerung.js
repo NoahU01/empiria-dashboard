@@ -1,177 +1,132 @@
-/* Steuerung – das zentrale Dashboard. Beantwortet vier Fragen, alles mit Klick in die Unterseite:
-     Lage-Satz (von Claude geschrieben, Tabelle lage)
-     Reagieren   – Rückmeldungen da, kann starten, nachfassen, Fristen, Mail-Entwürfe zur Freigabe
-     Entscheiden – Claudes offene Fragen (Tabelle fragen), Aufgaben, an denen andere hängen, was in Projekten fehlt
-     Bewegung    – je laufendem Projekt: zuletzt, als Nächstes, worauf es zuläuft; Stillstand markiert
-     Zeitleiste  – nächste sechs Wochen: Projekttermine, Meilensteine, Fristen; offene Vorbereitung je Termin
-   Keine Zähler, keine Kennzahlen. Daten aus Supabase; Mails (optional) über BetaMail. */
+/* Steuerung – Zuarbeit wie von einer Referentin.
+     Auf deinem Tisch – Vorlagen von Claude (Tabelle vorlagen): Thema, worum es geht, Vorschlag, Knopf.
+                         Entscheidung wird gespeichert, Claude setzt um.
+     Projekte          – ein Punkt je Projekt: braucht dich · läuft · steht. Klick ins Projekt.
+     Sechs Wochen      – kompakte Leiste: Fristen, Termine, Meilensteine.
+   Keine Zähler, kein Fließtext. */
 (function () {
   "use strict";
   var db = window.empiriaDb, wurzel = document.querySelector("[data-steuerung]");
   if (!db || !wurzel) return;
-  var B = window.BetaMail;
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
-  function tag(d) { return new Date(d).toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "short" }); }
-  var HEUTE = new Date(new Date().toDateString()), MORGEN = new Date(+HEUTE + 864e5);
+  var HEUTE = new Date(new Date().toDateString());
   function iso(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
-  function tageBis(d) { return Math.round((new Date(new Date(d).toDateString()) - HEUTE) / 864e5); }
+  function frist(f) {
+    if (!f) return "";
+    var d = new Date(f.slice(0, 10) + "T12:00:00"), t = Math.floor((d - HEUTE) / 864e5);
+    var txt = t < 0 ? "überfällig" : t === 0 ? "heute" : t === 1 ? "morgen" : d.toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "short" });
+    return '<span class="st3-frist' + (t <= 1 ? " st3-frist--jetzt" : "") + '">' + txt + "</span>";
+  }
   var D = {};
 
   db.auth.getSession().then(function (s) {
     if (!s.data.session) { wurzel.innerHTML = '<div class="kb-hinweis"><p>Bitte einmal auf der <a href="/strategie/kontakte.html">Kontaktseite</a> anmelden – dann erscheint hier die Steuerung.</p></div>'; return; }
-    var vor60 = new Date(Date.now() - 60 * 864e5).toISOString();
-    Promise.all([
-      db.from("projekte").select("id, name, marke, typ, status, ziel, ueberlegungen, naechstes_gate, gate_datum, angelegt_am"),
-      db.from("aufgaben").select("id, titel, status, spalte, faellig_am, erledigt_am, projekt_id, vorgaenger, hinweis, hinweis_am, antwort_am, antwort_von, nachfassen_hinweis_am, warten_auf, mail_gesendet_am")
-        .or("status.eq.offen,and(status.eq.erledigt,erledigt_am.gte." + vor60 + ")"),
-      db.from("projekt_ereignisse").select("id, projekt_id, datum, art, titel").gte("datum", vor60),
-      db.from("lage").select("text, angelegt_am").order("angelegt_am", { ascending: false }).limit(1),
-      db.from("fragen").select("id, text, link, projekt_id, aufgabe_id").eq("status", "offen").order("angelegt_am")
-    ]).then(function (r) {
-      D = { projekte: r[0].data || [], aufgaben: r[1].data || [], ereignisse: r[2].data || [], lage: (r[3].data || [])[0], fragen: r[4].data || [], mails: null };
-      zeichnen();
-      mailsLaden();
-    });
+    laden();
   });
 
+  function laden() {
+    var vor30 = new Date(Date.now() - 30 * 864e5).toISOString();
+    Promise.all([
+      db.from("vorlagen").select("id, titel, kern, vorschlag, knopf_ja, frist, projekt_id, link, rang, status, entscheidung, entscheidung_text, entschieden_am").in("status", ["offen", "entschieden"]).order("rang"),
+      db.from("projekte").select("id, name, marke, status, angelegt_am"),
+      db.from("aufgaben").select("id, status, faellig_am, erledigt_am, projekt_id, antwort_am, titel").or("status.eq.offen,and(status.eq.erledigt,erledigt_am.gte." + vor30 + ")"),
+      db.from("projekt_ereignisse").select("id, projekt_id, datum, art, titel").gte("datum", vor30)
+    ]).then(function (r) {
+      D = { vorlagen: r[0].data || [], projekte: r[1].data || [], aufgaben: r[2].data || [], ereignisse: r[3].data || [] };
+      zeichnen();
+    });
+  }
   function projekt(id) { return D.projekte.filter(function (p) { return p.id === id; })[0]; }
-  function zuAufgabe(a) { return a.projekt_id ? "/strategie/projekte.html#p=" + a.projekt_id : "/strategie/aufgaben.html"; }
-  function herkunft(a) { var p = projekt(a.projekt_id); return p ? p.name : "Operativ"; }
-  function offen() { return D.aufgaben.filter(function (a) { return a.status === "offen"; }); }
-  function zeile(link, titel, unter, ton) {
-    return '<li class="st2-zeile' + (ton ? " st2-" + ton : "") + '"><a href="' + esc(link) + '"><b>' + titel + "</b>" + (unter ? "<small>" + unter + "</small>" : "") + "</a></li>";
+
+  /* ---------- Vorlagen ---------- */
+  function karte(v) {
+    var p = projekt(v.projekt_id);
+    return '<article class="st3-karte" data-v="' + v.id + '"><header>' + frist(v.frist) + '<span class="st3-wo">' + esc(p ? p.name : "Operativ") + "</span></header>" +
+      '<h3><a href="' + esc(v.link || "#") + '">' + esc(v.titel) + "</a></h3>" +
+      '<p class="st3-kern">' + esc(v.kern) + "</p>" +
+      '<p class="st3-vorschlag"><span>Vorschlag</span>' + esc(v.vorschlag) + "</p>" +
+      '<div class="st3-knoepfe"><button type="button" class="st3-ja" data-e="ja">' + esc(v.knopf_ja) + '</button><button type="button" data-anders>Anders …</button><button type="button" data-e="spaeter">Später</button></div>' +
+      '<form class="st3-anders" hidden><textarea rows="2" placeholder="Was soll stattdessen passieren?"></textarea><button type="submit">An Claude geben</button></form></article>';
+  }
+  function entschieden(v) {
+    var was = v.entscheidung === "ja" ? "freigegeben – Claude ist dran" : v.entscheidung === "anders" ? "„" + esc(v.entscheidung_text || "") + "“" : "später";
+    return "<li><b>" + esc(v.titel) + "</b><span>" + was + "</span></li>";
   }
 
-  /* ---------- Reagieren ---------- */
-  function reagieren() {
-    var gesehen = {}, aus = [];
-    function nimm(a, titel, unter, ton) { if (gesehen[a.id]) return; gesehen[a.id] = 1; aus.push(zeile(zuAufgabe(a), titel, unter, ton)); }
-    offen().forEach(function (a) { if (a.antwort_am) nimm(a, esc(a.titel), esc(a.hinweis || "Rückmeldung ist da") + " · " + esc(herkunft(a)), "jetzt"); });
-    offen().forEach(function (a) { if (/^Kann jetzt starten/.test(a.hinweis || "")) nimm(a, esc(a.titel), esc(a.hinweis) + " · " + esc(herkunft(a))); });
-    offen().forEach(function (a) { if (a.nachfassen_hinweis_am && !a.antwort_am) nimm(a, esc(a.titel), esc(a.hinweis || "Nachfassen?") + " · " + esc(herkunft(a))); });
-    offen().filter(function (a) { return a.faellig_am && a.faellig_am.slice(0, 10) <= iso(MORGEN); })
-      .sort(function (a, b) { return a.faellig_am.localeCompare(b.faellig_am); })
-      .forEach(function (a) {
-        var t = tageBis(a.faellig_am), wann = t < 0 ? "überfällig seit " + tag(a.faellig_am) : t === 0 ? "fällig heute" : "fällig morgen";
-        nimm(a, esc(a.titel), wann + " · " + esc(herkunft(a)), t <= 0 ? "jetzt" : "");
-      });
-    if (D.mails === "laedt") aus.push('<li class="st2-leise">Mails werden geprüft …</li>');
-    else if (Array.isArray(D.mails) && D.mails.length) {
-      D.mails.slice(0, 3).forEach(function (m) {
-        aus.push(zeile("/strategie/korrespondenz-beta.html", "Entwurf an " + esc(B.absender(m)) + " freigeben", esc(m.subject || "") + " · " + esc(m.konto.name)));
-      });
-      if (D.mails.length > 3) aus.push('<li class="st2-mehr"><a href="/strategie/korrespondenz-beta.html">Weitere Entwürfe in der Korrespondenz →</a></li>');
-    } else if (D.mails === "anmelden") aus.push('<li class="st2-leise"><button type="button" data-ms-anmelden>Mails einbeziehen – mit Microsoft anmelden</button></li>');
-    return aus.length ? aus.join("") : '<li class="st2-leise">Gerade nichts, das auf dich wartet.</li>';
-  }
-
-  /* ---------- Entscheiden ---------- */
-  function entscheiden() {
-    var aus = D.fragen.map(function (f) { return zeile(f.link || "/strategie/aufgaben.html", esc(f.text), f.projekt_id && projekt(f.projekt_id) ? esc(projekt(f.projekt_id).name) : "", "frage"); });
-    // Aufgaben, an denen andere hängen – und die nicht auf jemand anderen warten
-    offen().forEach(function (a) {
-      var nach = offen().filter(function (n) { return (n.vorgaenger || []).map(Number).indexOf(a.id) > -1; });
-      if (!nach.length || (a.mail_gesendet_am && !a.antwort_am)) return;
-      aus.push(zeile(zuAufgabe(a), esc(a.titel), "gibt frei: " + nach.map(function (n) { return esc(n.titel); }).join(", ") + " · " + esc(herkunft(a))));
-    });
-    D.projekte.filter(function (p) { return p.status === "wartet auf dich"; }).forEach(function (p) {
-      aus.push(zeile("/strategie/projekte.html#p=" + p.id, esc(p.name), "wartet auf dich"));
-    });
-    var aktiv = D.projekte.filter(function (p) { return p.status !== "pausiert" && p.status !== "abgeschlossen"; });
-    var ohneZiel = aktiv.filter(function (p) { return !p.ziel; }), ohneKurs = aktiv.filter(function (p) { return !p.ueberlegungen; });
-    if (ohneZiel.length) aus.push(zeile("/strategie/projekte.html", "Projektziel fehlt", ohneZiel.map(function (p) { return esc(p.name); }).join(", ")));
-    if (ohneKurs.length) aus.push(zeile("/strategie/projekte.html", "Stoßrichtung fehlt", ohneKurs.map(function (p) { return esc(p.name); }).join(", ")));
-    return aus.length ? aus.join("") : '<li class="st2-leise">Keine offenen Entscheidungen.</li>';
-  }
-
-  /* ---------- Bewegung je Projekt ---------- */
-  function bewegung() {
-    var MARKEN = ["empiria", "sofortsichtbar", "Müller&Ströbel."];
-    var aktiv = D.projekte.filter(function (p) { return p.status !== "pausiert" && p.status !== "abgeschlossen"; })
-      .sort(function (a, b) { return MARKEN.indexOf(a.marke) - MARKEN.indexOf(b.marke) || (a.typ === "intern") - (b.typ === "intern") || a.name.localeCompare(b.name); });
-    return aktiv.map(function (p) {
-      var jetzt = Date.now();
-      var spuren = D.ereignisse.filter(function (e) { return e.projekt_id === p.id && new Date(e.datum) <= jetzt && e.art !== "Meilenstein"; })
-        .map(function (e) { return { d: e.datum, t: e.titel }; })
-        .concat(D.aufgaben.filter(function (a) { return a.projekt_id === p.id && a.erledigt_am; }).map(function (a) { return { d: a.erledigt_am, t: a.titel + " ✓" }; }))
-        .sort(function (a, b) { return new Date(b.d) - new Date(a.d); });
-      var zuletzt = spuren[0];
-      var naechsteA = offen().filter(function (a) { return a.projekt_id === p.id && a.spalte !== "backlog"; })
-        .sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); })[0];
-      var naechsterT = D.ereignisse.filter(function (e) { return e.projekt_id === p.id && new Date(e.datum) > jetzt && e.art !== "Meilenstein"; })
-        .sort(function (a, b) { return new Date(a.datum) - new Date(b.datum); })[0];
-      var ziel = D.ereignisse.filter(function (e) { return e.projekt_id === p.id && new Date(e.datum) > jetzt && e.art === "Meilenstein"; })
-        .sort(function (a, b) { return new Date(a.datum) - new Date(b.datum); })[0];
-      var naechstes = naechsteA && (!naechsterT || (naechsteA.faellig_am && new Date(naechsteA.faellig_am) <= new Date(naechsterT.datum)))
-        ? esc(naechsteA.titel) + (naechsteA.faellig_am ? " · bis " + tag(naechsteA.faellig_am) : "")
-        : naechsterT ? esc(naechsterT.titel) + " · " + tag(naechsterT.datum) : "";
-      // Stillstand: seit 3 Wochen keine Spur – frisch angelegte Projekte zählen nicht
-      var neu = p.angelegt_am && (jetzt - new Date(p.angelegt_am)) < 21 * 864e5;
-      var still = !neu && (!zuletzt || (jetzt - new Date(zuletzt.d)) > 21 * 864e5);
-      return '<li class="st2-projekt' + (still ? " st2-still" : "") + '"><a href="/strategie/projekte.html#p=' + p.id + '"><b>' + esc(p.name) + '</b><span class="st2-marke">' + esc(p.marke || "") + "</span>" +
-        '<span class="st2-spur"><i>zuletzt</i>' + (zuletzt ? esc(zuletzt.t) + " · " + tag(zuletzt.d) : neu ? "angelegt " + tag(p.angelegt_am) : "noch nichts erfasst") + "</span>" +
-        '<span class="st2-spur"><i>als Nächstes</i>' + (naechstes || '<em>kein nächster Schritt</em>') + "</span>" +
-        (ziel ? '<span class="st2-spur"><i>läuft zu auf</i>' + esc(ziel.titel) + " · " + tag(ziel.datum) + "</span>"
-          : p.naechstes_gate ? '<span class="st2-spur"><i>läuft zu auf</i>' + esc(p.naechstes_gate) + (p.gate_datum ? " · " + tag(p.gate_datum) : "") + "</span>" : "") +
-        (still ? '<span class="st2-stillstand">Keine Bewegung seit ' + (zuletzt ? tag(zuletzt.d) : "Anlage") + "</span>" : "") + "</a></li>";
+  /* ---------- Projekte als Statuspunkte ---------- */
+  function projektPunkte() {
+    var MARKEN = ["empiria", "sofortsichtbar", "Müller&Ströbel."], jetzt = Date.now();
+    var offeneVorlagen = D.vorlagen.filter(function (v) { return v.status === "offen"; });
+    var morgen = iso(new Date(+HEUTE + 864e5));
+    return MARKEN.map(function (m) {
+      var l = D.projekte.filter(function (p) { return (p.marke || "empiria") === m && p.status !== "abgeschlossen"; });
+      if (!l.length) return "";
+      return '<div class="st3-marke"><span class="st3-marke-name">' + esc(m) + "</span><div>" + l.sort(function (a, b) { return a.name.localeCompare(b.name); }).map(function (p) {
+        var dich = offeneVorlagen.some(function (v) { return v.projekt_id === p.id; }) ||
+          D.aufgaben.some(function (a) { return a.projekt_id === p.id && a.status === "offen" && (a.antwort_am || (a.faellig_am && a.faellig_am.slice(0, 10) <= morgen)); });
+        var bewegt = D.ereignisse.some(function (e) { return e.projekt_id === p.id && Math.abs(jetzt - new Date(e.datum)) < 14 * 864e5; }) ||
+          D.aufgaben.some(function (a) { return a.projekt_id === p.id && a.erledigt_am && jetzt - new Date(a.erledigt_am) < 14 * 864e5; }) ||
+          (p.angelegt_am && jetzt - new Date(p.angelegt_am) < 14 * 864e5);
+        var z = p.status === "pausiert" ? "pause" : dich ? "dich" : bewegt ? "laeuft" : "steht";
+        var tip = { pause: "pausiert", dich: "braucht dich", laeuft: "läuft", steht: "keine Bewegung seit zwei Wochen" }[z];
+        return '<a class="st3-punkt st3-punkt--' + z + '" href="/strategie/projekte.html#p=' + p.id + '" title="' + tip + '"><i></i>' + esc(p.name) + "</a>";
+      }).join("") + "</div></div>";
     }).join("");
   }
 
-  /* ---------- Zeitleiste: nächste sechs Wochen ---------- */
-  function zeitleiste() {
-    var bis = new Date(+HEUTE + 42 * 864e5), punkte = [], gezeigt = {};
-    D.ereignisse.slice().sort(function (a, b) { return new Date(a.datum) - new Date(b.datum); }).forEach(function (e) {
-      var d = new Date(e.datum); if (d < HEUTE || d > bis) return;
-      var p = projekt(e.projekt_id);
-      var vorb = gezeigt[e.projekt_id] ? [] : offen().filter(function (a) { return a.projekt_id === e.projekt_id && a.faellig_am && a.faellig_am.slice(0, 10) <= iso(d); });
-      if (vorb.length) gezeigt[e.projekt_id] = 1;
-      punkte.push({ d: d, art: e.art === "Meilenstein" ? "ziel" : "termin", titel: e.titel, p: p, link: "/strategie/projekte.html#p=" + e.projekt_id,
-        offen: vorb.slice(0, 3).map(function (a) { return a.titel; }).concat(vorb.length > 3 ? ["…"] : []) });
-    });
-    offen().forEach(function (a) {
-      if (!a.faellig_am) return; var d = new Date(a.faellig_am.slice(0, 10) + "T12:00:00"); if (d < HEUTE || d > bis) return;
-      punkte.push({ d: d, art: "frist", titel: a.titel, p: projekt(a.projekt_id), link: zuAufgabe(a), offen: [] });
-    });
-    punkte.sort(function (a, b) { return a.d - b.d || (a.art === "frist") - (b.art === "frist"); });
-    if (!punkte.length) return '<p class="st2-leise">Nichts in den nächsten sechs Wochen.</p>';
-    var wochen = {};
-    punkte.forEach(function (x) {
-      var mo = new Date(x.d); mo.setDate(mo.getDate() - ((mo.getDay() + 6) % 7)); var k = mo.toDateString();
-      (wochen[k] = wochen[k] || { mo: mo, l: [] }).l.push(x);
-    });
-    return Object.keys(wochen).map(function (k) {
-      var w = wochen[k], so = new Date(+w.mo + 6 * 864e5);
-      return '<section class="st2-woche"><h4>' + w.mo.toLocaleDateString("de-DE", { day: "numeric", month: "short" }) + " – " + so.toLocaleDateString("de-DE", { day: "numeric", month: "short" }) + "</h4><ul>" +
-        w.l.map(function (x) {
-          return '<li class="st2-' + x.art + '"><a href="' + esc(x.link) + '"><span class="st2-tag">' + tag(x.d) + "</span><span><b>" + esc(x.titel) + "</b>" +
-            "<small>" + (x.art === "frist" ? "Frist · " : x.art === "ziel" ? "Meilenstein · " : "") + esc(x.p ? x.p.name : "Operativ") + "</small>" +
-            (x.offen.length ? '<small class="st2-vorb">offen: ' + x.offen.map(esc).join(", ") + "</small>" : "") + "</span></a></li>";
-        }).join("") + "</ul></section>";
-    }).join("");
+  /* ---------- Sechs Wochen als Leiste ---------- */
+  function wochen() {
+    var mo = new Date(HEUTE); mo.setDate(mo.getDate() - ((mo.getDay() + 6) % 7));
+    var spalten = [];
+    for (var w = 0; w < 6; w++) {
+      var von = new Date(+mo + w * 7 * 864e5), bis = new Date(+von + 7 * 864e5);
+      var punkte = D.ereignisse.filter(function (e) { var d = new Date(e.datum); return d >= von && d < bis && d >= HEUTE; })
+        .map(function (e) { return { d: new Date(e.datum), art: e.art === "Meilenstein" ? "ziel" : "termin", t: e.titel, p: e.projekt_id }; })
+        .concat(D.aufgaben.filter(function (a) { if (a.status !== "offen" || !a.faellig_am) return false; var d = new Date(a.faellig_am.slice(0, 10) + "T12:00:00"); return d >= von && d < bis && d >= HEUTE; })
+          .map(function (a) { return { d: new Date(a.faellig_am.slice(0, 10) + "T12:00:00"), art: "frist", t: a.titel, p: a.projekt_id }; }))
+        .sort(function (a, b) { return a.d - b.d; });
+      spalten.push('<div class="st3-woche"><h4>' + von.toLocaleDateString("de-DE", { day: "numeric", month: "short" }) + "</h4>" + punkte.map(function (x) {
+        var p = projekt(x.p);
+        return '<a class="st3-ereignis st3-e-' + x.art + '" href="' + (x.p ? "/strategie/projekte.html#p=" + x.p : "/strategie/aufgaben.html") + '" title="' + esc(x.t + (p ? " · " + p.name : "")) + '">' +
+          '<span class="st3-tag">' + x.d.toLocaleDateString("de-DE", { weekday: "short", day: "numeric" }) + '</span><span class="st3-titel">' + esc(x.t) + "</span></a>";
+      }).join("") + "</div>");
+    }
+    return spalten.join("");
   }
 
   function zeichnen() {
+    var offen = D.vorlagen.filter(function (v) { return v.status === "offen" && v.entscheidung !== "spaeter"; });
+    var erledigt = D.vorlagen.filter(function (v) { return v.status === "entschieden" || v.entscheidung === "spaeter"; });
     wurzel.innerHTML =
-      (D.lage ? '<p class="st2-lage">' + esc(D.lage.text) + '</p><p class="st2-lage-stand">Lage von Claude · ' + new Date(D.lage.angelegt_am).toLocaleString("de-DE", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) + "</p>" : "") +
-      '<div class="st2-drei">' +
-        '<section><h3>Reagieren</h3><ul class="st2-liste">' + reagieren() + "</ul></section>" +
-        '<section><h3>Entscheiden</h3><ul class="st2-liste">' + entscheiden() + "</ul></section>" +
-        '<section class="st2-bew"><h3>Bewegung</h3><ul class="st2-liste">' + bewegung() + "</ul></section>" +
-      "</div>" +
-      '<section class="st2-zeit"><h3>Nächste sechs Wochen</h3><div class="st2-wochen">' + zeitleiste() + "</div></section>";
-    var k = wurzel.querySelector("[data-ms-anmelden]"); if (k && B) k.onclick = B.anmelden;
+      '<section class="st3-tisch"><h2 class="st3-h">Auf deinem Tisch</h2>' +
+        (offen.length ? '<div class="st3-karten">' + offen.map(karte).join("") + "</div>" : '<p class="st3-leer">Nichts zu entscheiden – alles ist vorbereitet oder läuft.</p>') +
+        (erledigt.length ? '<ul class="st3-entschieden">' + erledigt.map(entschieden).join("") + "</ul>" : "") +
+      "</section>" +
+      '<section class="st3-projekte"><h2 class="st3-h">Projekte</h2><p class="st3-legende"><span class="st3-punkt--dich"><i></i>braucht dich</span><span class="st3-punkt--laeuft"><i></i>läuft</span><span class="st3-punkt--steht"><i></i>steht</span><span class="st3-punkt--pause"><i></i>pausiert</span></p>' + projektPunkte() + "</section>" +
+      '<section class="st3-zeit"><h2 class="st3-h">Sechs Wochen</h2><p class="st3-legende"><span class="st3-l-frist">Frist</span><span class="st3-l-termin">Termin</span><span class="st3-l-ziel">Meilenstein</span></p><div class="st3-wochen">' + wochen() + "</div></section>";
+    verdrahten();
   }
 
-  // Mails mit fertigem Entwurf (Freigabe) – nur wenn bei Microsoft angemeldet
-  function mailsLaden() {
-    if (!B) return;
-    D.mails = "laedt"; zeichnen();
-    B.start().then(function (konto) {
-      if (!konto) { D.mails = "anmelden"; zeichnen(); return; }
-      return B.laden().then(function (d) {
-        D.mails = d.handlung.filter(function (m) { return m.analyse && m.analyse.entwurf && B.entscheidungLesen(m) !== "freigeben"; });
-        zeichnen();
+  function speichern(id, felder, karte) {
+    karte.classList.add("laedt");
+    felder.entschieden_am = new Date().toISOString();
+    db.from("vorlagen").update(felder).eq("id", id).then(function (r) {
+      if (r.error) { karte.classList.remove("laedt"); alert("Nicht gespeichert: " + r.error.message); return; }
+      var v = D.vorlagen.filter(function (x) { return x.id === id; })[0]; for (var k in felder) v[k] = felder[k];
+      karte.classList.add("st3-weg"); setTimeout(zeichnen, 350);
+    });
+  }
+  function verdrahten() {
+    wurzel.querySelectorAll(".st3-karte").forEach(function (k) {
+      var id = +k.getAttribute("data-v"), form = k.querySelector(".st3-anders");
+      k.querySelectorAll("[data-e]").forEach(function (b) {
+        b.onclick = function () { var e = b.getAttribute("data-e"); speichern(id, e === "ja" ? { status: "entschieden", entscheidung: "ja" } : { entscheidung: "spaeter" }, k); };
       });
-    }).catch(function () { D.mails = "anmelden"; zeichnen(); });
+      k.querySelector("[data-anders]").onclick = function () { form.hidden = !form.hidden; if (!form.hidden) form.querySelector("textarea").focus(); };
+      form.onsubmit = function (ev) {
+        ev.preventDefault(); var t = form.querySelector("textarea").value.trim(); if (!t) return;
+        speichern(id, { status: "entschieden", entscheidung: "anders", entscheidung_text: t }, k);
+      };
+    });
   }
 })();
