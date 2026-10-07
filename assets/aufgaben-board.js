@@ -30,7 +30,7 @@
       projekte = r[0].data || []; aufgaben = r[1].data || [];
       var ids = projekte.map(function (p) { return p.id; });
       wahl = wahl.filter(function (w) { return w === "op" || ids.indexOf(w) > -1 || (typeof w === "string" && MARKEN.indexOf(w.slice(2)) > -1); });
-      zeichnen();
+      if (window.AufgabenDetails) AufgabenDetails.vorlagenAnhaengen(db, aufgaben).then(zeichnen); else zeichnen();
     });
   }
 

@@ -72,7 +72,9 @@
       db.from("aufgaben").select("id, titel, beschreibung, status, spalte, faellig_am, erledigt_am, ereignis_id, weg, vorgaenger, warten_auf, hinweis, zeitblock_vorschlag, mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, unterlagen, person:kontakt_id(id, vorname, nachname), organisationen(id, name), zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
     ]).then(function (r) {
       if (r[0].error) { wurzel.innerHTML = '<p class="kb-leer">Fehler: ' + esc(r[0].error.message) + "</p>"; return; }
-      zeichnen(r[0].data, r[1].data || [], r[2].data || [], r[3].data || [], r[4].data || []);
+      var auf = r[4].data || [];
+      var weiter = function () { zeichnen(r[0].data, r[1].data || [], r[2].data || [], r[3].data || [], auf); };
+      if (window.AufgabenDetails) AufgabenDetails.vorlagenAnhaengen(db, auf).then(weiter); else weiter();
     });
   }
 

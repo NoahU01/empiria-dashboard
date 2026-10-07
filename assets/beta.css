@@ -1239,3 +1239,23 @@ a.sm-k:hover { box-shadow: 0 0 0 1.5px var(--ink); }
   .st4-idx-zelle { column-gap: 8px; }
 }
 .st4-spar .st4-spar-z, .st4-spar .st4-spar-los { align-self: flex-start !important; } .st4-spar b { hyphens: manual; overflow-wrap: normal; max-width: 100%; }
+/* Vorschlag von Claude an einer Aufgabe – Markierung im Kanban und in der Projekt-Aufgabenliste */
+.ad-v { margin-top: 8px; }
+.ad-v.laedt { opacity: .5; pointer-events: none; }
+.ad-v-marke { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 8px; border: 1px solid var(--ink); border-radius: 999px; background: #fff; font-size: .72rem; font-weight: 600; color: var(--ink); cursor: pointer; }
+.ad-v-marke::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--ink); }
+.ad-v-marke[aria-expanded="true"] { background: var(--ink); color: #fff; } .ad-v-marke[aria-expanded="true"]::before { background: #fff; }
+.ad-v-panel { margin-top: 8px; padding: 10px 12px; border-radius: 10px; background: #f7f6f4; }
+.ad-v-panel p { margin: 0 0 10px; font-size: .84rem; line-height: 1.45; color: var(--ink); }
+.ad-v-knoepfe { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.ad-v-knoepfe button, .ad-v-anders button { height: 30px; border: 1px solid #e4e1dd; border-radius: 8px; background: #fff; font-size: .76rem; font-weight: 500; color: var(--ink); }
+.ad-v-knoepfe .ad-v-ja, .ad-v-anders button { border-color: var(--ink); background: var(--ink); color: #fff; }
+.ad-v-anders { display: grid; gap: 6px; margin-top: 8px; } .ad-v-anders[hidden] { display: none; }
+.ad-v-anders textarea { width: 100%; padding: 8px 10px; border: 1px solid #e4e1dd; border-radius: 8px; font: inherit; font-size: .82rem; }
+.ad-v-erledigt { margin: 0; font-size: .76rem; color: var(--grey-70); }
+.pr-aufgaben .pr-kb-karte .ad-v-panel p { font-size: .74rem; }
+.ad-v-panel { max-width: 560px; }
+.ad-v-knoepfe { max-width: 360px; }
+.pr-kb-karte .ad-v-knoepfe { grid-template-columns: 1fr 1fr; max-width: none; }
+.pr-kb-karte .ad-v-knoepfe .ad-v-ja { grid-column: 1 / -1; }
+.pr-wartet .ad-kette { text-align: left; }
