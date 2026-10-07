@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kontakte &ndash; empiria</title>
-<meta name="description" content="Kontaktdatenbank – Prüfung der Excel-Struktur und Vorschlag für Supabase.">
+<title>Gestaltungsbausteine &ndash; empiria</title>
+<meta name="description" content="Gestaltungsbausteine zum Wiederverwenden.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="/styles.css">
 <link rel="stylesheet" href="/assets/dashboard-nav.css">
@@ -43,9 +43,9 @@
         </div>
         <a href="/strategie/projekte.html" class="sn-link"><span class="sn-tag">PR</span><span class="sn-txt"><b>Projekte</b><small>Steckbrief, Timeline, Protokoll</small></span></a>
         <a href="/strategie/aufgaben.html" class="sn-link"><span class="sn-tag">AU</span><span class="sn-txt"><b>Aufgaben</b><small>Kanban &uuml;ber alle Projekte</small></span></a>
-        <div class="sn-sub"><a href="/strategie/kontakte.html" class="sn-link" aria-current="page"><span class="sn-tag">KT</span><span class="sn-txt"><b>Kontakte</b><small>Kontaktdatenbank (CRM)</small></span></a><button class="sn-sub-toggle" type="button" aria-expanded="false" aria-controls="snKinderKT" aria-label="Unterseiten anzeigen"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+        <div class="sn-sub"><a href="/strategie/kontakte.html" class="sn-link"><span class="sn-tag">KT</span><span class="sn-txt"><b>Kontakte</b><small>Kontaktdatenbank (CRM)</small></span></a><button class="sn-sub-toggle" type="button" aria-expanded="false" aria-controls="snKinderKT" aria-label="Unterseiten anzeigen"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
         <div class="sn-kinder" id="snKinderKT">
-          <a href="/strategie/gestaltungsbausteine.html" class="sn-link"><span class="sn-tag">GB</span><span class="sn-txt"><b>Gestaltungsbausteine</b><small>Darstellungen zum Wiederverwenden</small></span></a>
+          <a href="/strategie/gestaltungsbausteine.html" class="sn-link" aria-current="page"><span class="sn-tag">GB</span><span class="sn-txt"><b>Gestaltungsbausteine</b><small>Darstellungen zum Wiederverwenden</small></span></a>
         </div>
         </nav>
       </div>
@@ -55,14 +55,49 @@
 
 <main>
   <section class="db"><div class="container">
-    <div class="db-kopf">
-      <div>
-        <p class="kicker">Kontaktdatenbank</p>
-        <h1 class="h-serif"><span class="hl">Kontakte.</span></h1>
-      </div>
-      <div class="db-konto" data-kb-konto></div>
+    <p class="kicker">Gestaltung &middot; Vorlagen zum Wiederverwenden</p>
+    <h1 class="h-serif">Gestaltungs<span class="hl">bausteine.</span></h1>
+    <p class="v-intro">Darstellungsformen, die sich bew&auml;hrt haben &ndash; mit Platzhaltertext. Bei Bedarf f&uuml;r neue Seiten &uuml;bernehmen (Klassen in beta.css, Pr&auml;fix <code>sd-</code>).</p>
+
+    <h2 class="sd-h2">1 &middot; Befunde: was nicht tr&auml;gt</h2>
+    <div class="sd-befunde">
+      <div class="sd-befund"><b>Befund eins</b><p>Ein Satz, was nicht funktioniert und warum es sp&auml;ter Probleme macht.</p></div>
+      <div class="sd-befund"><b>Befund zwei</b><p>Ein Satz, was nicht funktioniert und warum es sp&auml;ter Probleme macht.</p></div>
+      <div class="sd-befund"><b>Befund drei</b><p>Ein Satz, was nicht funktioniert und warum es sp&auml;ter Probleme macht.</p></div>
     </div>
-    <div data-kontakte><div class="kb-laedt"><span></span><span></span></div></div>
+    <p class="sd-gut"><b>Was gut ist und bleibt:</b> eine Zeile f&uuml;r das, was erhalten werden soll.</p>
+
+    <h2 class="sd-h2">2 &middot; Raster: ein Kern, ein Fokus, der Rest</h2>
+    <div class="sd-plan">
+      <div class="sd-tab sd-tab--kern"><h3>Kern</h3><small>das Herz des Themas</small><ul><li><b>Wichtigster Punkt</b></li><li>Punkt</li><li>Punkt</li><li>Punkt</li><li>Punkt</li></ul></div>
+      <div class="sd-tab"><h3>Baustein</h3><small>kurze Unterzeile</small><ul><li>Punkt</li><li>Punkt</li></ul></div>
+      <div class="sd-tab"><h3>Baustein</h3><small>kurze Unterzeile</small><ul><li>Punkt</li><li>Punkt</li></ul></div>
+      <div class="sd-tab"><h3>Baustein</h3><small>kurze Unterzeile</small><ul><li>Punkt</li></ul></div>
+      <div class="sd-tab sd-tab--gelb"><h3>Fokus</h3><small>das, worauf es ankommt</small><ul><li>Punkt</li><li>Punkt</li></ul></div>
+      <div class="sd-tab"><h3>Baustein</h3><small>kurze Unterzeile</small><ul><li>Punkt</li></ul></div>
+      <div class="sd-tab"><h3>Baustein</h3><small>kurze Unterzeile</small><ul><li>Punkt</li></ul></div>
+    </div>
+    <p class="sd-weg"><b>Hinweisleiste:</b> eine Zeile Erg&auml;nzung unter dem Raster.</p>
+
+    <h2 class="sd-h2">3 &middot; Ablauf in Schritten</h2>
+    <ol class="sd-fluss">
+      <li><b>Schritt eins</b><span>Was hier passiert, in einem Satz.</span></li>
+      <li><b>Schritt zwei</b><span>Was hier passiert, in einem Satz.</span></li>
+      <li><b>Schritt drei</b><span>Was hier passiert, in einem Satz.</span></li>
+      <li><b>Schritt vier</b><span>Was hier passiert, in einem Satz.</span></li>
+    </ol>
+
+    <h2 class="sd-h2">4 &middot; Frage mit Herleitung</h2>
+    <div class="sd-fragen">
+      <p>&bdquo;Eine Frage, die man stellen kann.&ldquo; <span>woraus sich die Antwort ergibt</span></p>
+      <p>&bdquo;Eine zweite Frage.&ldquo; <span>woraus sich die Antwort ergibt</span></p>
+    </div>
+
+    <h2 class="sd-h2">5 &middot; Entscheidungen</h2>
+    <ol class="sd-entscheid">
+      <li>Erste Entscheidung als Frage formuliert?</li>
+      <li>Zweite Entscheidung mit einem <b>hervorgehobenen</b> Wort?</li>
+    </ol>
   </div></section>
 </main>
 
@@ -74,8 +109,6 @@
 </footer>
 
 <script src="/script.js"></script>
-<script src="/assets/vendor/supabase.js"></script>
-<script src="/assets/kontakte.js"></script>
 <script src="/assets/dashboard-nav.js"></script>
 </body>
 </html>
