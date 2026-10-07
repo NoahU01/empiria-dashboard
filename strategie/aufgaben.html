@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dashboard Beta &ndash; empiria</title>
-<meta name="description" content="Dashboard Beta – der Stand, der wirklich läuft.">
+<title>Aufgaben &ndash; empiria</title>
+<meta name="description" content="Alle Aufgaben als Kanban-Board – über alle Projekte und operativ.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="/styles.css">
 <link rel="stylesheet" href="/assets/dashboard-nav.css">
@@ -32,7 +32,7 @@
           <a href="/strategie/dashboard-entwuerfe.html" class="sn-link"><span class="sn-tag">EN</span><span class="sn-txt"><b>Entw&uuml;rfe I</b><small>F&uuml;nf Haltungen, dieselben Daten</small></span></a>
           <a href="/strategie/dashboard-entwuerfe-2.html" class="sn-link"><span class="sn-tag">E2</span><span class="sn-txt"><b>Entw&uuml;rfe II</b><small>F&uuml;nf Ordnungen f&uuml;r dieselbe Lage</small></span></a>
         </div>
-        <div class="sn-sub"><a href="/strategie/dashboard-beta.html" class="sn-link" aria-current="page"><span class="sn-tag">DB</span><span class="sn-txt"><b>Dashboard Beta</b><small>Der Stand, der wirklich l&auml;uft</small></span></a><button class="sn-sub-toggle" type="button" aria-expanded="false" aria-controls="snKinderDB" aria-label="Unterseiten anzeigen"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+        <div class="sn-sub"><a href="/strategie/dashboard-beta.html" class="sn-link"><span class="sn-tag">DB</span><span class="sn-txt"><b>Dashboard Beta</b><small>Der Stand, der wirklich l&auml;uft</small></span></a><button class="sn-sub-toggle" type="button" aria-expanded="false" aria-controls="snKinderDB" aria-label="Unterseiten anzeigen"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
         <div class="sn-kinder" id="snKinderDB">
           <a href="/strategie/dashboard-varianten.html" class="sn-link"><span class="sn-tag">DV</span><span class="sn-txt"><b>Dashboard-Varianten</b><small>Entw&uuml;rfe zur Unternehmenssteuerung</small></span></a>
           <a href="/strategie/korrespondenz-beta.html" class="sn-link"><span class="sn-tag">KO</span><span class="sn-txt"><b>Korrespondenz</b><small>Alle Konten, nach Handlungsbedarf</small></span></a>
@@ -41,7 +41,7 @@
           <a href="/strategie/korrespondenz-variante-e.html" class="sn-link"><span class="sn-tag">VE</span><span class="sn-txt"><b>Variante E: Liste und Detail</b><small>Zwei Spalten – für MacBook und iPad</small></span></a>
         </div>
         <a href="/strategie/projekte.html" class="sn-link"><span class="sn-tag">PR</span><span class="sn-txt"><b>Projekte</b><small>Steckbrief, Timeline, Protokoll</small></span></a>
-        <a href="/strategie/aufgaben.html" class="sn-link"><span class="sn-tag">AU</span><span class="sn-txt"><b>Aufgaben</b><small>Kanban &uuml;ber alle Projekte</small></span></a>
+        <a href="/strategie/aufgaben.html" class="sn-link" aria-current="page"><span class="sn-tag">AU</span><span class="sn-txt"><b>Aufgaben</b><small>Kanban &uuml;ber alle Projekte</small></span></a>
         <div class="sn-sub"><a href="/strategie/kontakte.html" class="sn-link"><span class="sn-tag">KT</span><span class="sn-txt"><b>Kontakte</b><small>Kontaktdatenbank (CRM)</small></span></a><button class="sn-sub-toggle" type="button" aria-expanded="false" aria-controls="snKinderKT" aria-label="Unterseiten anzeigen"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
         <div class="sn-kinder" id="snKinderKT">
           <a href="/strategie/kontaktdatenbank.html" class="sn-link"><span class="sn-tag">KD</span><span class="sn-txt"><b>Aufbau der Datenbank</b><small>Pr&uuml;fung und Struktur</small></span></a>
@@ -53,57 +53,14 @@
 </header>
 
 <main>
-  <section class="db"><div class="container">
+  <section class="db ab-seite"><div class="ab-voll">
     <div class="db-kopf">
       <div>
-        <p class="kicker" data-db-datum>Dashboard Beta</p>
-        <h1 class="h-serif">Guten Tag, <span class="hl">Daniel.</span></h1>
-      </div>
-      <div class="db-konto" data-kb-konto></div>
-    </div>
-
-    <!-- Statusleiste: Platzhalter, bis die Anbindungen stehen -->
-    <div class="db-status" aria-label="Status">
-      <span class="db-chip db-chip--leer" title="Platzhalter – Anbindung folgt"><i></i>Linked Helper <b>&ndash;</b></span>
-      <span class="db-chip db-chip--leer" title="Platzhalter – Anbindung folgt"><i></i>Kampagne <b>&ndash;</b></span>
-      <span class="db-chip db-chip--leer" title="Platzhalter – Anbindung folgt">LinkedIn Follower <b>&ndash;</b></span>
-      <span class="db-chip db-chip--leer" title="Platzhalter – Anbindung folgt">LinkedIn Kontakte <b>&ndash;</b></span>
-      <a class="db-chip db-chip--leer" href="/strategie/korrespondenz-beta.html#relevant/kontakt" data-kb-kontakt><i></i>kontakt@ <b>&ndash;</b></a>
-      <span class="db-chip db-chip--trenn">Projekte</span>
-      <span class="db-chip">SV Akademie</span>
-      <span class="db-chip">SV Schadenmanagement</span>
-      <span class="db-chip">MSP Digitaler Vertrieb</span>
-      <span class="db-chip">MSP Landing Page</span>
-      <span class="db-chip">VVDE Strategie</span>
-    </div>
-
-    <div class="db-raster">
-      <article class="db-karte" data-kb="kachel">
-        <div class="db-karte-kopf">
-          <h2>Korrespondenz</h2>
-          <small>Handlungsbedarf</small>
-        </div>
-        <div data-kb-inhalt></div>
-        <a class="db-mehr" href="/strategie/korrespondenz-beta.html">Alle Mails ansehen <span aria-hidden="true">&rarr;</span></a>
-      </article>
-
-      <div class="db-seite">
-        <article class="db-karte">
-          <div class="db-karte-kopf"><h2>Termine</h2><small>als N&auml;chstes</small></div>
-          <div data-start-termine><p class="db-folgt">&hellip;</p></div>
-        </article>
-        <article class="db-karte">
-          <div class="db-karte-kopf"><h2>Aufgaben</h2><small>offen</small></div>
-          <div data-start-aufgaben><p class="db-folgt">&hellip;</p></div>
-          <a class="db-mehr" href="/strategie/aufgaben.html">Alle Aufgaben <span aria-hidden="true">&rarr;</span></a>
-        </article>
-        <article class="db-karte">
-          <div class="db-karte-kopf"><h2>Wieder dran</h2><small>Beziehungspflege</small></div>
-          <div data-start-dran><p class="db-folgt">&hellip;</p></div>
-          <a class="db-mehr" href="/strategie/kontakte.html#faellig">Beziehungspflege <span aria-hidden="true">&rarr;</span></a>
-        </article>
+        <p class="kicker">Steuerung</p>
+        <h1 class="h-serif"><span class="hl">Aufgaben.</span></h1>
       </div>
     </div>
+    <div data-aufgaben-board><div class="kb-laedt"><span></span><span></span></div></div>
   </div></section>
 </main>
 
@@ -115,17 +72,9 @@
 </footer>
 
 <script src="/script.js"></script>
-<script src="/assets/dashboard-nav.js"></script>
-<script src="/assets/vendor/msal-browser.min.js"></script>
 <script src="/assets/vendor/supabase.js"></script>
 <script src="/assets/db.js"></script>
-<script src="/assets/beta-mail.js"></script>
-<script src="/assets/beta-seiten.js"></script>
-<script src="/assets/beta-start.js"></script>
-<script>
-  (function () { var d = document.querySelector("[data-db-datum]"); var h = new Date().getHours();
-    d.textContent = new Date().toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" });
-    document.querySelector(".db-kopf h1").innerHTML = (h < 11 ? "Guten Morgen, " : h < 18 ? "Guten Tag, " : "Guten Abend, ") + '<span class="hl">Daniel.</span>'; })();
-</script>
+<script src="/assets/aufgaben-board.js"></script>
+<script src="/assets/dashboard-nav.js"></script>
 </body>
 </html>
