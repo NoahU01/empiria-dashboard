@@ -69,7 +69,7 @@
       db.from("projekt_beteiligte").select("id, seite, rolle, name, kontakte(id, vorname, nachname, position)").eq("projekt_id", id),
       db.from("projekt_ereignisse").select("id, datum, art, titel, quelle, format, ort, teilnehmer, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("datum", { ascending: false }),
       db.from("projekt_punkte").select("id, ereignis_id, art, text, angelegt_am, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am", { ascending: false }),
-      db.from("aufgaben").select("id, titel, beschreibung, status, spalte, faellig_am, erledigt_am, ereignis_id, zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
+      db.from("aufgaben").select("id, titel, beschreibung, status, spalte, faellig_am, erledigt_am, ereignis_id, weg, vorgaenger, warten_auf, hinweis, zeitblock_vorschlag, zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
     ]).then(function (r) {
       if (r[0].error) { wurzel.innerHTML = '<p class="kb-leer">Fehler: ' + esc(r[0].error.message) + "</p>"; return; }
       zeichnen(r[0].data, r[1].data || [], r[2].data || [], r[3].data || [], r[4].data || []);
@@ -126,6 +126,12 @@
         : '<span class="pr-auf-titel">' + esc(a.titel) + "</span>";
     }
     function details(a) { return a.beschreibung ? '<div class="pr-auf-details" hidden><p>' + esc(a.beschreibung).replace(/\n/g, "<br>") + "</p></div>" : ""; }
+    // Hinweis (Antwort da, es kann weitergehen, nachfassen) und offene Vorgänger
+    function zusatz(a) {
+      var offenVor = (a.vorgaenger || []).map(function (id) { return auf.filter(function (x) { return x.id === id && x.status !== "erledigt"; })[0]; }).filter(Boolean);
+      return (a.status === "offen" && a.hinweis ? '<p class="pr-hinweis">' + esc(a.hinweis) + "</p>" : "") +
+        (offenVor.length ? '<p class="pr-wartet">wartet auf: ' + offenVor.map(function (v) { return esc(v.titel); }).join(", ") + "</p>" : "");
+    }
     var wahl = '<span class="pr-tl-wahl">' + [["liste", "Liste"], ["kanban", "Kanban"]].map(function (v) {
       return '<button type="button" data-aav="' + v[0] + '" aria-pressed="' + (v[0] === aav) + '">' + v[1] + "</button>"; }).join("") + "</span>";
     var aufInhalt;
@@ -139,14 +145,14 @@
         }).sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });
         return '<div class="pr-kb-spalte" data-spalte="' + sp[0] + '"><p class="pr-kb-kopf">' + sp[1] + "</p>" + karten.map(function (a) {
           return '<div class="pr-kb-karte' + (a.status === "erledigt" ? " pr-kb-fertig" : "") + '" draggable="true" data-a="' + a.id + '">' + titel(a) +
-            '<p class="pr-kb-meta">' + frist(a) + '<span class="pr-wer">' + esc(wer(a) || "offen") + "</span></p>" + details(a) + "</div>";
+            '<p class="pr-kb-meta">' + frist(a) + '<span class="pr-wer">' + esc(wer(a) || "offen") + "</span></p>" + zusatz(a) + details(a) + "</div>";
         }).join("") + "</div>";
       }).join("") + "</div>";
     } else {
       var offen = auf.filter(function (a) { return a.status === "offen"; }).sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });
       aufInhalt = offen.length ? '<ul class="pr-auf2">' + offen.map(function (a) {
         return '<li data-a="' + a.id + '"><div class="pr-auf-zeile"><button type="button" class="st-haken" aria-label="Erledigt"></button>' + frist(a) + titel(a) +
-          '<span class="pr-wer">' + esc(wer(a) || "offen") + "</span></div>" + details(a) + "</li>";
+          '<span class="pr-wer">' + esc(wer(a) || "offen") + "</span></div>" + '<div class="pr-auf-zusatz">' + zusatz(a) + "</div>" + details(a) + "</li>";
       }).join("") + "</ul>" : '<p class="kt3-leise">Nichts offen.</p>';
     }
     if (aav === "kanban") h = h.replace('<section class="kt3-box pr-kurs">', '<section class="kt3-box kt3-breit pr-kurs pr-kurs-breit">');

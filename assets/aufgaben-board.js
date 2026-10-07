@@ -23,7 +23,7 @@
     var vor14 = new Date(Date.now() - 14 * 864e5).toISOString();
     Promise.all([
       db.from("projekte").select("id, name, typ, marke, status").order("name"),
-      db.from("aufgaben").select("id, titel, beschreibung, status, spalte, faellig_am, erledigt_am, projekt_id, zustaendig_name, verantwortlich, kontakte:zustaendig_kontakt_id(vorname, nachname), organisationen(name)")
+      db.from("aufgaben").select("id, titel, beschreibung, status, spalte, faellig_am, erledigt_am, projekt_id, weg, vorgaenger, warten_auf, hinweis, zustaendig_name, verantwortlich, kontakte:zustaendig_kontakt_id(vorname, nachname), organisationen(name)")
         .or("status.eq.offen,and(status.eq.erledigt,erledigt_am.gte." + vor14 + ")")
     ]).then(function (r) {
       if (r[1].error) { wurzel.innerHTML = '<p class="kb-leer">Fehler: ' + esc(r[1].error.message) + "</p>"; return; }
@@ -64,7 +64,14 @@
       (a.beschreibung ? '<button type="button" class="pr-auf-titel" data-auf-auf aria-expanded="false"><span>' + esc(a.titel) + '</span><span class="tl-dreieck" aria-hidden="true"></span></button>'
         : '<span class="pr-auf-titel">' + esc(a.titel) + "</span>") +
       '<p class="pr-kb-meta"><span class="pr-frist' + (ueber ? " pr-ueber" : "") + '">' + (a.faellig_am ? kurz(a.faellig_am) : "ohne Termin") + '</span><span class="pr-wer">' + esc(wer(a) || "offen") + "</span></p>" +
-      (a.beschreibung ? '<div class="pr-auf-details" hidden><p>' + esc(a.beschreibung).replace(/\n/g, "<br>") + "</p></div>" : "") + "</div>";
+      zusatz(a) + (a.beschreibung ? '<div class="pr-auf-details" hidden><p>' + esc(a.beschreibung).replace(/\n/g, "<br>") + "</p></div>" : "") + "</div>";
+  }
+
+  // Hinweis (Antwort da, es kann weitergehen, nachfassen) und offene Vorgänger
+  function zusatz(a) {
+    var offenVor = (a.vorgaenger || []).map(function (id) { return aufgaben.filter(function (x) { return x.id === id && x.status !== "erledigt"; })[0]; }).filter(Boolean);
+    return (a.status === "offen" && a.hinweis ? '<p class="pr-hinweis">' + esc(a.hinweis) + "</p>" : "") +
+      (offenVor.length ? '<p class="pr-wartet">wartet auf: ' + offenVor.map(function (v) { return esc(v.titel); }).join(", ") + "</p>" : "");
   }
 
   function zeichnen() {
