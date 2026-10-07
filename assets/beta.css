@@ -714,3 +714,6 @@ body.kt3-detail .db-kopf { min-height: 0; }
   .pr-reiter .pr-tl2-liste button.an::after { display: none; }
   .pr-reiter .pr-tl2-detail { border-left: 0; border-radius: 0 14px 14px 0; }
 }
+/* Beteiligte: alle Namen gleich – ob verlinkt oder nicht */
+.pr-bet .pr-name { font-family: var(--font-sans); font-size: .9rem; font-weight: 500; color: var(--ink); text-decoration: none; }
+.pr-bet a.pr-name:hover { text-decoration: underline; text-underline-offset: 2px; }
