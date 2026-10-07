@@ -42,6 +42,20 @@ a.sn-link:hover, a.sn-link[aria-current="page"] { background: var(--grey-bg); co
 .sn-txt b { font-weight: 500; font-size: 14px; }
 .sn-txt small { font-size: 12px; color: var(--grey-50); margin-top: 1px; }
 
+/* Zweite Ebene: ein Eintrag mit Unterseiten klappt auf (Klick auf das Dreieck),
+   die Unterseiten stehen eingerückt darunter – funktioniert auch mobil. */
+.sn-sub { display: flex; align-items: stretch; }
+.sn-sub > a.sn-link { flex: 1 1 auto; }
+.sn-sub-toggle { flex: 0 0 36px; display: inline-flex; align-items: center; justify-content: center;
+  border: 0; background: none; border-radius: 10px; color: var(--grey-50); cursor: pointer; }
+.sn-sub-toggle:hover { background: var(--grey-bg); color: var(--ink); }
+.sn-sub-toggle svg { width: 12px; height: 12px; transition: transform .2s ease; }
+.sn-sub-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+.sn-kinder { display: none; margin: 2px 0 6px 22px; padding-left: 10px; box-shadow: inset 2px 0 0 var(--grey-bg); }
+.sn-kinder.is-open { display: block; }
+.sn-kinder a.sn-link { padding: 7px 8px; }
+.sn-kinder .sn-tag { flex-basis: 28px; height: 28px; font-size: 11px; background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink); }
+
 @media (max-width: 900px) {
   /* Mobil haengt das Panel nicht am Dreieck, sondern an der Kopfzeile (.nav)
      und fuellt deren Innenbreite - sonst liefe es rechts aus dem Bild. */

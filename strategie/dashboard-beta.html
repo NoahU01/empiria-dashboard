@@ -3,12 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Meilensteine &middot; empiria</title>
-<meta name="description" content="Meilensteine auf dem Weg zum Zielbild.">
+<title>Dashboard Beta &ndash; empiria</title>
+<meta name="description" content="Dashboard Beta – der Stand, der wirklich läuft.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="/styles.css">
-<link rel="stylesheet" href="/assets/projekte/projekte.css">
 <link rel="stylesheet" href="/assets/dashboard-nav.css">
+<style>
+.ed-gitter{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+.ed-karte{display:flex;flex-direction:column;gap:8px;padding:24px;border-radius:18px;background:var(--grey-bg);color:var(--ink);text-decoration:none;transition:transform .15s ease,box-shadow .15s ease}
+.ed-karte:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.08)}
+.ed-karte .sn-tag{width:36px;height:36px;flex:none}
+.ed-karte b{font-family:var(--font-serif);font-weight:500;font-size:1.3rem;margin-top:6px}
+.ed-karte span.u{font-size:.92rem;color:var(--grey-70)}
+.db-leer{margin-top:28px;padding:40px;border-radius:18px;border:1.5px dashed #c8c4bf;color:var(--grey-70);max-width:720px}
+</style>
 </head>
 <body>
 
@@ -31,7 +39,7 @@
           <a href="/strategie/dashboard-entwuerfe.html" class="sn-link"><span class="sn-tag">EN</span><span class="sn-txt"><b>Entw&uuml;rfe I</b><small>F&uuml;nf Haltungen, dieselben Daten</small></span></a>
           <a href="/strategie/dashboard-entwuerfe-2.html" class="sn-link"><span class="sn-tag">E2</span><span class="sn-txt"><b>Entw&uuml;rfe II</b><small>F&uuml;nf Ordnungen f&uuml;r dieselbe Lage</small></span></a>
         </div>
-        <a href="/strategie/dashboard-beta.html" class="sn-link"><span class="sn-tag">DB</span><span class="sn-txt"><b>Dashboard Beta</b><small>Der Stand, der wirklich l&auml;uft</small></span></a>
+        <a href="/strategie/dashboard-beta.html" class="sn-link" aria-current="page"><span class="sn-tag">DB</span><span class="sn-txt"><b>Dashboard Beta</b><small>Der Stand, der wirklich l&auml;uft</small></span></a>
         </nav>
       </div>
     </div>
@@ -39,62 +47,12 @@
 </header>
 
 <main>
-
-  <section class="hero pj-hero">
-    <div class="container">
-      <div class="hero-grid">
-        <div class="hero-head">
-          <p class="kicker">Strategie &middot; empiria</p>
-          <h1 class="h-serif">Die Schritte <span class="hl">dorthin.</span></h1>
-        </div>
-        <div class="hero-copy lead">
-          <p>Der Weg zum Zielbild in Wegmarken: was bis wann steht, wer es verantwortet und woran man erkennt, dass eine Marke erreicht ist.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <div class="pj-kopfzeile">
-        <p class="kicker">Die Wegmarken</p>
-        <h2 class="h-serif">Was sind die <span class="hl">Schritte?</span></h2>
-        <p class="lead">Wenige Marken mit einem klaren Ergebnis sind mehr wert als ein voller Plan, den niemand mehr liest.</p>
-      </div>
-      <div style="margin-top:clamp(26px,3.2vw,40px)">
-      <div class="formate-accordion">
-        <details class="formate-acc-item formate-acc--magenta" name="bst-meilensteine" open>
-          <summary><span>Dieses Jahr</span></summary>
-          <div class="formate-acc-body">
-            <p>Noch offen &ndash; was bis zum 31.12. stehen soll.</p>
-          </div>
-        </details>
-
-        <details class="formate-acc-item formate-acc--violet" name="bst-meilensteine">
-          <summary><span>Erstes Halbjahr 2027</span></summary>
-          <div class="formate-acc-body">
-            <p>Noch offen &ndash; die Schritte, die auf dem aufsetzen, was dieses Jahr fertig wird.</p>
-          </div>
-        </details>
-
-        <details class="formate-acc-item formate-acc--cyan" name="bst-meilensteine">
-          <summary><span>Zweites Halbjahr 2027</span></summary>
-          <div class="formate-acc-body">
-            <p>Noch offen &ndash; was erst sinnvoll ist, wenn das Vorherige steht.</p>
-          </div>
-        </details>
-
-        <details class="formate-acc-item formate-acc--emerald" name="bst-meilensteine">
-          <summary><span>Daueraufgaben</span></summary>
-          <div class="formate-acc-body">
-            <p>Noch offen &ndash; was nie fertig wird, aber regelm&auml;&szlig;ig Aufmerksamkeit braucht.</p>
-          </div>
-        </details>
-      </div>
-      </div>
-    </div>
-  </section>
-
+  <section class="section section--eng"><div class="container">
+      <p class="kicker">Dashboard</p>
+      <h1 class="h-serif">Dashboard <span class="hl">Beta.</span></h1>
+      <p class="lead" style="max-width:62ch">Hier entsteht das Dashboard, mit dem wir wirklich arbeiten &ndash; Schritt f&uuml;r Schritt, mit echten Daten.</p>
+      <div class="db-leer">Noch leer. Die ersten Bausteine kommen hierher, sobald wir sie gemeinsam festgelegt haben.</div>
+  </div></section>
 </main>
 
 <footer class="site-footer">
