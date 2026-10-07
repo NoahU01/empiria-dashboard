@@ -152,10 +152,10 @@
       '<span class="kb-von">' + esc(B.absender(m)) + '</span><span class="kb-betreff">' + esc(m.subject || "(ohne Betreff)") + "</span></div>" +
       '<span class="kb-zeit">' + zeit(m) + "</span></div>";
     html += '<div class="kb-block"><p class="kb-label">' + (a ? "Worum es geht" : "Anfang der Mail") + "</p><p>" + esc(a ? a.zusammenfassung : m.bodyPreview) + "</p></div>";
+    html += '<div class="kb-block"><p class="kb-label">Originalmail</p><pre class="v-original" data-kb-voll="' + esc(m.id) + '">' + esc(m.volltext || m.bodyPreview) + "</pre></div>";
     html += '<div class="kb-block"><p class="kb-label">Vorschlag</p><p class="kb-vorschlag-text">' + esc(m.vorschlag.text) + "</p></div>";
     if (a && a.entwurf) html += '<div class="kb-entwurf"><p class="kb-label">Antwortentwurf</p><pre>' + esc(a.entwurf) + "</pre></div>";
-    html += '<div class="kb-karte-fuss">' + B.badge(m.konto) + "<span>" + esc(m.grund) + '</span><button type="button" class="kb-ganz" aria-expanded="false">Ganze Mail</button>' +
-      outlookLink(m, "kb-oeffnen") + '</div><pre class="kb-text kb-text--ganz" data-kb-text hidden></pre></li>';
+    html += '<div class="kb-karte-fuss">' + B.badge(m.konto) + "<span>" + esc(m.grund) + '</span>' + outlookLink(m, "kb-oeffnen") + "</div></li>";
     return html;
   }
 
@@ -224,7 +224,18 @@
     standVerdrahten();
   }
 
+  // Volltext der Karten nachladen (der Anfang steht sofort da)
+  function volltexteLaden() {
+    ziel().querySelectorAll("[data-kb-voll]").forEach(function (pre) {
+      var m = alleMails().filter(function (x) { return x.id === pre.getAttribute("data-kb-voll"); })[0];
+      if (!m) return;
+      if (m.volltext) { pre.textContent = m.volltext; return; }
+      B.volltext(m).then(function (t) { m.volltext = t; pre.textContent = t; }).catch(function () {});
+    });
+  }
+
   function zeilenVerdrahten() {
+    volltexteLaden();
     ziel().querySelectorAll(".kb-karte .kb-ganz").forEach(function (b) {
       b.addEventListener("click", function () {
         var li = b.closest(".kb-karte"), pre = li.querySelector("[data-kb-text]"), auf = pre.hidden;
