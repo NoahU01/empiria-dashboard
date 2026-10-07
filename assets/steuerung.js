@@ -100,6 +100,8 @@
     var offen = D.vorlagen.filter(function (v) { return v.status === "offen" && v.entscheidung !== "spaeter"; });
     var weg = D.vorlagen.filter(function (v) { return v.status === "entschieden" || v.entscheidung === "spaeter"; });
     wurzel.innerHTML =
+      '<nav class="st4-nav" aria-label="Hauptseiten">' + [["Projekte", "/strategie/projekte.html"], ["Aufgaben", "/strategie/aufgaben.html"], ["Korrespondenz", "/strategie/korrespondenz-beta.html"], ["Kontakte", "/strategie/kontakte.html"]]
+        .map(function (x) { return '<a href="' + x[1] + '">' + x[0] + "<span>→</span></a>"; }).join("") + "</nav>" +
       '<section class="st4-projekte">' + projekte() + "</section>" +
       '<section class="st4-block"><h2 class="st4-h">Auf deinem Tisch</h2>' +
         (offen.length ? '<div class="st4-karten">' + offen.map(karte).join("") + "</div>" : '<p class="st4-leer">Nichts zu entscheiden.</p>') +
