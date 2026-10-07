@@ -108,7 +108,7 @@
     h += '<div class="kt3-raster">';
     // Links: Stoßrichtung (Gesamtblick über alle Termine) – rechts: Aufgaben
     var punkte = (p.ueberlegungen || "").split("\n").map(function (x) { return x.trim(); }).filter(Boolean);
-    h += '<section class="kt3-box pr-kurs"><h3>Stoßrichtung</h3>' + (punkte.length ? '<ul data-ueb-text>' + punkte.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"
+    h += '<section class="kt3-box kt3-breit pr-kurs pr-kurs-breit"><h3>Stoßrichtung</h3>' + (punkte.length ? '<ul data-ueb-text>' + punkte.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"
         : '<p class="kt3-leise" data-ueb-text>Noch keine Stoßrichtung – diktiere sie mir oder trage sie ein.</p>') +
       '<textarea class="pr-ueb" data-ueb hidden placeholder="Ein Punkt pro Zeile">' + esc(p.ueberlegungen || "") + '</textarea><div class="pr-ueb-knoepfe"><button type="button" class="kt3-klapp" data-ueb-bearbeiten>Bearbeiten</button>' +
       '<button type="button" class="pr-speichern" data-ueb-speichern hidden>Speichern</button></div></section>';
@@ -121,26 +121,15 @@
       var ueber = a.status === "offen" && a.faellig_am && new Date(a.faellig_am) < new Date(new Date().toDateString());
       return '<span class="pr-frist' + (ueber ? " pr-ueber" : "") + '">' + (a.faellig_am ? kurz(a.faellig_am) : "ohne Termin") + "</span>";
     }
-    // Aufgeklappte Aufgabe: Hintergrund, Herkunft, Weg, Kette, Unterlagen (assets/aufgaben-details.js)
-    function det(a) {
-      if (a._det === undefined) {
-        var e = ere.filter(function (x) { return x.id === a.ereignis_id; })[0];
-        if (e) a.ereignis = { id: e.id, titel: e.titel, datum: e.datum, projekt_id: p.id };
-        a._det = window.AufgabenDetails ? AufgabenDetails.html(a, auf) : (a.beschreibung ? "<p>" + esc(a.beschreibung) + "</p>" : "");
-      }
-      return a._det;
-    }
+    // Aufgeklappt: nur die Details als Stichpunkte (assets/aufgaben-details.js)
+    function det(a) { if (a._det === undefined) a._det = window.AufgabenDetails ? AufgabenDetails.html(a) : ""; return a._det; }
     function titel(a) {
       return det(a) ? '<button type="button" class="pr-auf-titel" data-auf-auf aria-expanded="false"><span>' + esc(a.titel) + '</span><span class="tl-dreieck" aria-hidden="true"></span></button>'
         : '<span class="pr-auf-titel">' + esc(a.titel) + "</span>";
     }
     function details(a) { return det(a) ? '<div class="pr-auf-details" hidden>' + det(a) + "</div>" : ""; }
-    // Hinweis (Antwort da, es kann weitergehen, nachfassen) und offene Vorgänger
-    function zusatz(a) {
-      var offenVor = (a.vorgaenger || []).map(function (id) { return auf.filter(function (x) { return x.id === id && x.status !== "erledigt"; })[0]; }).filter(Boolean);
-      return (a.status === "offen" && a.hinweis ? '<p class="pr-hinweis">' + esc(a.hinweis) + "</p>" : "") +
-        (offenVor.length ? '<p class="pr-wartet">wartet auf: ' + offenVor.map(function (v) { return esc(v.titel); }).join(", ") + "</p>" : "");
-    }
+    // Immer sichtbar: „Hängt ab von …“ und Hinweise wie „Wartet auf Rückmeldung von …“
+    function zusatz(a) { return window.AufgabenDetails ? AufgabenDetails.lage(a, auf) : ""; }
     var wahl = '<span class="pr-tl-wahl">' + [["liste", "Liste"], ["kanban", "Kanban"]].map(function (v) {
       return '<button type="button" data-aav="' + v[0] + '" aria-pressed="' + (v[0] === aav) + '">' + v[1] + "</button>"; }).join("") + "</span>";
     var aufInhalt;
@@ -164,8 +153,7 @@
           '<span class="pr-wer">' + esc(wer(a) || "offen") + "</span></div>" + '<div class="pr-auf-zusatz">' + zusatz(a) + "</div>" + details(a) + "</li>";
       }).join("") + "</ul>" : '<p class="kt3-leise">Nichts offen.</p>';
     }
-    if (aav === "kanban") h = h.replace('<section class="kt3-box pr-kurs">', '<section class="kt3-box kt3-breit pr-kurs pr-kurs-breit">');
-    h += '<section class="kt3-box pr-aufgaben' + (aav === "kanban" ? " kt3-breit pr-auf-kanban" : "") + '"><div class="pr-tl-kopf"><h3>Aufgaben</h3>' + wahl + "</div>" + aufInhalt + "</section>";
+    h += '<section class="kt3-box kt3-breit pr-aufgaben pr-auf-breit' + (aav === "kanban" ? " pr-auf-kanban" : "") + '"><div class="pr-tl-kopf"><h3>Aufgaben</h3>' + wahl + "</div>" + aufInhalt + "</section>";
     // Timeline: drei Darstellungen zum Vergleich – ohne äußeren Kasten, mit viel Luft
     var jetzt = Date.now(), tlv = "seite";
     try { tlv = localStorage.getItem("pr-tl-ansicht") || "seite"; } catch (x) {}
@@ -201,7 +189,7 @@
         return "<li>" + (b.kontakte ? '<a class="pr-name" href="/strategie/kontakte.html#k=' + b.kontakte.id + '">' + esc(name(b.kontakte)) + "</a>" : '<span class="pr-name">' + esc(b.name) + "</span>") +
           (b.rolle ? '<span class="pr-themen"> · ' + esc(b.rolle) + "</span>" : "") + "</li>"; }).join("") + "</ul>" : '<p class="kt3-leise">–</p>';
     }
-    h += '<div class="kt3-breit pr-bet-zeile"><section class="kt3-box"><h3>Beteiligte beim Kunden</h3>' + seite("Kunde") + '</section><section class="kt3-box"><h3>Team empiria</h3>' + seite("empiria") + seite("Partner").replace('<p class="kt3-leise">–</p>', "") + "</section></div>";
+    h += '<section class="kt3-box kt3-breit pr-team"><h3>Projektteam</h3><div class="pr-bet-zeile"><div class="pr-bet-spalte"><h4>Beteiligte beim Kunden</h4>' + seite("Kunde") + '</div><div class="pr-bet-spalte"><h4>Team empiria</h4>' + seite("empiria") + seite("Partner").replace('<p class="kt3-leise">–</p>', "") + "</div></div></section>";
     wurzel.innerHTML = h + "</div>";
     if (lookWert() === "sva") module(p);
     verdrahten(p);

@@ -67,16 +67,9 @@
       zusatz(a) + (det(a) ? '<div class="pr-auf-details" hidden>' + det(a) + "</div>" : "") + "</div>";
   }
 
-  function det(a) {
-    if (a._det === undefined) a._det = window.AufgabenDetails ? AufgabenDetails.html(a, aufgaben) : (a.beschreibung ? "<p>" + esc(a.beschreibung) + "</p>" : "");
-    return a._det;
-  }
-  // Hinweis (Antwort da, es kann weitergehen, nachfassen) und offene Vorgänger
-  function zusatz(a) {
-    var offenVor = (a.vorgaenger || []).map(function (id) { return aufgaben.filter(function (x) { return x.id === id && x.status !== "erledigt"; })[0]; }).filter(Boolean);
-    return (a.status === "offen" && a.hinweis ? '<p class="pr-hinweis">' + esc(a.hinweis) + "</p>" : "") +
-      (offenVor.length ? '<p class="pr-wartet">wartet auf: ' + offenVor.map(function (v) { return esc(v.titel); }).join(", ") + "</p>" : "");
-  }
+  function det(a) { if (a._det === undefined) a._det = window.AufgabenDetails ? AufgabenDetails.html(a) : ""; return a._det; }
+  // Immer sichtbar: „Hängt ab von …“ und Hinweise wie „Wartet auf Rückmeldung von …“
+  function zusatz(a) { return window.AufgabenDetails ? AufgabenDetails.lage(a, aufgaben) : ""; }
 
   function zeichnen() {
     var l = aufgaben.filter(sichtbar).sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });

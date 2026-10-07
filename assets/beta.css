@@ -900,3 +900,18 @@ main.pr-look-grau .pr-kb-spalte { background: #f4f2ef; }
 .pr-aufgaben .pr-kb-karte .ad-teil p, .pr-aufgaben .pr-kb-karte .ad-teil li { font-size: .72rem; }
 .ad-blink { box-shadow: 0 0 0 2px var(--hl) !important; transition: box-shadow .3s ease; }
 .ad-teil a { text-decoration: underline; text-decoration-color: #c9c5c0; } .ad-teil a:hover { text-decoration-color: var(--ink); }
+/* Aufgaben-Details: nur Stichpunkte */
+.ad-punkte { margin: 2px 0 4px; padding-left: 1.1em; }
+.ad-punkte li { margin-bottom: 3px; font-size: .86rem; font-weight: 300; line-height: 1.5; color: var(--ink-2); }
+.pr-aufgaben .pr-kb-karte .ad-punkte li { font-size: .72rem; }
+.pr-wartet::before { content: none; }
+.pr-wartet .ad-kette { color: var(--ink-2); }
+/* Projektansicht Weiß/Grau/Schwarz: alle Sektionen über die volle Breite untereinander */
+.pr-aufgaben.pr-auf-breit { height: auto; min-height: 0; }
+.pr-aufgaben.pr-auf-breit > ul { overflow: visible; }
+.pr-kurs.pr-kurs-breit > ul { overflow: visible; }
+.pr-team .pr-bet-zeile { margin-top: 0; display: grid; gap: 14px 40px; }
+@media (min-width: 900px) { .pr-team .pr-bet-zeile { grid-template-columns: 1fr 1fr; } }
+.pr-bet-spalte h4 { margin: 4px 0 6px; font-size: .78rem; font-weight: 600; color: var(--grey-70); }
+.pr-tl-frei + .pr-ziel, .pr-ziel + .pr-team, .pr-tl-frei + .pr-team { margin-top: 0; }
+.pr-module .pr-bet-spalte h4 { margin-top: 0; }
