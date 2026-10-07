@@ -202,7 +202,7 @@
     db.from("kontakte").select("*, organisationen(name, gruppe, marktumfeld, klaeren), kontaktwege(art, wert, kontext, bevorzugt, status), " +
       "anschriften(typ, strasse, plz, ort, status), kontakt_marken(marke, rolle, bestaetigt), kontakt_merkmale(herkunft, merkmale(kategorie, wert)), " +
       "kampagnen_teilnehmer(status, zuordnungsgrund, individueller_ansatz, kampagnen(name, zeitraum)), notizen(art, text, datum, quelle), " +
-      "aktivitaeten(datum, kanal, richtung, anlass, inhalt, ergebnis)").eq("id", id).single().then(function (r) {
+      "aktivitaeten(datum, kanal, richtung, anlass, inhalt, ergebnis, teilnehmer, ort, link)").eq("id", id).single().then(function (r) {
       if (r.error) { ziel.innerHTML = '<p class="kb-leer">Fehler: ' + esc(r.error.message) + "</p>"; return; }
       ziel.innerHTML = detailHtml(r.data);
     });
@@ -243,11 +243,24 @@
     // Anlass für den nächsten Kontakt
     h += abschnitt("Anlass", k.kontaktbriefing ? '<p class="kt-t">' + esc(k.kontaktbriefing) + "</p>" : "");
 
-    // Verlauf
+    // Verlauf: eine Zeile je Kontakt, Details aufklappbar; Geplantes oben
     var akt = (k.aktivitaeten || []).slice().sort(function (a, b) { return new Date(b.datum) - new Date(a.datum); });
-    h += abschnitt("Verlauf", akt.length ? '<ul class="kt-verlauf">' + akt.map(function (a) {
-      return "<li><span>" + datum(a.datum) + "</span><p>" + esc(a.kanal) + (a.anlass ? " – " + esc(a.anlass) : "") +
-        (a.ergebnis ? "<br>" + esc(a.ergebnis) : "") + "</p></li>"; }).join("") + "</ul>"
+    var jetzt = Date.now(), geplant = akt.filter(function (a) { return new Date(a.datum) > jetzt; }).reverse(),
+        war = akt.filter(function (a) { return new Date(a.datum) <= jetzt; });
+    function eintrag(a) {
+      var d = new Date(a.datum), zeit = d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+      var mit = (a.teilnehmer || []).join(", ");
+      var mehr = [a.kanal === "Termin" || a.kanal === "Treffen" ? zeit + " Uhr" : "", a.ort ? esc(a.ort) : "", mit ? "mit " + esc(mit) : "",
+                  a.ergebnis ? esc(a.ergebnis) : "", a.inhalt ? esc(a.inhalt) : "", a.link ? '<a href="' + esc(a.link) + '" target="_blank" rel="noopener">In Outlook öffnen</a>' : ""]
+                 .filter(Boolean).map(function (x) { return "<p>" + x + "</p>"; }).join("");
+      return '<li><details><summary><span>' + datum(a.datum) + "</span><b>" + esc(a.kanal) + "</b><em>" + esc(a.anlass || "") + "</em></summary>" +
+        (mehr ? '<div class="kt-v-mehr">' + mehr + "</div>" : "") + "</details></li>";
+    }
+    h += abschnitt("Geplant", geplant.length ? '<ul class="kt-v">' + geplant.map(eintrag).join("") + "</ul>" : "");
+    var sichtbar = 6;
+    h += abschnitt("Verlauf", war.length ? '<ul class="kt-v">' + war.map(function (a, i) {
+        return i < sichtbar ? eintrag(a) : eintrag(a).replace("<li>", '<li class="kt-v-weitere" hidden>'); }).join("") + "</ul>" +
+        (war.length > sichtbar ? '<button type="button" class="kt-v-alle" onclick="this.previousElementSibling.querySelectorAll(\'[hidden]\').forEach(function(x){x.hidden=false});this.remove()">Alle ' + war.length + " anzeigen</button>" : "")
       : '<p class="kt-t kt-leise">Noch nichts erfasst. Diktiere mir einfach, wenn du ' + esc(k.vorname || "die Person") + " getroffen oder gesprochen hast.</p>");
 
     // Erreichbar: nur die bevorzugten, gültigen Wege

@@ -362,3 +362,17 @@ a.db-chip:hover { background: #e2e0dd; color: var(--ink); }
 .kt-marken input { width: 18px; height: 18px; accent-color: var(--ink); cursor: pointer; }
 .kt-marken-firma td { padding-top: 18px; font-size: .78rem; font-weight: 600; color: var(--grey-50); border-bottom: 0; text-align: left; }
 @media (max-width: 520px) { .kt-marken th { font-size: .7rem; padding: 8px 4px; } .kt-marken td { padding: 7px 4px; } }
+
+/* Kontakte – Verlauf kompakt */
+.kt-v { list-style: none; padding: 0 !important; }
+.kt-v li + li { border-top: 1px solid #f2f1ef; }
+.kt-v summary { display: grid; grid-template-columns: 110px 70px minmax(0, 1fr); gap: 10px; padding: 7px 0; cursor: pointer; list-style: none; }
+.kt-v summary::-webkit-details-marker { display: none; }
+.kt-v summary span { color: var(--grey-50); font-size: .88rem; }
+.kt-v summary b { font-weight: 400; font-size: .88rem; color: var(--grey-70); }
+.kt-v summary em { font-style: normal; font-weight: 300; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kt-v details[open] summary em { white-space: normal; }
+.kt-v-mehr { padding: 0 0 10px 190px; font-size: .88rem; font-weight: 300; color: var(--ink-2); overflow-wrap: anywhere; }
+.kt-v-mehr p + p { margin-top: 2px; } .kt-v-mehr a { color: var(--ink); }
+.kt-v-alle { margin-top: 8px; border: 0; background: none; padding: 0; font-size: .85rem; text-decoration: underline; text-underline-offset: 2px; color: var(--ink); }
+@media (max-width: 600px) { .kt-v summary { grid-template-columns: 90px minmax(0, 1fr); } .kt-v summary b { display: none; } .kt-v-mehr { padding-left: 0; } }
