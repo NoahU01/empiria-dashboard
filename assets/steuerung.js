@@ -47,12 +47,13 @@
 
   /* ---------- Projekte: Index je Marke ---------- */
   function projekte() {
+    function liste(l) { return l.map(function (p) { return '<a href="/strategie/projekte.html#p=' + p.id + '"' + (p.status === "pausiert" ? ' class="st4-pause"' : "") + ">" + esc(p.name) + "</a>"; }).join('<i aria-hidden="true">·</i>'); }
     return ["empiria", "sofortsichtbar", "Müller&Ströbel."].map(function (m) {
-      var l = D.projekte.filter(function (p) { return (p.marke || "empiria") === m && p.status !== "abgeschlossen"; })
-        .sort(function (a, b) { return (a.typ === "intern") - (b.typ === "intern") || a.name.localeCompare(b.name); });
-      return '<div class="st4-marke"><h4>' + esc(m) + "</h4><ul>" + l.map(function (p) {
-        return '<li><a href="/strategie/projekte.html#p=' + p.id + '"' + (p.status === "pausiert" ? ' class="st4-pause"' : "") + ">" + esc(p.name) + "</a></li>";
-      }).join("") + "</ul></div>";
+      var l = D.projekte.filter(function (p) { return (p.marke || "empiria") === m && p.status !== "abgeschlossen"; }).sort(function (a, b) { return a.name.localeCompare(b.name); });
+      var k = l.filter(function (p) { return p.typ !== "intern"; }), n = l.filter(function (p) { return p.typ === "intern"; });
+      return '<div class="st4-marke"><h4>' + esc(m) + "</h4>" +
+        '<p><span class="st4-art">Kunden</span>' + (k.length ? liste(k) : '<em>–</em>') + "</p>" +
+        '<p><span class="st4-art">Intern</span>' + (n.length ? liste(n) : '<em>–</em>') + "</p></div>";
     }).join("");
   }
 
@@ -72,7 +73,7 @@
   /* ---------- Sparring ---------- */
   function sparring() {
     return SPARRING.map(function (s) {
-      return '<button type="button" class="st4-spar" data-spar="' + s.k + '" title="Regel: ' + esc(s.r) + '"><b>' + esc(s.n) + '</b><span class="st4-spar-z">' + s.z + "</span><span class=\"st4-spar-s\">" + esc(s.s) + '</span><span class="st4-spar-los">Starten →</span></button>';
+      return '<button type="button" class="st4-spar" data-spar="' + s.k + '" title="Regel: ' + esc(s.r) + '"><span class="st4-play" aria-hidden="true"></span><span class="st4-spar-text"><b>' + esc(s.n) + '</b><span class="st4-spar-s">' + esc(s.s) + '</span></span><span class="st4-spar-z">' + s.z + "</span></button>";
     }).join("");
   }
 
@@ -80,7 +81,7 @@
   function wochen() {
     var mo = new Date(HEUTE); mo.setDate(mo.getDate() - ((mo.getDay() + 6) % 7));
     var h = "";
-    for (var w = 0; w < 6; w++) {
+    for (var w = 0; w < 8; w++) {
       var von = new Date(+mo + w * 7 * 864e5), bis = new Date(+von + 7 * 864e5);
       var punkte = D.ereignisse.filter(function (e) { var d = new Date(e.datum); return d >= von && d < bis; })
         .map(function (e) { return { d: new Date(e.datum), art: e.art === "Meilenstein" ? "ziel" : "termin", t: e.titel, p: e.projekt_id }; })
@@ -101,7 +102,7 @@
     var weg = D.vorlagen.filter(function (v) { return v.status === "entschieden" || v.entscheidung === "spaeter"; });
     wurzel.innerHTML =
       '<nav class="st4-nav" aria-label="Hauptseiten">' + [["Projekte", "/strategie/projekte.html"], ["Aufgaben", "/strategie/aufgaben.html"], ["Korrespondenz", "/strategie/korrespondenz-beta.html"], ["Kontakte", "/strategie/kontakte.html"]]
-        .map(function (x) { return '<a href="' + x[1] + '">' + x[0] + "<span>→</span></a>"; }).join("") + "</nav>" +
+        .map(function (x) { return '<a href="' + x[1] + '">' + x[0] + " →</a>"; }).join("") + "</nav>" +
       '<section class="st4-projekte">' + projekte() + "</section>" +
       '<section class="st4-block"><h2 class="st4-h">Auf deinem Tisch</h2>' +
         (offen.length ? '<div class="st4-karten">' + offen.map(karte).join("") + "</div>" : '<p class="st4-leer">Nichts zu entscheiden.</p>') +
@@ -109,7 +110,7 @@
           return "<span>" + esc(v.titel) + " · " + (v.entscheidung === "ja" ? "freigegeben" : v.entscheidung === "anders" ? "anders" : "später") + "</span>"; }).join("") + "</p>" : "") +
       "</section>" +
       '<section class="st4-block"><h2 class="st4-h">Sparring starten</h2><div class="st4-sparring">' + sparring() + '</div><p class="st4-hinweis" data-spar-hinweis hidden></p></section>' +
-      '<section class="st4-block"><h2 class="st4-h">Sechs Wochen</h2><div class="st4-wochen">' + wochen() + "</div></section>";
+      '<section class="st4-block"><h2 class="st4-h">Die nächsten Wochen</h2><div class="st4-wochen" tabindex="0" aria-label="Wochen – seitlich wischen">' + wochen() + "</div></section>";
     verdrahten();
   }
 
