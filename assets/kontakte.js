@@ -34,7 +34,7 @@
   function laden() {
     wurzel.innerHTML = '<div class="kb-laedt"><span></span><span></span><span></span></div>';
     db.from("kontakte").select("id, kontakt_nr, anrede, vorname, nachname, position, ansprache, prioritaet, beziehungsstatus, beziehungsnaehe, " +
-      "kontaktfrequenz, rhythmus_tage, letzter_kontakt, naechster_kontakt, profiltiefe, kontaktstopp, klaeren, linkedin_url, " +
+      "kontaktfrequenz, rhythmus_tage, letzter_kontakt, naechster_kontakt, profiltiefe, kontaktstopp, klaeren, linkedin_url, kontaktart, " +
       "organisationen(name, gruppe, klaeren), kontakt_marken(marke, bestaetigt), kampagnen_teilnehmer(status, kampagnen(name))")
       .order("nachname").then(function (r) {
         if (r.error) { wurzel.innerHTML = '<div class="kb-hinweis"><p>Fehler: ' + esc(r.error.message) + "</p></div>"; return; }
@@ -60,6 +60,7 @@
 
   var TABS = [
     ["alle", "Alle", function () { return true; }],
+    ["direkt", "Direkte Kontakte", function (k) { return k.kontaktart === "direkt"; }],
     ["klaeren", "Klärfälle", klaerfall],
     ["faellig", "Wieder dran", faellig],
     ["a", "Priorität A", function (k) { return k.prioritaet === "A"; }],
@@ -248,7 +249,8 @@
     var h = '<div class="kt-d">';
     h += '<h2 class="kt-name">' + esc(name(k)) + "</h2>";
     h += '<p class="kt-sub">' + esc([k.position, o.name].filter(Boolean).join(" · ")) + "</p>";
-    h += '<p class="kt-tags">' + [k.ansprache && "per " + esc(k.ansprache), k.prioritaet && "Priorität " + esc(k.prioritaet), marken && esc(marken)]
+    var ART = { direkt: "direkter Kontakt", LinkedIn: "nur LinkedIn", "Sales Navigator": "aus Sales Navigator", recherchiert: "recherchiert" };
+    h += '<p class="kt-tags">' + [ART[k.kontaktart], k.ansprache && "per " + esc(k.ansprache), k.prioritaet && "Priorität " + esc(k.prioritaet), marken && esc(marken)]
       .filter(Boolean).join('<span aria-hidden="true">·</span>') + (k.kontaktstopp ? '<span aria-hidden="true">·</span><b class="kt-stopp">Kontaktstopp</b>' : "") + "</p>";
 
     // Stand der Beziehung
