@@ -160,7 +160,8 @@
     Promise.all([
       db.from("organisationen").select("id, name, gruppe, marktumfeld, website, klaeren, sitz, rechtsform, groesse, konzern, fuehrung, themen, recherche_stand").eq("id", id).single(),
       db.from("firmen_meldungen").select("art, datum, titel, typ, quelle_name, quelle_url, relevanz, aufhaenger").eq("organisation_id", id).order("datum", { ascending: false }),
-      ids.length ? db.from("kontakt_merkmale").select("kontakt_id, merkmale(kategorie, wert)").in("kontakt_id", ids) : Promise.resolve({ data: [] })
+      ids.length ? db.from("kontakt_merkmale").select("kontakt_id, merkmale(kategorie, wert)").in("kontakt_id", ids) : Promise.resolve({ data: [] }),
+      db.from("projekte").select("id, name, phase, status").eq("organisation_id", id)
     ]).then(function (r) {
       var org = r[0].data || { name: "Firma" }, meld = r[1].data || [], merk = r[2].data || [];
       var h = '<a class="kb-zurueck" href="#firmen"><span aria-hidden="true">&larr;</span> Firmen</a>';
@@ -169,7 +170,7 @@
         [web, esc(org.sitz || ""), esc(org.rechtsform || ""), esc(org.konzern || (org.gruppe && org.gruppe !== org.name ? "gehört zu " + org.gruppe : "")), esc(org.marktumfeld || "")].filter(Boolean).join(" · ") + "</p>" +
         (org.groesse ? '<p class="kt3-tags">' + esc(org.groesse) + "</p>" : "") + "</div></div>";
       if (org.klaeren) h += '<p class="kt3-klaer">' + esc(org.klaeren) + "</p>";
-      h += '<div class="kt3-raster">';
+      h += '<div class="kt3-raster">' + projekteBox(r[3].data || []);
       var ansatz = {};
       merk.forEach(function (m) { if (m.merkmale && (m.merkmale.kategorie === "Bedarf" || m.merkmale.kategorie === "Angebot")) (ansatz[m.merkmale.kategorie] = ansatz[m.merkmale.kategorie] || {})[m.merkmale.wert] = 1; });
       h += box("Ansatzpunkte", (ansatz.Bedarf ? '<p class="kt3-zeile"><span>Bedarf</span>' + esc(Object.keys(ansatz.Bedarf).join(", ")) + "</p>" : "") +
@@ -215,15 +216,23 @@
       db.from("kontakte").select("*, organisationen(id, name, gruppe, klaeren), kontaktwege(art, wert, kontext, bevorzugt, status), kontakt_marken(marke), " +
         "kontakt_merkmale(merkmale(kategorie, wert)), kampagnen_teilnehmer(status, zuordnungsgrund, kampagnen(name, zeitraum)), " +
         "aktivitaeten(datum, kanal, richtung, anlass, inhalt, ergebnis, teilnehmer, ort, link)").eq("id", id).single(),
-      db.from("aufgaben").select("id, titel, faellig_am").eq("kontakt_id", id).eq("status", "offen").order("angelegt_am")
+      db.from("aufgaben").select("id, titel, faellig_am").eq("kontakt_id", id).eq("status", "offen").order("angelegt_am"),
+      db.from("projekt_beteiligte").select("rolle, projekte(id, name, phase, status)").eq("kontakt_id", id)
     ]).then(function (r) {
       if (r[0].error) { wurzel.innerHTML = '<p class="kb-leer">Fehler: ' + esc(r[0].error.message) + "</p>"; return; }
-      wurzel.innerHTML = personHtml(r[0].data, r[1].data || []);
+      wurzel.innerHTML = personHtml(r[0].data, r[1].data || [], (r[2].data || []).filter(function (b) { return b.projekte; }));
       neuTodoVerdrahten(); todoVerdrahten();
     });
   }
 
-  function personHtml(k, todos) {
+  function projekteBox(liste) {
+    if (!liste.length) return "";
+    return '<section class="kt3-box kt3-breit kt3-proj"><h3>Projekte</h3><ul>' + liste.map(function (b) {
+      var p = b.projekte || b;
+      return '<li><a href="/strategie/projekte.html#p=' + p.id + '"><b>' + esc(p.name) + "</b></a>" + '<span class="kt3-leise">' + esc([b.rolle, p.phase, p.status].filter(Boolean).join(" · ")) + "</span></li>";
+    }).join("") + "</ul></section>";
+  }
+  function personHtml(k, todos, projekte) {
     var o = k.organisationen, h = '<a class="kb-zurueck" href="#' + zustand.tab + '"><span aria-hidden="true">&larr;</span> Kontakte</a>';
     var wege = (k.kontaktwege || []).filter(function (w) { return w.status !== "veraltet" && (w.art === "E-Mail" || w.art === "Mobil" || w.art === "Telefon"); })
       .sort(function (a, b) { return b.bevorzugt - a.bevorzugt; });
@@ -244,7 +253,7 @@
     var klaer = [k.klaeren, o && o.klaeren && "Firma: " + o.klaeren].filter(Boolean);
     if (klaer.length) h += '<p class="kt3-klaer">' + klaer.map(esc).join(" · ") + "</p>";
 
-    h += '<div class="kt3-raster">';
+    h += '<div class="kt3-raster">' + projekteBox(projekte || []);
     var m = {}; (k.kontakt_merkmale || []).forEach(function (x) { if (x.merkmale) (m[x.merkmale.kategorie] = m[x.merkmale.kategorie] || []).push(x.merkmale.wert); });
     var kamp = (k.kampagnen_teilnehmer || []).filter(function (t) { return t.status === "freigegeben" || t.status === "vorgeschlagen"; });
     h += box("Ansatzpunkte",

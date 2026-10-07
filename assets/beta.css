@@ -608,3 +608,9 @@ body.kt3-detail .db-kopf { min-height: 0; }
 .pr-bet { list-style: none; margin: 0; padding: 0; } .pr-bet li { display: grid; padding: 6px 0; border-top: 1px solid #f2f1ef; font-size: .9rem; } .pr-bet li:first-child { border-top: 0; }
 .pr-bet a { color: var(--ink); font-weight: 500; text-decoration: none; } .pr-bet span { font-size: .8rem; }
 @media (max-width: 600px) { .pr-tl li { grid-template-columns: 1fr; } .pr-neu { flex-wrap: wrap; } .pr-neu .pr-wer-feld { flex: 1 1 100%; } }
+/* Projekte bei Person/Firma; Termin-Details in der Timeline */
+.kt3-proj ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 24px; }
+.kt3-proj li { display: flex; flex-direction: column; } .kt3-proj a { color: var(--ink); text-decoration: none; } .kt3-proj a:hover b { text-decoration: underline; text-underline-offset: 2px; }
+.kt3-proj b { font-family: var(--font-serif); font-size: 1.05rem; font-weight: 600; } .kt3-proj span { font-size: .8rem; }
+.pr-meta { margin: 2px 0 0 !important; font-size: .8rem !important; color: var(--grey-70); }
+.pr-art { display: inline-block; margin-right: 6px; padding: 0 6px; border-radius: 4px; background: var(--grey-bg); font-size: .7rem; font-weight: 600; color: var(--ink-2); }

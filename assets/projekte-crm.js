@@ -51,7 +51,7 @@
     Promise.all([
       db.from("projekte").select("*, organisationen(id, name)").eq("id", id).single(),
       db.from("projekt_beteiligte").select("id, seite, rolle, name, kontakte(id, vorname, nachname, position)").eq("projekt_id", id),
-      db.from("projekt_ereignisse").select("id, datum, art, titel, quelle, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("datum", { ascending: false }),
+      db.from("projekt_ereignisse").select("id, datum, art, titel, quelle, format, ort, teilnehmer, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("datum", { ascending: false }),
       db.from("projekt_punkte").select("id, ereignis_id, art, text, angelegt_am, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am", { ascending: false }),
       db.from("aufgaben").select("id, titel, status, faellig_am, ereignis_id, zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
     ]).then(function (r) {
@@ -91,7 +91,11 @@
     h += '<section class="kt3-box kt3-breit"><h3>Timeline</h3><ol class="pr-tl">' + ere.map(function (e, i) {
       var p2 = pkt.filter(function (x) { return x.ereignis_id === e.id; }), a2 = auf.filter(function (x) { return x.ereignis_id === e.id; });
       var zuk = new Date(e.datum) > jetzt;
-      return "<li" + (i >= 6 ? " hidden data-mehr" : "") + ' class="' + (zuk ? "pr-zuk" : "") + '"><span class="pr-d">' + (zuk ? "geplant · " : "") + kurz(e.datum) + "</span><div><b>" + esc(e.titel) + '</b> <span class="kt3-leise">' + esc(e.art) + (e.kontakte ? " · " + esc(name(e.kontakte)) : "") + "</span>" +
+      var zeit = new Date(e.datum).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+      var fmt = e.format === "vor Ort" ? "vor Ort" + (e.ort ? ": " + e.ort : "") : e.format === "offen" ? "Ort offen" : (e.format || e.art);
+      var tn = (e.teilnehmer || []).length ? (e.teilnehmer || []).join(", ") : (e.kontakte ? name(e.kontakte) : "");
+      return "<li" + (i >= 6 ? " hidden data-mehr" : "") + ' class="' + (zuk ? "pr-zuk" : "") + '"><span class="pr-d">' + (zuk ? "geplant · " : "") + kurz(e.datum) + "<br>" + zeit + "</span><div><b>" + esc(e.titel) + "</b>" +
+        '<p class="pr-meta"><span class="pr-art">' + esc(e.art) + "</span>" + esc(fmt) + (tn ? " · mit " + esc(tn) : "") + "</p>" +
         p2.filter(function (x) { return x.art === "Protokoll"; }).map(function (x) { return '<p class="pr-prot">' + esc(x.text) + "</p>"; }).join("") +
         p2.filter(function (x) { return x.art === "Entscheidung"; }).map(function (x) { return '<p class="pr-e"><span>Entscheidung</span>' + esc(x.text) + "</p>"; }).join("") +
         a2.map(function (x) { return '<p class="pr-a"><span>Aufgabe</span>' + esc(x.titel) + ' <i>' + esc(wer(x)) + "</i>" + (x.status === "erledigt" ? " ✓" : "") + "</p>"; }).join("") + "</div></li>";
