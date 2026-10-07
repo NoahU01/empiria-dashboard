@@ -9,7 +9,7 @@
   var db = window.supabase.createClient(URL_, SCHLUESSEL, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
   var wurzel = document.querySelector("[data-kontakte]");
   var kopfKonto = document.querySelector("[data-kb-konto]");
-  var alle = [], vorschlaege = [], zustand = { tab: "alle", suche: "", gewaehlt: null };
+  var alle = [], vorschlaege = [], aufgaben = [], zustand = { tab: "alle", suche: "", gewaehlt: null };
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
   function datum(d) { return d ? new Date(d).toLocaleDateString("de-DE", { day: "numeric", month: "short", year: "numeric" }) : "–"; }
@@ -41,6 +41,9 @@
         alle = r.data;
         return db.from("vorschlaege").select("id, kontakt_id, feld, wert, beleg, quelle, sicherheit").eq("status", "offen").order("sicherheit").then(function (v) {
           vorschlaege = v.data || [];
+          return db.from("aufgaben").select("id, titel, beschreibung, faellig_am, angelegt_am, organisationen(name), kontakte(vorname, nachname)").eq("status", "offen").order("angelegt_am");
+        }).then(function (a) {
+          aufgaben = (a && a.data) || [];
         if (!alle.length) { wurzel.innerHTML = '<div class="kb-hinweis"><p>Keine Kontakte sichtbar – ist diese Mailadresse freigegeben?</p></div>'; return; }
         zeichnen();
         });
@@ -60,6 +63,7 @@
     ["klaeren", "Klärfälle", klaerfall],
     ["faellig", "Wieder dran", faellig],
     ["a", "Priorität A", function (k) { return k.prioritaet === "A"; }],
+    ["todo", "To-dos", function () { return false; }],
     ["marken", "Marken", function () { return true; }],
     ["vorschlaege", "Vorschläge", function (k) { return vorschlaege.some(function (v) { return v.kontakt_id === k.id; }); }]
   ];
@@ -142,7 +146,31 @@
     });
   }
 
+  function todoHtml() {
+    if (!aufgaben.length) return '<p class="kb-leer">Keine offenen To-dos.</p>';
+    return '<ul class="kt-todo">' + aufgaben.map(function (a) {
+      var bezug = a.kontakte ? name(a.kontakte) : a.organisationen ? a.organisationen.name : "";
+      return '<li data-a="' + a.id + '"><div><b>' + esc(a.titel) + "</b>" + (bezug ? "<span>" + esc(bezug) + "</span>" : "") +
+        (a.beschreibung && a.beschreibung !== a.titel ? "<p>" + esc(a.beschreibung) + "</p>" : "") + "</div>" +
+        '<button type="button">Erledigt</button></li>';
+    }).join("") + "</ul>";
+  }
+
   function zeichnen() {
+    if (zustand.tab === "todo") {
+      wurzel.innerHTML = tabsHtml() + todoHtml();
+      tabsVerdrahten();
+      wurzel.querySelectorAll("[data-a] button").forEach(function (b) {
+        b.onclick = function () {
+          var id = +b.parentNode.getAttribute("data-a"); b.disabled = true;
+          db.from("aufgaben").update({ status: "erledigt", erledigt_am: new Date().toISOString() }).eq("id", id).then(function (r) {
+            if (r.error) { b.disabled = false; alert("Nicht gespeichert: " + r.error.message); return; }
+            aufgaben = aufgaben.filter(function (x) { return x.id !== id; }); zeichnen();
+          });
+        };
+      });
+      return;
+    }
     if (zustand.tab === "marken") {
       wurzel.innerHTML = tabsHtml() + markenHtml();
       tabsVerdrahten(); markenVerdrahten();
@@ -186,7 +214,8 @@
 
   function tabsHtml() {
     return '<div class="kt-tabs">' + TABS.map(function (t) {
-      var n = t[0] === "vorschlaege" ? vorschlaege.length : alle.filter(t[2]).length;
+      var n = t[0] === "vorschlaege" ? vorschlaege.length : t[0] === "todo" ? aufgaben.length : alle.filter(t[2]).length;
+      if (t[0] === "todo" && !n && zustand.tab !== t[0]) return "";
       if (t[0] === "vorschlaege" && !n && zustand.tab !== t[0]) return "";
       return '<button type="button" data-tab="' + t[0] + '" aria-pressed="' + (zustand.tab === t[0]) + '">' + t[1] + " <span>" + n + "</span></button>";
     }).join("") + "</div>";
