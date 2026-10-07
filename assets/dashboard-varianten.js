@@ -124,24 +124,6 @@
       "</div></div>";
   }
 
-  /* Paper – Morgenbriefing als ganz reduzierte Zeitung: ein Aufmacher, schmale Spalten, nur Schwarz */
-  function vPaper() {
-    var d = new Date(), tag = d.toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-    var e = L.entscheiden[0];
-    function link(t) { return '<a href="#" class="pa-a">' + esc(t) + " &rarr;</a>"; }
-    return '<article class="pa"><header class="pa-kopf"><span>' + tag + '</span><b>Die Lage</b><span>empiria</span></header>' +
-      '<section class="pa-auf"><p class="pa-dach">' + esc(e.projekt) + ' · Entscheidung bis ' + esc(e.bis) + '</p><h2>' + esc(e.frage) + '</h2><p class="pa-lead">' + esc(e.warum) + "</p>" +
-        '<p class="pa-opt">' + e.optionen.map(function (o) { return '<a href="#">' + esc(o) + "</a>"; }).join(" · ") + "</p></section>" +
-      '<div class="pa-spalten">' +
-      '<section><h3>Fertig für dich</h3>' + L.freigeben.map(function (f) { return "<p><b>" + esc(f.was) + ".</b> " + esc(f.worum) + " " + link("Freigeben") + "</p>"; }).join("") + "</section>" +
-      '<section><h3>Heute vorbereiten</h3>' + L.vorbereiten.map(function (v) { return "<p><b>" + esc(v.was) + ".</b> " + esc(v.termin) + ", bis " + esc(v.bis) + ". " + link("Vorbereiten lassen") + "</p>"; }).join("") + "</section>" +
-      '<section><h3>Außerdem zu entscheiden</h3>' + L.entscheiden.slice(1).map(function (x) { return "<p><b>" + esc(x.frage) + "</b> " + esc(x.warum) + "</p>"; }).join("") + "</section>" +
-      "</div>" +
-      '<section class="pa-proj"><h3>Projekte</h3>' + L.projekte.map(function (p) {
-        return "<p><b>" + esc(p.name) + "</b>" + (p.status !== "laeuft" ? " <i>" + STATUS[p.status] + "</i>" : "") + " — " + esc(p.schritt) + "</p>"; }).join("") + "</section>" +
-      '<section class="pa-fuss"><h3>Menschen</h3>' + L.beziehungen.map(function (b) { return "<p><b>" + esc(b.wer) + "</b>, " + esc(b.wo) + ": " + esc(b.anlass) + "</p>"; }).join("") + "</section></article>";
-  }
-
   /* Stripe – klare Karten, feine Linien, Status als Farbpunkte, alles auf einer Ebene lesbar */
   function vStripe() {
     function zeile(a, b, c, d) { return '<div class="sp-z"><span class="sp-a">' + a + '</span><span class="sp-b">' + b + '</span><span class="sp-c">' + (c || "") + "</span>" + (d || "") + "</div>"; }
@@ -165,7 +147,7 @@
     var ico = { ent: '<span class="ln-i ln-i--ent"></span>', frei: '<span class="ln-i ln-i--frei"></span>', vor: '<span class="ln-i ln-i--vor"></span>' };
     function gruppe(titel, zeilen) { return '<section class="ln-g"><h3>' + titel + "</h3>" + zeilen + "</section>"; }
     function z(i, text, tag, rechts, k) { return '<div class="ln-z">' + i + '<span class="ln-t">' + text + "</span>" + (tag ? '<span class="ln-tag">' + tag + "</span>" : "") + '<span class="ln-r">' + (rechts || "") + "</span>" + (k ? "<kbd>" + k + "</kbd>" : "") + "</div>"; }
-    return '<div class="ln"><aside class="ln-seite"><p class="ln-ws">empiria</p>' + ["Lage", "Entscheiden", "Freigeben", "Vorbereiten", "Projekte", "Kontakte"].map(function (x, i) {
+    return '<div class="ln"><aside class="ln-seite"><p class="ln-ws"><img src="/assets/empiria-logo.svg" alt="empiria"></p>' + ["Lage", "Entscheiden", "Freigeben", "Vorbereiten", "Projekte", "Kontakte"].map(function (x, i) {
         return '<a href="#"' + (i ? "" : ' class="an"') + ">" + x + "</a>"; }).join("") + '<p class="ln-ws ln-ws--2">Projekte</p>' + L.projekte.map(function (p) {
         return '<a href="#"><span class="ln-st ln-st--' + p.status + '"></span>' + esc(p.name) + "</a>"; }).join("") + "</aside>" +
       '<div class="ln-haupt"><p class="ln-lage">' + esc(L.satz) + "</p>" +
@@ -177,7 +159,7 @@
   }
 
   var V = [["v1", "Streifen", "wie Projekt SV Akademie", v1], ["v2", "Felder", "gleiche Elemente, ohne Aufklappen", v2], ["v3", "Apple", "ruhig, groß, Widgets", v3],
-           ["paper", "Paper", "Morgenbriefing als Zeitung", vPaper], ["stripe", "Stripe", "klare Karten, feine Linien", vStripe], ["linear", "Linear", "präzise Arbeitsfläche", vLinear]];
+           ["stripe", "Stripe", "klare Karten, feine Linien", vStripe], ["linear", "Linear", "präzise Arbeitsfläche", vLinear]];
   var nav = document.querySelector("[data-dv-nav]");
   function zeigen() {
     var h = location.hash.replace("#", ""), v = V.filter(function (x) { return x[0] === h; })[0] || V[0];
