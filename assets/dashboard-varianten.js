@@ -124,66 +124,60 @@
       "</div></div>";
   }
 
-  /* V4 – Tesla: dunkel, eine klare Mitte, große Bedienflächen */
-  function v4() {
+  /* Paper – Morgenbriefing als ganz reduzierte Zeitung: ein Aufmacher, schmale Spalten, nur Schwarz */
+  function vPaper() {
+    var d = new Date(), tag = d.toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
     var e = L.entscheiden[0];
-    return '<div class="te"><div class="te-oben"><span>empiria</span><span>' + L.status.map(function (s) { return '<i class="te-pkt"></i>' + s[0]; }).join(" ") + "</span></div>" +
-      '<div class="te-mitte"><p class="te-label">Jetzt</p><h2>' + esc(e.frage) + "</h2><p>" + esc(e.warum) + '</p><div class="te-opts">' + e.optionen.map(function (o, i) {
-        return '<button class="' + (i === 0 ? "te-an" : "") + '">' + esc(o) + "</button>"; }).join("") + "</div></div>" +
-      '<div class="te-leiste">' +
-      '<div><p class="te-label">Freigeben</p>' + L.freigeben.slice(0, 3).map(function (f) { return "<button>" + esc(f.was) + "</button>"; }).join("") + "</div>" +
-      '<div><p class="te-label">Vorbereiten</p>' + L.vorbereiten.map(function (v) { return '<button class="' + (v.dringend ? "te-rot" : "") + '">' + esc(v.was) + "<small>bis " + esc(v.bis) + "</small></button>"; }).join("") + "</div>" +
-      '<div><p class="te-label">Projekte</p>' + L.projekte.map(function (p) { return '<button><span class="te-st te-st-' + p.status + '"></span>' + esc(p.name) + "<small>" + STATUS[p.status] + "</small></button>"; }).join("") + "</div>" +
+    function link(t) { return '<a href="#" class="pa-a">' + esc(t) + " &rarr;</a>"; }
+    return '<article class="pa"><header class="pa-kopf"><span>' + tag + '</span><b>Die Lage</b><span>empiria</span></header>' +
+      '<section class="pa-auf"><p class="pa-dach">' + esc(e.projekt) + ' · Entscheidung bis ' + esc(e.bis) + '</p><h2>' + esc(e.frage) + '</h2><p class="pa-lead">' + esc(e.warum) + "</p>" +
+        '<p class="pa-opt">' + e.optionen.map(function (o) { return '<a href="#">' + esc(o) + "</a>"; }).join(" · ") + "</p></section>" +
+      '<div class="pa-spalten">' +
+      '<section><h3>Fertig für dich</h3>' + L.freigeben.map(function (f) { return "<p><b>" + esc(f.was) + ".</b> " + esc(f.worum) + " " + link("Freigeben") + "</p>"; }).join("") + "</section>" +
+      '<section><h3>Heute vorbereiten</h3>' + L.vorbereiten.map(function (v) { return "<p><b>" + esc(v.was) + ".</b> " + esc(v.termin) + ", bis " + esc(v.bis) + ". " + link("Vorbereiten lassen") + "</p>"; }).join("") + "</section>" +
+      '<section><h3>Außerdem zu entscheiden</h3>' + L.entscheiden.slice(1).map(function (x) { return "<p><b>" + esc(x.frage) + "</b> " + esc(x.warum) + "</p>"; }).join("") + "</section>" +
+      "</div>" +
+      '<section class="pa-proj"><h3>Projekte</h3>' + L.projekte.map(function (p) {
+        return "<p><b>" + esc(p.name) + "</b>" + (p.status !== "laeuft" ? " <i>" + STATUS[p.status] + "</i>" : "") + " — " + esc(p.schritt) + "</p>"; }).join("") + "</section>" +
+      '<section class="pa-fuss"><h3>Menschen</h3>' + L.beziehungen.map(function (b) { return "<p><b>" + esc(b.wer) + "</b>, " + esc(b.wo) + ": " + esc(b.anlass) + "</p>"; }).join("") + "</section></article>";
+  }
+
+  /* Stripe – klare Karten, feine Linien, Status als Farbpunkte, alles auf einer Ebene lesbar */
+  function vStripe() {
+    function zeile(a, b, c, d) { return '<div class="sp-z"><span class="sp-a">' + a + '</span><span class="sp-b">' + b + '</span><span class="sp-c">' + (c || "") + "</span>" + (d || "") + "</div>"; }
+    return '<div class="sp"><div class="sp-kopf"><div><p class="sp-klein">Heute</p><h2>Guten Morgen, Daniel</h2></div><div class="sp-suche">Suchen oder Befehl …<kbd>⌘K</kbd></div></div>' +
+      '<div class="sp-hinweis"><span class="sp-pkt sp-pkt--rot"></span><b>Achtung</b> ' + esc(L.satz) + '<a href="#">Entscheiden →</a></div>' +
+      '<div class="sp-raster"><section class="sp-karte sp-breit"><header><h3>Entscheidungen</h3><a href="#">Alle ansehen</a></header>' +
+        L.entscheiden.map(function (e) { return zeile('<span class="sp-pkt sp-pkt--gelb"></span>' + esc(e.projekt), "<b>" + esc(e.frage) + "</b>", "bis " + esc(e.bis), '<button class="sp-k">Entscheiden</button>'); }).join("") + "</section>" +
+      '<section class="sp-karte"><header><h3>Zur Freigabe</h3><a href="#">Alle freigeben</a></header>' +
+        L.freigeben.map(function (f) { return zeile(esc(f.art), "<b>" + esc(f.was) + "</b><small>" + esc(f.worum) + "</small>", "", '<button class="sp-k sp-k--blau">Freigeben</button>'); }).join("") + "</section>" +
+      '<section class="sp-karte"><header><h3>Vorbereiten</h3></header>' +
+        L.vorbereiten.map(function (v) { return zeile('<span class="sp-pkt ' + (v.dringend ? "sp-pkt--rot" : "sp-pkt--grau") + '"></span>bis ' + esc(v.bis), "<b>" + esc(v.was) + "</b><small>" + esc(v.termin) + "</small>"); }).join("") + "</section>" +
+      '<section class="sp-karte sp-breit"><header><h3>Projekte</h3></header><div class="sp-tab"><div class="sp-th"><span>Projekt</span><span>Status</span><span>Nächster Schritt</span><span>Nächster Termin</span></div>' +
+        L.projekte.map(function (p) { return '<div class="sp-tr"><span><b>' + esc(p.name) + '</b></span><span><span class="sp-badge sp-badge--' + p.status + '">' + STATUS[p.status] + "</span></span><span>" + esc(p.schritt) + "</span><span>" + esc(p.naechst) + "</span></div>"; }).join("") + "</div></section>" +
+      '<section class="sp-karte"><header><h3>Beziehungen</h3></header>' + L.beziehungen.map(function (b) { return zeile(esc(b.seit), "<b>" + esc(b.wer) + "</b><small>" + esc(b.anlass) + "</small>"); }).join("") + "</section>" +
+      '<section class="sp-karte"><header><h3>Vertrieb</h3></header>' + L.vertrieb.map(function (k) { return zeile(esc(k.wann), "<b>" + esc(k.name) + "</b><small>" + esc(k.stand) + "</small>"); }).join("") + "</section>" +
       "</div></div>";
   }
 
-  /* V5 – Meta: Feed – was passiert ist, was es bedeutet, was jetzt zu tun ist */
-  function v5() {
-    var feed = [
-      ["Entscheidung", L.entscheiden[0].projekt, L.entscheiden[0].frage, L.entscheiden[0].warum, L.entscheiden[0].optionen],
-      ["Antwort liegt bereit", "Korrespondenz", L.freigeben[0].was, L.freigeben[0].worum, ["Freigeben", "Anders …"]],
-      ["Termin morgen", "SV Schadenmanagement", L.vorbereiten[0].was, L.vorbereiten[0].termin, ["Claude bereitet vor", "Erledigt"]],
-      ["Gelegenheit", L.beziehungen[0].wo, L.beziehungen[0].wer, L.beziehungen[0].anlass, [L.beziehungen[0].tun]],
-      ["Projekt blockiert", "MSP Digitaler Vertrieb", L.projekte[2].schritt, "Hängt an der Entscheidung oben.", ["Zum Projekt"]],
-      ["Kampagne", "Vertrieb", L.vertrieb[0].name, L.vertrieb[0].stand, ["Ansehen"]]
-    ];
-    return '<div class="mt"><aside class="mt-seite"><p class="mt-ich">Daniel Ströbel</p>' + ["Lage", "Entscheidungen", "Freigaben", "Projekte", "Kontakte", "Sparring"].map(function (x, i) {
-        return '<a href="#" class="' + (i ? "" : "an") + '">' + x + "</a>"; }).join("") + '</aside><div class="mt-feed">' + feed.map(function (f) {
-        return '<article class="mt-post"><p class="mt-kopf"><b>' + esc(f[0]) + "</b> · " + esc(f[1]) + "</p><h3>" + esc(f[2]) + "</h3><p>" + esc(f[3]) + '</p><div class="mt-akt">' +
-          f[4].map(function (a, i) { return '<button class="' + (i ? "" : "an") + '">' + esc(a) + "</button>"; }).join("") + "</div></article>"; }).join("") +
-      '</div><aside class="mt-rechts"><p class="mt-label">Heute</p>' + L.vorbereiten.map(function (v) { return "<p><b>" + esc(v.termin.split(" · ")[1] || "") + "</b> " + esc(v.termin.split(" · ")[0]) + "</p>"; }).join("") +
-      '<p class="mt-label">Sparring</p>' + L.sparring.slice(0, 3).map(function (s) { return '<button class="mt-sp">' + s[0] + "</button>"; }).join("") + "</aside></div>";
-  }
-
-  /* V6 – Briefing (aus Entwürfe II, reduziert): lesen wie ein Memo, handeln in der Zeile */
-  function v6() {
-    function abs(t, items) { return '<section class="br-abs"><h3>' + t + "</h3>" + items + "</section>"; }
-    return '<div class="br"><p class="br-gruss">Guten Morgen, Daniel.</p><p class="br-lage">' + esc(L.satz) + "</p>" +
-      abs("Was nur du entscheiden kannst", L.entscheiden.map(function (e) { return '<p class="br-z"><b>' + esc(e.frage) + "</b> " + esc(e.warum) + ' <span class="br-akt">' + e.optionen.map(function (o) { return knopf(esc(o)); }).join("") + "</span></p>"; }).join("")) +
-      abs("Was fertig auf dich wartet", L.freigeben.map(function (f) { return '<p class="br-z"><b>' + esc(f.was) + ".</b> " + esc(f.worum) + ' <span class="br-akt">' + knopf("Freigeben", true) + "</span></p>"; }).join("")) +
-      abs("Was du vorbereiten solltest", L.vorbereiten.map(function (v) { return '<p class="br-z"><b>' + esc(v.was) + "</b> – " + esc(v.termin) + ", bis " + esc(v.bis) + '. <span class="br-akt">' + knopf("Claude bereitet vor") + "</span></p>"; }).join("")) +
-      abs("Wo die Projekte stehen", L.projekte.map(function (p) { return '<p class="br-z"><b>' + esc(p.name) + "</b> " + (p.status !== "laeuft" ? '<span class="dv-st dv-st-' + p.status + '">' + STATUS[p.status] + "</span> " : "") + esc(p.schritt) + "</p>"; }).join("")) +
-      abs("Wer dich braucht", L.beziehungen.map(function (b) { return '<p class="br-z"><b>' + esc(b.wer) + "</b> (" + esc(b.wo) + "): " + esc(b.anlass) + ' <span class="br-akt">' + knopf(esc(b.tun)) + "</span></p>"; }).join("")) +
-      "</div>";
-  }
-
-  /* V7 – Leitwand: Projekte als Spalten, darunter was quer liegt (Stripe/Linear-Ruhe, CD-frei) */
-  function v7() {
-    return '<div class="lw"><p class="lw-lage">' + esc(L.satz) + '</p><div class="lw-spalten">' + L.projekte.map(function (p) {
-      var ent = L.entscheiden.filter(function (e) { return e.projekt === p.name; });
-      var vor = L.vorbereiten.filter(function (v) { return v.termin.toLowerCase().indexOf(p.name.split(" ")[0].toLowerCase()) > -1; });
-      return '<section class="lw-spalte lw-' + p.status + '"><header><b>' + esc(p.name) + "</b><span>" + STATUS[p.status] + "</span></header>" +
-        '<p class="lw-schritt">' + esc(p.schritt) + "</p>" +
-        (ent.length ? '<div class="lw-karte lw-karte--ent"><small>Entscheidung</small>' + esc(ent[0].frage) + "</div>" : "") +
-        vor.map(function (v) { return '<div class="lw-karte"><small>Vorbereiten · bis ' + esc(v.bis) + "</small>" + esc(v.was) + "</div>"; }).join("") +
-        '<p class="lw-naechst">' + esc(p.naechst) + "</p></section>";
-    }).join("") + '</div><div class="lw-quer"><section><h3>Freigeben</h3>' + L.freigeben.map(function (f) { return "<p><b>" + esc(f.was) + "</b><span>" + esc(f.art) + "</span></p>"; }).join("") +
-      '</section><section><h3>Beziehungen</h3>' + L.beziehungen.map(function (b) { return "<p><b>" + esc(b.wer) + "</b><span>" + esc(b.tun) + "</span></p>"; }).join("") +
-      '</section><section><h3>Vertrieb</h3>' + L.vertrieb.map(function (k) { return "<p><b>" + esc(k.name) + "</b><span>" + esc(k.wann) + "</span></p>"; }).join("") + "</section></div></div>";
+  /* Linear – präzise Arbeitsfläche: Gruppen mit Statussymbolen, eine Zeile je Vorgang, Tastenkürzel */
+  function vLinear() {
+    var ico = { ent: '<span class="ln-i ln-i--ent"></span>', frei: '<span class="ln-i ln-i--frei"></span>', vor: '<span class="ln-i ln-i--vor"></span>' };
+    function gruppe(titel, zeilen) { return '<section class="ln-g"><h3>' + titel + "</h3>" + zeilen + "</section>"; }
+    function z(i, text, tag, rechts, k) { return '<div class="ln-z">' + i + '<span class="ln-t">' + text + "</span>" + (tag ? '<span class="ln-tag">' + tag + "</span>" : "") + '<span class="ln-r">' + (rechts || "") + "</span>" + (k ? "<kbd>" + k + "</kbd>" : "") + "</div>"; }
+    return '<div class="ln"><aside class="ln-seite"><p class="ln-ws">empiria</p>' + ["Lage", "Entscheiden", "Freigeben", "Vorbereiten", "Projekte", "Kontakte"].map(function (x, i) {
+        return '<a href="#"' + (i ? "" : ' class="an"') + ">" + x + "</a>"; }).join("") + '<p class="ln-ws ln-ws--2">Projekte</p>' + L.projekte.map(function (p) {
+        return '<a href="#"><span class="ln-st ln-st--' + p.status + '"></span>' + esc(p.name) + "</a>"; }).join("") + "</aside>" +
+      '<div class="ln-haupt"><p class="ln-lage">' + esc(L.satz) + "</p>" +
+      gruppe("Entscheiden", L.entscheiden.map(function (e, i) { return z(ico.ent, esc(e.frage), esc(e.projekt), "bis " + esc(e.bis), "E " + (i + 1)); }).join("")) +
+      gruppe("Freigeben", L.freigeben.map(function (f, i) { return z(ico.frei, esc(f.was) + ' <span class="ln-leise">' + esc(f.worum) + "</span>", esc(f.art), "", "F " + (i + 1)); }).join("")) +
+      gruppe("Vorbereiten", L.vorbereiten.map(function (v) { return z(ico.vor, esc(v.was), "", '<span class="' + (v.dringend ? "ln-rot" : "") + '">bis ' + esc(v.bis) + "</span>"); }).join("")) +
+      gruppe("Projekte", L.projekte.map(function (p) { return z('<span class="ln-st ln-st--' + p.status + '"></span>', "<b>" + esc(p.name) + '</b> <span class="ln-leise">' + esc(p.schritt) + "</span>", STATUS[p.status], esc(p.naechst)); }).join("")) +
+      "</div></div>";
   }
 
   var V = [["v1", "Streifen", "wie Projekt SV Akademie", v1], ["v2", "Felder", "gleiche Elemente, ohne Aufklappen", v2], ["v3", "Apple", "ruhig, groß, Widgets", v3],
-           ["v4", "Tesla", "dunkel, eine klare Mitte", v4], ["v5", "Meta", "Feed: passiert → tun", v5], ["v6", "Briefing", "lesen wie ein Memo", v6], ["v7", "Leitwand", "Projekte als Spalten", v7]];
+           ["paper", "Paper", "Morgenbriefing als Zeitung", vPaper], ["stripe", "Stripe", "klare Karten, feine Linien", vStripe], ["linear", "Linear", "präzise Arbeitsfläche", vLinear]];
   var nav = document.querySelector("[data-dv-nav]");
   function zeigen() {
     var h = location.hash.replace("#", ""), v = V.filter(function (x) { return x[0] === h; })[0] || V[0];
