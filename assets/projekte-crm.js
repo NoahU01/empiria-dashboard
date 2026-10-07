@@ -34,19 +34,21 @@
       var MARKEN = ["empiria", "sofort sichtbar", "Müller & Ströbel"];
       var kunde = p.filter(function (x) { return x.typ !== "intern"; }), intern = p.filter(function (x) { return x.typ === "intern"; });
       function name_(x) { return '<a class="kt3-p" href="#p=' + x.id + '">' + esc(x.name) + "</a>" + (x.status !== "läuft" ? ' <span class="pr-st ' + STATUS[x.status] + '">' + esc(x.status) + "</span>" : ""); }
-      wurzel.innerHTML = '<div class="pr-zwei">' +
-        '<section><h2 class="pr-h2">Kundenprojekte</h2><table class="kt3-tab pr-tab"><colgroup><col style="width:36%"><col style="width:30%"><col style="width:34%"></colgroup>' +
-        "<thead><tr><th>Projekt</th><th>Kunde</th><th>Nächster Termin</th></tr></thead><tbody>" + kunde.map(function (x) {
-          var n = nae[x.id];
-          return '<tr data-href="#p=' + x.id + '"><td>' + name_(x) + "</td><td>" + esc(x.organisationen ? x.organisationen.name : "") + "</td><td>" +
-            (n ? kurz(n.datum) + '<br><span class="kt3-leise">' + esc(n.titel) + "</span>" : '<span class="kt3-leise">keiner geplant</span>') + "</td></tr>";
-        }).join("") + "</tbody></table></section>" +
-        '<section><h2 class="pr-h2">Interne Projekte</h2>' + MARKEN.map(function (m) {
-          var l = intern.filter(function (x) { return (x.marke || "empiria") === m; });
-          return '<table class="kt3-tab pr-tab pr-marke"><thead><tr><th>' + esc(m) + "</th></tr></thead><tbody>" + (l.length ? l.map(function (x) {
+      // Je Marke eine Sektion: links Kundenprojekte, rechts interne Projekte
+      wurzel.innerHTML = MARKEN.map(function (m) {
+        function von(l) { return l.filter(function (x) { return (x.marke || "empiria") === m; }); }
+        var k = von(kunde), i = von(intern);
+        return '<section class="pr-marke-sek"><h2 class="pr-h2">' + esc(m) + '</h2><div class="pr-zwei">' +
+          '<table class="kt3-tab pr-tab"><colgroup><col style="width:36%"><col style="width:30%"><col style="width:34%"></colgroup>' +
+          "<thead><tr><th>Kundenprojekt</th><th>Kunde</th><th>Nächster Termin</th></tr></thead><tbody>" + (k.length ? k.map(function (x) {
+            var n = nae[x.id];
+            return '<tr data-href="#p=' + x.id + '"><td>' + name_(x) + "</td><td>" + esc(x.organisationen ? x.organisationen.name : "") + "</td><td>" +
+              (n ? kurz(n.datum) + '<br><span class="kt3-leise">' + esc(n.titel) + "</span>" : '<span class="kt3-leise">keiner geplant</span>') + "</td></tr>";
+          }).join("") : '<tr><td colspan="3" class="kt3-leise">Keine Kundenprojekte.</td></tr>') + "</tbody></table>" +
+          '<table class="kt3-tab pr-tab"><thead><tr><th>Internes Projekt</th></tr></thead><tbody>' + (i.length ? i.map(function (x) {
             return '<tr data-href="#p=' + x.id + '"><td>' + name_(x) + "</td></tr>";
-          }).join("") : '<tr><td class="kt3-leise">Noch keine internen Projekte.</td></tr>') + "</tbody></table>";
-        }).join("") + "</section></div>";
+          }).join("") : '<tr><td class="kt3-leise">Keine internen Projekte.</td></tr>') + "</tbody></table></div></section>";
+      }).join("");
       wurzel.querySelectorAll("tr[data-href]").forEach(function (tr) { tr.onclick = function (e) { if (!e.target.closest("a")) location.hash = tr.getAttribute("data-href"); }; });
     });
   }

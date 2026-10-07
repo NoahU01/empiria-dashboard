@@ -755,5 +755,7 @@ body.kt3-detail .db-kopf { min-height: 0; }
   .pr-tl-inhalt > .tl-oben { flex: 0 0 auto; }
   .pr-tl-inhalt > .tl-oben-det { flex: 1; min-height: 0; height: auto; }
 }
-/* Interne Projekte: je Marke eine Tabelle */
-.pr-marke + .pr-marke { margin-top: 28px; }
+/* Projekte: je Marke eine Sektion */
+.pr-marke-sek + .pr-marke-sek { margin-top: 56px; }
+.pr-marke-sek:first-child { margin-top: 36px; }
+.pr-marke-sek .pr-zwei { margin-top: 0; }
