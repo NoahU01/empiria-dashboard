@@ -26,21 +26,25 @@
   function liste() {
     wurzel.innerHTML = '<div class="kb-laedt"><span></span><span></span></div>';
     Promise.all([
-      db.from("projekte").select("id, name, phase, status, thema, organisationen(id, name)").order("name"),
-      db.from("projekt_ereignisse").select("projekt_id, datum, titel").gte("datum", new Date().toISOString()).order("datum"),
-      db.from("aufgaben").select("projekt_id, titel, zustaendig_name").eq("status", "offen").not("projekt_id", "is", null).order("angelegt_am")
+      db.from("projekte").select("id, name, typ, status, naechstes_gate, gate_datum, organisationen(id, name)").order("name"),
+      db.from("projekt_ereignisse").select("projekt_id, datum, titel").gte("datum", new Date().toISOString()).order("datum")
     ]).then(function (r) {
-      var p = r[0].data || [], nae = {}, auf = {};
+      var p = r[0].data || [], nae = {};
       (r[1].data || []).forEach(function (e) { if (!nae[e.projekt_id]) nae[e.projekt_id] = e; });
-      (r[2].data || []).forEach(function (a) { if (!auf[a.projekt_id]) auf[a.projekt_id] = a; });
-      wurzel.innerHTML = '<table class="kt3-tab pr-tab"><colgroup><col style="width:24%"><col style="width:22%"><col style="width:16%"><col style="width:20%"><col style="width:18%"></colgroup>' +
-        "<thead><tr><th>Projekt</th><th>Kunde</th><th>Phase · Status</th><th>Nächste Aufgabe</th><th>Nächster Termin</th></tr></thead><tbody>" +
-        p.map(function (x) {
-          var a = auf[x.id], n = nae[x.id];
-          return '<tr data-href="#p=' + x.id + '"><td><a class="kt3-p" href="#p=' + x.id + '">' + esc(x.name) + "</a></td><td>" + esc(x.organisationen ? x.organisationen.name : "") +
-            '</td><td>' + esc(x.phase || "") + '<br><span class="pr-st ' + STATUS[x.status] + '">' + esc(x.status) + "</span></td><td>" + (a ? esc(a.titel) + (a.zustaendig_name ? ' <span class="kt3-leise">· ' + esc(a.zustaendig_name) + "</span>" : "") : '<span class="kt3-leise">–</span>') +
-            "</td><td>" + (n ? kurz(n.datum) + '<br><span class="kt3-leise">' + esc(n.titel) + "</span>" : '<span class="kt3-leise">–</span>') + "</td></tr>";
-        }).join("") + "</tbody></table>";
+      var kunde = p.filter(function (x) { return x.typ !== "intern"; }), intern = p.filter(function (x) { return x.typ === "intern"; });
+      function name_(x) { return '<a class="kt3-p" href="#p=' + x.id + '">' + esc(x.name) + "</a>" + (x.status !== "läuft" ? ' <span class="pr-st ' + STATUS[x.status] + '">' + esc(x.status) + "</span>" : ""); }
+      wurzel.innerHTML = '<div class="pr-zwei">' +
+        '<section><h2 class="pr-h2">Kundenprojekte</h2><table class="kt3-tab pr-tab"><colgroup><col style="width:36%"><col style="width:30%"><col style="width:34%"></colgroup>' +
+        "<thead><tr><th>Projekt</th><th>Kunde</th><th>Nächster Termin</th></tr></thead><tbody>" + kunde.map(function (x) {
+          var n = nae[x.id];
+          return '<tr data-href="#p=' + x.id + '"><td>' + name_(x) + "</td><td>" + esc(x.organisationen ? x.organisationen.name : "") + "</td><td>" +
+            (n ? kurz(n.datum) + '<br><span class="kt3-leise">' + esc(n.titel) + "</span>" : '<span class="kt3-leise">keiner geplant</span>') + "</td></tr>";
+        }).join("") + "</tbody></table></section>" +
+        '<section><h2 class="pr-h2">Interne Projekte</h2><table class="kt3-tab pr-tab"><colgroup><col style="width:36%"><col style="width:64%"></colgroup>' +
+        "<thead><tr><th>Projekt</th><th>Nächstes Gate</th></tr></thead><tbody>" + (intern.length ? intern.map(function (x) {
+          return '<tr data-href="#p=' + x.id + '"><td>' + name_(x) + "</td><td>" + (x.naechstes_gate ? esc(x.naechstes_gate) : '<span class="kt3-leise">noch offen</span>') +
+            (x.gate_datum ? '<br><span class="kt3-leise">bis ' + kurz(x.gate_datum) + "</span>" : "") + "</td></tr>";
+        }).join("") : '<tr><td colspan="2" class="kt3-leise">Noch keine internen Projekte.</td></tr>') + "</tbody></table></section></div>";
       wurzel.querySelectorAll("tr[data-href]").forEach(function (tr) { tr.onclick = function (e) { if (!e.target.closest("a")) location.hash = tr.getAttribute("data-href"); }; });
     });
   }
@@ -83,7 +87,8 @@
     h += '<div class="kt3-kopf"><div><h2 class="kt3-name">' + esc(p.name) + '</h2><p class="kt3-sub">' +
       [p.organisationen ? '<a href="/strategie/kontakte.html#f=' + p.organisationen.id + '">' + esc(p.organisationen.name) + "</a>" : "", esc(p.marke || ""), esc(p.phase || ""),
        '<span class="pr-st ' + STATUS[p.status] + '">' + esc(p.status) + "</span>"].filter(Boolean).join(" · ") + "</p>" +
-      (p.thema ? '<p class="pr-thema">' + esc(p.thema) + "</p>" : "") + "</div></div>";
+      (p.thema ? '<p class="pr-thema">' + esc(p.thema) + "</p>" : "") +
+      (p.typ === "intern" && p.naechstes_gate ? '<p class="pr-gate"><span>Nächstes Gate</span>' + esc(p.naechstes_gate) + (p.gate_datum ? " · bis " + kurz(p.gate_datum) : "") + "</p>" : "") + "</div></div>";
     h += '<div class="kt3-raster">';
     // Links: Stoßrichtung (Gesamtblick über alle Termine) – rechts: Aufgaben
     var punkte = (p.ueberlegungen || "").split("\n").map(function (x) { return x.trim(); }).filter(Boolean);
