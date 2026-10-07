@@ -340,7 +340,7 @@
   }
 
   /* ---------- Marken: alle Kontakte nach Firma, ein Klick setzt/entfernt ---------- */
-  var MARKEN = ["empiria", "sofort sichtbar", "Müller & Ströbel", "außerhalb Versicherung"];
+  var MARKEN = ["empiria", "sofortsichtbar", "Müller&Ströbel.", "außerhalb Versicherung"];
   function markenHtml() {
     var q = zustand.suche.toLowerCase(), zuletztF = null;
     var l = alle.filter(function (k) { return treffer(k, q); }).sort(function (a, b) {

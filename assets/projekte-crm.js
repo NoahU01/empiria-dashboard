@@ -31,7 +31,7 @@
     ]).then(function (r) {
       var p = r[0].data || [], nae = {};
       (r[1].data || []).forEach(function (e) { if (!nae[e.projekt_id]) nae[e.projekt_id] = e; });
-      var MARKEN = ["empiria", "sofort sichtbar", "Müller & Ströbel"];
+      var MARKEN = ["empiria", "sofortsichtbar", "Müller&Ströbel."];
       var kunde = p.filter(function (x) { return x.typ !== "intern"; }), intern = p.filter(function (x) { return x.typ === "intern"; });
       function name_(x) { return '<a class="kt3-p" href="#p=' + x.id + '">' + esc(x.name) + "</a>" + (x.status !== "läuft" ? ' <span class="pr-st ' + STATUS[x.status] + '">' + esc(x.status) + "</span>" : ""); }
       // Je Marke eine Sektion: links Kundenprojekte, rechts interne Projekte

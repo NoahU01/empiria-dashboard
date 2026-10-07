@@ -18,7 +18,7 @@
       worum: "Auf der Rechnung fehlt die Bestellnummer, Kurt bittet um Korrektur.",
       vorschlag: "Rechnung mit Bestellnummer neu schicken.",
       entwurf: "Moin Kurt,\n\nsorry, da hat die Bestellnummer gefehlt – die korrigierte Rechnung hängt an.\n\nViele Grüße\nDaniel" },
-    { art: "nobrainer", von: "Lea Test", konto: "sofort sichtbar", wann: "gestern", betreff: "Website-Check – Gespräch?",
+    { art: "nobrainer", von: "Lea Test", konto: "sofortsichtbar", wann: "gestern", betreff: "Website-Check – Gespräch?",
       text: "Hallo,\n\nwir haben über eure Seite den Website-Check für unsere Praxis gemacht. Die Ergebnisse sind spannend, ein paar Punkte verstehen wir aber noch nicht ganz.\n\nHättet ihr Zeit für ein kurzes Gespräch, in dem wir die Ergebnisse durchgehen?\n\nViele Grüße\nLea Test",
       worum: "Lea hat den Website-Check gemacht und möchte die Ergebnisse besprechen.",
       vorschlag: "Zusagen und Buchungslink schicken.",
@@ -27,7 +27,7 @@
       text: "Hi Daniel,\n\nwie besprochen würden wir gerne nächste Woche mit dem Kick-off starten. Bei uns wären Dienstag oder Donnerstag jeweils vormittags frei.\n\nWas passt dir besser? Zwei Stunden sollten reichen.\n\nBeste Grüße\nJonas",
       worum: "Jonas bietet für das Kick-off nächste Woche Dienstag oder Donnerstag Vormittag an.",
       vorschlag: "Dienstag 10 Uhr zusagen – laut Kalender frei." },
-    { art: "termin", von: "Tobias Müller", konto: "Müller & Ströbel", wann: "vor 6 Tagen", betreff: "Besuch in Stuttgart?",
+    { art: "termin", von: "Tobias Müller", konto: "Müller&Ströbel.", wann: "vor 6 Tagen", betreff: "Besuch in Stuttgart?",
       text: "Zur Info – wann besuchen wir sie in Stuttgart? 😉\n\n---\nLieber Herr Müller,\nin Baden-Baden sind wir dieses Jahr nicht vertreten. Wenn Sie einmal in Stuttgart sind, sind Sie aber herzlich willkommen. Melden Sie sich gerne auch kurzfristig.\nMit freundlichen Grüßen",
       worum: "Der Vorstand lädt euch nach Stuttgart ein, Tobias fragt, wann ihr hinfahrt.",
       vorschlag: "Tobias zwei Termine in KW 44 vorschlagen." },
@@ -45,7 +45,7 @@
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
   function art(a) { return '<span class="kb-art kb-art--' + a + '">' + ARTEN[a] + "</span>"; }
   function konto(k) {
-    var key = { "empiria": "empiria", "sofort sichtbar": "ss", "Müller & Ströbel": "ms" }[k];
+    var key = { "empiria": "empiria", "sofortsichtbar": "ss", "Müller&Ströbel.": "ms" }[k];
     return '<span class="kb-konto kb-konto--' + key + '">' + esc(k) + "</span>";
   }
   function original(m, zu) {

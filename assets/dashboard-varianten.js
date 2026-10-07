@@ -16,7 +16,7 @@
         optionen: ["Dunkel, Startseiten-Stil", "Drei Kapitel", "Hebel-Check"] },
       { frage: "Kommt das Qualitätssiegel 2027 auf die SharePoint-Seite?", warum: "Akademie-Leitung fragt nach; passt zur Sichtbarkeit nach innen.", projekt: "SV Akademie", bis: "nächste Woche",
         optionen: ["Ja, auf die Startseite", "Nur im Bereich Qualität", "Nein"] },
-      { frage: "Bekommt die M&S-Website ihre thematische Offenheit zurück?", warum: "Partner sieht die Superkräfte nicht mehr; Entwurf wartet auf Richtung.", projekt: "Müller & Ströbel", bis: "Ende Oktober",
+      { frage: "Bekommt die M&S-Website ihre thematische Offenheit zurück?", warum: "Partner sieht die Superkräfte nicht mehr; Entwurf wartet auf Richtung.", projekt: "Müller&Ströbel.", bis: "Ende Oktober",
         optionen: ["Ja, Methode vor Themen", "Nein, Schwerpunkte bleiben", "Gespräch mit Partner"] }
     ],
     freigeben: [
@@ -33,8 +33,8 @@
     projekte: [
       { name: "SV Akademie", frage: "Die beste Akademie der Branche", phase: "Vision & Strategie", schritt: "Workshop Vision vorbereiten – Agenda steht, Protokoll fehlt.", status: "laeuft", naechst: "Mo 14:00 Zwischenstand", marke: "empiria" },
       { name: "SV Schadenmanagement", frage: "Leitbild für den Führungskreis", phase: "Leitbild", schritt: "Leitbilder der Abteilungen zusammenführen.", status: "dich", naechst: "Di Workshop (ganztägig)", marke: "empiria" },
-      { name: "MSP Digitaler Vertrieb", frage: "Vom Kontakt zum Auftrag", phase: "Bausteine", schritt: "One-Pager-Variante entscheiden, dann Prozess festlegen.", status: "blockiert", naechst: "Fr Workshop", marke: "sofort sichtbar" },
-      { name: "MSP Landing Page", frage: "Die Story nach außen", phase: "Abnahme", schritt: "Abnahme am Mittwoch, Vorschau steht.", status: "laeuft", naechst: "Mi 10:00 Abnahme", marke: "sofort sichtbar" },
+      { name: "MSP Digitaler Vertrieb", frage: "Vom Kontakt zum Auftrag", phase: "Bausteine", schritt: "One-Pager-Variante entscheiden, dann Prozess festlegen.", status: "blockiert", naechst: "Fr Workshop", marke: "sofortsichtbar" },
+      { name: "MSP Landing Page", frage: "Die Story nach außen", phase: "Abnahme", schritt: "Abnahme am Mittwoch, Vorschau steht.", status: "laeuft", naechst: "Mi 10:00 Abnahme", marke: "sofortsichtbar" },
       { name: "VVDE Strategie", frage: "Strategie für den Verband", phase: "Status Quo", schritt: "Ist-Zahlen fehlen – Anfrage liegt zur Freigabe.", status: "dich", naechst: "Do 11:00", marke: "empiria" }
     ],
     beziehungen: [

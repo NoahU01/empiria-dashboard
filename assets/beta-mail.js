@@ -21,8 +21,8 @@
   // im Handlungsbedarf (kontakt@ ist ein Eingangskanal, kein Gespräch).
   var KONTEN = [
     { key: "empiria", name: "empiria", pfad: "/me", handlung: true },
-    { key: "ss", name: "sofort sichtbar", adresse: "daniel.stroebel@sofortsichtbar.de", handlung: true },
-    { key: "ms", name: "Müller & Ströbel", adresse: "daniel@muellerundstroebel.de", handlung: true },
+    { key: "ss", name: "sofortsichtbar", adresse: "daniel.stroebel@sofortsichtbar.de", handlung: true },
+    { key: "ms", name: "Müller&Ströbel.", adresse: "daniel@muellerundstroebel.de", handlung: true },
     { key: "kontakt", name: "kontakt@", adresse: "kontakt@sofortsichtbar.de", handlung: false }
   ];
   KONTEN.forEach(function (k) { if (!k.pfad) k.pfad = "/users/" + k.adresse; });
@@ -331,7 +331,7 @@
     function h(st) { return new Date(Date.now() - st * 36e5).toISOString(); }
     function p(n, a) { return { emailAddress: { name: n, address: a } }; }
     var me = p("Daniel Ströbel", "daniel.stroebel@empiria.de"), ss = p("Daniel Ströbel", "daniel.stroebel@sofortsichtbar.de"),
-        ms = p("Daniel Ströbel", "daniel@muellerundstroebel.de"), ko = p("sofort sichtbar", "kontakt@sofortsichtbar.de");
+        ms = p("Daniel Ströbel", "daniel@muellerundstroebel.de"), ko = p("sofortsichtbar", "kontakt@sofortsichtbar.de");
     var i = 0;
     function e(von, an, betreff, text, st, x) {
       x = x || {};
@@ -347,7 +347,7 @@
         { gelesen: true, a: { kategorie: "termin", zusammenfassung: "Jonas möchte das Kick-off nächste Woche machen und bietet Dienstag oder Donnerstag Vormittag an.", vorschlag: "Einen der beiden Vormittage zusagen – laut Kalender ist Dienstag frei." } }),
       e(p("Petra Probe", "probe@verband-beispiel.de"), me, "Strategiepapier – Ihre Einschätzung", "Sehr geehrter Herr Ströbel, anbei der Entwurf. Wir würden uns über Ihre Einschätzung bis Ende der Woche freuen.", 120,
         { flag: true, a: { kategorie: "tiefer", zusammenfassung: "Der Verband schickt den Entwurf seines Strategiepapiers und bittet bis Ende der Woche um deine fachliche Einschätzung.", vorschlag: "Entwurf lesen und Kernpunkte einschätzen – ich kann dir eine Zusammenfassung des Anhangs vorbereiten." } }),
-      e(p("Lea Test", "lea@test-praxis.de"), ss, "Website-Check sofort sichtbar", "Hallo, wir haben den Check gemacht und hätten gerne ein Gespräch zu den Ergebnissen.", 20),
+      e(p("Lea Test", "lea@test-praxis.de"), ss, "Website-Check sofortsichtbar", "Hallo, wir haben den Check gemacht und hätten gerne ein Gespräch zu den Ergebnissen.", 20),
       e(p("Max Vorlage", "max@vorlage-hr.de"), ms, "Vertrag zur Durchsicht", "Hallo Daniel, anbei der Vertrag zur Durchsicht. Bitte kurz Freigabe, dann geht er raus.", 50,
         { a: { kategorie: "aufgabe", zusammenfassung: "Max schickt den Vertrag zur Durchsicht und wartet auf deine Freigabe, bevor er rausgeht.", vorschlag: "Vertrag durchsehen und freigeben." } }),
       e(p("Kurt Kunde", "kurt@kunde.de"), me, "Kurze Frage zur Rechnung", "Moin Daniel, auf der Rechnung fehlt die Bestellnummer, kannst du die ergänzen?", 6,
