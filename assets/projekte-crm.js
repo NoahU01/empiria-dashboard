@@ -85,15 +85,6 @@
        '<span class="pr-st ' + STATUS[p.status] + '">' + esc(p.status) + "</span>"].filter(Boolean).join(" · ") + "</p>" +
       (p.thema ? '<p class="pr-thema">' + esc(p.thema) + "</p>" : "") + "</div></div>";
     h += '<div class="kt3-raster">';
-    // Als Nächstes (Claude) | Entscheidungen – beides als kurze Punkte
-    var impuls = (p.claude_impuls || "").split("\n").map(function (x) { return x.trim(); }).filter(Boolean);
-    h += '<section class="kt3-box pr-next"><h3>Als Nächstes <span>Claude</span></h3>' + (impuls.length ? "<ul>" + impuls.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"
-      : '<p class="kt3-leise">Diktiere mir, was passiert ist – ich sage dir, was als Nächstes dran ist.</p>') + "</section>";
-    var ent = pkt.filter(function (x) { return x.art === "Entscheidung"; });
-    h += '<section class="kt3-box"><h3>Entscheidungen</h3>' + (ent.length ? '<ul class="pr-ent2">' + ent.map(function (e) {
-      var ev = ere.filter(function (x) { return x.id === e.ereignis_id; })[0];
-      return "<li>" + esc(e.text) + ' <span class="kt3-leise">· ' + (ev ? kurz(ev.datum) : datum(e.angelegt_am)) + "</span></li>"; }).join("") + "</ul>"
-      : '<p class="kt3-leise">Noch keine Entscheidungen festgehalten.</p>') + "</section>";
     // Überlegungen: lesbar, aufklappbar, Bearbeiten auf Klick
     h += '<details class="kt3-box kt3-breit pr-ueb-box"><summary><h3>Überlegungen</h3><span class="kt3-leise">' + (p.ueberlegungen ? "aufklappen" : "noch leer") + "</span></summary>" +
       '<div class="pr-ueb-text" data-ueb-text>' + (p.ueberlegungen ? esc(p.ueberlegungen).split(/\n+/).map(function (x) { return "<p>" + x + "</p>"; }).join("") : '<p class="kt3-leise">Noch keine Überlegungen.</p>') + "</div>" +
