@@ -83,7 +83,7 @@
   }
 
   /* ---------- Laden ---------- */
-  var FELDER_EIN = "id,subject,from,toRecipients,ccRecipients,receivedDateTime,isRead,inferenceClassification,flag,categories,conversationId,webLink,bodyPreview,importance,hasAttachments";
+  var FELDER_EIN = "id,internetMessageId,subject,from,toRecipients,ccRecipients,receivedDateTime,isRead,inferenceClassification,flag,categories,conversationId,webLink,bodyPreview,importance,hasAttachments";
   var FELDER_AUS = "id,subject,toRecipients,ccRecipients,sentDateTime,conversationId,webLink,bodyPreview";
 
   function seit(tage) { return new Date(Date.now() - tage * 864e5).toISOString().slice(0, 19) + "Z"; }
@@ -104,12 +104,38 @@
         .catch(function (e) { if (e.anmelden) throw e; return { konto: k, fehler: e.status || "?" }; });
     });
     return Promise.all([ich].concat(je)).then(function (r) {
+      return einschaetzungenHolen(r.slice(1)).then(function () { return r; });
+    }).then(function (r) {
       var me = r[0], adressen = {};
       [me.mail].concat((me.proxyAddresses || []).map(function (a) { return a.replace(/^smtp:/i, ""); }))
         .forEach(function (a) { if (a) adressen[a.toLowerCase()] = "empiria"; });
       KONTEN.forEach(function (k) { if (k.adresse) adressen[k.adresse] = k.key; });
       return auswerten({ ich: me, adressen: adressen, postfaecher: r.slice(1) });
     });
+  }
+
+  /* ---------- Claudes Einschätzungen aus der Datenbank ----------
+     Nur mit Anmeldung (Login-Link, gleich wie auf der Kontaktseite). Ohne Anmeldung
+     bleibt es bei der einfachen Vorsortierung nach Stichworten. */
+  var dbStatus = "aus";
+  function einschaetzungenHolen(postfaecher) {
+    var db = window.empiriaDb;
+    if (!db) return Promise.resolve();
+    var ids = [];
+    postfaecher.forEach(function (p) { (p.ein || []).forEach(function (m) { if (m.internetMessageId) ids.push(m.internetMessageId); }); });
+    return db.auth.getSession().then(function (s) {
+      if (!s.data.session) { dbStatus = "abgemeldet"; return; }
+      var teile = [];
+      for (var i = 0; i < ids.length; i += 150) teile.push(ids.slice(i, i + 150));
+      return Promise.all(teile.map(function (t) {
+        return db.from("mail_einschaetzungen").select("internet_message_id, kategorie, zusammenfassung, vorschlag, entwurf").in("internet_message_id", t);
+      })).then(function (res) {
+        var nach = {};
+        res.forEach(function (r) { (r.data || []).forEach(function (e) { nach[e.internet_message_id] = e; }); });
+        postfaecher.forEach(function (p) { (p.ein || []).forEach(function (m) { if (nach[m.internetMessageId]) m._analyse = nach[m.internetMessageId]; }); });
+        dbStatus = "an";
+      });
+    }).catch(function () { dbStatus = "fehler"; });
   }
 
   /* ---------- Auswerten ---------- */
@@ -178,7 +204,7 @@
 
     var kontakt = ein.filter(function (m) { return m.konto.key === "kontakt"; });
     return {
-      ich: roh.ich, konten: KONTEN, fehler: fehler, demo: demo, stand: new Date(),
+      ich: roh.ich, konten: KONTEN, fehler: fehler, demo: demo, stand: new Date(), dbStatus: dbStatus,
       handlung: handlung,
       relevant: ein.filter(function (m) { return m.relevant; }),
       nichtRelevant: ein.filter(function (m) { return !m.relevant; }),
@@ -189,6 +215,7 @@
   }
 
   function analyse(m) {
+    if (m._analyse) return m._analyse;
     var e = (m.singleValueExtendedProperties || [])[0];
     if (!e || !e.value) return null;
     try { return JSON.parse(e.value); } catch (x) { return null; }
