@@ -130,11 +130,20 @@
       var teile = [];
       for (var i = 0; i < ids.length; i += 150) teile.push(ids.slice(i, i + 150));
       return Promise.all(teile.map(function (t) {
-        return db.from("mail_einschaetzungen").select("internet_message_id, kategorie, zusammenfassung, vorschlag, entwurf").in("internet_message_id", t);
+        return Promise.all([
+          db.from("mail_einschaetzungen").select("internet_message_id, kategorie, zusammenfassung, vorschlag, entwurf, entwurf_art, weiterleiten_an").in("internet_message_id", t),
+          db.from("mail_anweisungen").select("internet_message_id, text, status, ergebnis, angelegt_am").in("internet_message_id", t).order("angelegt_am")
+        ]);
       })).then(function (res) {
-        var nach = {};
-        res.forEach(function (r) { (r.data || []).forEach(function (e) { nach[e.internet_message_id] = e; }); });
-        postfaecher.forEach(function (p) { (p.ein || []).forEach(function (m) { if (nach[m.internetMessageId]) m._analyse = nach[m.internetMessageId]; }); });
+        var nach = {}, anw = {};
+        res.forEach(function (paar) {
+          (paar[0].data || []).forEach(function (e) { nach[e.internet_message_id] = e; });
+          (paar[1].data || []).forEach(function (a) { anw[a.internet_message_id] = a; });   // jeweils die neueste
+        });
+        postfaecher.forEach(function (p) { (p.ein || []).forEach(function (m) {
+          if (nach[m.internetMessageId]) m._analyse = nach[m.internetMessageId];
+          if (anw[m.internetMessageId]) m.anweisung = anw[m.internetMessageId];
+        }); });
         dbStatus = "an";
       });
     }).catch(function () { dbStatus = "fehler"; });
@@ -270,6 +279,18 @@
     });
   }
 
+  /* ---------- Anweisung („Anders …“) an Claude ---------- */
+  function anweisen(m, text) {
+    var db = window.empiriaDb;
+    if (demo) { m.anweisung = { text: text, status: "offen" }; return Promise.resolve(); }
+    if (!db) return Promise.reject(new Error("Datenbank nicht geladen"));
+    return db.from("mail_anweisungen").insert({ internet_message_id: m.internetMessageId, message_id: m.id, postfach: m.konto.name,
+      betreff: m.subject, absender: m.from && m.from.emailAddress && m.from.emailAddress.address, text: text }).then(function (r) {
+      if (r.error) throw new Error(r.error.message === "new row violates row-level security policy for table \"mail_anweisungen\"" ? "Bitte einmal auf der Kontaktseite anmelden." : r.error.message);
+      m.anweisung = { text: text, status: "offen" };
+    });
+  }
+
   /* ---------- Volltext beim Aufklappen ---------- */
   function volltext(m) {
     if (demo) return Promise.resolve(m.bodyPreview + "\n\n(Beispieltext – im echten Betrieb steht hier die ganze Mail.)");
@@ -333,6 +354,6 @@
     return { ich: { displayName: "Daniel Ströbel" }, adressen: adressen, postfaecher: KONTEN.map(function (k) { return nach[k.key]; }) };
   }
 
-  window.BetaMail = { arten: ARTEN, entscheiden: entscheiden, entscheidungLesen: entscheidungLesen, start: start, anmelden: anmelden, abmelden: abmelden, laden: laden, volltext: volltext,
+  window.BetaMail = { arten: ARTEN, entscheiden: entscheiden, anweisen: anweisen, entscheidungLesen: entscheidungLesen, start: start, anmelden: anmelden, abmelden: abmelden, laden: laden, volltext: volltext,
     konten: KONTEN, esc: esc, wann: wann, badge: badge, absender: absender, istDemo: function () { return demo; } };
 })();

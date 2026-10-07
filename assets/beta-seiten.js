@@ -161,12 +161,17 @@
     return html;
   }
 
+  // Drei Möglichkeiten: Freigeben (passt) · Anders … (sprechen/tippen, Claude setzt um) · Schon erledigt
   function knoepfe(m) {
-    var e = B.entscheidungLesen(m);
-    return '<div class="kb-entscheid" data-entscheid="' + esc(m.id) + '">' +
-      [["freigeben", "Freigeben"], ["pruefen", "Prüfen"], ["zurueck", "Zurückstellen"], ["erledigt", "Schon erledigt"]].map(function (k) {
-        return '<button type="button" data-e="' + k[0] + '" aria-pressed="' + (e === k[0]) + '">' + k[1] + "</button>";
-      }).join("") + "</div>";
+    var e = B.entscheidungLesen(m), a = m.anweisung;
+    var anw = a ? '<p class="kb-anweisung"><span>' + (a.status === "offen" ? "Deine Anweisung – wird umgesetzt" : a.status === "umgesetzt" ? "Umgesetzt" : "Verworfen") +
+      "</span>" + esc(a.text) + (a.ergebnis ? "<br><small>" + esc(a.ergebnis) + "</small>" : "") + "</p>" : "";
+    return anw + '<div class="kb-entscheid" data-entscheid="' + esc(m.id) + '">' +
+      '<button type="button" data-e="freigeben" aria-pressed="' + (e === "freigeben") + '">Freigeben</button>' +
+      '<button type="button" data-anders aria-expanded="false">Anders …</button>' +
+      '<button type="button" data-e="erledigt" aria-pressed="' + (e === "erledigt") + '">Schon erledigt</button></div>' +
+      '<form class="kb-anders" data-anders-form hidden><textarea rows="3" placeholder="Sag oder tippe, was passieren soll – z. B. „An Tobias weiterleiten, er soll den Termin übernehmen.“ Auf dem iPhone: Mikrofon auf der Tastatur."></textarea>' +
+      '<div><button type="submit" class="kb-knopf kb-knopf--klein">An Claude geben</button><button type="button" class="kb-anders-abbruch">Abbrechen</button></div></form>';
   }
 
   function seite() {
@@ -248,7 +253,25 @@
     volltexteLaden();
     ziel().querySelectorAll("[data-entscheid]").forEach(function (box) {
       var m = alleMails().filter(function (x) { return x.id === box.getAttribute("data-entscheid"); })[0];
-      box.querySelectorAll("button").forEach(function (b) {
+      var form = box.nextElementSibling, andersB = box.querySelector("[data-anders]");
+      andersB.addEventListener("click", function () {
+        var auf = form.hidden; form.hidden = !auf; andersB.setAttribute("aria-expanded", String(auf));
+        if (auf) form.querySelector("textarea").focus();
+      });
+      form.querySelector(".kb-anders-abbruch").addEventListener("click", function () { form.hidden = true; andersB.setAttribute("aria-expanded", "false"); });
+      form.addEventListener("submit", function (ev) {
+        ev.preventDefault();
+        var t = form.querySelector("textarea").value.trim();
+        if (!t) return;
+        form.classList.add("laedt");
+        B.anweisen(m, t).then(function () {
+          var p = document.createElement("p"); p.className = "kb-anweisung";
+          p.innerHTML = "<span>Deine Anweisung – wird umgesetzt</span>" + esc(t);
+          var alt = box.previousElementSibling; if (alt && alt.classList.contains("kb-anweisung")) alt.remove();
+          box.parentNode.insertBefore(p, box); form.hidden = true; form.querySelector("textarea").value = "";
+        }).catch(function (f) { alert("Nicht gespeichert: " + f.message); }).then(function () { form.classList.remove("laedt"); });
+      });
+      box.querySelectorAll("button[data-e]").forEach(function (b) {
         b.addEventListener("click", function () {
           box.classList.add("laedt");
           B.entscheiden(m, b.getAttribute("data-e")).then(function (e) {

@@ -400,3 +400,15 @@ a.db-chip:hover { background: #e2e0dd; color: var(--ink); }
 .st-haken:hover { background: var(--hl); }
 .st-weg { opacity: .3; text-decoration: line-through; }
 .st-prio { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: var(--grey-bg); font-size: .75rem; font-weight: 600; }
+
+/* Korrespondenz – „Anders …“ */
+.kb-entscheid button[data-anders] { background: #fff; color: var(--ink); }
+.kb-entscheid button[data-anders][aria-expanded="true"] { background: var(--grey-bg); }
+.kb-anders { margin-top: 10px; }
+.kb-anders textarea { width: 100%; padding: 12px 14px; border: 1.5px solid var(--ink); border-radius: 14px; font: inherit; font-size: .92rem; line-height: 1.5; resize: vertical; }
+.kb-anders div { display: flex; gap: 10px; align-items: center; margin-top: 8px; }
+.kb-anders-abbruch { border: 0; background: none; font-size: .85rem; color: var(--grey-50); text-decoration: underline; }
+.kb-anders.laedt { opacity: .5; pointer-events: none; }
+.kb-anweisung { margin: 14px 0 0; padding: 4px 0 4px 14px; box-shadow: inset 3px 0 0 var(--ink); font-size: .9rem; font-weight: 300; }
+.kb-anweisung span { display: block; font-size: .78rem; font-weight: 500; color: var(--grey-70); }
+.kb-anweisung small { color: var(--grey-50); }
