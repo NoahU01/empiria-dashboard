@@ -114,11 +114,11 @@
     var jetzt = Date.now(), tlv = "seite";
     try { tlv = localStorage.getItem("pr-tl-ansicht") || "seite"; } catch (x) {}
     var start = ere.filter(function (e) { return new Date(e.datum) <= jetzt; })[0] || ere[0];
-    function eintrag(e, mitPersonen, dreieck, ohneGeplant) {
+    function eintrag(e, mitPersonen, dreieck, knapp) {
       var zuk = new Date(e.datum) > jetzt, hat = pkt.some(function (x) { return x.ereignis_id === e.id; }) || auf.some(function (x) { return x.ereignis_id === e.id; });
-      return '<button type="button" data-ev="' + e.id + '" class="' + (zuk ? "pr-zuk " : "") + (start && e.id === start.id ? "an" : "") + '"><span class="pr-d">' + (zuk && !ohneGeplant ? "geplant · " : "") + kurz(e.datum) +
+      return '<button type="button" data-ev="' + e.id + '" class="' + (zuk ? "pr-zuk " : "") + (start && e.id === start.id ? "an" : "") + '"><span class="pr-d">' + (zuk && !knapp ? "geplant · " : "") + kurz(e.datum) +
         zeit(e.datum, " · ") + (hat ? ' <i class="pr-hat-details" title="Protokoll vorhanden"></i>' : "") + "</span><b>" + esc(e.titel) + "</b>" +
-        '<small>' + esc(format(e)) + "</small>" + (mitPersonen && teiln(e) ? "<small>" + esc(teiln(e)) + "</small>" : "") +
+        (knapp ? "" : '<small>' + esc(format(e)) + "</small>") + (mitPersonen && teiln(e) ? "<small>" + esc(teiln(e)) + "</small>" : "") +
         (dreieck && hat ? '<span class="tl-dreieck" aria-hidden="true"></span>' : "") + "</button>";
     }
     var tl;
