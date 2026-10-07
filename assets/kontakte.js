@@ -60,6 +60,7 @@
     ["klaeren", "Klärfälle", klaerfall],
     ["faellig", "Wieder dran", faellig],
     ["a", "Priorität A", function (k) { return k.prioritaet === "A"; }],
+    ["marken", "Marken", function () { return true; }],
     ["vorschlaege", "Vorschläge", function (k) { return vorschlaege.some(function (v) { return v.kontakt_id === k.id; }); }]
   ];
 
@@ -99,7 +100,54 @@
     });
   }
 
+  // Marken: alle Kontakte auf einen Blick, nach Firma, ein Klick setzt/entfernt eine Marke
+  var MARKEN = ["empiria", "sofort sichtbar", "Müller & Ströbel"];
+  function markenHtml() {
+    var q = zustand.suche.toLowerCase();
+    var liste = alle.filter(function (k) {
+      return !q || (name(k) + " " + (k.organisationen ? k.organisationen.name : "")).toLowerCase().indexOf(q) > -1;
+    }).sort(function (a, b) {
+      var fa = a.organisationen ? a.organisationen.name : "~", fb = b.organisationen ? b.organisationen.name : "~";
+      return fa.localeCompare(fb, "de") || (a.nachname || "").localeCompare(b.nachname || "", "de");
+    });
+    var zuletzt = null, h = '<input class="kb-suche kt-suche" type="search" placeholder="Name oder Firma" value="' + esc(zustand.suche) + '" data-suche>' +
+      '<table class="kt-marken"><thead><tr><th>Kontakt</th>' + MARKEN.map(function (m) { return "<th>" + esc(m) + "</th>"; }).join("") + "</tr></thead><tbody>";
+    liste.forEach(function (k) {
+      var firma = k.organisationen ? k.organisationen.name : "ohne Firma";
+      if (firma !== zuletzt) { h += '<tr class="kt-marken-firma"><td colspan="4">' + esc(firma) + "</td></tr>"; zuletzt = firma; }
+      var hat = (k.kontakt_marken || []).map(function (m) { return m.marke; });
+      h += "<tr><td>" + esc(name(k)) + "</td>" + MARKEN.map(function (m) {
+        return '<td><input type="checkbox" aria-label="' + esc(m) + '" data-k="' + k.id + '" data-m="' + esc(m) + '"' + (hat.indexOf(m) > -1 ? " checked" : "") + "></td>";
+      }).join("") + "</tr>";
+    });
+    return h + "</tbody></table>";
+  }
+  function markenVerdrahten() {
+    var s = wurzel.querySelector("[data-suche]");
+    s.oninput = function () { zustand.suche = s.value; var pos = s.selectionStart; zeichnen(); var n = wurzel.querySelector("[data-suche]"); n.focus(); n.setSelectionRange(pos, pos); };
+    wurzel.querySelectorAll("[data-m]").forEach(function (c) {
+      c.onchange = function () {
+        var kid = +c.getAttribute("data-k"), m = c.getAttribute("data-m"), k = alle.filter(function (x) { return x.id === kid; })[0];
+        c.disabled = true;
+        var auftrag = c.checked
+          ? db.from("kontakt_marken").upsert({ kontakt_id: kid, marke: m, bestaetigt: true })
+          : db.from("kontakt_marken").delete().eq("kontakt_id", kid).eq("marke", m);
+        auftrag.then(function (res) {
+          c.disabled = false;
+          if (res.error) { c.checked = !c.checked; alert("Nicht gespeichert: " + res.error.message); return; }
+          k.kontakt_marken = (k.kontakt_marken || []).filter(function (x) { return x.marke !== m; });
+          if (c.checked) k.kontakt_marken.push({ marke: m, bestaetigt: true });
+        });
+      };
+    });
+  }
+
   function zeichnen() {
+    if (zustand.tab === "marken") {
+      wurzel.innerHTML = tabsHtml() + markenHtml();
+      tabsVerdrahten(); markenVerdrahten();
+      return;
+    }
     if (zustand.tab === "vorschlaege") {
       wurzel.innerHTML = tabsHtml() + vorschlaegeHtml();
       tabsVerdrahten();

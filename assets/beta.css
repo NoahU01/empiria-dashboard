@@ -352,3 +352,13 @@ a.db-chip:hover { background: #e2e0dd; color: var(--ink); }
 .kt-verlauf span { color: var(--grey-50); font-size: .88rem; }
 .kt-verlauf p { font-weight: 300; }
 @media (max-width: 520px) { .kt-stand, .kt-verlauf li { grid-template-columns: 110px minmax(0, 1fr); } }
+
+/* Kontakte – Marken auf einen Blick */
+.kt-marken { width: 100%; max-width: 760px; border-collapse: collapse; font-size: .92rem; }
+.kt-marken th { position: sticky; top: 84px; z-index: 2; background: #fff; padding: 10px 8px; font-size: .8rem; font-weight: 500; color: var(--grey-70); text-align: center; border-bottom: 1px solid #e6e3df; }
+.kt-marken th:first-child { text-align: left; }
+.kt-marken td { padding: 7px 8px; border-bottom: 1px solid #f2f1ef; text-align: center; font-weight: 300; }
+.kt-marken td:first-child { text-align: left; }
+.kt-marken input { width: 18px; height: 18px; accent-color: var(--ink); cursor: pointer; }
+.kt-marken-firma td { padding-top: 18px; font-size: .78rem; font-weight: 600; color: var(--grey-50); border-bottom: 0; text-align: left; }
+@media (max-width: 520px) { .kt-marken th { font-size: .7rem; padding: 8px 4px; } .kt-marken td { padding: 7px 4px; } }
