@@ -158,15 +158,16 @@
     var ids = leute.map(function (k) { return k.id; });
     wurzel.innerHTML = '<div class="kb-laedt"><span></span><span></span></div>';
     Promise.all([
-      db.from("organisationen").select("id, name, gruppe, marktumfeld, website, klaeren").eq("id", id).single(),
-      Promise.resolve({ data: [] }),
+      db.from("organisationen").select("id, name, gruppe, marktumfeld, website, klaeren, sitz, rechtsform, groesse, konzern, fuehrung, themen, recherche_stand").eq("id", id).single(),
+      db.from("firmen_meldungen").select("art, datum, titel, typ, quelle_name, quelle_url, relevanz, aufhaenger").eq("organisation_id", id).order("datum", { ascending: false }),
       ids.length ? db.from("kontakt_merkmale").select("kontakt_id, merkmale(kategorie, wert)").in("kontakt_id", ids) : Promise.resolve({ data: [] })
     ]).then(function (r) {
-      var org = r[0].data || { name: "Firma" }, akt = einmal(r[1].data || []), merk = r[2].data || [];
+      var org = r[0].data || { name: "Firma" }, meld = r[1].data || [], merk = r[2].data || [];
       var h = '<a class="kb-zurueck" href="#firmen"><span aria-hidden="true">&larr;</span> Firmen</a>';
+      var web = org.website ? '<a href="' + esc(/^http/.test(org.website) ? org.website : "https://" + org.website) + '" target="_blank" rel="noopener">' + esc(org.website.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")) + "</a>" : "";
       h += '<div class="kt3-kopf"><div><h2 class="kt3-name">' + esc(org.name) + '</h2><p class="kt3-sub">' +
-        esc([org.gruppe && org.gruppe !== org.name ? "gehört zu " + org.gruppe : "", org.marktumfeld].filter(Boolean).join(" · ")) +
-        (org.website ? ' · <a href="' + esc(org.website) + '" target="_blank" rel="noopener">Website</a>' : "") + "</p></div></div>";
+        [web, esc(org.sitz || ""), esc(org.rechtsform || ""), esc(org.konzern || (org.gruppe && org.gruppe !== org.name ? "gehört zu " + org.gruppe : "")), esc(org.marktumfeld || "")].filter(Boolean).join(" · ") + "</p>" +
+        (org.groesse ? '<p class="kt3-tags">' + esc(org.groesse) + "</p>" : "") + "</div></div>";
       if (org.klaeren) h += '<p class="kt3-klaer">' + esc(org.klaeren) + "</p>";
       h += '<div class="kt3-raster">';
       var ansatz = {};
@@ -177,6 +178,27 @@
       h += box("Nächste Schritte", td.length ? '<ul class="kt3-todo">' + td.map(function (a) {
           return '<li data-a="' + a.id + '"><button type="button" class="st-haken" aria-label="Erledigt"></button><span>' + esc(a.titel) + (a.kontakte ? ' <span class="kt3-leise">· ' + esc(name(a.kontakte)) + "</span>" : "") + "</span></li>"; }).join("") + "</ul>" : "",
         "Nichts offen.", '<form class="kt3-neu" data-neu-todo data-org="' + id + '"><input type="text" placeholder="Nächsten Schritt notieren …"><button type="submit">+</button></form>');
+      var news = meld.filter(function (m) { return m.art === "Meldung"; }), anl = meld.filter(function (m) { return m.art === "Anlass"; });
+      h += '<section class="kt3-box kt3-breit"><h3>Was gerade passiert</h3>' + (news.length ? '<ul class="kt3-news">' + news.map(function (m, i) {
+          return "<li" + (i >= 3 ? " hidden data-mehr" : "") + '><span class="kt3-d">' + esc(m.datum || "") + "</span><div>" +
+            (m.quelle_url ? '<a href="' + esc(m.quelle_url) + '" target="_blank" rel="noopener"><b>' + esc(m.titel) + "</b></a>" : "<b>" + esc(m.titel) + "</b>") +
+            (m.quelle_name ? ' <span class="kt3-leise">· ' + esc(m.quelle_name) + "</span>" : "") +
+            (m.relevanz ? "<p>" + esc(m.relevanz) + "</p>" : "") + (m.aufhaenger ? '<p class="kt3-aufh"><span>Aufhänger</span>' + esc(m.aufhaenger) + "</p>" : "") + "</div></li>";
+        }).join("") + "</ul>" + (news.length > 3 ? '<button type="button" class="kt3-klapp" data-klapp-knopf aria-expanded="false">Alle zeigen</button>' : "")
+        : '<p class="kt3-leise">Noch kein Pressespiegel – sag „Pressespiegel ' + esc(org.name) + ' aktualisieren“.</p>') +
+        (org.recherche_stand ? '<p class="kt3-stand-klein">Stand ' + datum(org.recherche_stand) + "</p>" : "") + "</section>";
+      // Führung und Zugang: wen kennst du an der Spitze – und wo fehlt der Draht?
+      var fu = org.fuehrung || [];
+      function finde(n) { var t = (n || "").toLowerCase(); return leute.filter(function (k) { return k.nachname && t.indexOf(k.nachname.toLowerCase()) > -1 && t.indexOf((k.vorname || "").toLowerCase()) > -1; })[0]; }
+      var zugang = leute.slice().sort(function (a, b) { return ebeneRang(a) - ebeneRang(b); })[0];
+      h += box("Führung und Zugang", fu.length ? '<ul class="kt3-fu">' + fu.map(function (f) {
+          var k = finde(f.name);
+          return "<li><b>" + esc(f.name) + '</b><span class="kt3-leise">' + esc(f.rolle || "") + "</span>" +
+            (k ? '<span class="kt3-ok">direkt: ' + lk(k) + "</span>" : '<span class="kt3-luecke">kein direkter Draht' + (zugang ? " – Zugang über " + lk(zugang) : "") + "</span>") + "</li>";
+        }).join("") + "</ul>" : "", "Führung noch nicht recherchiert.");
+      h += box("Themen der Firma", (org.themen || []).length ? '<ul class="kt3-l">' + org.themen.map(function (t) { return "<li><b>" + esc(t.thema) + "</b>" + (t.beleg ? ' <span class="kt3-leise">– ' + esc(t.beleg.replace(/https?:\/\/\S+/g, "").trim()) + "</span>" : "") + "</li>"; }).join("") + "</ul>" : "", "Noch keine Themen erfasst.");
+      h += box("Anlässe", anl.length ? '<ul class="kt3-v">' + anl.map(function (a) {
+          return '<li><span class="kt3-d">' + esc(a.datum || "") + "</span>" + (a.quelle_url ? '<a href="' + esc(a.quelle_url) + '" target="_blank" rel="noopener">' + esc(a.titel) + "</a>" : "<span>" + esc(a.titel) + "</span>") + "</li>"; }).join("") + "</ul>" : "", "Keine Anlässe bekannt.");
       h += '<section class="kt3-box kt3-breit" data-klapp><h3>Personen</h3><table class="kt3-tab kt3-tab--eng"><tbody>' + leute.slice().sort(nachNachname).map(function (k, i) {
         return '<tr data-href="#k=' + k.id + '"' + (i >= KURZ ? ' class="kt3-mehr" hidden' : "") + '><td>' + lk(k) + '</td><td class="kt3-pos">' + esc(k.position || "") + "</td><td>" + esc(k.beziehungsstatus || "") + "</td><td>" + zuletzt(k.letzter_kontakt) + "</td></tr>";
       }).join("") + "</tbody></table>" + klappKnopf(leute.length) + "</section>";

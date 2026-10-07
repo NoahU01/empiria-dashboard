@@ -570,3 +570,17 @@ body.kt3-detail .db-kopf { min-height: 0; }
   .kt3-tab--personen .c-name { width: 40%; } .kt3-tab--personen .c-firma { width: 35%; } .kt3-tab--personen .c-letzt { width: 25%; }
   .kt3-letzt { white-space: normal; }
 }
+
+/* Firmenseite: Pressespiegel, Führung, Abstand */
+.kt3-raster { margin-top: 28px; }
+.kt3-news { list-style: none; margin: 0; padding: 0; }
+.kt3-news li { display: grid; grid-template-columns: 100px minmax(0, 1fr); gap: 10px; padding: 10px 0; border-top: 1px solid #f2f1ef; }
+.kt3-news li:first-child { border-top: 0; }
+.kt3-news a { color: var(--ink); text-decoration: none; } .kt3-news a:hover b { text-decoration: underline; text-underline-offset: 2px; }
+.kt3-news b { font-weight: 500; font-size: .92rem; } .kt3-news p { margin: 3px 0 0 !important; font-size: .86rem; font-weight: 300; color: var(--ink-2); }
+.kt3-aufh span { display: inline-block; margin-right: 6px; padding: 0 6px; border-radius: 4px; background: var(--hl); font-size: .72rem; font-weight: 600; color: var(--ink); }
+.kt3-stand-klein { margin-top: 8px !important; font-size: .74rem; color: var(--grey-50); }
+.kt3-fu { list-style: none; margin: 0; padding: 0; } .kt3-fu li { display: grid; gap: 1px; padding: 7px 0; border-top: 1px solid #f2f1ef; font-size: .88rem; } .kt3-fu li:first-child { border-top: 0; }
+.kt3-fu b { font-weight: 500; } .kt3-ok { font-size: .8rem; color: #2e9e5b; } .kt3-ok a { color: #2e9e5b; }
+.kt3-luecke { font-size: .8rem; color: #b8730b; } .kt3-luecke a { color: #b8730b; }
+@media (max-width: 600px) { .kt3-news li { grid-template-columns: 1fr; } }
