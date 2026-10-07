@@ -310,3 +310,21 @@ a.db-chip:hover { background: #e2e0dd; color: var(--ink); }
 .kt-merk span { display: inline-block; min-width: 140px; margin-right: 8px; color: var(--grey-50); font-size: .8rem; font-weight: 400; }
 .kt-leise { color: var(--grey-50) !important; font-size: .85rem !important; }
 .kt-notiz-kopf { margin: 16px 0 4px !important; font-size: .76rem !important; color: var(--grey-50) !important; }
+
+/* Kontakte – Vorschläge */
+.kt-vs-kopf { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 20px; margin-bottom: 8px; }
+.kt-vs-kopf p { margin: 0; font-size: .9rem; color: var(--ink-2); font-weight: 300; }
+.kt-vs { list-style: none; margin: 0; padding: 0; }
+.kt-vs > li { padding: 14px 0; border-top: 1px solid #eeece9; }
+.kt-vs-name { margin: 0 0 8px; font-size: .95rem; }
+.kt-vs-zeile { display: grid; grid-template-columns: 80px minmax(0, 1fr); gap: 4px 12px; align-items: start; padding: 4px 0; }
+@media (min-width: 760px) { .kt-vs-zeile { grid-template-columns: 90px minmax(0, 1fr) auto; } }
+.kt-vs-feld { font-size: .78rem; color: var(--grey-50); padding-top: 2px; }
+.kt-vs-wert { font-size: .9rem; overflow-wrap: anywhere; } .kt-vs-wert a { color: var(--ink); }
+.kt-vs-wert small { color: #b8730b; font-size: .75rem; }
+.kt-vs-wert .kt-vs-beleg { display: block; color: var(--grey-50); font-weight: 300; }
+.kt-vs-knoepfe { grid-column: 2; display: flex; gap: 6px; }
+@media (min-width: 760px) { .kt-vs-knoepfe { grid-column: 3; } }
+.kt-vs-knoepfe button { height: 32px; padding: 0 14px; border: 1.5px solid var(--ink); border-radius: 999px; background: #fff; font-size: .8rem; font-weight: 500; }
+.kt-vs-knoepfe button[data-ja] { background: var(--ink); color: #fff; }
+.kt-vs-zeile.laedt { opacity: .4; pointer-events: none; }

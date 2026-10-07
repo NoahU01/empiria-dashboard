@@ -9,7 +9,7 @@
   var db = window.supabase.createClient(URL_, SCHLUESSEL, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
   var wurzel = document.querySelector("[data-kontakte]");
   var kopfKonto = document.querySelector("[data-kb-konto]");
-  var alle = [], zustand = { tab: "alle", suche: "", gewaehlt: null };
+  var alle = [], vorschlaege = [], zustand = { tab: "alle", suche: "", gewaehlt: null };
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
   function datum(d) { return d ? new Date(d).toLocaleDateString("de-DE", { day: "numeric", month: "short", year: "numeric" }) : "–"; }
@@ -39,8 +39,11 @@
       .order("nachname").then(function (r) {
         if (r.error) { wurzel.innerHTML = '<div class="kb-hinweis"><p>Fehler: ' + esc(r.error.message) + "</p></div>"; return; }
         alle = r.data;
+        return db.from("vorschlaege").select("id, kontakt_id, feld, wert, beleg, quelle, sicherheit").eq("status", "offen").order("sicherheit").then(function (v) {
+          vorschlaege = v.data || [];
         if (!alle.length) { wurzel.innerHTML = '<div class="kb-hinweis"><p>Keine Kontakte sichtbar – ist diese Mailadresse freigegeben?</p></div>'; return; }
         zeichnen();
+        });
       });
   }
 
@@ -56,7 +59,8 @@
     ["alle", "Alle", function () { return true; }],
     ["klaeren", "Klärfälle", klaerfall],
     ["faellig", "Wieder dran", faellig],
-    ["a", "Priorität A", function (k) { return k.prioritaet === "A"; }]
+    ["a", "Priorität A", function (k) { return k.prioritaet === "A"; }],
+    ["vorschlaege", "Vorschläge", function (k) { return vorschlaege.some(function (v) { return v.kontakt_id === k.id; }); }]
   ];
 
   function gefiltert() {
@@ -69,18 +73,57 @@
   }
 
   /* ---------- Darstellung ---------- */
+  var FELD = { linkedin_url: "LinkedIn", position: "Position", firma: "Firma", email: "E-Mail", telefon: "Telefon" };
+  function vorschlaegeHtml() {
+    if (!vorschlaege.length) return '<p class="kb-leer">Keine offenen Vorschläge.</p>';
+    var sicher = vorschlaege.filter(function (v) { return v.sicherheit === "hoch"; }).length;
+    var nachK = {};
+    vorschlaege.forEach(function (v) { (nachK[v.kontakt_id] = nachK[v.kontakt_id] || []).push(v); });
+    return '<div class="kt-vs-kopf"><p>' + vorschlaege.length + " offene Vorschläge aus der Suche. Bitte kurz prüfen – stimmt Person und Firma?</p>" +
+      (sicher ? '<button type="button" class="kb-knopf" data-alle-sicher>Alle ' + sicher + " sicheren übernehmen</button>" : "") + "</div>" +
+      '<ul class="kt-vs">' + Object.keys(nachK).map(function (kid) {
+        var k = alle.filter(function (x) { return x.id === +kid; })[0] || {};
+        return '<li><p class="kt-vs-name"><b>' + esc(name(k)) + "</b> · " + esc(k.organisationen ? k.organisationen.name : "ohne Firma") + "</p>" +
+          nachK[kid].map(function (v) {
+            var wert = v.feld === "linkedin_url" ? '<a href="' + esc(v.wert) + '" target="_blank" rel="noopener">' + esc(v.wert.replace(/^https:\/\/www\.linkedin\.com\/in\//, "").replace(/\/$/, "")) + " ↗</a>" : esc(v.wert);
+            return '<div class="kt-vs-zeile" data-v="' + v.id + '"><span class="kt-vs-feld">' + FELD[v.feld] + '</span><span class="kt-vs-wert">' + wert +
+              (v.sicherheit === "mittel" ? ' <small>unsicher</small>' : "") + (v.beleg ? '<small class="kt-vs-beleg">' + esc(v.beleg) + "</small>" : "") + "</span>" +
+              '<span class="kt-vs-knoepfe"><button type="button" data-ja>Übernehmen</button><button type="button" data-nein>Verwerfen</button></span></div>';
+          }).join("") + "</li>";
+      }).join("") + "</ul>";
+  }
+  function entscheiden(id, ja) {
+    return db.rpc("vorschlag_entscheiden", { p_id: id, p_annehmen: ja }).then(function (r) {
+      if (r.error) { alert("Nicht gespeichert: " + r.error.message); return; }
+      vorschlaege = vorschlaege.filter(function (v) { return v.id !== id; });
+    });
+  }
+
   function zeichnen() {
+    if (zustand.tab === "vorschlaege") {
+      wurzel.innerHTML = tabsHtml() + vorschlaegeHtml();
+      tabsVerdrahten();
+      wurzel.querySelectorAll("[data-v]").forEach(function (z) {
+        var id = +z.getAttribute("data-v");
+        z.querySelector("[data-ja]").onclick = function () { z.classList.add("laedt"); entscheiden(id, true).then(function () { laden(); }); };
+        z.querySelector("[data-nein]").onclick = function () { z.classList.add("laedt"); entscheiden(id, false).then(zeichnen); };
+      });
+      var alleB = wurzel.querySelector("[data-alle-sicher]");
+      if (alleB) alleB.onclick = function () {
+        alleB.disabled = true; alleB.textContent = "Wird übernommen …";
+        vorschlaege.filter(function (v) { return v.sicherheit === "hoch"; }).reduce(function (p, v) { return p.then(function () { return entscheiden(v.id, true); }); }, Promise.resolve()).then(laden);
+      };
+      return;
+    }
     var liste = gefiltert();
-    var html = '<div class="kt-tabs">' + TABS.map(function (t) {
-      return '<button type="button" data-tab="' + t[0] + '" aria-pressed="' + (zustand.tab === t[0]) + '">' + t[1] + " <span>" + alle.filter(t[2]).length + "</span></button>";
-    }).join("") + '</div><input class="kb-suche kt-suche" type="search" placeholder="Name, Firma, Position" value="' + esc(zustand.suche) + '" data-suche>';
+    var html = tabsHtml() + '<input class="kb-suche kt-suche" type="search" placeholder="Name, Firma, Position" value="' + esc(zustand.suche) + '" data-suche>';
     html += '<div class="ve"><div class="ve-liste kt-liste">' + (liste.length ? liste.map(function (k) {
       return '<button type="button" class="ve-eintrag' + (zustand.gewaehlt === k.id ? " aktiv" : "") + '" data-id="' + k.id + '"><span class="ve-name">' + esc(name(k)) +
         (klaerfall(k) ? ' <i class="kt-punkt" title="Klärfall"></i>' : "") + '</span><span class="ve-zeit">' + esc(k.prioritaet || "") + '</span><span class="ve-betreff">' +
         esc(k.organisationen ? k.organisationen.name : "ohne Firma") + "</span></button>";
     }).join("") : '<p class="kb-leer">Nichts gefunden.</p>') + '</div><div class="ve-detail" data-detail><p class="kb-leer">Links einen Kontakt wählen.</p></div></div>';
     wurzel.innerHTML = html;
-    wurzel.querySelectorAll("[data-tab]").forEach(function (b) { b.onclick = function () { zustand.tab = b.getAttribute("data-tab"); zeichnen(); }; });
+    tabsVerdrahten();
     var s = wurzel.querySelector("[data-suche]");
     s.oninput = function () { zustand.suche = s.value; var pos = s.selectionStart; zeichnen(); var n = wurzel.querySelector("[data-suche]"); n.focus(); n.setSelectionRange(pos, pos); };
     wurzel.querySelectorAll(".ve-eintrag").forEach(function (b) {
@@ -91,6 +134,17 @@
       };
     });
     if (zustand.gewaehlt) detail(zustand.gewaehlt);
+  }
+
+  function tabsHtml() {
+    return '<div class="kt-tabs">' + TABS.map(function (t) {
+      var n = t[0] === "vorschlaege" ? vorschlaege.length : alle.filter(t[2]).length;
+      if (t[0] === "vorschlaege" && !n && zustand.tab !== t[0]) return "";
+      return '<button type="button" data-tab="' + t[0] + '" aria-pressed="' + (zustand.tab === t[0]) + '">' + t[1] + " <span>" + n + "</span></button>";
+    }).join("") + "</div>";
+  }
+  function tabsVerdrahten() {
+    wurzel.querySelectorAll("[data-tab]").forEach(function (b) { b.onclick = function () { zustand.tab = b.getAttribute("data-tab"); zeichnen(); }; });
   }
 
   function detail(id) {
