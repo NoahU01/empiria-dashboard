@@ -876,3 +876,16 @@ main.pr-look-grau .pr-kb-spalte { background: #f4f2ef; }
 .pr-wartet::before { content: "⧗ "; }
 .pr-auf-zusatz:empty { display: none; }
 @media (min-width: 601px) { .pr-aufgaben .pr-auf-zusatz { padding: 0 34px 6px 122px; } .pr-aufgaben .pr-auf-zusatz .pr-hinweis { margin-top: 0; } }
+/* Kanban im Projekt: kompaktere Karten (schmale Spalten) */
+.pr-aufgaben .pr-kanban { gap: 10px; }
+.pr-aufgaben .pr-kb-spalte { padding: 8px; }
+.pr-aufgaben .pr-kb-karte { margin-bottom: 6px; padding: 8px 10px; }
+.pr-aufgaben .pr-kb-karte .pr-auf-titel { font-size: .78rem; line-height: 1.35; }
+.pr-aufgaben .pr-kb-karte button.pr-auf-titel { padding-right: 20px; }
+.pr-aufgaben .pr-kb-karte .pr-auf-titel .tl-dreieck { width: 7px; height: 7px; top: 5px; right: 2px; }
+.pr-aufgaben .pr-kb-karte .pr-auf-titel[aria-expanded="true"] .tl-dreieck { top: 9px; }
+.pr-aufgaben .pr-kb-meta, .pr-aufgaben .pr-kb-meta .pr-frist, .pr-aufgaben .pr-kb-meta .pr-wer { font-size: .68rem; }
+.pr-aufgaben .pr-kb-meta { margin-top: 4px; }
+.pr-aufgaben .pr-kb-karte .pr-auf-details p, .pr-aufgaben .pr-kb-karte .pr-hinweis { font-size: .72rem; }
+.pr-aufgaben .pr-kb-karte .pr-wartet { font-size: .68rem; }
+.pr-aufgaben .pr-kb-kopf { font-size: .72rem; margin-bottom: 8px; }
