@@ -1,4 +1,4 @@
-/* Aufgaben – was Daniel sieht: Details als Stichpunkte (aus dem Diktat, eine Zeile = ein Punkt)
+/* Aufgaben – was Daniel sieht: Details als Stichpunkte (aus dem Diktat, eine Zeile = ein Punkt) plus verlinkte Unterlagen
    und in einfacher Sprache, wovon die Aufgabe abhängt bzw. auf wen sie wartet.
    Die Logik dahinter (Weg, Mail-Gespräch, Kette) bleibt in der Datenbank und wird nicht gezeigt.
    Genutzt von projekte-crm.js und aufgaben-board.js.
@@ -10,7 +10,10 @@
 
   function html(a) {
     var punkte = String(a.beschreibung || "").split("\n").map(function (x) { return x.replace(/^[-•·]\s*/, "").trim(); }).filter(Boolean);
-    return punkte.length ? '<ul class="ad-punkte">' + punkte.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "";
+    var links = (a.unterlagen || []).filter(function (u) { return u && u.url; }).map(function (u) {
+      return '<li class="ad-link"><a href="' + esc(u.url) + '" target="_blank" rel="noopener">' + esc(u.titel || "Link") + "</a></li>"; });
+    var li = punkte.map(function (x) { return "<li>" + esc(x) + "</li>"; }).concat(links);
+    return li.length ? '<ul class="ad-punkte">' + li.join("") + "</ul>" : "";
   }
 
   function lage(a, alle) {

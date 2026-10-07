@@ -915,3 +915,4 @@ main.pr-look-grau .pr-kb-spalte { background: #f4f2ef; }
 .pr-bet-spalte h4 { margin: 4px 0 6px; font-size: .78rem; font-weight: 600; color: var(--grey-70); }
 .pr-tl-frei + .pr-ziel, .pr-ziel + .pr-team, .pr-tl-frei + .pr-team { margin-top: 0; }
 .pr-module .pr-bet-spalte h4 { margin-top: 0; }
+.ad-link a { color: var(--ink); text-decoration: underline; text-decoration-color: #c9c5c0; text-underline-offset: 2px; } .ad-link a:hover { text-decoration-color: var(--ink); }
