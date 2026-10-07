@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kontaktdatenbank &ndash; Vorschlag</title>
+<meta name="description" content="Kontaktdatenbank – Prüfung der Excel-Struktur und Vorschlag für Supabase.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/assets/dashboard-nav.css">
+<link rel="stylesheet" href="/assets/beta.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container nav">
+    <div class="sn">
+      <a class="brand" href="/strategie/oekosystem.html" aria-label="empiria &ndash; zur Startseite">
+        <img src="/assets/empiria-logo.svg" alt="empiria">
+      </a>
+      <div class="sn-dd" data-sn-dd>
+        <button class="sn-toggle" type="button" aria-expanded="false" aria-controls="snPanel" aria-label="Seiten anzeigen">
+          <svg class="sn-chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <nav class="sn-panel" id="snPanel" aria-label="Seiten">
+        <p class="sn-group">Strategie</p>
+        <a href="/strategie/oekosystem.html" class="sn-link"><span class="sn-tag">&Ouml;S</span><span class="sn-txt"><b>&Ouml;kosystem</b><small>Schaltplan der Steuerungszentrale</small></span></a>
+        <div class="sn-sub"><a href="/strategie/entwuerfe-dashboard.html" class="sn-link"><span class="sn-tag">ED</span><span class="sn-txt"><b>Entw&uuml;rfe Dashboard</b><small>Vier Entw&uuml;rfe im Vergleich</small></span></a><button class="sn-sub-toggle" type="button" aria-expanded="false" aria-controls="snKinderED" aria-label="Unterseiten anzeigen"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+        <div class="sn-kinder" id="snKinderED">
+          <a href="/strategie/dashboard.html" class="sn-link"><span class="sn-tag">SZ</span><span class="sn-txt"><b>Steuerungszentrale</b><small>Sechs Vorhaben, vier Ansichten</small></span></a>
+          <a href="/strategie/dashboard-lage.html" class="sn-link"><span class="sn-tag">AL</span><span class="sn-txt"><b>Aktuelle Lage</b><small>Startklar, Eingang, Sparring</small></span></a>
+          <a href="/strategie/dashboard-entwuerfe.html" class="sn-link"><span class="sn-tag">EN</span><span class="sn-txt"><b>Entw&uuml;rfe I</b><small>F&uuml;nf Haltungen, dieselben Daten</small></span></a>
+          <a href="/strategie/dashboard-entwuerfe-2.html" class="sn-link"><span class="sn-tag">E2</span><span class="sn-txt"><b>Entw&uuml;rfe II</b><small>F&uuml;nf Ordnungen f&uuml;r dieselbe Lage</small></span></a>
+        </div>
+        <div class="sn-sub"><a href="/strategie/dashboard-beta.html" class="sn-link"><span class="sn-tag">DB</span><span class="sn-txt"><b>Dashboard Beta</b><small>Der Stand, der wirklich l&auml;uft</small></span></a><button class="sn-sub-toggle" type="button" aria-expanded="false" aria-controls="snKinderDB" aria-label="Unterseiten anzeigen"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+        <div class="sn-kinder" id="snKinderDB">
+          <a href="/strategie/korrespondenz-beta.html" class="sn-link"><span class="sn-tag">KO</span><span class="sn-txt"><b>Korrespondenz</b><small>Alle Konten, nach Handlungsbedarf</small></span></a>
+          <a href="/strategie/korrespondenz-variante-a.html" class="sn-link"><span class="sn-tag">VA</span><span class="sn-txt"><b>Variante A: Karten</b><small>Alles offen untereinander</small></span></a>
+          <a href="/strategie/korrespondenz-variante-b.html" class="sn-link"><span class="sn-tag">VB</span><span class="sn-txt"><b>Variante B: Kompakte Liste</b><small>Eine Zeile je Mail</small></span></a>
+          <a href="/strategie/korrespondenz-variante-c.html" class="sn-link"><span class="sn-tag">VC</span><span class="sn-txt"><b>Variante C: Entscheidungs-Sprint</b><small>Eine Mail nach der anderen</small></span></a>
+          <a href="/strategie/korrespondenz-variante-d.html" class="sn-link"><span class="sn-tag">VD</span><span class="sn-txt"><b>Variante D: Briefing</b><small>Wie ein kurzes Memo</small></span></a>
+          <a href="/strategie/korrespondenz-variante-e.html" class="sn-link"><span class="sn-tag">VE</span><span class="sn-txt"><b>Variante E: Liste und Detail</b><small>Wie Outlook, zwei Spalten</small></span></a>
+        </div>
+        <a href="/strategie/kontaktdatenbank.html" class="sn-link" aria-current="page"><span class="sn-tag">KD</span><span class="sn-txt"><b>Kontaktdatenbank</b><small>Vorschlag zur Freigabe</small></span></a>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="db"><div class="container">
+    <p class="kicker">Kontaktdatenbank &middot; Vorschlag zur Freigabe</p>
+    <h1 class="h-serif">Vom Excel zur <span class="hl">Datenbank.</span></h1>
+    <p class="v-intro">Gepr&uuml;ft: die ChatGPT-Arbeitsmappe (28 Bl&auml;tter, 170 Kontakte). Oben, was heute nicht tr&auml;gt. Darunter, wie ich es in Supabase anlegen w&uuml;rde. Es ist noch nichts angelegt.</p>
+
+    <div class="sd-zahlen">
+      <div><b>28</b><span>Bl&auml;tter heute</span></div>
+      <div><b>10</b><span>Tabellen im Vorschlag</span></div>
+      <div><b>170</b><span>Kontakte &uuml;bernommen</span></div>
+      <div><b>0</b><span>Kontakte mit Marke</span></div>
+    </div>
+
+    <h2 class="sd-h2">Was am Excel nicht tr&auml;gt</h2>
+    <div class="sd-befunde">
+      <div class="sd-befund"><b>Alles mehrfach</b><p>Name, Firma und Position stehen in bis zu 12 Bl&auml;ttern. &Auml;ndert sich etwas, stimmt es an elf Stellen nicht mehr.</p></div>
+      <div class="sd-befund"><b>Zwei Wahrheiten</b><p>Beziehungsstatus steht als Spalte <i>und</i> als Tag &ndash; mit unterschiedlichen Werten (z.&nbsp;B. 23 vs. 37 &bdquo;locker erhalten&ldquo;).</p></div>
+      <div class="sd-befund"><b>Marken leer</b><p>Das Blatt Kontakt-Marken ist bei allen 170 Kontakten unausgef&uuml;llt &ndash; genau das, was sp&auml;ter alles steuert.</p></div>
+      <div class="sd-befund"><b>Firma als Freitext</b><p>56 Firmen nur als Text. Beim Import aus dem Sales Navigator entstehen so Dubletten (&bdquo;SV&ldquo;, &bdquo;SV SparkassenVersicherung&ldquo; &hellip;).</p></div>
+      <div class="sd-befund"><b>LinkedIn fehlt</b><p>Nur 20 von 170 Kontakten haben ein LinkedIn-Profil &ndash; das ist aber der sichere Schl&uuml;ssel, um Sales-Navigator-Kontakte abzugleichen.</p></div>
+      <div class="sd-befund"><b>Kein Ged&auml;chtnis</b><p>Das Blatt Aktivit&auml;ten ist leer. Ohne &bdquo;wann zuletzt Kontakt&ldquo; kann niemand ausrechnen, wer wieder dran ist.</p></div>
+      <div class="sd-befund"><b>Kampagnen dreifach</b><p>Wer bei welcher Aktion dabei ist, steht in Aktionstyp, Kampagnen-Freigabe, Kampagnen-Check und Homepage-Arbeitsliste.</p></div>
+      <div class="sd-befund"><b>Diktate vierfach</b><p>Deine Interviews liegen in vier Bl&auml;ttern, teils doppelt. Sie sind das Wertvollste &ndash; und geh&ouml;ren genau einmal gespeichert.</p></div>
+      <div class="sd-befund"><b>Kein Kontaktstopp</b><p>Es gibt kein Feld &bdquo;darf angeschrieben werden&ldquo;. F&uuml;r Mailings an Sales-Navigator-Kontakte ist das Pflicht.</p></div>
+    </div>
+    <p class="sd-gut"><b>Was gut ist und bleibt:</b> die Kontakt-IDs, Ansprache Du/Sie, Beziehungsstatus, Kontaktfrequenz, Kontaktbriefing, Kommunikationsvariante, die Kataloge (Angebote, Cluster, Themen) und vor allem deine Interviews.</p>
+
+    <h2 class="sd-h2">Vorschlag: 10 Tabellen, die Person in der Mitte</h2>
+    <div class="sd-plan">
+      <div class="sd-tab sd-tab--kern"><h3>Kontakte</h3><small>eine Zeile je Person &ndash; das Herz</small><ul>
+        <li><b>Kontakt-ID</b> (K000014 bleibt)</li><li>Anrede, Titel, Vorname, Nachname</li><li>&rarr; Organisation, Position, Ebene</li><li>Ansprache Du/Sie</li><li><b>LinkedIn-Profil</b> (eindeutig)</li>
+        <li>Beziehungsstatus, N&auml;he, Priorit&auml;t A/B/C</li><li>Kontaktfrequenz &rarr; <b>Rhythmus in Tagen</b></li><li>Einflussrolle, Kontaktziel</li><li>Kontaktbriefing, Kommunikationsvariante</li>
+        <li><b>Profiltiefe</b>: Basis &middot; recherchiert &middot; Interview</li><li><b>Quelle</b>: Adressbuch &middot; Sales Navigator &middot; manuell</li><li><b>Kontaktstopp</b> + Werbeerlaubnis</li><li>letzter / n&auml;chster Kontakt</li></ul></div>
+      <div class="sd-tab"><h3>Organisationen</h3><small>jede Firma genau einmal</small><ul><li>Name, Marktumfeld</li><li>Website, LinkedIn-Seite</li></ul></div>
+      <div class="sd-tab"><h3>Kontaktwege</h3><small>beliebig viele je Person</small><ul><li>E-Mail / Telefon / Mobil</li><li>gesch&auml;ftlich / privat, bevorzugt</li><li>Status: gepr&uuml;ft &middot; ungepr&uuml;ft &middot; veraltet</li></ul></div>
+      <div class="sd-tab"><h3>Anschriften</h3><small>f&uuml;r Post und Geschenke</small><ul><li>Typ, Stra&szlig;e, PLZ, Ort, Land</li></ul></div>
+      <div class="sd-tab sd-tab--gelb"><h3>Marken</h3><small>eine Person, mehrere Marken</small><ul><li>empiria &middot; sofort sichtbar &middot; M&amp;S</li><li>Rolle: Kunde, Interessent, Multiplikator, Partner</li><li>Begr&uuml;ndung</li></ul></div>
+      <div class="sd-tab"><h3>Merkmale</h3><small>Mehrfachauswahl aus festen Katalogen</small><ul><li>Themen, Bedarfe, passende Angebote, Kampagnencluster</li><li>Herkunft: Interview &middot; abgeleitet &middot; KI &middot; manuell</li></ul></div>
+      <div class="sd-tab"><h3>Notizen</h3><small>dein Wissen, w&ouml;rtlich, einmal</small><ul><li>Interviews, Diktate, Recherche</li><li>Datum, Art, Originaltext</li></ul></div>
+      <div class="sd-tab"><h3>Aktivit&auml;ten</h3><small>das Ged&auml;chtnis</small><ul><li>Mail, Anruf, Treffen, LinkedIn</li><li>Datum, Anlass, Ergebnis, n&auml;chster Schritt</li></ul></div>
+      <div class="sd-tab"><h3>Kampagnen</h3><small>Homepage, Budgetretter, Weihnachten &hellip;</small><ul><li>Ziel, Zeitraum, Auswahlregel, Status</li></ul></div>
+      <div class="sd-tab"><h3>Kampagnen-Teilnehmer</h3><small>wer ist bei welcher Aktion</small><ul><li>vorgeschlagen &rarr; freigegeben &rarr; versendet &rarr; reagiert</li><li>individueller Ansatz</li></ul></div>
+    </div>
+    <p class="sd-weg"><b>Wird nicht mehr gespeichert, sondern berechnet:</b> Zielgruppen (gespeicherte Filter statt ID-Listen), Firmen&uuml;bersicht, Pr&uuml;flisten. <b>Ins Archiv statt in die Datenbank:</b> die rohen Adressbuch-Felder (Quellfelder).</p>
+
+    <h2 class="sd-h2">Neue Kontakte aus dem Sales Navigator</h2>
+    <ol class="sd-fluss">
+      <li><b>Liste rein</b><span>Export oder Liste aus deiner Suche &ndash; auch mit wenig Infos.</span></li>
+      <li><b>Abgleich</b><span>Erst LinkedIn-Profil, dann E-Mail, dann Name + Firma. Bekannte werden erg&auml;nzt, nicht doppelt angelegt.</span></li>
+      <li><b>Pflicht nur</b><span>Vorname, Nachname, Firma, LinkedIn. Alles andere darf leer sein &ndash; Profiltiefe &bdquo;Basis&ldquo;.</span></li>
+      <li><b>Anreichern</b><span>Ich ordne Marke, Themen und Cluster aus Position und Firma vor &ndash; markiert als &bdquo;KI-Vorschlag&ldquo;, bis du best&auml;tigst.</span></li>
+    </ol>
+
+    <h2 class="sd-h2">Was die Intelligenzschicht damit kann</h2>
+    <div class="sd-fragen">
+      <p>&bdquo;Wer ist &uuml;berf&auml;llig?&ldquo; <span>Rhythmus in Tagen + letzte Aktivit&auml;t</span></p>
+      <p>&bdquo;Alle Vorst&auml;nde in der Versicherungswirtschaft mit Thema Sichtbarkeit, sofort sichtbar, ohne Kontaktstopp.&ldquo; <span>Organisation + Ebene + Merkmale + Marke</span></p>
+      <p>&bdquo;Lohnt sich eine Landingpage f&uuml;r &sbquo;F&uuml;hrung mit Umsetzungskraft&lsquo;?&ldquo; <span>Cluster z&auml;hlen, nach Priorit&auml;t und N&auml;he gewichten</span></p>
+      <p>&bdquo;Schreib die Homepage-Mails.&ldquo; <span>Kampagnen-Teilnehmer + Briefing + Notizen + Ansprache</span></p>
+    </div>
+
+    <h2 class="sd-h2">Deine Entscheidungen</h2>
+    <ol class="sd-entscheid">
+      <li>Passt die Grundstruktur mit 10 Tabellen?</li>
+      <li>Marken je Kontakt: soll ich sie aus deinen Interviews <b>vorschlagen</b>, und du best&auml;tigst?</li>
+      <li>Kontaktfrequenz in Tagen: intensivieren = 30, regelm&auml;&szlig;ig = 90, locker = 180, nur Weihnachten = 365 &ndash; einverstanden?</li>
+      <li>Die Kampagnen (Homepage, Budgetretter, Weihnachten) gleich mit &uuml;bernehmen?</li>
+    </ol>
+  </div></section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-row">
+    <span>empiria GmbH 2026</span>
+    <span class="footer-links"><a href="https://www.empiria.de/impressum.html">Impressum</a> <span>|</span> <a href="https://www.empiria.de/datenschutz.html">Datenschutz</a> <span>|</span> <button type="button" data-cookie-settings>Cookie-Einstellungen</button></span>
+  </div>
+</footer>
+
+<script src="/script.js"></script>
+<script src="/assets/dashboard-nav.js"></script>
+</body>
+</html>
