@@ -283,3 +283,30 @@ a.db-chip:hover { background: #e2e0dd; color: var(--ink); }
 .ve-entwurf pre, .ve-orig pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--font-sans); font-weight: 300; font-size: .88rem; line-height: 1.6; color: var(--ink); }
 .ve-orig { margin-top: 26px; padding-top: 16px; border-top: 1px solid #eeece9; }
 .ve-orig pre { color: var(--ink-2); }
+
+/* ---------- Kontakte ---------- */
+.kt-login form { display: flex; flex-wrap: wrap; gap: 10px; }
+.kt-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 12px; }
+.kt-tabs button { height: 34px; padding: 0 14px; border: 0; border-radius: 999px; background: var(--grey-bg); font-size: .82rem; color: var(--ink-2); }
+.kt-tabs button span { margin-left: 4px; color: var(--grey-50); }
+.kt-tabs button[aria-pressed="true"] { background: var(--ink); color: #fff; } .kt-tabs button[aria-pressed="true"] span { color: var(--hl); }
+.kt-suche { width: 100%; max-width: 420px; margin-bottom: 18px; }
+.kt-liste { max-height: 72vh; overflow-y: auto; }
+.kt-punkt { display: inline-block; width: 7px; height: 7px; margin-left: 4px; border-radius: 50%; background: #d0453b; vertical-align: 2px; }
+.kt-stopp { color: #d0453b; }
+.kt-klaeren { margin-top: 14px; padding: 4px 0 4px 14px; box-shadow: inset 3px 0 0 #d0453b; }
+.kt-klaeren p { margin: 0 0 4px; font-size: .88rem; font-weight: 300; }
+.kt-felder { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 20px; margin-top: 16px; }
+@media (min-width: 1100px) { .kt-felder { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.kt-feld span { display: block; font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-50); }
+.kt-feld b { font-weight: 400; font-size: .9rem; }
+.kt-wege { list-style: none; margin: 0; padding: 0; }
+.kt-wege li { display: flex; flex-wrap: wrap; gap: 4px 12px; padding: 4px 0; font-size: .9rem; overflow-wrap: anywhere; }
+.kt-wege li span { width: 90px; flex: none; color: var(--grey-50); font-size: .8rem; }
+.kt-wege li a { color: var(--ink); }
+.kt-wege li small { color: var(--grey-50); font-size: .75rem; }
+.kt-wege li.alt a { text-decoration: line-through; color: var(--grey-50); }
+.kt-merk { margin: 0 0 6px !important; font-size: .88rem; font-weight: 300; }
+.kt-merk span { display: inline-block; min-width: 140px; margin-right: 8px; color: var(--grey-50); font-size: .8rem; font-weight: 400; }
+.kt-leise { color: var(--grey-50) !important; font-size: .85rem !important; }
+.kt-notiz-kopf { margin: 16px 0 4px !important; font-size: .76rem !important; color: var(--grey-50) !important; }
