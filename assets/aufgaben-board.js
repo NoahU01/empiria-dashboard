@@ -23,7 +23,7 @@
     var vor14 = new Date(Date.now() - 14 * 864e5).toISOString();
     Promise.all([
       db.from("projekte").select("id, name, typ, marke, status").order("name"),
-      db.from("aufgaben").select("id, titel, beschreibung, status, spalte, faellig_am, erledigt_am, projekt_id, weg, vorgaenger, warten_auf, hinweis, zustaendig_name, verantwortlich, kontakte:zustaendig_kontakt_id(vorname, nachname), organisationen(name)")
+      db.from("aufgaben").select("id, titel, beschreibung, status, spalte, faellig_am, erledigt_am, projekt_id, weg, vorgaenger, warten_auf, hinweis, zustaendig_name, verantwortlich, kontakte:zustaendig_kontakt_id(vorname, nachname), organisationen(id, name), person:kontakt_id(id, vorname, nachname), ereignis:ereignis_id(id, titel, datum, projekt_id), mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, zeitblock_vorschlag, unterlagen")
         .or("status.eq.offen,and(status.eq.erledigt,erledigt_am.gte." + vor14 + ")")
     ]).then(function (r) {
       if (r[1].error) { wurzel.innerHTML = '<p class="kb-leer">Fehler: ' + esc(r[1].error.message) + "</p>"; return; }
@@ -61,12 +61,16 @@
     var herkunft = p ? p.name : a.organisationen ? a.organisationen.name : "Operativ";
     return '<div class="pr-kb-karte' + (a.status === "erledigt" ? " pr-kb-fertig" : "") + '" draggable="true" data-a="' + a.id + '">' +
       '<p class="ab-herkunft">' + (p ? '<a href="/strategie/projekte.html#p=' + p.id + '">' + esc(herkunft) + "</a>" : esc(herkunft)) + "</p>" +
-      (a.beschreibung ? '<button type="button" class="pr-auf-titel" data-auf-auf aria-expanded="false"><span>' + esc(a.titel) + '</span><span class="tl-dreieck" aria-hidden="true"></span></button>'
+      (det(a) ? '<button type="button" class="pr-auf-titel" data-auf-auf aria-expanded="false"><span>' + esc(a.titel) + '</span><span class="tl-dreieck" aria-hidden="true"></span></button>'
         : '<span class="pr-auf-titel">' + esc(a.titel) + "</span>") +
       '<p class="pr-kb-meta"><span class="pr-frist' + (ueber ? " pr-ueber" : "") + '">' + (a.faellig_am ? kurz(a.faellig_am) : "ohne Termin") + '</span><span class="pr-wer">' + esc(wer(a) || "offen") + "</span></p>" +
-      zusatz(a) + (a.beschreibung ? '<div class="pr-auf-details" hidden><p>' + esc(a.beschreibung).replace(/\n/g, "<br>") + "</p></div>" : "") + "</div>";
+      zusatz(a) + (det(a) ? '<div class="pr-auf-details" hidden>' + det(a) + "</div>" : "") + "</div>";
   }
 
+  function det(a) {
+    if (a._det === undefined) a._det = window.AufgabenDetails ? AufgabenDetails.html(a, aufgaben) : (a.beschreibung ? "<p>" + esc(a.beschreibung) + "</p>" : "");
+    return a._det;
+  }
   // Hinweis (Antwort da, es kann weitergehen, nachfassen) und offene Vorgänger
   function zusatz(a) {
     var offenVor = (a.vorgaenger || []).map(function (id) { return aufgaben.filter(function (x) { return x.id === id && x.status !== "erledigt"; })[0]; }).filter(Boolean);

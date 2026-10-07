@@ -69,7 +69,7 @@
       db.from("projekt_beteiligte").select("id, seite, rolle, name, kontakte(id, vorname, nachname, position)").eq("projekt_id", id),
       db.from("projekt_ereignisse").select("id, datum, art, titel, quelle, format, ort, teilnehmer, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("datum", { ascending: false }),
       db.from("projekt_punkte").select("id, ereignis_id, art, text, angelegt_am, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am", { ascending: false }),
-      db.from("aufgaben").select("id, titel, beschreibung, status, spalte, faellig_am, erledigt_am, ereignis_id, weg, vorgaenger, warten_auf, hinweis, zeitblock_vorschlag, zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
+      db.from("aufgaben").select("id, titel, beschreibung, status, spalte, faellig_am, erledigt_am, ereignis_id, weg, vorgaenger, warten_auf, hinweis, zeitblock_vorschlag, mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, unterlagen, person:kontakt_id(id, vorname, nachname), organisationen(id, name), zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
     ]).then(function (r) {
       if (r[0].error) { wurzel.innerHTML = '<p class="kb-leer">Fehler: ' + esc(r[0].error.message) + "</p>"; return; }
       zeichnen(r[0].data, r[1].data || [], r[2].data || [], r[3].data || [], r[4].data || []);
@@ -121,11 +121,20 @@
       var ueber = a.status === "offen" && a.faellig_am && new Date(a.faellig_am) < new Date(new Date().toDateString());
       return '<span class="pr-frist' + (ueber ? " pr-ueber" : "") + '">' + (a.faellig_am ? kurz(a.faellig_am) : "ohne Termin") + "</span>";
     }
+    // Aufgeklappte Aufgabe: Hintergrund, Herkunft, Weg, Kette, Unterlagen (assets/aufgaben-details.js)
+    function det(a) {
+      if (a._det === undefined) {
+        var e = ere.filter(function (x) { return x.id === a.ereignis_id; })[0];
+        if (e) a.ereignis = { id: e.id, titel: e.titel, datum: e.datum, projekt_id: p.id };
+        a._det = window.AufgabenDetails ? AufgabenDetails.html(a, auf) : (a.beschreibung ? "<p>" + esc(a.beschreibung) + "</p>" : "");
+      }
+      return a._det;
+    }
     function titel(a) {
-      return a.beschreibung ? '<button type="button" class="pr-auf-titel" data-auf-auf aria-expanded="false"><span>' + esc(a.titel) + '</span><span class="tl-dreieck" aria-hidden="true"></span></button>'
+      return det(a) ? '<button type="button" class="pr-auf-titel" data-auf-auf aria-expanded="false"><span>' + esc(a.titel) + '</span><span class="tl-dreieck" aria-hidden="true"></span></button>'
         : '<span class="pr-auf-titel">' + esc(a.titel) + "</span>";
     }
-    function details(a) { return a.beschreibung ? '<div class="pr-auf-details" hidden><p>' + esc(a.beschreibung).replace(/\n/g, "<br>") + "</p></div>" : ""; }
+    function details(a) { return det(a) ? '<div class="pr-auf-details" hidden>' + det(a) + "</div>" : ""; }
     // Hinweis (Antwort da, es kann weitergehen, nachfassen) und offene Vorgänger
     function zusatz(a) {
       var offenVor = (a.vorgaenger || []).map(function (id) { return auf.filter(function (x) { return x.id === id && x.status !== "erledigt"; })[0]; }).filter(Boolean);
