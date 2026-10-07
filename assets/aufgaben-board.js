@@ -1,6 +1,6 @@
 /* Aufgaben – Kanban-Board über alle Projekte und die operativen Aufgaben ohne Projekt.
    Oben ein Filter: Alle, Operativ oder einzelne/mehrere Projekte (merkt sich die Auswahl).
-   Spalten: Backlog · To-do · In Arbeit · Erledigt (letzte 14 Tage). Karten zum Ziehen.
+   Spalten: Backlog · To-do · In Arbeit · Review/Prüfung · Erledigt (letzte 14 Tage). Karten zum Ziehen.
    Anmeldung wie auf der Kontaktseite (Login-Link). */
 (function () {
   "use strict";
@@ -10,7 +10,7 @@
   function kurz(d) { return d ? new Date(d).toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "short" }) : ""; }
   function name(k) { return k ? [k.vorname, k.nachname].filter(Boolean).join(" ") : ""; }
   var MARKEN = ["empiria", "sofortsichtbar", "Müller&Ströbel."];
-  var SPALTEN = [["backlog", "Backlog"], ["todo", "To-do"], ["arbeit", "In Arbeit"], ["erledigt", "Erledigt"]];
+  var SPALTEN = [["backlog", "Backlog"], ["todo", "To-do"], ["arbeit", "In Arbeit"], ["pruefung", "Review / Prüfung"], ["erledigt", "Erledigt"]];
   var projekte = [], aufgaben = [], wahl = [];   // wahl: leer = alle; sonst Projekt-IDs und/oder "op"
   try { wahl = JSON.parse(localStorage.getItem("ab-filter") || "[]"); } catch (x) { wahl = []; }
 

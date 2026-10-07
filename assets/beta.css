@@ -838,7 +838,7 @@ span.pr-auf-titel:hover span, button.pr-auf-titel:hover span { text-decoration: 
 main.pr-look-schwarz .pr-aufgaben > .pr-tl-kopf { margin: -16px -18px 16px; padding: 8px 14px 8px 18px; }
 /* Kanban-Board: vier ruhige Spalten, Karten zum Ziehen */
 .pr-aufgaben.pr-auf-kanban { height: auto; }
-.pr-kanban { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.pr-kanban { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
 @media (max-width: 900px) { .pr-kanban { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .pr-kanban { grid-template-columns: 1fr; } }
 .pr-kb-spalte { min-height: 140px; padding: 10px; border-radius: 14px; background: #f7f6f4; transition: background-color .15s ease, box-shadow .15s ease; }

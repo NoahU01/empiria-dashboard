@@ -114,7 +114,7 @@
       '<button type="button" class="pr-speichern" data-ueb-speichern hidden>Speichern</button></div></section>';
     // Aufgaben: immer mit Frist, nach Datum
     var offen = auf.filter(function (a) { return a.status === "offen"; }).sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });
-    // Aufgaben als Liste oder Kanban-Board (Backlog · To-do · In Arbeit · Erledigt)
+    // Aufgaben als Liste oder Kanban-Board (Backlog · To-do · In Arbeit · Review/Prüfung · Erledigt)
     var aav = "liste";
     try { aav = localStorage.getItem("pr-auf-ansicht") === "kanban" ? "kanban" : "liste"; } catch (x) {}
     function frist(a) {
@@ -131,7 +131,7 @@
     var aufInhalt;
     if (aav === "kanban") {
       var vor14 = Date.now() - 14 * 864e5;
-      var SPALTEN = [["backlog", "Backlog"], ["todo", "To-do"], ["arbeit", "In Arbeit"], ["erledigt", "Erledigt"]];
+      var SPALTEN = [["backlog", "Backlog"], ["todo", "To-do"], ["arbeit", "In Arbeit"], ["pruefung", "Review / Prüfung"], ["erledigt", "Erledigt"]];
       aufInhalt = '<div class="pr-kanban">' + SPALTEN.map(function (sp) {
         var karten = auf.filter(function (a) {
           if (sp[0] === "erledigt") return a.status === "erledigt" && (!a.erledigt_am || new Date(a.erledigt_am) >= vor14);
