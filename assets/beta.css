@@ -448,3 +448,51 @@ a.db-chip:hover { background: #e2e0dd; color: var(--ink); }
 .kb-entscheid[data-senden] { align-items: center; }
 .kb-entscheid.laedt { opacity: .5; pointer-events: none; }
 .kb-gesendet { margin: 0; font-weight: 500; color: #2e9e5b; }
+
+/* ---------- Termine – Konzept II (Tufte/Raster) ---------- */
+.tk2-lage { margin: 0 0 26px; max-width: 70ch; font-family: var(--font-serif); font-size: 1.25rem; line-height: 1.5; }
+.tk2-lage b { font-weight: 600; }
+.tk2-zwei { display: grid; gap: 34px; }
+@media (min-width: 1000px) { .tk2-zwei { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); } }
+.tk2-zwei h2, .tk2-proj h2 { margin: 0 0 10px; font-family: var(--font-sans); font-size: .82rem; font-weight: 600; letter-spacing: .02em; color: var(--grey-70); }
+.tk2-vorb { list-style: none; margin: 0; padding: 0; }
+.tk2-vorb li { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 4px 12px; padding: 12px 0; border-top: 1px solid #eeece9; }
+.tk2-vorb li.dringend .tk2-bis { color: #d0453b; font-weight: 600; }
+.tk2-bis { font-size: .8rem; color: var(--grey-70); padding-top: 1px; }
+.tk2-vorb b { display: block; font-weight: 500; font-size: .92rem; line-height: 1.4; }
+.tk2-vorb small { display: block; font-size: .8rem; color: var(--grey-50); }
+.tk2-vorb .tk2-warum { color: var(--ink-2); font-weight: 300; }
+.tk2-akt { grid-column: 2; display: flex; gap: 6px; margin-top: 6px; }
+.tk2-akt button { height: 28px; padding: 0 12px; border: 1px solid #d6d3cf; border-radius: 999px; background: #fff; font-size: .76rem; color: var(--ink); }
+.tk2-akt button:first-child { border-color: var(--ink); }
+.tk2-raster { display: grid; grid-template-columns: 26px repeat(5, minmax(0, 1fr)); gap: 0 4px; }
+.tk2-achse { position: relative; margin-top: 30px; }
+.tk2-achse span { position: absolute; left: 0; transform: translateY(-50%); font-size: .68rem; color: var(--grey-50); }
+.tk2-tag p { height: 30px; margin: 0; font-size: .8rem; font-weight: 600; display: flex; justify-content: space-between; gap: 4px; }
+.tk2-tag p small { font-weight: 400; color: var(--grey-50); }
+.tk2-spalte { position: relative; background: repeating-linear-gradient(#fff 0 43px, #f2f1ef 43px 44px); border-radius: 6px; }
+.tk2-block { position: absolute; left: 2px; right: 2px; overflow: hidden; padding: 3px 6px; border-radius: 5px; font-size: .72rem; line-height: 1.25; }
+.tk2-block b { display: block; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tk2-block small { display: block; opacity: .75; font-size: .66rem; }
+.tk2-workshop { background: var(--ink); color: #fff; }
+.tk2-kunde { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.3px var(--ink); }
+.tk2-intern { background: var(--grey-bg); color: var(--ink-2); }
+.tk2-offen::after { content: ""; position: absolute; top: 4px; right: 4px; width: 7px; height: 7px; border-radius: 50%; background: #d0453b; }
+.tk2-legende { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin: 10px 0 0 30px; font-size: .74rem; color: var(--grey-50); }
+.tk2-l { display: inline-block; width: 12px; height: 12px; margin-right: -6px; border-radius: 3px; vertical-align: -1px; }
+.tk2-l.tk2-offenp { width: 7px; height: 7px; border-radius: 50%; background: #d0453b; }
+.tk2-proj { margin-top: 38px; }
+.tk2-proj table { width: 100%; max-width: 900px; border-collapse: collapse; font-size: .86rem; }
+.tk2-proj th { text-align: left; font-weight: 500; font-size: .76rem; color: var(--grey-50); padding: 6px 8px 6px 0; border-bottom: 1px solid #e6e3df; }
+.tk2-proj td { padding: 8px 8px 8px 0; border-bottom: 1px solid #f2f1ef; font-weight: 300; white-space: nowrap; }
+.tk2-proj td:first-child { font-weight: 500; white-space: normal; }
+.tk2-balken { width: 30%; } .tk2-balken i { display: block; height: 6px; border-radius: 3px; background: var(--ink); }
+.tk2-rot { color: #d0453b; font-weight: 600; }
+@media (max-width: 700px) { .tk2-proj th:nth-child(4), .tk2-proj td:nth-child(4) { display: none; } .tk2-raster { grid-template-columns: 22px repeat(5, minmax(0, 1fr)); gap: 0 2px; } .tk2-block small { display: none; } }
+@media (max-width: 700px) {
+  .tk2-proj th:nth-child(2), .tk2-proj td:nth-child(2), .tk2-proj th:nth-child(5), .tk2-proj td:nth-child(5) { display: none; }
+  .tk2-proj td { white-space: normal; }
+  .tk2-tag p small { display: none; }
+  .tk2-tag p { font-size: .72rem; }
+}
+.tk2-proj { overflow-x: auto; }
