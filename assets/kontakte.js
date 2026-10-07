@@ -166,9 +166,6 @@
         (org.website ? ' · <a href="' + esc(org.website) + '" target="_blank" rel="noopener">Website</a>' : "") + "</p></div></div>";
       if (org.klaeren) h += '<p class="kt3-klaer">' + esc(org.klaeren) + "</p>";
       h += '<div class="kt3-raster">';
-      h += '<section class="kt3-box kt3-breit"><h3>Personen</h3><table class="kt3-tab kt3-tab--eng"><tbody>' + leute.slice().sort(nachNachname).map(function (k) {
-        return '<tr data-href="#k=' + k.id + '"><td>' + lk(k) + '</td><td class="kt3-pos">' + esc(k.position || "") + "</td><td>" + esc(k.beziehungsstatus || "") + "</td><td>" + zuletzt(k.letzter_kontakt) + "</td></tr>";
-      }).join("") + "</tbody></table></section>";
       var ansatz = {};
       merk.forEach(function (m) { if (m.merkmale && (m.merkmale.kategorie === "Bedarf" || m.merkmale.kategorie === "Angebot")) (ansatz[m.merkmale.kategorie] = ansatz[m.merkmale.kategorie] || {})[m.merkmale.wert] = 1; });
       h += box("Ansatzpunkte", (ansatz.Bedarf ? '<p class="kt3-zeile"><span>Bedarf</span>' + esc(Object.keys(ansatz.Bedarf).join(", ")) + "</p>" : "") +
@@ -177,6 +174,9 @@
       h += box("Nächste Schritte", td.length ? '<ul class="kt3-todo">' + td.map(function (a) {
           return '<li data-a="' + a.id + '"><button type="button" class="st-haken" aria-label="Erledigt"></button><span>' + esc(a.titel) + (a.kontakte ? ' <span class="kt3-leise">· ' + esc(name(a.kontakte)) + "</span>" : "") + "</span></li>"; }).join("") + "</ul>" : "",
         "Nichts offen.", '<form class="kt3-neu" data-neu-todo data-org="' + id + '"><input type="text" placeholder="Nächsten Schritt notieren …"><button type="submit">+</button></form>');
+      h += '<section class="kt3-box kt3-breit" data-klapp><h3>Personen</h3><table class="kt3-tab kt3-tab--eng"><tbody>' + leute.slice().sort(nachNachname).map(function (k, i) {
+        return '<tr data-href="#k=' + k.id + '"' + (i >= KURZ ? ' class="kt3-mehr" hidden' : "") + '><td>' + lk(k) + '</td><td class="kt3-pos">' + esc(k.position || "") + "</td><td>" + esc(k.beziehungsstatus || "") + "</td><td>" + zuletzt(k.letzter_kontakt) + "</td></tr>";
+      }).join("") + "</tbody></table>" + klappKnopf(leute.length) + "</section>";
       var wer = {}; leute.forEach(function (k) { wer[k.id] = k; });
       h += box("Termine", liste(akt.filter(istTermin), wer), "Keine Termine erfasst.");
       h += box("Kommunikation", liste(akt.filter(function (a) { return !istTermin(a); }), wer), "Keine Kommunikation erfasst.");
@@ -206,7 +206,7 @@
       .sort(function (a, b) { return b.bevorzugt - a.bevorzugt; });
     var mail = wege.filter(function (w) { return w.art === "E-Mail"; })[0], tel = wege.filter(function (w) { return w.art !== "E-Mail"; })[0];
     var ART = { direkt: "direkter Kontakt", LinkedIn: "nur LinkedIn", "Sales Navigator": "aus Sales Navigator", recherchiert: "recherchiert" };
-    h += '<div class="kt3-kopf"><div><h2 class="kt3-name">' + esc([k.titel, name(k)].filter(Boolean).join(" ")) + "</h2>" +
+    h += '<div class="kt3-kopf"><div><h2 class="kt3-name">' + esc([k.titel, k.vorname].filter(Boolean).join(" ")) + ' <span class="kt3-nachname">' + esc(k.nachname) + "</span></h2>" +
       '<p class="kt3-sub">' + esc(k.position || "") + (o ? (k.position ? " · " : "") + lf(o) : "") + "</p>" +
       '<p class="kt3-tags">' + [ART[k.kontaktart], k.ansprache && "per " + k.ansprache, k.prioritaet && "Priorität " + k.prioritaet,
         (k.kontakt_marken || []).map(function (m) { return m.marke; }).join(", ")].filter(Boolean).map(esc).join(" · ") +
@@ -242,6 +242,15 @@
   /* ---------- Bausteine ---------- */
   function istTermin(a) { return a.kanal === "Termin" || a.kanal === "Treffen"; }
   function einmal(akt) { var s = {}; return akt.filter(function (a) { var k = a.datum + "|" + a.anlass; if (s[k]) return false; s[k] = 1; return true; }); }
+  var KURZ = 5;
+  function klappKnopf(n) { return n > KURZ ? '<button type="button" class="kt3-klapp" data-klapp-knopf aria-expanded="false">Alle zeigen</button>' : ""; }
+  // Auf- und Zuklappen: alles hinter den ersten KURZ Einträgen
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-klapp-knopf]"); if (!b) return;
+    var auf = b.getAttribute("aria-expanded") !== "true", box = b.closest(".kt3-box");
+    box.querySelectorAll("[data-mehr], .kt3-mehr").forEach(function (x) { x.hidden = !auf; });
+    b.setAttribute("aria-expanded", String(auf)); b.textContent = auf ? "Weniger zeigen" : "Alle zeigen";
+  });
   function box(titel, inhalt, leer, fuss) {
     return '<section class="kt3-box"><h3>' + titel + "</h3>" + (inhalt || '<p class="kt3-leise">' + leer + "</p>") + (fuss || "") + "</section>";
   }
@@ -251,10 +260,10 @@
     return '<ul class="kt3-v">' + akt.slice(0, 40).map(function (a, i) {
       var zuk = new Date(a.datum) > jetzt, person = wer && wer[a.kontakt_id] ? " · " + esc(name(wer[a.kontakt_id])) : "";
       var titel = esc((a.kanal === "E-Mail" ? (a.richtung === "eingehend" ? "← " : "→ ") : "") + (a.anlass || a.kanal));
-      return "<li" + (i >= 8 ? " hidden" : "") + (zuk ? ' class="kt3-zuk"' : "") + '><span class="kt3-d">' + (zuk ? "geplant " + new Date(a.datum).toLocaleDateString("de-DE", { day: "numeric", month: "short" }) : datum(a.datum)) + "</span>" +
+      return "<li" + (i >= KURZ ? ' hidden data-mehr' : "") + (zuk ? ' class="kt3-zuk"' : "") + '><span class="kt3-d">' + (zuk ? "geplant " + new Date(a.datum).toLocaleDateString("de-DE", { day: "numeric", month: "short" }) : datum(a.datum)) + "</span>" +
         (a.link ? '<a href="' + esc(a.link) + '" target="_blank" rel="noopener">' + titel + "</a>" : "<span>" + titel + "</span>") +
         (person || (a.kanal !== "Termin" && a.kanal !== "E-Mail") ? '<span class="kt3-leise">' + person + (a.kanal !== "Termin" && a.kanal !== "E-Mail" ? " · " + esc(a.kanal) : "") + "</span>" : "") + "</li>";
-    }).join("") + "</ul>" + (akt.length > 8 ? '<button type="button" class="kt-v-alle" onclick="this.previousElementSibling.querySelectorAll(\'[hidden]\').forEach(function(x){x.hidden=false});this.remove()">Alle anzeigen</button>' : "");
+    }).join("") + "</ul>" + klappKnopf(Math.min(akt.length, 40));
   }
   function zeilenKlickbar() {
     wurzel.querySelectorAll("tr[data-href]").forEach(function (tr) {
