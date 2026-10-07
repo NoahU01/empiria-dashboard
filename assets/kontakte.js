@@ -159,7 +159,7 @@
     wurzel.innerHTML = '<div class="kb-laedt"><span></span><span></span></div>';
     Promise.all([
       db.from("organisationen").select("id, name, gruppe, marktumfeld, website, klaeren").eq("id", id).single(),
-      ids.length ? db.from("aktivitaeten").select("datum, kanal, richtung, anlass, inhalt, link, kontakt_id").in("kontakt_id", ids).order("datum", { ascending: false }).limit(80) : Promise.resolve({ data: [] }),
+      Promise.resolve({ data: [] }),
       ids.length ? db.from("kontakt_merkmale").select("kontakt_id, merkmale(kategorie, wert)").in("kontakt_id", ids) : Promise.resolve({ data: [] })
     ]).then(function (r) {
       var org = r[0].data || { name: "Firma" }, akt = einmal(r[1].data || []), merk = r[2].data || [];
@@ -181,8 +181,6 @@
         return '<tr data-href="#k=' + k.id + '"' + (i >= KURZ ? ' class="kt3-mehr" hidden' : "") + '><td>' + lk(k) + '</td><td class="kt3-pos">' + esc(k.position || "") + "</td><td>" + esc(k.beziehungsstatus || "") + "</td><td>" + zuletzt(k.letzter_kontakt) + "</td></tr>";
       }).join("") + "</tbody></table>" + klappKnopf(leute.length) + "</section>";
       var wer = {}; leute.forEach(function (k) { wer[k.id] = k; });
-      h += box("Termine", liste(akt.filter(istTermin), wer), "Keine Termine erfasst.");
-      h += box("Kommunikation", liste(akt.filter(function (a) { return !istTermin(a); }), wer), "Keine Kommunikation erfasst.");
       wurzel.innerHTML = h + "</div>";
       zeilenKlickbar(); neuTodoVerdrahten(); todoVerdrahten();
     });
