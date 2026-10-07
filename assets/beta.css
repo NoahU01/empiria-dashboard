@@ -803,3 +803,29 @@ main.pr-look-schwarz .pr-ziel-satz { color: rgba(255,255,255,.75); }
 main.pr-look-schwarz .pr-ziel-kopf .tl-dreieck { border-color: #fff; }
 main.pr-look-schwarz .pr-ziel-det { padding-top: 14px; }
 @media (max-width: 700px) { .pr-ziel-kopf { flex-wrap: wrap; gap: 4px; } .pr-ziel-satz { white-space: normal; } }
+/* Projektansicht „SV Akademie“: Module wie auf der Seite Projekt SV Akademie */
+main.pr-look-sva { background: #f4f2ef; }
+.pr-module { display: grid; gap: 12px; }
+.pr-module .fl-ebene { border: 1px solid #e4e1dd; border-radius: 22px; background: #fff; overflow: hidden; }
+.pr-module .fl-ebene.is-offen { border-color: #ddd8d2; box-shadow: 0 16px 38px rgba(0,0,0,.06); }
+.pr-module .fl-kopf { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: clamp(14px, 2vw, 26px);
+  width: 100%; padding: clamp(16px, 2vw, 22px) clamp(18px, 2.2vw, 26px); border: 0; background: none; cursor: pointer; text-align: left; color: inherit; transition: background-color .15s ease; }
+.pr-module .fl-kopf:hover { background: #faf9f7; }
+.pr-module .fl-kopf-nr { font-family: var(--font-serif); font-weight: 700; font-size: 1.1rem; color: var(--grey-50); }
+.pr-module .is-offen .fl-kopf-nr { color: var(--ink); }
+.pr-module .fl-kopf-text b { display: block; font-family: var(--font-serif); font-weight: 700; font-size: clamp(1.1rem, 1.6vw, 1.35rem); line-height: 1.25; }
+.pr-module .fl-kopf-text small { display: block; margin-top: 3px; font-size: .9rem; line-height: 1.5; color: var(--grey-70); font-weight: 300; }
+.pr-module .fl-kopf-pfeil { width: 10px; height: 10px; border-right: 2px solid var(--grey-50); border-bottom: 2px solid var(--grey-50); transform: rotate(45deg); margin-bottom: 4px; transition: transform .2s ease, border-color .2s ease; }
+.pr-module .is-offen .fl-kopf-pfeil { transform: rotate(-135deg); margin-bottom: -3px; border-color: var(--ink); }
+.pr-module .fl-koerper { display: none; padding: 0 clamp(18px, 2.2vw, 26px) clamp(22px, 2.6vw, 30px); }
+.pr-module .is-offen .fl-koerper { display: block; }
+/* Kästen im Modul: ohne eigenen Rahmen, volle Höhe */
+.pr-module .kt3-box { padding: 0; border-radius: 0; box-shadow: none; background: none; }
+.pr-module .pr-kurs, .pr-module .pr-aufgaben { height: auto; }
+.pr-module .pr-kurs > ul, .pr-module .pr-aufgaben > ul { overflow: visible; }
+.pr-module .pr-tl-frei { padding: 0; }
+.pr-module .pr-tl-kopf { justify-content: flex-end; margin-bottom: 12px; }
+.pr-module .pr-ziel-det { padding: 0; }
+.pr-module .pr-ziel-det h4:first-child { margin-top: 0; }
+.pr-module .pr-bet-zeile { margin-top: 0; column-gap: 40px; }
+.pr-module .fl-kopf-nr { min-width: 1.6em; }

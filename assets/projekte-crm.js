@@ -20,7 +20,7 @@
   function lookWert() { try { return localStorage.getItem("pr-look") || "weiss"; } catch (x) { return "weiss"; } }
   function look(an) {
     var m = document.querySelector("main"); if (!m) return;
-    m.classList.remove("pr-look-grau", "pr-look-schwarz");
+    m.classList.remove("pr-look-grau", "pr-look-schwarz", "pr-look-sva");
     if (an && lookWert() !== "weiss") m.classList.add("pr-look-" + lookWert());
   }
   function route() {
@@ -102,7 +102,7 @@
     h += '<div class="kt3-kopf"><div><h2 class="kt3-name">' + esc(p.name) + '</h2><p class="kt3-sub">' +
       (p.organisationen ? '<a href="/strategie/kontakte.html#f=' + p.organisationen.id + '">' + esc(p.organisationen.name) + "</a>" : esc(p.marke || "")) + "</p>" +
       (p.thema ? '<p class="pr-thema">' + esc(p.thema) + "</p>" : "") +
-      (p.typ === "intern" && p.naechstes_gate ? '<p class="pr-gate"><span>Nächstes Gate</span>' + esc(p.naechstes_gate) + (p.gate_datum ? " · bis " + kurz(p.gate_datum) : "") + "</p>" : "") + "</div><span class=\"pr-tl-wahl pr-look-wahl\">" + [["weiss", "Weiß"], ["grau", "Grau"], ["schwarz", "Schwarz"]].map(function (v) {
+      (p.typ === "intern" && p.naechstes_gate ? '<p class="pr-gate"><span>Nächstes Gate</span>' + esc(p.naechstes_gate) + (p.gate_datum ? " · bis " + kurz(p.gate_datum) : "") + "</p>" : "") + "</div><span class=\"pr-tl-wahl pr-look-wahl\">" + [["weiss", "Weiß"], ["grau", "Grau"], ["schwarz", "Schwarz"], ["sva", "SV Akademie"]].map(function (v) {
         return '<button type="button" data-look="' + v[0] + '" aria-pressed="' + (v[0] === lookWert()) + '">' + v[1] + "</button>"; }).join("") + "</span></div>";
     h += '<div class="kt3-raster">';
     // Links: Stoßrichtung (Gesamtblick über alle Termine) – rechts: Aufgaben
@@ -158,14 +158,48 @@
     }
     h += '<div class="kt3-breit pr-bet-zeile"><section class="kt3-box"><h3>Beteiligte beim Kunden</h3>' + seite("Kunde") + '</section><section class="kt3-box"><h3>Team empiria</h3>' + seite("empiria") + seite("Partner").replace('<p class="kt3-leise">–</p>', "") + "</section></div>";
     wurzel.innerHTML = h + "</div>";
+    if (lookWert() === "sva") module(p);
     verdrahten(p);
+  }
+
+  /* Darstellung „SV Akademie“: aufklappbare Module 01–05 wie auf der Seite Projekt SV Akademie.
+     Die fertig gezeichneten Kästen werden in die Module umgehängt (Knöpfe behalten ihre Funktion). */
+  var MODUL_OFFEN = { kurs: false, auf: true, tl: true, ziel: false, team: false };
+  function module(p) {
+    var r = wurzel.querySelector(".kt3-raster"), liste = document.createElement("div"), n = 0;
+    liste.className = "fl-ebenen pr-module kt3-breit";
+    function modul(key, titel, sub, teile) {
+      var nr = ++n < 10 ? "0" + n : String(n), sek = document.createElement("section");
+      sek.className = "fl-ebene" + (MODUL_OFFEN[key] ? " is-offen" : "");
+      sek.innerHTML = '<button type="button" class="fl-kopf" aria-expanded="' + MODUL_OFFEN[key] + '"><span class="fl-kopf-nr">' + nr + '</span><span class="fl-kopf-text"><b>' + esc(titel) + "</b>" +
+        (sub ? "<small>" + esc(sub) + "</small>" : "") + '</span><span class="fl-kopf-pfeil" aria-hidden="true"></span></button><div class="fl-koerper"></div>';
+      var k = sek.querySelector(".fl-koerper");
+      teile.forEach(function (t) { if (t) k.appendChild(t); });
+      sek.querySelector(".fl-kopf").onclick = function () {
+        var auf = !sek.classList.contains("is-offen"); sek.classList.toggle("is-offen", auf); this.setAttribute("aria-expanded", String(auf)); MODUL_OFFEN[key] = auf;
+      };
+      liste.appendChild(sek);
+    }
+    function ohneTitel(el, sel) { if (el) { var t = el.querySelector(sel); if (t) t.remove(); } return el; }
+    var kurs = ohneTitel(r.querySelector(".pr-kurs"), ":scope > h3"), auf = ohneTitel(r.querySelector(".pr-aufgaben"), ":scope > h3"),
+        tl = ohneTitel(r.querySelector(".pr-tl-frei"), ".pr-tl-kopf > h3"), ziel = r.querySelector(".pr-ziel"), team = r.querySelector(".pr-bet-zeile");
+    modul("kurs", "Stoßrichtung", "Wohin wir das Projekt steuern.", [kurs]);
+    modul("auf", "Aufgaben", "Was als Nächstes ansteht.", [auf]);
+    modul("tl", "Timeline", "Termine mit Protokoll, Entscheidungen und Aufgaben.", [tl]);
+    if (ziel) {
+      var det = ziel.querySelector(".pr-ziel-det"); det.hidden = false;
+      modul("ziel", "Projektziel", p.ziel || "", [det]); ziel.remove();
+    }
+    modul("team", "Projektteam", "Beteiligte beim Kunden und Team empiria.", [team]);
+    r.innerHTML = ""; r.appendChild(liste);
   }
 
   function verdrahten(p) {
     var zk = wurzel.querySelector("[data-ziel]");
     if (zk) zk.onclick = function () { var auf = zk.getAttribute("aria-expanded") !== "true"; zk.setAttribute("aria-expanded", String(auf)); zk.nextElementSibling.hidden = !auf; };
     wurzel.querySelectorAll("[data-look]").forEach(function (b) {
-      b.onclick = function () { try { localStorage.setItem("pr-look", b.getAttribute("data-look")); } catch (x) {} look(true);
+      b.onclick = function () { var vorher = lookWert(); try { localStorage.setItem("pr-look", b.getAttribute("data-look")); } catch (x) {} look(true);
+        if (vorher === "sva" || lookWert() === "sva") { projekt(p.id); return; }
         wurzel.querySelectorAll("[data-look]").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); }); };
     });
     wurzel.querySelectorAll("[data-tlv]").forEach(function (b) {
