@@ -78,6 +78,7 @@
 
   function wer(a) { return a.zustaendig_name || name(a.kontakte) || ""; }
   function format(e) { return e.format === "vor Ort" ? "vor Ort" + (e.ort ? ": " + e.ort : "") : e.format === "offen" ? e.art + " · Ort offen" : e.art + (e.format ? " · " + e.format : ""); }
+  function personen(e) { return (e.teilnehmer || []).length ? e.teilnehmer.join(", ") : (e.kontakte ? name(e.kontakte) : ""); }
   function teiln(e) { return (e.teilnehmer || []).length ? "mit " + e.teilnehmer.join(", ") : (e.kontakte ? "mit " + name(e.kontakte) : ""); }
   /* Ohne bekannte Uhrzeit (00:00) wird keine angezeigt */
   function zeit(d, vor) { var t = new Date(d); return t.getHours() || t.getMinutes() ? vor + t.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) : ""; }
@@ -130,7 +131,7 @@
       var zuk = new Date(e.datum) > jetzt, hat = pkt.some(function (x) { return x.ereignis_id === e.id; }) || auf.some(function (x) { return x.ereignis_id === e.id; });
       return '<button type="button" data-ev="' + e.id + '" class="' + (zuk ? "pr-zuk " : "") + (start && e.id === start.id ? "an" : "") + '"><span class="pr-d">' + (zuk && !knapp ? "geplant · " : "") + kurz(e.datum) +
         zeit(e.datum, " · ") + (hat ? ' <i class="pr-hat-details" title="Protokoll vorhanden"></i>' : "") + "</span><b>" + esc(e.titel) + "</b>" +
-        (knapp ? "" : '<small>' + esc(format(e)) + "</small>") + (mitPersonen && teiln(e) ? "<small>" + esc(teiln(e)) + "</small>" : "") +
+        (knapp ? "" : '<small>' + esc(format(e)) + (mitPersonen && personen(e) ? " (" + esc(personen(e)) + ")" : "") + "</small>") +
         (dreieck && hat ? '<span class="tl-dreieck" aria-hidden="true"></span>' : "") + "</button>";
     }
     var tl;
