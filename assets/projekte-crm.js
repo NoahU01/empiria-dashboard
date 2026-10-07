@@ -112,17 +112,18 @@
     var jetzt = Date.now(), tlv = "seite";
     try { tlv = localStorage.getItem("pr-tl-ansicht") || "seite"; } catch (x) {}
     var start = ere.filter(function (e) { return new Date(e.datum) <= jetzt; })[0] || ere[0];
-    function eintrag(e) {
+    function eintrag(e, mitPersonen, dreieck) {
       var zuk = new Date(e.datum) > jetzt, hat = pkt.some(function (x) { return x.ereignis_id === e.id; }) || auf.some(function (x) { return x.ereignis_id === e.id; });
       return '<button type="button" data-ev="' + e.id + '" class="' + (zuk ? "pr-zuk " : "") + (start && e.id === start.id ? "an" : "") + '"><span class="pr-d">' + (zuk ? "geplant · " : "") + kurz(e.datum) + " · " +
         new Date(e.datum).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + (hat ? ' <i class="pr-hat-details" title="Protokoll vorhanden"></i>' : "") + "</span><b>" + esc(e.titel) + "</b>" +
-        '<small>' + esc(format(e)) + "</small>" + (teiln(e) ? "<small>" + esc(teiln(e)) + "</small>" : "") + "</button>";
+        '<small>' + esc(format(e)) + "</small>" + (mitPersonen && teiln(e) ? "<small>" + esc(teiln(e)) + "</small>" : "") +
+        (dreieck && hat ? '<span class="tl-dreieck" aria-hidden="true"></span>' : "") + "</button>";
     }
     var tl;
-    if (tlv === "auf") tl = '<ol class="tl-auf">' + ere.map(function (e) { return "<li>" + eintrag(e) + '<div class="tl-auf-det" data-ev-detail="' + e.id + '"' + (start && e.id === start.id ? "" : " hidden") + "></div></li>"; }).join("") + "</ol>";
-    else if (tlv === "oben") tl = '<ol class="tl-oben">' + ere.slice().reverse().map(function (e) { return "<li>" + eintrag(e) + "</li>"; }).join("") + '</ol><div class="tl-oben-det" data-ev-detail=""></div>';
+    if (tlv === "auf") tl = '<ol class="tl-auf">' + ere.map(function (e) { return "<li>" + eintrag(e, true, true) + '<div class="tl-auf-det" data-ev-detail="' + e.id + '" hidden></div></li>'; }).join("") + "</ol>";
+    else if (tlv === "oben") tl = '<ol class="tl-oben">' + ere.map(function (e) { return "<li>" + eintrag(e, true) + "</li>"; }).join("") + '</ol><div class="tl-oben-det" data-ev-detail=""></div>';
     else tl = '<div class="tl-seite"><ol class="tl-seite-liste">' + ere.map(function (e) { return "<li>" + eintrag(e) + "</li>"; }).join("") + '</ol><div class="tl-seite-det" data-ev-detail=""></div></div>';
-    h += '<section class="kt3-breit pr-tl-frei"><div class="pr-tl-kopf"><h3>Timeline</h3><span class="pr-tl-wahl">' +
+    h += '<section class="kt3-box kt3-breit pr-tl-frei"><div class="pr-tl-kopf"><h3>Timeline</h3><span class="pr-tl-wahl">' +
       [["seite", "Nebeneinander"], ["auf", "Aufklappen"], ["oben", "Zeitleiste oben"]].map(function (v) {
         return '<button type="button" data-tlv="' + v[0] + '" aria-pressed="' + (v[0] === tlv) + '">' + v[1] + "</button>"; }).join("") + "</span></div>" + tl + "</section>";
     // Beteiligte
@@ -153,7 +154,8 @@
         knoepfe.forEach(function (x) { x.classList.toggle("an", x === b); }); detailEreignis(id);
       };
     });
-    var an = wurzel.querySelector("[data-ev].an"); if (an) detailEreignis(+an.getAttribute("data-ev"));
+    if (aufklappen) wurzel.querySelectorAll(".tl-auf [data-ev].an").forEach(function (x) { x.classList.remove("an"); });
+    var an = wurzel.querySelector("[data-ev].an"); if (an && !aufklappen) detailEreignis(+an.getAttribute("data-ev"));
     wurzel.querySelectorAll("[data-auf-auf]").forEach(function (b) {
       var li = b.closest("li"), det = li.querySelector(".pr-auf-details"), ta = det.querySelector("textarea"), sp = det.querySelector("[data-det-speichern]");
       b.onclick = function () { det.hidden = !det.hidden; b.setAttribute("aria-expanded", String(!det.hidden)); };

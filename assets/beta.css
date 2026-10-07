@@ -735,3 +735,15 @@ body.kt3-detail .db-kopf { min-height: 0; }
 .pr-bet a.pr-name:hover { text-decoration: underline; text-underline-offset: 2px; }
 /* Beteiligte: Name · Themen in einer Zeile */
 .pr-bet li { display: block; } .pr-themen { font-size: .9rem; font-weight: 300; color: var(--ink-2); }
+
+/* Timeline – im Kasten wie die anderen, mehr Luft danach */
+.pr-tl-frei { margin-top: 0; padding: 18px 22px 22px; }
+.pr-tl-frei + .pr-bet-zeile { margin-top: 40px; }
+.pr-tl-kopf h3 { font-family: var(--font-sans); font-size: .88rem; }
+/* Aufklappen: Dreieck rechts, wenn es Details gibt */
+.tl-auf [data-ev] { position: relative; padding-right: 40px !important; }
+.tl-dreieck { position: absolute; right: 8px; top: 18px; width: 9px; height: 9px; border-right: 2px solid var(--grey-50); border-bottom: 2px solid var(--grey-50); transform: rotate(45deg); transition: transform .2s ease; }
+.tl-auf [data-ev].an .tl-dreieck { transform: rotate(-135deg); top: 22px; }
+.tl-auf { max-width: none; }
+/* Zeitleiste oben: Neuestes links, feste Höhe, Inhalt scrollt */
+.tl-oben-det { max-width: none; height: 360px; overflow-y: auto; padding-right: 8px; }
