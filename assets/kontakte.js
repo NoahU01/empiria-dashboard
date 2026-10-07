@@ -160,44 +160,59 @@
     });
   }
 
-  function zeile(label, wert) { return wert ? '<div class="kt-feld"><span>' + label + "</span><b>" + wert + "</b></div>" : ""; }
+  // Detail für Entscheidungen: wer, wann zuletzt, was ist offen, wie erreichbar.
+  // Merkmale und Interviewwissen bleiben in der Datenbank (für Claude), werden hier nicht gezeigt.
+  function tageSeit(d) { return Math.floor((Date.now() - new Date(d)) / 864e5); }
+  function abschnitt(titel, inhalt) { return inhalt ? '<section class="kt-a"><h3>' + titel + "</h3>" + inhalt + "</section>" : ""; }
 
   function detailHtml(k) {
-    var o = k.organisationen || {}, h = "";
-    h += '<p class="ve-meta">' + esc(k.kontakt_nr) + " · Profil: " + esc(k.profiltiefe) + (k.kontaktstopp ? ' · <b class="kt-stopp">Kontaktstopp</b>' : "") + "</p>";
-    h += '<h2 class="h-serif ve-titel">' + esc([k.anrede, k.titel, name(k)].filter(Boolean).join(" ")) + "</h2>";
-    h += '<p class="ve-von">' + esc(k.position || "") + (o.name ? " · " + esc(o.name) : "") + "</p>";
-    var klaer = [k.klaeren, o.klaeren && "Firma: " + o.klaeren].filter(Boolean);
-    if (klaer.length) h += '<div class="kt-klaeren"><p class="kb-label">Zu klären</p>' + klaer.map(function (x) { return "<p>" + esc(x) + "</p>"; }).join("") + "</div>";
-    h += '<div class="kt-felder">' +
-      zeile("Ansprache", esc(k.ansprache)) + zeile("Priorität", esc(k.prioritaet)) + zeile("Beziehung", esc(k.beziehungsstatus)) +
-      zeile("Nähe", esc(k.beziehungsnaehe)) + zeile("Rhythmus", k.rhythmus_tage ? esc(k.kontaktfrequenz) + " (" + k.rhythmus_tage + " Tage)" : "") +
-      zeile("Letzter Kontakt", datum(k.letzter_kontakt)) + zeile("Einfluss", esc(k.einflussrolle)) + zeile("Ebene", esc(k.entscheidungsebene)) +
-      zeile("Marke", (k.kontakt_marken || []).map(function (m) { return esc(m.marke) + (m.bestaetigt ? "" : " (noch prüfen)"); }).join(", ")) + "</div>";
-    if (k.kontaktbriefing) h += '<div class="kb-block"><p class="kb-label">Kontaktbriefing</p><p>' + esc(k.kontaktbriefing) + "</p></div>";
-    if (k.kontaktziel) h += '<div class="kb-block"><p class="kb-label">Kontaktziel</p><p>' + esc(k.kontaktziel) + "</p></div>";
-    var wege = (k.kontaktwege || []).slice().sort(function (a, b) { return b.bevorzugt - a.bevorzugt; });
-    if (wege.length || k.linkedin_url) {
-      h += '<div class="kb-block"><p class="kb-label">Erreichbar</p><ul class="kt-wege">' + wege.map(function (w) {
-        var link = w.art === "E-Mail" ? "mailto:" + w.wert : w.art === "Web" ? (/^http/.test(w.wert) ? w.wert : "https://" + w.wert) : "tel:" + w.wert.replace(/[^\d+]/g, "");
-        return '<li class="' + (w.status === "veraltet" ? "alt" : "") + '"><span>' + esc(w.art) + (w.kontext === "privat" ? " privat" : "") + '</span><a href="' + esc(link) + '">' + esc(w.wert) + "</a>" +
-          (w.status !== "geprüft" ? "<small>" + esc(w.status) + "</small>" : "") + "</li>";
-      }).join("") + (k.linkedin_url ? '<li><span>LinkedIn</span><a href="' + esc(k.linkedin_url) + '" target="_blank" rel="noopener">Profil öffnen</a></li>' : "") + "</ul></div>";
-    }
-    var merk = {};
-    (k.kontakt_merkmale || []).forEach(function (m) { if (m.merkmale) (merk[m.merkmale.kategorie] = merk[m.merkmale.kategorie] || []).push(m.merkmale.wert); });
-    if (Object.keys(merk).length) h += '<div class="kb-block"><p class="kb-label">Merkmale</p>' + Object.keys(merk).map(function (kat) {
-      return '<p class="kt-merk"><span>' + esc(kat) + "</span>" + esc(merk[kat].join(", ")) + "</p>"; }).join("") + "</div>";
-    if ((k.kampagnen_teilnehmer || []).length) h += '<div class="kb-block"><p class="kb-label">Kampagnen</p>' + k.kampagnen_teilnehmer.map(function (t) {
-      return '<p class="kt-merk"><span>' + esc(t.kampagnen.name) + "</span>" + esc(t.status) + (t.zuordnungsgrund ? " – " + esc(t.zuordnungsgrund) : "") + "</p>"; }).join("") + "</div>";
-    var akt = (k.aktivitaeten || []).sort(function (a, b) { return new Date(b.datum) - new Date(a.datum); });
-    h += '<div class="kb-block"><p class="kb-label">Verlauf</p>' + (akt.length ? akt.map(function (a) {
-      return '<p class="kt-merk"><span>' + datum(a.datum) + " · " + esc(a.kanal) + "</span>" + esc(a.anlass || a.inhalt || "") + (a.ergebnis ? " → " + esc(a.ergebnis) : "") + "</p>"; }).join("")
-      : '<p class="kt-leise">Noch nichts erfasst. Einfach im Chat diktieren, z. B. „Habe heute mit ' + esc(k.vorname || name(k)) + ' telefoniert …“.</p>') + "</div>";
-    var notes = (k.notizen || []).sort(function (a, b) { return (a.art === "Interview" ? 0 : 1) - (b.art === "Interview" ? 0 : 1); });
-    if (notes.length) h += '<div class="kb-block ve-orig"><p class="kb-label">Dein Wissen (' + notes.length + ")</p>" + notes.map(function (n) {
-      return '<p class="kt-notiz-kopf">' + esc(n.art) + (n.datum ? " · " + datum(n.datum) : "") + (n.quelle ? " · " + esc(n.quelle) : "") + "</p><pre>" + esc(n.text) + "</pre>"; }).join("") + "</div>";
-    return h;
+    var o = k.organisationen || {};
+    var marken = (k.kontakt_marken || []).map(function (m) { return m.marke; }).join(", ");
+    var h = '<div class="kt-d">';
+    h += '<h2 class="kt-name">' + esc(name(k)) + "</h2>";
+    h += '<p class="kt-sub">' + esc([k.position, o.name].filter(Boolean).join(" · ")) + "</p>";
+    h += '<p class="kt-tags">' + [k.ansprache && "per " + esc(k.ansprache), k.prioritaet && "Priorität " + esc(k.prioritaet), marken && esc(marken)]
+      .filter(Boolean).join('<span aria-hidden="true">·</span>') + (k.kontaktstopp ? '<span aria-hidden="true">·</span><b class="kt-stopp">Kontaktstopp</b>' : "") + "</p>";
+
+    // Stand der Beziehung
+    var letzt = k.letzter_kontakt ? datum(k.letzter_kontakt) + " (vor " + tageSeit(k.letzter_kontakt) + " Tagen)" : "noch nicht erfasst";
+    var faelligAm = k.rhythmus_tage ? (k.letzter_kontakt ? new Date(new Date(k.letzter_kontakt).getTime() + k.rhythmus_tage * 864e5) : new Date()) : null;
+    var istFaellig = faelligAm && faelligAm <= new Date();
+    h += '<dl class="kt-stand">' +
+      "<div><dt>Letzter Kontakt</dt><dd>" + letzt + "</dd></div>" +
+      (faelligAm ? "<div><dt>Nächster Kontakt</dt><dd" + (istFaellig ? ' class="kt-faellig"' : "") + ">" + (istFaellig ? "jetzt fällig" : datum(faelligAm)) + "</dd></div>" : "") +
+      (k.beziehungsstatus ? "<div><dt>Beziehung</dt><dd>" + esc(k.beziehungsstatus) + "</dd></div>" : "") + "</dl>";
+
+    // Offen / zu entscheiden
+    var offen = [];
+    if (k.klaeren) offen.push(esc(k.klaeren));
+    if (o.klaeren) offen.push("Firma: " + esc(o.klaeren));
+    (k.kampagnen_teilnehmer || []).forEach(function (t) {
+      if (t.status === "freigegeben" || t.status === "vorgeschlagen") offen.push("Kampagne „" + esc(t.kampagnen.name) + "“ – " + esc(t.status) + (t.kampagnen.zeitraum ? ", " + esc(t.kampagnen.zeitraum) : ""));
+    });
+    h += abschnitt("Offen", offen.length ? '<ul class="kt-l">' + offen.map(function (x) { return "<li>" + x + "</li>"; }).join("") + "</ul>" : "");
+
+    // Anlass für den nächsten Kontakt
+    h += abschnitt("Anlass", k.kontaktbriefing ? '<p class="kt-t">' + esc(k.kontaktbriefing) + "</p>" : "");
+
+    // Verlauf
+    var akt = (k.aktivitaeten || []).slice().sort(function (a, b) { return new Date(b.datum) - new Date(a.datum); });
+    h += abschnitt("Verlauf", akt.length ? '<ul class="kt-verlauf">' + akt.map(function (a) {
+      return "<li><span>" + datum(a.datum) + "</span><p>" + esc(a.kanal) + (a.anlass ? " – " + esc(a.anlass) : "") +
+        (a.ergebnis ? "<br>" + esc(a.ergebnis) : "") + "</p></li>"; }).join("") + "</ul>"
+      : '<p class="kt-t kt-leise">Noch nichts erfasst. Diktiere mir einfach, wenn du ' + esc(k.vorname || "die Person") + " getroffen oder gesprochen hast.</p>");
+
+    // Erreichbar: nur die bevorzugten, gültigen Wege
+    var wege = (k.kontaktwege || []).filter(function (w) { return w.status !== "veraltet" && w.art !== "Fax" && w.art !== "Web"; })
+      .sort(function (a, b) { return b.bevorzugt - a.bevorzugt; });
+    var je = {}; wege.forEach(function (w) { var g = w.art === "E-Mail" ? "E-Mail" : "Telefon"; if (!je[g]) je[g] = w; });
+    var zeilen = Object.keys(je).map(function (g) {
+      var w = je[g], link = g === "E-Mail" ? "mailto:" + w.wert : "tel:" + w.wert.replace(/[^\d+]/g, "");
+      return "<div><dt>" + g + '</dt><dd><a href="' + esc(link) + '">' + esc(w.wert) + "</a></dd></div>";
+    });
+    if (k.linkedin_url) zeilen.push('<div><dt>LinkedIn</dt><dd><a href="' + esc(k.linkedin_url) + '" target="_blank" rel="noopener">Profil öffnen</a></dd></div>');
+    h += abschnitt("Erreichbar", zeilen.length ? '<dl class="kt-stand">' + zeilen.join("") + "</dl>" : "");
+    return h + "</div>";
   }
 
   /* ---------- Start ---------- */

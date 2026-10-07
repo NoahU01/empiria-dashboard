@@ -328,3 +328,27 @@ a.db-chip:hover { background: #e2e0dd; color: var(--ink); }
 .kt-vs-knoepfe button { height: 32px; padding: 0 14px; border: 1.5px solid var(--ink); border-radius: 999px; background: #fff; font-size: .8rem; font-weight: 500; }
 .kt-vs-knoepfe button[data-ja] { background: var(--ink); color: #fff; }
 .kt-vs-zeile.laedt { opacity: .4; pointer-events: none; }
+
+/* Kontakte – Detail, ruhig: eine Schrift, zwei Größen, gleiche Abstände */
+.kt-d { font-size: .95rem; line-height: 1.55; color: var(--ink); }
+.kt-d p, .kt-d ul, .kt-d dl { margin: 0; }
+.kt-name { margin: 0; font-family: var(--font-serif); font-weight: 600; font-size: 1.6rem; line-height: 1.2; }
+.kt-sub { margin-top: 4px !important; color: var(--grey-70); }
+.kt-tags { display: flex; flex-wrap: wrap; gap: 0 8px; margin-top: 6px !important; font-size: .85rem; color: var(--grey-50); }
+.kt-stand { display: grid; grid-template-columns: 140px minmax(0, 1fr); row-gap: 6px; margin-top: 22px !important; }
+.kt-stand > div { display: contents; }
+.kt-stand dt { color: var(--grey-50); font-size: .88rem; }
+.kt-stand dd { margin: 0; overflow-wrap: anywhere; }
+.kt-stand dd a { color: var(--ink); }
+.kt-faellig { font-weight: 600; }
+.kt-a { margin-top: 26px; padding-top: 18px; border-top: 1px solid #eeece9; }
+.kt-a h3 { margin: 0 0 8px; font-family: var(--font-sans); font-size: .88rem; font-weight: 600; color: var(--ink); }
+.kt-a .kt-stand { margin-top: 0 !important; }
+.kt-t { font-weight: 300; }
+.kt-leise { color: var(--grey-50); }
+.kt-l { padding-left: 1.1em !important; font-weight: 300; } .kt-l li + li { margin-top: 4px; }
+.kt-verlauf { list-style: none; padding: 0 !important; }
+.kt-verlauf li { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 12px; padding: 6px 0; }
+.kt-verlauf span { color: var(--grey-50); font-size: .88rem; }
+.kt-verlauf p { font-weight: 300; }
+@media (max-width: 520px) { .kt-stand, .kt-verlauf li { grid-template-columns: 110px minmax(0, 1fr); } }
