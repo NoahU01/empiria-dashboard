@@ -496,3 +496,58 @@ a.db-chip:hover { background: #e2e0dd; color: var(--ink); }
   .tk2-tag p { font-size: .72rem; }
 }
 .tk2-proj { overflow-x: auto; }
+
+/* ---------- Kontakte – CRM (Übersicht, Firma, Person) ---------- */
+nav.kt-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 16px; }
+nav.kt-tabs a { height: 34px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; background: var(--grey-bg); font-size: .84rem; color: var(--ink-2); text-decoration: none; }
+nav.kt-tabs a[aria-current="page"] { background: var(--ink); color: #fff; }
+.kt3-suche { width: 100%; max-width: 520px; height: 44px; margin-bottom: 16px; font-size: .95rem; }
+.kt3-hinweis { margin: 0 0 12px; font-size: .88rem; color: var(--grey-70); }
+.kt3-leise { color: var(--grey-50); } .kt3-block { display: block; }
+.kt3-tab { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.kt3-tab th { text-align: left; font-weight: 500; font-size: .76rem; color: var(--grey-50); padding: 8px 12px 8px 0; border-bottom: 1px solid #e6e3df; }
+.kt3-tab td { padding: 10px 12px 10px 0; border-bottom: 1px solid #f2f1ef; vertical-align: top; font-weight: 300; }
+.kt3-tab tr[data-href] { cursor: pointer; } .kt3-tab tr[data-href]:hover td { background: #faf9f8; }
+.kt3-tab td:first-child { font-weight: 400; }
+.kt3-tab--eng td { padding: 7px 12px 7px 0; }
+.kt3-pos { color: var(--ink-2); }
+.kt3-p, .kt3-f { color: var(--ink); text-decoration: none; } .kt3-p { font-weight: 500; }
+.kt3-p:hover, .kt3-f:hover { text-decoration: underline; text-underline-offset: 2px; }
+@media (max-width: 700px) { .kt3-tab th:nth-child(2), .kt3-tab td.kt3-pos:nth-child(2) { display: none; } }
+.kt3-kopf { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px 30px; margin-top: 6px; }
+.kt3-name { margin: 0; font-family: var(--font-serif); font-weight: 600; font-size: clamp(1.7rem, 4vw, 2.3rem); line-height: 1.15; }
+.kt3-sub { margin: 4px 0 0; color: var(--ink-2); } .kt3-sub a { color: var(--ink); }
+.kt3-tags { margin: 6px 0 0; font-size: .84rem; color: var(--grey-50); }
+.kt3-erreich { display: flex; flex-direction: column; gap: 2px; text-align: right; font-size: .9rem; }
+.kt3-erreich a { color: var(--ink); overflow-wrap: anywhere; }
+@media (max-width: 700px) { .kt3-erreich { text-align: left; } }
+.kt3-stand { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin: 18px 0 0; padding: 12px 0; border-top: 1px solid #eeece9; border-bottom: 1px solid #eeece9; font-size: .92rem; }
+.kt3-stand span { color: var(--grey-50); font-size: .8rem; margin-left: 10px; } .kt3-stand span:first-child { margin-left: 0; }
+.kt3-klaer { margin: 12px 0 0; padding: 4px 0 4px 12px; box-shadow: inset 3px 0 0 #d0453b; font-size: .88rem; font-weight: 300; }
+.kt3-raster { display: grid; gap: 14px; margin-top: 18px; }
+@media (min-width: 900px) { .kt3-raster { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kt3-breit { grid-column: 1 / -1; } }
+.kt3-box { padding: 16px 18px; border-radius: 16px; box-shadow: 0 0 0 1px #e9e7e4; background: #fff; min-width: 0; }
+.kt3-box h3 { margin: 0 0 10px; font-family: var(--font-sans); font-size: .88rem; font-weight: 600; }
+.kt3-box p { margin: 0; }
+.kt3-t { font-size: .92rem; font-weight: 300; line-height: 1.55; margin-bottom: 8px !important; }
+.kt3-zeile { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 10px; padding: 4px 0; font-size: .88rem; font-weight: 300; }
+.kt3-zeile span { color: var(--grey-50); font-weight: 400; font-size: .8rem; }
+.kt3-v { list-style: none; margin: 0; padding: 0; }
+.kt3-v li { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 0 10px; padding: 6px 0; border-top: 1px solid #f4f3f1; font-size: .88rem; }
+.kt3-v li:first-child { border-top: 0; }
+.kt3-v li > :nth-child(3) { grid-column: 2; font-size: .8rem; }
+.kt3-d { color: var(--grey-50); font-size: .8rem; padding-top: 1px; }
+.kt3-v a, .kt3-v span { color: var(--ink); text-decoration: none; overflow-wrap: anywhere; font-weight: 300; }
+.kt3-v a:hover { text-decoration: underline; text-underline-offset: 2px; }
+.kt3-zuk .kt3-d { color: var(--ink); font-weight: 600; }
+.kt3-todo { list-style: none; margin: 0; padding: 0; }
+.kt3-todo li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 8px; align-items: start; padding: 6px 0; font-size: .9rem; }
+.kt3-todo--gross { max-width: 760px; } .kt3-todo--gross li { padding: 12px 0; border-top: 1px solid #eeece9; } .kt3-todo--gross b { font-weight: 500; }
+.kt3-neu { display: flex; gap: 6px; margin-top: 10px; }
+.kt3-neu input { flex: 1; min-width: 0; height: 36px; padding: 0 12px; border: 1px solid #dedbd7; border-radius: 10px; font: inherit; font-size: .88rem; }
+.kt3-neu button { width: 36px; height: 36px; border: 0; border-radius: 10px; background: var(--ink); color: #fff; font-size: 1.1rem; }
+.kt3-neu.laedt { opacity: .5; pointer-events: none; }
+/* Detailansicht (Person/Firma): Seitentitel weg, Platz für die Person */
+body.kt3-detail .db-kopf .kicker, body.kt3-detail .db-kopf h1 { display: none; }
+body.kt3-detail .db-kopf { min-height: 0; }
+.kt3-v li { grid-template-columns: 120px minmax(0, 1fr); }
