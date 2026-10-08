@@ -98,7 +98,7 @@
     { key: "handlung", name: "Handlungsbedarf", liste: "handlung", karten: true,
       gruppen: [["nobrainer", "No-Brainer"], ["termin", "Terminvorschlag nötig"], ["aufgabe", "Aufgabe"], ["tiefer", "Tiefer reinschauen"], ["offen", "Noch nicht eingeschätzt"]] },
     { key: "claude", name: "Bei Claude", liste: "beiClaude", karten: true,
-      gruppen: [["nobrainer", "No-Brainer"], ["termin", "Terminvorschlag nötig"], ["aufgabe", "Aufgabe"], ["tiefer", "Tiefer reinschauen"], ["offen", "Noch nicht eingeschätzt"]] },
+      gruppen: [["nobrainer", "No-Brainer"], ["termin", "Terminvorschlag nötig"], ["aufgabe", "Aufgabe"], ["tiefer", "Tiefer reinschauen"], ["offen", "Noch nicht eingeschätzt"], ["nachfassen", "Deine Mails – Nachfassen"], ["warten", "Deine Mails – Rückmeldung"]] },
     { key: "relevant", name: "Relevant", liste: "relevant" },
     { key: "nicht", name: "Nicht relevant", liste: "nichtRelevant" },
     { key: "warten", name: "Wartet auf Antwort", liste: "warten", gruppen: [["nachfassen", "Nachfassen"], ["warten", "Noch abwarten"]] },
@@ -146,7 +146,14 @@
       '<div class="kb-auf"><p class="kb-an">An: ' + esc(an) + (cc ? "<br>Cc: " + esc(cc) : "") + "</p>" +
       '<pre class="kb-text" data-kb-text>' + esc(m.bodyPreview) + "</pre>" +
       '<div class="kb-schritt">' + (m.vorschlag ? '<span class="kb-vorschlag">Vorschlag: ' + esc(m.vorschlag.text) + "</span><small>" + esc(ERKLAERUNG[m.vorschlag.art] || "") + "</small>" : "") +
-      outlookLink(m, "kb-knopf kb-knopf--klein") + "</div></div></li>";
+      outlookLink(m, "kb-knopf kb-knopf--klein") + "</div>" + (zustand.tab === "warten" ? reaktionWarten(m) : "") + "</div></li>";
+  }
+  // Wartet auf Antwort: nachfassen lassen · Rückmeldung an Claude · keine Antwort nötig
+  function reaktionWarten(m) {
+    return '<div class="kb-entscheid kb-entscheid--warten" data-warten="' + esc(m.id) + '">' +
+      '<button type="button" data-w="nachfassen">Nachfassen lassen</button><button type="button" data-w-anders>Anders …</button><button type="button" data-w="erledigt">Keine Antwort nötig</button></div>' +
+      '<form class="kb-anders" data-w-form hidden><textarea rows="3" placeholder="Deine Rückmeldung – z. B. „Ich rufe ihn an“ oder „Erst nach dem 20.10. nachhaken“."></textarea>' +
+      '<div><button type="submit" class="kb-knopf kb-knopf--klein">An Claude geben</button><button type="button" class="kb-anders-abbruch">Abbrechen</button></div></form>';
   }
 
   function karte(m, nr) {
@@ -157,12 +164,17 @@
     html += '<div class="kb-block"><p class="kb-label">' + (a ? "Worum es geht" : "Anfang der Mail") + "</p><p>" + esc(a ? a.zusammenfassung : m.bodyPreview) + "</p></div>";
     html += '<div class="kb-block"><p class="kb-label">Vorschlag</p><p class="kb-vorschlag-text">' + esc(m.vorschlag.text) + "</p></div>";
     if (a && a.entwurf) html += '<div class="kb-entwurf"><p class="kb-label">Antwortentwurf</p><pre>' + esc(a.entwurf) + "</pre></div>";
-    html += knoepfe(m);
+    html += zustand.tab === "claude" ? statusBeiClaude(m) : knoepfe(m);
     html += '<div class="kb-block"><p class="kb-label">Originalmail</p><pre class="v-original" data-kb-voll="' + esc(m.id) + '">' + esc(m.volltext || m.bodyPreview) + "</pre></div>";
     html += '<div class="kb-karte-fuss">' + B.badge(m.konto) + "<span>" + esc(m.grund) + '</span>' + outlookLink(m, "kb-oeffnen") + "</div></li>";
     return html;
   }
 
+  function statusBeiClaude(m) {
+    var a = m.anweisung;
+    if (a) return '<p class="kb-anweisung"><span>' + (a.status === "umgesetzt" ? "Umgesetzt" : "Deine Anweisung – Claude setzt um") + "</span>" + esc(a.text) + (a.ergebnis ? "<br><small>" + esc(a.ergebnis) + "</small>" : "") + "</p>";
+    return '<p class="kb-anweisung"><span>Freigegeben</span>Claude setzt um.</p>';
+  }
   // Drei Möglichkeiten: Freigeben (passt) · Anders … (sprechen/tippen, Claude setzt um) · Schon erledigt
   function knoepfe(m) {
     var e = B.entscheidungLesen(m), a = m.anweisung;
@@ -275,6 +287,27 @@
           daten.entwuerfe = daten.entwuerfe.filter(function (x) { return x.id !== m.id; });
         }).catch(function (f) { box.classList.remove("laedt"); alert("Nicht gesendet: " + f.message + (/(401|403)/.test(f.message) ? " – bitte einmal neu anmelden." : "")); });
       });
+    });
+    ziel().querySelectorAll("[data-warten]").forEach(function (box) {
+      var m = alleMails().filter(function (x) { return x.id === box.getAttribute("data-warten"); })[0];
+      var form = box.nextElementSibling, li = box.closest(".kb-mail");
+      function weg(nachClaude) {
+        daten.warten = daten.warten.filter(function (x) { return x !== m; });
+        if (nachClaude && daten.beiClaude.indexOf(m) < 0) { m.beiClaude = true; daten.beiClaude.push(m); }
+        li.classList.add("kb-erledigt"); setTimeout(function () { li.remove(); }, 900);
+      }
+      function anweisen(text) {
+        box.classList.add("laedt");
+        B.anweisen(m, text).then(function () { weg(true); }).catch(function (f) { box.classList.remove("laedt"); alert("Nicht gespeichert: " + f.message); });
+      }
+      box.querySelector('[data-w="nachfassen"]').addEventListener("click", function () { anweisen("Bitte eine kurze, freundliche Nachfass-Mail als Entwurf vorbereiten."); });
+      box.querySelector('[data-w="erledigt"]').addEventListener("click", function () {
+        box.classList.add("laedt");
+        B.entscheiden(m, "erledigt").then(function () { weg(false); }).catch(function (f) { box.classList.remove("laedt"); alert("Konnte nicht gespeichert werden: " + f.message); });
+      });
+      box.querySelector("[data-w-anders]").addEventListener("click", function () { form.hidden = !form.hidden; if (!form.hidden) form.querySelector("textarea").focus(); });
+      form.querySelector(".kb-anders-abbruch").addEventListener("click", function () { form.hidden = true; });
+      form.addEventListener("submit", function (ev) { ev.preventDefault(); var t = form.querySelector("textarea").value.trim(); if (t) anweisen(t); });
     });
     ziel().querySelectorAll("[data-entscheid]").forEach(function (box) {
       var m = alleMails().filter(function (x) { return x.id === box.getAttribute("data-entscheid"); })[0];

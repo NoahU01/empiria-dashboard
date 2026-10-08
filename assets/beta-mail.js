@@ -86,7 +86,7 @@
 
   /* ---------- Laden ---------- */
   var FELDER_EIN = "id,internetMessageId,subject,from,toRecipients,ccRecipients,receivedDateTime,isRead,inferenceClassification,flag,categories,conversationId,webLink,bodyPreview,importance,hasAttachments";
-  var FELDER_AUS = "id,subject,toRecipients,ccRecipients,sentDateTime,conversationId,webLink,bodyPreview";
+  var FELDER_AUS = "id,internetMessageId,subject,toRecipients,ccRecipients,sentDateTime,conversationId,webLink,bodyPreview,categories";
 
   function seit(tage) { return new Date(Date.now() - tage * 864e5).toISOString().slice(0, 19) + "Z"; }
 
@@ -128,7 +128,7 @@
     var db = window.empiriaDb;
     if (!db) return Promise.resolve();
     var ids = [];
-    postfaecher.forEach(function (p) { (p.ein || []).forEach(function (m) { if (m.internetMessageId) ids.push(m.internetMessageId); }); });
+    postfaecher.forEach(function (p) { (p.ein || []).concat(p.aus || []).forEach(function (m) { if (m.internetMessageId) ids.push(m.internetMessageId); }); });
     return db.auth.getSession().then(function (s) {
       if (!s.data.session) { dbStatus = "abgemeldet"; return; }
       var teile = [];
@@ -144,7 +144,7 @@
           (paar[0].data || []).forEach(function (e) { nach[e.internet_message_id] = e; });
           (paar[1].data || []).forEach(function (a) { anw[a.internet_message_id] = a; });   // jeweils die neueste
         });
-        postfaecher.forEach(function (p) { (p.ein || []).forEach(function (m) {
+        postfaecher.forEach(function (p) { (p.ein || []).concat(p.aus || []).forEach(function (m) {
           if (nach[m.internetMessageId]) m._analyse = nach[m.internetMessageId];
           if (anw[m.internetMessageId]) m.anweisung = anw[m.internetMessageId];
         }); });
@@ -202,17 +202,19 @@
 
     // Eigene Mails ohne Rückmeldung: neueste gesendete Mail je Gespräch,
     // danach kam nichts mehr herein.
-    var gesehen = {}, warten = [];
+    var gesehen = {}, warten = [], wartenClaude = [];
     aus.slice().sort(function (a, b) { return new Date(b.sentDateTime) - new Date(a.sentDateTime); }).forEach(function (m) {
       if (gesehen[m.conversationId] || !m.konto.handlung) return;
       gesehen[m.conversationId] = 1;
       var nachher = letzterEingang[m.conversationId] && letzterEingang[m.conversationId].t > +new Date(m.sentDateTime);
       var extern = (m.toRecipients || []).filter(function (e) { return !roh.adressen[adr(e)]; });
       m.alter = tageAlt(m.sentDateTime);
+      // „Keine Antwort nötig“ nimmt die Mail aus der Liste; mit Rückmeldung an Claude geht sie zu „Bei Claude“
+      if (entscheidungLesen(m) === "erledigt") return;
       if (!nachher && extern.length && m.alter <= 21) {
         m.vorschlag = m.alter >= TAGE_NACHFASSEN ? { art: "nachfassen", text: "Nachfassen" } : { art: "warten", text: "Noch abwarten" };
         m.grund = m.alter === 0 ? "Heute gesendet" : "Seit " + m.alter + (m.alter === 1 ? " Tag" : " Tagen") + " ohne Antwort";
-        warten.push(m);
+        if (m.anweisung) { m.beiClaude = true; wartenClaude.push(m); } else warten.push(m);
       }
     });
 
@@ -227,7 +229,7 @@
     return {
       ich: roh.ich, konten: KONTEN, fehler: fehler, demo: demo, stand: new Date(), dbStatus: dbStatus,
       handlung: handlung,
-      beiClaude: ein.filter(function (m) { return m.beiClaude; }),
+      beiClaude: ein.filter(function (m) { return m.beiClaude; }).concat(wartenClaude),
       relevant: ein.filter(function (m) { return m.relevant; }),
       nichtRelevant: ein.filter(function (m) { return !m.relevant; }),
       warten: warten,
