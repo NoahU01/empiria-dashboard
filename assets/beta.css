@@ -1227,3 +1227,41 @@ body.kt3-detail .db-kopf .kicker { margin-bottom: 14px; font-size: var(--fs-s); 
 body.kt3-detail .kt3-kopf { margin-top: 18px; }
 body.kt3-detail .pr-thema { margin: 0; max-width: 62ch; font-size: var(--fs-l); font-weight: 300; line-height: 1.5; color: var(--ink-2); }
 body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; }
+
+/* Treffen vor Ort (treffen.js) */
+.tr-kasten { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: var(--ink); color: #fff; box-shadow: none; }
+.tr-kasten h3 { color: #fff; } .tr-kasten p { font-size: var(--fs-s); color: #cfcac3; }
+.tr-oeffnen { flex: none; padding: 9px 16px; border-radius: 999px; background: var(--hl); color: var(--ink); font-weight: 600; font-size: var(--fs-s); text-decoration: none; }
+.tr-tag { margin-top: 32px; }
+.tr-tag h2 { margin: 0 0 10px; font-family: var(--font-serif); font-size: var(--fs-l); font-weight: 600; }
+.tr-liste { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--linie); }
+.tr-z { border-bottom: 1px solid var(--linie); }
+.tr-kopf { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 12px; align-items: start; width: 100%; padding: 14px 4px; border: 0; background: none; font: inherit; text-align: left; color: inherit; cursor: pointer; }
+.tr-zeit { font-weight: 600; font-variant-numeric: tabular-nums; }
+.tr-wer b { display: block; font-size: var(--fs-m); }
+.tr-wer small { display: block; margin-top: 2px; font-size: var(--fs-s); color: var(--grey-70); }
+.tr-wer .tr-ort { color: var(--grey-50); font-size: var(--fs-xs); }
+.tr-status { padding: 3px 10px; border-radius: 999px; font-size: var(--fs-xs); font-weight: 600; white-space: nowrap; }
+.tr-status--ok { background: #f2f1ef; } .tr-status--offen { background: var(--hl); } .tr-status--leise { color: var(--grey-50); } .tr-status--fertig { background: var(--ink); color: #fff; }
+.tr-z--veranstaltung .tr-kopf { cursor: default; } .tr-z--veranstaltung .tr-wer b { font-weight: 500; color: var(--grey-70); }
+.tr-z--fertig .tr-wer b { color: var(--grey-50); }
+.tr-z--auf { background: #faf9f7; }
+.tr-det { display: grid; gap: 12px; padding: 0 4px 18px 80px; }
+.tr-meta { margin: 0; font-size: var(--fs-s); color: var(--grey-70); } .tr-meta a { color: inherit; }
+.tr-hinweis { margin: 0; padding: 8px 12px; border-left: 3px solid var(--cyan); background: #e3f4f8; font-size: var(--fs-s); }
+.tr-det label { display: grid; gap: 4px; font-size: var(--fs-s); font-weight: 600; }
+.tr-det label small { font-weight: 400; color: var(--grey-50); }
+.tr-det textarea, .tr-det input { width: 100%; padding: 10px 12px; border: 1px solid var(--linie); border-radius: 10px; font: inherit; font-size: var(--fs-m); font-weight: 400; background: #fff; }
+.tr-knoepfe { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.tr-knoepfe button { padding: 8px 14px; border: 1px solid var(--linie); border-radius: 999px; background: #fff; font: inherit; font-size: var(--fs-s); cursor: pointer; }
+.tr-knoepfe .tr-ja { background: var(--ink); border-color: var(--ink); color: #fff; }
+.tr-ok { font-size: var(--fs-xs); color: var(--ok); } .tr-crm { margin-left: auto; font-size: var(--fs-s); color: var(--grey-70); }
+.tr-kein { margin-top: 32px; } .tr-kein summary { cursor: pointer; font-weight: 600; }
+.tr-kein ul { list-style: none; margin: 10px 0 0; padding: 0; } .tr-kein li { padding: 8px 0; border-bottom: 1px solid var(--linie); font-size: var(--fs-s); }
+.tr-kein small { display: block; color: var(--grey-50); }
+@media (max-width: 600px) {
+  .tr-kopf { grid-template-columns: 52px minmax(0, 1fr); }
+  .tr-status { grid-column: 2; justify-self: start; }
+  .tr-det { padding-left: 4px; }
+  .tr-kasten { flex-direction: column; align-items: flex-start; }
+}
