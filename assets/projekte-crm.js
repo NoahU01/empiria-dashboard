@@ -69,10 +69,12 @@
       db.from("projekt_beteiligte").select("id, seite, rolle, name, kontakte(id, vorname, nachname, position)").eq("projekt_id", id),
       db.from("projekt_ereignisse").select("id, datum, art, titel, quelle, format, ort, teilnehmer, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("datum", { ascending: false }),
       db.from("projekt_punkte").select("id, ereignis_id, art, text, angelegt_am, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am", { ascending: false }),
-      db.from("aufgaben").select("id, titel, beschreibung, status, spalte, faellig_am, erledigt_am, ereignis_id, weg, vorgaenger, warten_auf, hinweis, zeitblock_vorschlag, mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, unterlagen, person:kontakt_id(id, vorname, nachname), organisationen(id, name), zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
+      db.from("aufgaben").select("id, paket_id, titel, beschreibung, status, spalte, faellig_am, erledigt_am, ereignis_id, weg, vorgaenger, warten_auf, hinweis, zeitblock_vorschlag, mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, unterlagen, person:kontakt_id(id, vorname, nachname), organisationen(id, name), zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
+      ,db.from("projekt_pakete").select("id, nr, titel, ziel, stand, status").eq("projekt_id", id).order("nr")
     ]).then(function (r) {
       if (r[0].error) { wurzel.innerHTML = '<p class="kb-leer">Fehler: ' + esc(r[0].error.message) + "</p>"; return; }
       var auf = r[4].data || [];
+      PAKETE = (r[5] && r[5].data) || [];
       var weiter = function () { zeichnen(r[0].data, r[1].data || [], r[2].data || [], r[3].data || [], auf); };
       if (window.AufgabenDetails) AufgabenDetails.vorlagenAnhaengen(db, auf).then(weiter); else weiter();
     });
@@ -112,6 +114,30 @@
         esc(s.repo.split("/").pop()) + (s.zweig ? " · " + esc(s.zweig) : "") + "</a>" : "") + "</nav>";
   }
 
+  /* Arbeitspakete (Tabelle projekt_pakete) – nur bei umfangreichen Projekten: Thema, Ziel, was steht, offene Aufträge */
+  var PAKETE = [];
+  function nr2(n) { return n < 10 ? "0" + n : String(n); }
+  function paketLabel(a) {
+    var pk = a.paket_id && PAKETE.filter(function (x) { return x.id === a.paket_id; })[0];
+    return pk ? ' <span class="pk-label">· Paket ' + nr2(pk.nr) + " " + esc(pk.titel) + "</span>" : "";
+  }
+  function pakete(auf) {
+    if (!PAKETE.length) return "";
+    return '<section class="kt3-box kt3-breit pr-pakete"><div class="pr-tl-kopf"><h3>Arbeitspakete</h3></div><ol class="pk-liste">' + PAKETE.map(function (pk) {
+      var offen = auf.filter(function (a) { return a.paket_id === pk.id && a.status === "offen"; })
+        .sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });
+      var stand = String(pk.stand || "").split("\n").filter(Boolean);
+      return '<li class="pk"><button type="button" class="pk-kopf" aria-expanded="false" data-pk><span class="pk-nr">' + nr2(pk.nr) + '</span><span class="pk-titel">' + esc(pk.titel) + "</span>" +
+        '<span class="pk-status pk-status--' + esc(pk.status) + '">' + esc(pk.status) + "</span>" +
+        '<span class="pk-anz">' + (offen.length ? offen.length + (offen.length === 1 ? " offener Auftrag" : " offene Aufträge") : "keine offenen Aufträge") + '</span><span class="tl-dreieck" aria-hidden="true"></span></button>' +
+        '<div class="pk-koerper" hidden>' + (pk.ziel ? '<p class="pk-ziel">' + esc(pk.ziel) + "</p>" : "") + '<div class="pk-zwei">' +
+          '<div><h4>Was steht</h4>' + (stand.length ? "<ul>" + stand.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : '<p class="kt3-leise">Noch nichts.</p>') + "</div>" +
+          '<div><h4>Offene Aufträge</h4>' + (offen.length ? "<ul>" + offen.map(function (a) {
+            return '<li><button type="button" class="ad-kette" data-zu-aufgabe="' + a.id + '">' + esc(a.titel) + "</button>" + (a.faellig_am ? ' <span class="mk mk--frist pk-frist">' + kurz(a.faellig_am) + "</span>" : "") + "</li>"; }).join("") + "</ul>" : '<p class="kt3-leise">Keine.</p>') + "</div>" +
+        "</div></div></li>";
+    }).join("") + "</ol></section>";
+  }
+
   function zeichnen(p, bet, ere, pkt, auf) {
     STAND = { ere: ere, pkt: pkt, auf: auf };
     var h = '<a class="kb-zurueck" href="#"><span aria-hidden="true">&larr;</span> Projekte</a>';
@@ -128,6 +154,7 @@
         : '<p data-ueb-text><span class="pr-offen">Noch keine Stoßrichtung – bitte diktieren.</span></p>') +
       '<textarea class="pr-ueb" data-ueb hidden placeholder="Ein Punkt pro Zeile">' + esc(p.ueberlegungen || "") + '</textarea><div class="pr-ueb-knoepfe"><button type="button" class="kt3-klapp" data-ueb-bearbeiten>Bearbeiten</button>' +
       '<button type="button" class="pr-speichern" data-ueb-speichern hidden>Speichern</button></div></section>';
+    h += pakete(auf);
     // Aufgaben: immer mit Frist, nach Datum
     var offen = auf.filter(function (a) { return a.status === "offen"; }).sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });
     // Aufgaben als Liste oder Kanban-Board (Backlog · To-do · In Arbeit · Review/Prüfung · Erledigt)
@@ -159,14 +186,14 @@
         }).sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });
         return '<div class="pr-kb-spalte" data-spalte="' + sp[0] + '"><p class="pr-kb-kopf">' + sp[1] + "</p>" + karten.map(function (a) {
           return '<div class="pr-kb-karte' + (a.status === "erledigt" ? " pr-kb-fertig" : "") + '" draggable="true" data-a="' + a.id + '">' + titel(a) +
-            '<p class="pr-kb-meta">' + frist(a) + '<span class="pr-wer">' + esc(wer(a) || "offen") + "</span></p>" + zusatz(a) + details(a) + "</div>";
+            '<p class="pr-kb-meta">' + frist(a) + '<span class="pr-wer">' + esc(wer(a) || "offen") + paketLabel(a) + "</span></p>" + zusatz(a) + details(a) + "</div>";
         }).join("") + "</div>";
       }).join("") + "</div>";
     } else {
       var offen = auf.filter(function (a) { return a.status === "offen"; }).sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });
       aufInhalt = offen.length ? '<ul class="pr-auf2">' + offen.map(function (a) {
         return '<li data-a="' + a.id + '"><div class="pr-auf-zeile"><button type="button" class="st-haken" aria-label="Erledigt"></button>' + frist(a) + titel(a) +
-          '<span class="pr-wer">' + esc(wer(a) || "offen") + "</span></div>" + '<div class="pr-auf-zusatz">' + zusatz(a) + "</div>" + details(a) + "</li>";
+          '<span class="pr-wer">' + esc(wer(a) || "offen") + paketLabel(a) + "</span></div>" + '<div class="pr-auf-zusatz">' + zusatz(a) + "</div>" + details(a) + "</li>";
       }).join("") + "</ul>" : '<p class="kt3-leise">Nichts offen.</p>';
     }
     h += '<section class="kt3-box kt3-breit pr-aufgaben pr-auf-breit' + (aav === "kanban" ? " pr-auf-kanban" : "") + '"><div class="pr-tl-kopf"><h3>Aufgaben</h3>' + wahl + "</div>" + aufInhalt + "</section>";
@@ -237,6 +264,8 @@
     var kurs = ohneTitel(r.querySelector(".pr-kurs"), ":scope > h3"), auf = ohneTitel(r.querySelector(".pr-aufgaben"), ".pr-tl-kopf > h3"),
         tl = ohneTitel(r.querySelector(".pr-tl-frei"), ".pr-tl-kopf > h3"), ziel = r.querySelector(".pr-ziel"), team = r.querySelector(".pr-bet-zeile");
     modul("kurs", "Stoßrichtung", "Wohin wir das Projekt steuern.", [kurs]);
+    var pak = ohneTitel(r.querySelector(".pr-pakete"), ".pr-tl-kopf");
+    if (pak) modul("pak", "Arbeitspakete", "Themen des Projekts mit Stand und offenen Aufträgen.", [pak]);
     modul("auf", "Aufgaben", "Was als Nächstes ansteht.", [auf]);
     modul("tl", "Timeline", "Termine mit Protokoll, Entscheidungen und Aufgaben.", [tl]);
     var det = ziel && ziel.querySelector(".pr-ziel-det");
@@ -252,6 +281,9 @@
   }
 
   function verdrahten(p) {
+    wurzel.querySelectorAll("[data-pk]").forEach(function (b) {
+      b.onclick = function () { var auf = b.getAttribute("aria-expanded") !== "true"; b.setAttribute("aria-expanded", String(auf)); b.nextElementSibling.hidden = !auf; };
+    });
     var zk = wurzel.querySelector("[data-ziel]");
     if (zk) zk.onclick = function () { var auf = zk.getAttribute("aria-expanded") !== "true"; zk.setAttribute("aria-expanded", String(auf)); zk.nextElementSibling.hidden = !auf; };
     wurzel.querySelectorAll("[data-look]").forEach(function (b) {
