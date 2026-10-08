@@ -53,15 +53,14 @@
       '<section class="st4-block"><h2 class="st4-h">Beiträge mit der größten Reichweite</h2><p class="mk-unter">LinkedIn, letzte 12 Monate · Impressionen</p>' + liste + "</section>" +
       '<section class="st4-block"><h2 class="st4-h">Zielgruppen, Außenwirkung, Stoßrichtungen</h2><div class="st4-sparring mk-themen">' + THEMEN.map(function (t) {
         return '<button type="button" class="st4-spar" data-thema="' + t.k + '"><span class="st4-spar-z">' + esc(t.m) + "</span><b>" + esc(t.n) + '</b><span class="st4-spar-s">' + esc(t.s) + '</span><span class="st4-spar-los">Erarbeiten <i aria-hidden="true">→</i></span></button>';
-      }).join("") + '</div><p class="st4-hinweis" data-thema-hinweis hidden></p></section>';
+      }).join("") + '</div></section>';
 
-    var hw = wurzel.querySelector("[data-thema-hinweis]");
     wurzel.querySelectorAll("[data-thema]").forEach(function (b) {
       b.onclick = function () {
         var t = THEMEN.filter(function (x) { return x.k === b.getAttribute("data-thema"); })[0];
         var satz = t.m + " Marketing starten – Thema: " + t.n + ". " + t.s;
         db.from("sparring").insert({ modus: t.m + " Marketing: " + t.n }).then(function () {});
-        var fertig = function () { hw.hidden = false; hw.textContent = "„" + t.n + "“ ist angefragt – der Startsatz liegt in der Zwischenablage, einfach im Chat mit Claude einfügen."; };
+        var fertig = function () { b.classList.add("st4-spar--an"); b.querySelector(".st4-spar-los").textContent = "✓ Angefragt – Startsatz ist kopiert, im Chat mit Claude einfügen."; };
         if (navigator.clipboard) navigator.clipboard.writeText(satz).then(fertig, fertig); else fertig();
       };
     });

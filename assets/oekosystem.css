@@ -29,9 +29,9 @@
            background: #fff; padding: 10px 12px 12px; }
 .oe-band-tag { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
                margin: 0 0 9px 2px; }
-.oe-band-tag b { font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
-                 font-weight: 700; color: var(--ink); }
-.oe-band-tag span { font-size: .8rem; color: var(--grey-50); }
+.oe-band-tag b { font-size: var(--fs-xs); letter-spacing: .14em; text-transform: uppercase;
+                 font-weight: 600; color: var(--ink); }
+.oe-band-tag span { font-size: var(--fs-s); color: var(--grey-50); }
 
 /* Die Knotenreihe bricht um, statt schmaler zu werden - ein Kasten, in dem
    der Text umbricht, ist in einem Schaltplan nicht mehr zu ueberfliegen. */
@@ -54,19 +54,19 @@
    wird nur noch dort, wo im Titel ein weiches Trennzeichen steht. */
 .oe-knoten-titel, .oe-knoten-unter { overflow-wrap: break-word;
                                      hyphens: manual; -webkit-hyphens: manual; }
-.oe-knoten-titel { font-size: .82rem; font-weight: 600; line-height: 1.25; }
-.oe-knoten-unter { font-size: .72rem; line-height: 1.3; color: var(--grey-50); }
+.oe-knoten-titel { font-size: var(--fs-s); font-weight: 600; line-height: 1.25; }
+.oe-knoten-unter { font-size: var(--fs-xs); line-height: 1.3; color: var(--grey-50); }
 /* Werkzeuge, die auf einer Quelle sitzen, stehen als kleine Kuerzel im
    Kasten statt als eigene Kaesten in der Kette. Der volle Name kommt beim
    Darueberfahren. */
 .oe-werkzeuge { display: flex; gap: 4px; margin-top: 6px; }
 .oe-werkzeug { position: relative; display: inline-block; padding: 1px 6px;
                border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px #d8d3cd;
-               font-size: .62rem; font-weight: 700; letter-spacing: .06em;
+               font-size: var(--fs-xs); font-weight: 600; letter-spacing: .06em;
                line-height: 1.5; color: var(--grey-70); cursor: help; }
 .oe-werkzeug::after { content: attr(data-tipp); position: absolute; left: 50%; bottom: calc(100% + 6px);
                       transform: translateX(-50%); padding: 4px 8px; border-radius: 6px;
-                      background: var(--ink); color: #fff; font-size: .7rem; font-weight: 600;
+                      background: var(--ink); color: #fff; font-size: var(--fs-xs); font-weight: 600;
                       letter-spacing: 0; white-space: nowrap; pointer-events: none;
                       opacity: 0; transition: opacity .12s; z-index: 10; }
 .oe-werkzeug:hover::after, .oe-werkzeug:focus-visible::after { opacity: 1; }
@@ -84,8 +84,8 @@
 .oe-knoten--gross .oe-marke { margin-top: 12px; }
 .oe-knoten--gross .oe-knoten-unter { min-height: 2.8em; }
 .oe-knoten--gross:hover { background: #000; }
-.oe-knoten--gross .oe-knoten-titel { font-family: var(--font-serif); font-weight: 700;
-                                     font-size: 1.08rem; }
+.oe-knoten--gross .oe-knoten-titel { font-family: var(--font-serif); font-weight: 600;
+                                     font-size: var(--fs-l); }
 .oe-knoten--gross .oe-knoten-unter { color: rgba(255,255,255,.6); }
 .oe-knoten--gross.is-offen { background: var(--hl); border-color: var(--ink);
                              color: var(--ink); }
@@ -96,8 +96,8 @@
    stand sonst "SCHWACH..." statt "schwaches Glied". */
 .oe-marke { justify-self: start; margin-top: 4px; padding: 2px 7px;
             max-width: 100%; border-radius: 10px;
-            font-size: .62rem; letter-spacing: .07em; text-transform: uppercase;
-            font-weight: 700; line-height: 1.35;
+            font-size: var(--fs-xs); letter-spacing: .07em; text-transform: uppercase;
+            font-weight: 600; line-height: 1.35;
             background: #eceae6; color: var(--grey-70); }
 .oe-marke--entschieden { background: var(--ink); color: #fff; }
 .oe-marke--beauftragt  { background: var(--hl); color: var(--ink); }
@@ -128,8 +128,8 @@
 /* ---- Das Band der Ausfuehrung: Geraete links, Knoten in der Mitte ------ */
 .oe-kern { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1.1fr);
            gap: clamp(12px, 2vw, 26px); align-items: center; }
-.oe-spalte-tag { margin: 0 0 6px 2px; font-size: .66rem; letter-spacing: .12em;
-                 text-transform: uppercase; font-weight: 700; color: var(--grey-50); }
+.oe-spalte-tag { margin: 0 0 6px 2px; font-size: var(--fs-xs); letter-spacing: .12em;
+                 text-transform: uppercase; font-weight: 600; color: var(--grey-50); }
 .oe-eingabe-reihe { display: grid; gap: 7px;
                     grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .oe-kern-mitte { display: flex; justify-content: flex-start; }
@@ -170,24 +170,24 @@
 .oe-feld-zu { position: absolute; top: 14px; right: 16px; width: 34px; height: 34px;
               display: grid; place-items: center; cursor: pointer;
               border: 0; border-radius: 50%; background: #f4f2ef;
-              font-family: inherit; font-size: 1.3rem; line-height: 1; color: var(--grey-70);
+              font-family: inherit; font-size: var(--fs-xl); line-height: 1; color: var(--grey-70);
               transition: background-color .15s ease, color .15s ease; }
 .oe-feld-zu:hover { background: var(--ink); color: #fff; }
-.oe-feld-band { margin: 0; font-size: .7rem; letter-spacing: .14em;
-                text-transform: uppercase; font-weight: 700; color: var(--grey-50); }
+.oe-feld-band { margin: 0; font-size: var(--fs-xs); letter-spacing: .14em;
+                text-transform: uppercase; font-weight: 600; color: var(--grey-50); }
 .oe-feld-titel { display: flex; align-items: center; flex-wrap: wrap; gap: 12px;
-                 margin: .4rem 0 0; font-weight: 700; line-height: 1.2;
+                 margin: .4rem 0 0; font-weight: 600; line-height: 1.2;
                  font-size: clamp(1.4rem, 2.2vw, 1.9rem); }
 .oe-feld-titel .oe-marke { margin-top: 0; }
-.oe-feld-satz { margin: .9rem 0 0; max-width: 72ch; font-size: 1rem; line-height: 1.75;
+.oe-feld-satz { margin: .9rem 0 0; max-width: 72ch; font-size: var(--fs-l); line-height: 1.75;
                 color: var(--grey-70); }
 .oe-feld-spalten { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
                    gap: clamp(18px, 2.4vw, 34px); margin-top: clamp(20px, 2.4vw, 28px); }
 .oe-feld-spalte { min-width: 0; }
-.oe-feld-tag { margin: 0 0 8px; font-size: .68rem; letter-spacing: .12em;
-               text-transform: uppercase; font-weight: 700; color: var(--grey-50); }
+.oe-feld-tag { margin: 0 0 8px; font-size: var(--fs-xs); letter-spacing: .12em;
+               text-transform: uppercase; font-weight: 600; color: var(--grey-50); }
 .oe-feld-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
-.oe-feld-liste li { position: relative; padding-left: 20px; font-size: .94rem;
+.oe-feld-liste li { position: relative; padding-left: 20px; font-size: var(--fs-m);
                     line-height: 1.6; color: var(--grey-70); }
 .oe-feld-liste li::before { content: ""; position: absolute; left: 0; top: .66em;
                             width: 11px; height: 2px; border-radius: 2px;
@@ -225,7 +225,7 @@ body .section--eng:has(.oe-plan) { padding-top: clamp(20px, 2.4vw, 34px); }
            margin-top: clamp(28px, 3.6vw, 48px); }
 .oe-raum .oe-plan { margin-top: 0; }
 .oe-raum .oe-feld { position: sticky; top: 100px; margin-top: 0; }
-.oe-feld-leer p:last-child { margin: .5rem 0 0; font-size: .92rem; line-height: 1.7;
+.oe-feld-leer p:last-child { margin: .5rem 0 0; font-size: var(--fs-m); line-height: 1.7;
                              color: var(--grey-50); }
 .oe-feld { border-color: #e4e1dd; }
 .oe-feld:has(.oe-feld-inhalt:not([hidden])) { border-color: var(--ink); }
@@ -324,7 +324,7 @@ body .section--eng:has(.oe-plan) { padding-top: clamp(20px, 2.4vw, 34px); }
 .oe-plan--gefasst .oe-geraete > .oe-spalte-tag { margin-bottom: 0; }
 .oe-plan--verdrahtung .oe-geraete::after,
 .oe-plan--gefasst .oe-geraete::after { content: "\00a0"; display: block;
-                     font-size: .66rem; letter-spacing: .12em; }
+                     font-size: var(--fs-xs); letter-spacing: .12em; }
 .oe-knotenplatz { display: flex; justify-content: center; }
 .oe-leitstandplatz { display: flex; justify-content: flex-start; }
 
@@ -391,7 +391,7 @@ body .section--eng:has(.oe-plan) { padding-top: clamp(20px, 2.4vw, 34px); }
 
 /* ---- Die Legende der Strichstaerken ------------------------------------ */
 .oe-legende-posten { display: inline-flex; align-items: center; gap: 8px;
-                     font-size: .8rem; color: var(--grey-70); }
+                     font-size: var(--fs-s); color: var(--grey-70); }
 .oe-strich { display: block; width: 26px; height: 0; border-top: 2px solid #cfc9c2; }
 .oe-strich--eingerichtet { border-color: #8a8783; }
 .oe-strich--geplant      { border-top-style: dashed; border-color: #b8b2ab; }
@@ -409,7 +409,7 @@ body .section--eng:has(.oe-plan) { padding-top: clamp(20px, 2.4vw, 34px); }
              margin: clamp(22px, 2.6vw, 32px) 0 clamp(26px, 3vw, 38px);
              padding: 12px 0; min-height: 57px; box-sizing: border-box; }
 .oe-leiste-gruppe { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
-.oe-leiste .oe-legende-posten { font-size: .8rem; gap: 8px; }
+.oe-leiste .oe-legende-posten { font-size: var(--fs-s); gap: 8px; }
 .oe-leiste .oe-strich { width: 22px; }
 
 
@@ -497,7 +497,7 @@ body .section--eng:has(.oe-plan) { padding-top: clamp(20px, 2.4vw, 34px); }
    nicht bunt. */
 .oe-knoten--speicher { border: 2px solid #0B9FBD;
                        border-radius: 12px; background: #fff; }
-.oe-knoten--speicher .oe-knoten-titel { font-size: .92rem; color: #0B9FBD; }
+.oe-knoten--speicher .oe-knoten-titel { font-size: var(--fs-m); color: #0B9FBD; }
 .oe-knoten--speicher .oe-marke { background: rgba(11,159,189,.12); color: #0B9FBD;
                                  box-shadow: none; }
 .oe-knoten--speicher:hover { background: rgba(11,159,189,.06); }
@@ -567,10 +567,10 @@ body .section--eng:has(.oe-plan) { padding-top: clamp(20px, 2.4vw, 34px); }
              background: #fff; border: 1px solid #e4e1dd;
              border-radius: var(--radius-card); }
 .gf-tag { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
-          margin: 0 0 11px 2px; font-size: .72rem; letter-spacing: .14em;
-          text-transform: uppercase; font-weight: 700; color: var(--ink); }
+          margin: 0 0 11px 2px; font-size: var(--fs-xs); letter-spacing: .14em;
+          text-transform: uppercase; font-weight: 600; color: var(--ink); }
 .gf-tag span { letter-spacing: .02em; text-transform: none; font-weight: 500;
-               font-size: .78rem; color: var(--grey-50); }
+               font-size: var(--fs-s); color: var(--grey-50); }
 .oe-plan--gefasst .oe-quellen { gap: clamp(22px, 2.8vh, 36px) 8px; }
 .oe-plan--gefasst .oe-schiene { margin-top: clamp(20px, 2.6vh, 32px); }
 .oe-plan--gefasst .oe-mittelreihe { margin-top: 0; }

@@ -93,11 +93,17 @@
         (weg.length ? '<p class="st4-entschieden">' + weg.map(function (v) {
           return "<span>" + esc(v.titel) + " · " + (v.entscheidung === "ja" ? "freigegeben" : v.entscheidung === "anders" ? "anders" : "später") + "</span>"; }).join("") + "</p>" : "") +
       "</section>" +
-      '<section class="st4-block"><h2 class="st4-h">Sparring starten</h2><div class="st4-sparring">' + sparring() + '</div><p class="st4-hinweis" data-spar-hinweis hidden></p></section>' +
+      '<section class="st4-block"><h2 class="st4-h">Sparring starten</h2><div class="st4-sparring">' + sparring() + '</div></section>' +
       '<section class="st4-block"><h2 class="st4-h">Die nächsten Wochen</h2>' +
         '<p class="mk-legende"><span class="mk mk--frist">Frist einer Aufgabe</span><span class="mk mk--termin">Termin</span><span class="mk mk--ziel">Meilenstein</span></p>' +
         '<div class="st4-wochen" tabindex="0" aria-label="Wochen – seitlich wischen">' + wochen() + "</div></section>";
     verdrahten();
+  }
+
+  function bestaetigen(b) {
+    wurzel.querySelectorAll(".st4-spar--an").forEach(function (x) { if (x !== b) { x.classList.remove("st4-spar--an"); x.querySelector(".st4-spar-los").innerHTML = 'Starten <i aria-hidden="true">→</i>'; } });
+    b.classList.add("st4-spar--an");
+    b.querySelector(".st4-spar-los").textContent = "✓ Angefragt – Startsatz ist kopiert, im Chat mit Claude einfügen.";
   }
 
   function speichern(id, felder, karte) {
@@ -123,13 +129,13 @@
         speichern(id, { status: "entschieden", entscheidung: "anders", entscheidung_text: t }, k);
       };
     });
-    var hinweis = wurzel.querySelector("[data-spar-hinweis]");
     wurzel.querySelectorAll("[data-spar]").forEach(function (b) {
       b.onclick = function () {
         var s = SPARRING.filter(function (x) { return x.k === b.getAttribute("data-spar"); })[0];
         var satz = s.n + " starten – Regel: " + s.r;
         db.from("sparring").insert({ modus: s.n }).then(function () {});
-        var fertig = function () { hinweis.hidden = false; hinweis.textContent = "„" + s.n + "“ ist angefragt – der Startsatz liegt in der Zwischenablage, einfach im Chat mit Claude einfügen."; };
+        // Bestätigung direkt im angeklickten Kasten – auf dem iPhone stehen die Kästen untereinander
+        var fertig = function () { bestaetigen(b); };
         if (navigator.clipboard) navigator.clipboard.writeText(satz).then(fertig, fertig); else fertig();
       };
     });
