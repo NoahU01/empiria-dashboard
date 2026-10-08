@@ -889,3 +889,44 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
   .ab-seite { overflow-x: clip; }
 }
 .pr-kanban .pr-auf-titel span:first-child { overflow-wrap: break-word; }
+
+/* Projektübersicht auf dem Telefon: keine drei Spalten, sondern Name oben, Kunde links und Termin rechts darunter */
+@media (max-width: 600px) {
+  .pr-tab colgroup { display: none; }
+  .pr-tab thead, .pr-tab thead tr { display: block; } .pr-tab thead th { display: none; }
+  .pr-tab thead th:first-child { display: block; padding: 0 0 8px; border-bottom: 1px solid var(--linie); font-size: var(--fs-xs); font-weight: 500; color: var(--grey-50); text-align: left; }
+  .pr-tab thead tr { padding: 0; border: 0; }
+  .pr-tab, .pr-tab tbody { display: block; }
+  .pr-tab tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 16px; padding: 14px 0; border-bottom: 1px solid var(--linie); }
+  .pr-tab td { display: block; padding: 0; border: 0; }
+  .pr-tab td:first-child { grid-column: 1 / -1; }
+  .pr-tab td:nth-child(2), .pr-tab td:nth-child(3) { font-size: var(--fs-s); color: var(--grey-50); }
+  .pr-tab td:nth-child(3) { text-align: right; }
+  .pr-tab + .pr-tab { margin-top: 24px; }
+  .pr-tab tbody::before { content: none; }
+}
+
+/* Abstände – etwas mehr Luft, einheitlich aus dem 4er-Raster (Tokens in dashboard-nav.css) */
+.db { padding-block: var(--s6) var(--s9); }
+.st4-block, .an-block { margin-top: var(--s8); }
+.st4-h { margin-bottom: var(--s5); }
+.pr-h2 { margin-bottom: var(--s4); }
+.pr-marke-sek + .pr-marke-sek { margin-top: var(--s8); }
+.an-signale { margin-top: var(--s6); gap: var(--s4); }
+.st4-karten { gap: var(--s4); }
+@media (max-width: 600px) {
+  .st4-block, .an-block, .pr-marke-sek + .pr-marke-sek { margin-top: var(--s7); }
+  .st4-h { margin-bottom: var(--s4); }
+}
+@media (max-width: 480px) {
+  .an-signale { grid-template-columns: minmax(0, 1fr); gap: var(--s3); }
+  .an-k { display: grid; grid-template-columns: 76px minmax(0, 1fr); column-gap: var(--s3); align-items: start; min-height: 0; padding: var(--s4) var(--s4); }
+  .an-k .an-zahl { grid-row: 1 / span 2; justify-self: start; margin: 0; }
+  .an-k b { align-self: end; }
+}
+@media (max-width: 600px) {
+  .pr-auf-zeile > .pr-auf-titel, .pr-auf-zeile > .pr-frist, .pr-auf-zeile > .pr-wer { grid-column: 2; }
+  .pr-auf-zeile > .st-haken { grid-row: 1 / span 3; align-self: start; margin-top: 2px; }
+  .pr-auf-zeile { align-items: start; row-gap: 2px; padding: 10px 0; }
+}
+@media (max-width: 600px) { .pr-aufgaben .pr-wartet, .pr-aufgaben .pr-hinweis, .pr-aufgaben .ad-v { margin-left: 36px; } }
