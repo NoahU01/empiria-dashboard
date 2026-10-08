@@ -174,10 +174,17 @@
     html += '<div class="kb-block"><p class="kb-label">' + (a ? "Worum es geht" : "Anfang der Mail") + "</p><p>" + esc(a ? a.zusammenfassung : m.bodyPreview) + "</p></div>";
     html += '<div class="kb-block"><p class="kb-label">Vorschlag</p><p class="kb-vorschlag-text">' + esc(m.vorschlag.text) + "</p></div>";
     if (a && a.entwurf) html += '<div class="kb-entwurf"><p class="kb-label">Antwortentwurf</p><pre>' + esc(a.entwurf) + "</pre></div>";
-    html += zustand.tab === "claude" ? statusBeiClaude(m) : knoepfe(m);
+    html += zustand.tab === "claude" ? statusBeiClaude(m) + nachtrag(m) : knoepfe(m);
     html += '<div class="kb-block"><p class="kb-label">Originalmail</p><pre class="v-original" data-kb-voll="' + esc(m.id) + '">' + esc(m.volltext || m.bodyPreview) + "</pre></div>";
     html += '<div class="kb-karte-fuss">' + B.badge(m.konto) + "<span>" + esc(m.grund) + '</span>' + outlookLink(m, "kb-oeffnen") + "</div></li>";
     return html;
+  }
+
+  // Bei Claude: nachträglich noch etwas dazu sagen (ergänzt die Anweisung, Claude setzt um)
+  function nachtrag(m) {
+    return '<div class="kb-entscheid" data-nachtrag="' + esc(m.id) + '"><button type="button" data-n-auf>Noch etwas dazu sagen …</button></div>' +
+      '<form class="kb-anders" data-n-form hidden><textarea rows="3" placeholder="Was soll sich ändern oder dazukommen? – z. B. „Doch lieber per Sie“ oder „Termin erst nach dem 20.10. vorschlagen“. Auf dem iPhone: Mikrofon auf der Tastatur."></textarea>' +
+      '<div><button type="submit" class="kb-knopf kb-knopf--klein">An Claude geben</button><button type="button" class="kb-anders-abbruch">Abbrechen</button></div></form>';
   }
 
   function statusBeiClaude(m) {
@@ -296,6 +303,21 @@
           var karte = box.closest(".kb-karte"); karte.innerHTML = '<p class="kb-gesendet">✓ Gesendet an ' + esc(an) + "</p>";
           daten.entwuerfe = daten.entwuerfe.filter(function (x) { return x.id !== m.id; });
         }).catch(function (f) { box.classList.remove("laedt"); alert("Nicht gesendet: " + f.message + (/(401|403)/.test(f.message) ? " – bitte einmal neu anmelden." : "")); });
+      });
+    });
+    ziel().querySelectorAll("[data-nachtrag]").forEach(function (box) {
+      var m = alleMails().filter(function (x) { return x.id === box.getAttribute("data-nachtrag"); })[0];
+      var form = box.nextElementSibling;
+      box.querySelector("[data-n-auf]").addEventListener("click", function () { form.hidden = !form.hidden; if (!form.hidden) form.querySelector("textarea").focus(); });
+      form.querySelector(".kb-anders-abbruch").addEventListener("click", function () { form.hidden = true; });
+      form.addEventListener("submit", function (ev) {
+        ev.preventDefault(); var t = form.querySelector("textarea").value.trim(); if (!t) return;
+        box.classList.add("laedt");
+        B.anweisen(m, t).then(function () {
+          m.anweisung = { text: t, status: "offen" };
+          form.remove();
+          box.outerHTML = '<p class="kb-anweisung"><span>Nachtrag an Claude</span>' + esc(t) + "</p>";
+        }).catch(function (f) { box.classList.remove("laedt"); alert("Nicht gespeichert: " + f.message); });
       });
     });
     ziel().querySelectorAll("[data-warten]").forEach(function (box) {
