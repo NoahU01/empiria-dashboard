@@ -35,18 +35,40 @@
   function lf(o) { return o ? '<a class="kt3-f" href="#f=' + o.id + '">' + esc(o.name) + "</a>" : '<span class="kt3-leise">ohne Firma</span>'; }
 
   /* ---------- Anmeldung ---------- */
-  function anmeldenZeigen(hinweis) {
+  // Anmeldung in zwei Schritten, damit sie auch in der Web-App auf dem Homescreen (eigener Speicher, getrennt von Safari) klappt:
+  // 1) Mail anfordern  2) Code aus der Mail eingeben ODER den kopierten Login-Link einfügen – beides meldet direkt hier an.
+  function zurueck() { var z = new URLSearchParams(location.search).get("zurueck"); return z && /^\/strategie\/[\w-]+\.html$/.test(z) ? z : null; }
+  function anmeldenZeigen(hinweis, mail) {
     if (kopfKonto) kopfKonto.innerHTML = "";
-    wurzel.innerHTML = '<div class="kb-hinweis kt-login"><p>' + (hinweis || "Melde dich einmal an: Du bekommst einen Login-Link an deine Mailadresse. Danach bleibst du auf diesem Gerät angemeldet.") + "</p>" +
-      '<form data-login><input class="kb-suche" type="email" required value="daniel.stroebel@empiria.de" aria-label="Mailadresse"> ' +
-      '<button class="kb-knopf" type="submit">Login-Link schicken</button></form></div>';
-    wurzel.querySelector("[data-login]").addEventListener("submit", function (e) {
+    wurzel.innerHTML = '<div class="kb-hinweis kt-login"><p>' + (hinweis || "Melde dich einmal an: Du bekommst eine Mail an deine Adresse. Danach bleibst du auf diesem Gerät angemeldet – auch in der Web-App auf dem Homescreen.") + "</p>" +
+      (mail ? "" : '<form data-login><input class="kb-suche" type="email" required value="daniel.stroebel@empiria.de" aria-label="Mailadresse"> <button class="kb-knopf" type="submit">Anmelde-Mail schicken</button></form>') +
+      (mail ? '<form data-code class="kt-code"><input class="kb-suche" type="text" inputmode="text" autocomplete="one-time-code" required placeholder="Code aus der Mail – oder den kopierten Login-Link einfügen" aria-label="Code oder Link"> <button class="kb-knopf" type="submit">Anmelden</button>' +
+        '<p class="kt-code-hilfe">Auf iPhone oder iPad: in der Mail lange auf „Sign in“ bzw. den Link tippen → „Link kopieren“ → hier einfügen. <button type="button" class="kt-neu" data-neu>Andere Adresse / neue Mail</button></p></form>' : "") + "</div>";
+    var f = wurzel.querySelector("[data-login]");
+    if (f) f.addEventListener("submit", function (e) {
       e.preventDefault();
-      var mail = e.target.querySelector("input").value.trim();
-      db.auth.signInWithOtp({ email: mail, options: { emailRedirectTo: location.origin + location.pathname, shouldCreateUser: true } }).then(function (r) {
-        anmeldenZeigen(r.error ? "Das hat nicht geklappt: " + esc(r.error.message) : "Link ist unterwegs an <b>" + esc(mail) + "</b>. Öffne ihn auf diesem Gerät.");
+      var m = e.target.querySelector("input").value.trim();
+      db.auth.signInWithOtp({ email: m, options: { emailRedirectTo: location.origin + location.pathname, shouldCreateUser: true } }).then(function (r) {
+        if (r.error) anmeldenZeigen("Das hat nicht geklappt: " + esc(r.error.message));
+        else anmeldenZeigen("Mail ist unterwegs an <b>" + esc(m) + "</b>.", m);
       });
     });
+    var c = wurzel.querySelector("[data-code]");
+    if (c) {
+      c.querySelector("input").focus();
+      wurzel.querySelector("[data-neu]").onclick = function () { anmeldenZeigen(); };
+      c.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var x = c.querySelector("input").value.trim(), versuch;
+        var tok = x.match(/[?&#]token=([^&#\s]+)/), hash = x.match(/token_hash=([^&#\s]+)/);
+        if (hash || tok) versuch = db.auth.verifyOtp({ token_hash: decodeURIComponent((hash || tok)[1]), type: "magiclink" });
+        else versuch = db.auth.verifyOtp({ email: mail, token: x.replace(/\s/g, ""), type: "email" });
+        versuch.then(function (r) {
+          if (r.error) { anmeldenZeigen("Code oder Link passt nicht (" + esc(r.error.message) + ") – bitte neu versuchen.", mail); return; }
+          if (zurueck()) location.replace(zurueck()); else location.reload();
+        });
+      });
+    }
   }
 
   /* ---------- Laden ---------- */

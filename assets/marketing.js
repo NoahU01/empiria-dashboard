@@ -19,7 +19,7 @@
   var KREIS = ["Content bauen", "Posten", "Analysieren", "Änderungen ableiten", "Wirkung prüfen"];
 
   db.auth.getSession().then(function (s) {
-    if (!s.data.session) { wurzel.innerHTML = '<div class="kb-hinweis"><p>Bitte einmal auf der <a href="/strategie/kontakte.html">Kontaktseite</a> anmelden – dann erscheint hier das Marketing.</p></div>'; return; }
+    if (!s.data.session) { wurzel.innerHTML = '<div class="kb-hinweis"><p>Bitte einmal auf der <a href="/strategie/kontakte.html?zurueck=' + encodeURIComponent(location.pathname) + '">Kontaktseite</a> anmelden – dann erscheint hier das Marketing.</p></div>'; return; }
     Promise.all([
       db.from("linkedin_kennzahlen").select("stichtag, follower, kontakte, impressionen, interaktionen, profilaufrufe").eq("quelle", "profil").order("stichtag", { ascending: false }).limit(2),
       db.from("linkedin_posts").select("text, link, impressionen, reaktionen, kommentare, stand").order("impressionen", { ascending: false }).limit(5)

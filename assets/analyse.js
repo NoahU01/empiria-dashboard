@@ -14,7 +14,7 @@
   var D = { mails: "laedt" };
 
   db.auth.getSession().then(function (s) {
-    if (!s.data.session) { wurzel.innerHTML = '<div class="kb-hinweis"><p>Bitte einmal auf der <a href="/strategie/kontakte.html">Kontaktseite</a> anmelden – dann erscheint hier die Analyse.</p></div>'; return; }
+    if (!s.data.session) { wurzel.innerHTML = '<div class="kb-hinweis"><p>Bitte einmal auf der <a href="/strategie/kontakte.html?zurueck=' + encodeURIComponent(location.pathname) + '">Kontaktseite</a> anmelden – dann erscheint hier die Analyse.</p></div>'; return; }
     var bis14 = new Date(+HEUTE + 15 * 864e5).toISOString();
     Promise.all([
       db.from("vorlagen").select("id, entscheidung").eq("status", "offen"),

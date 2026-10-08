@@ -3,6 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="empiria">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#ffffff">
+<link rel="apple-touch-icon" href="/assets/app-icon-180.png">
 <title>Anmeldung &ndash; empiria</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="/styles.css">
@@ -12,8 +19,8 @@
      MSAL schickt von hier zurück auf die Seite, auf der die Anmeldung begann.
      Wer die Adresse direkt aufruft, landet auf der Steuerung. Nicht im Menü. -->
 <main class="container" style="padding:64px 16px"><p>Anmeldung wird abgeschlossen &hellip;</p></main>
-<script src="/assets/vendor/msal-browser.min.js?v=202610080852"></script>
-<script src="/assets/beta-mail.js?v=202610080852"></script>
+<script src="/assets/vendor/msal-browser.min.js?v=202610080856"></script>
+<script src="/assets/beta-mail.js?v=202610080856"></script>
 <script>
   (function () {
     if (!/[#&?](code|error|state)=/.test(location.hash + location.search)) { location.replace("/strategie/steuerung.html"); return; }

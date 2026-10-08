@@ -1035,3 +1035,7 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
 }
 .pk-zwei .ad-kette { text-align: left; }
 .pk-ziel { margin-bottom: var(--s5); }
+.kt-code { display: flex; flex-wrap: wrap; gap: var(--s2); margin-top: var(--s3); }
+.kt-code input { flex: 1 1 280px; }
+.kt-code-hilfe { flex: 0 0 100%; margin: var(--s2) 0 0; font-size: var(--fs-s); color: var(--grey-70); line-height: 1.5; }
+.kt-neu { padding: 0; border: 0; background: none; font: inherit; color: var(--ink); text-decoration: underline; cursor: pointer; }

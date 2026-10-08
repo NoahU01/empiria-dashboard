@@ -12,7 +12,7 @@
   var STATUS = { "läuft": "st-laeuft", "wartet auf dich": "st-dich", "blockiert": "st-blockiert", "pausiert": "st-pause", "abgeschlossen": "st-pause" };
 
   db.auth.getSession().then(function (s) {
-    if (!s.data.session) { wurzel.innerHTML = '<div class="kb-hinweis"><p>Bitte einmal auf der <a href="/strategie/kontakte.html">Kontaktseite</a> anmelden – dann erscheinen hier die Projekte.</p></div>'; return; }
+    if (!s.data.session) { wurzel.innerHTML = '<div class="kb-hinweis"><p>Bitte einmal auf der <a href="/strategie/kontakte.html?zurueck=' + encodeURIComponent(location.pathname) + '">Kontaktseite</a> anmelden – dann erscheinen hier die Projekte.</p></div>'; return; }
     route();
   });
   window.addEventListener("hashchange", function () { route(); window.scrollTo(0, 0); });

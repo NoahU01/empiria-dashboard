@@ -15,7 +15,7 @@
   try { wahl = JSON.parse(localStorage.getItem("ab-filter") || "[]"); } catch (x) { wahl = []; }
 
   db.auth.getSession().then(function (s) {
-    if (!s.data.session) { wurzel.innerHTML = '<div class="kb-hinweis"><p>Bitte einmal auf der <a href="/strategie/kontakte.html">Kontaktseite</a> anmelden – dann erscheinen hier die Aufgaben.</p></div>'; return; }
+    if (!s.data.session) { wurzel.innerHTML = '<div class="kb-hinweis"><p>Bitte einmal auf der <a href="/strategie/kontakte.html?zurueck=' + encodeURIComponent(location.pathname) + '">Kontaktseite</a> anmelden – dann erscheinen hier die Aufgaben.</p></div>'; return; }
     laden();
   });
 

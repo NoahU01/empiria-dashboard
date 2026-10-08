@@ -43,7 +43,7 @@
 
   /* ---------- gemeinsame Bausteine ---------- */
   function fehlerZeile() {
-    var hinweis = daten.dbStatus === "abgemeldet" ? '<p class="kb-fehler">Claudes Einschätzungen und Antwortentwürfe erscheinen, sobald du einmal auf der <a href="/strategie/kontakte.html">Kontaktseite</a> angemeldet bist.</p>' : "";
+    var hinweis = daten.dbStatus === "abgemeldet" ? '<p class="kb-fehler">Claudes Einschätzungen und Antwortentwürfe erscheinen, sobald du einmal auf der <a href="/strategie/kontakte.html?zurueck=' + encodeURIComponent(location.pathname) + '">Kontaktseite</a> angemeldet bist.</p>' : "";
     if (!daten.fehler.length) return hinweis;
     return '<p class="kb-fehler">Noch kein Zugriff auf: ' + daten.fehler.map(function (f) { return esc(f.konto.name); }).join(", ") +
       " – die Freigabe bei Microsoft kann bis zu einer Stunde dauern.</p>" + hinweis;

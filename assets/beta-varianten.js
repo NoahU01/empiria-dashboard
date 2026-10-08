@@ -33,7 +33,7 @@
 
   /* ---------- Bausteine ---------- */
   function hinweisDb() {
-    return dbStatus === "abgemeldet" ? '<p class="kb-fehler">Claudes Einschätzungen und Antwortentwürfe erscheinen, sobald du einmal auf der <a href="/strategie/kontakte.html">Kontaktseite</a> angemeldet bist.</p>' : "";
+    return dbStatus === "abgemeldet" ? '<p class="kb-fehler">Claudes Einschätzungen und Antwortentwürfe erscheinen, sobald du einmal auf der <a href="/strategie/kontakte.html?zurueck=' + encodeURIComponent(location.pathname) + '">Kontaktseite</a> angemeldet bist.</p>' : "";
   }
   function inhalt(m) {
     var a = m.analyse;
