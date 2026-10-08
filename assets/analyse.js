@@ -18,7 +18,7 @@
     var bis14 = new Date(+HEUTE + 15 * 864e5).toISOString();
     Promise.all([
       db.from("vorlagen").select("id, entscheidung").eq("status", "offen"),
-      db.from("termine").select("id, start, ende, ganztags, betreff, ort, teilnehmer, extern, postfach, projekt_id, vorbereitung, abgesagt").gte("ende", JETZT.toISOString()).lte("start", bis14).order("start"),
+      db.from("termine").select("id, start, ende, ganztags, betreff, ort, teilnehmer, extern, postfach, projekt_id, vorbereitung, vorbereitung_notiz, abgesagt").gte("ende", JETZT.toISOString()).lte("start", bis14).order("start"),
       db.from("aufgaben").select("id, status, faellig_am, antwort_am, mail_gesendet_am").eq("status", "offen"),
       db.from("projekte").select("id, name")
     ]).then(function (r) {
@@ -66,7 +66,8 @@
         var p = projekt(t.projekt_id), zeit = t.ganztags ? "ganztags" : new Date(t.start).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
         var mit = (t.teilnehmer || []).slice(0, 3).join(", ") + ((t.teilnehmer || []).length > 3 ? " …" : "");
         return '<li class="an-t an-t--' + t.vorbereitung + '" data-t="' + t.id + '"><span class="an-zeit">' + zeit + "</span>" +
-          '<span class="an-was"><b>' + esc(t.betreff || "(ohne Titel)") + "</b><small>" + [p ? esc(p.name) : "", esc(mit), esc(t.postfach)].filter(Boolean).join(" · ") + "</small></span>" +
+          '<span class="an-was"><b>' + esc(t.betreff || "(ohne Titel)") + "</b><small>" + [p ? esc(p.name) : "", esc(mit), esc(t.postfach)].filter(Boolean).join(" · ") + "</small>" +
+            (t.vorbereitung_notiz ? '<ul class="an-notiz">' + t.vorbereitung_notiz.split("\n").filter(Boolean).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "") + "</span>" +
           '<span class="an-vorb" role="group" aria-label="Vorbereitung">' +
             '<button type="button" data-v="offen" aria-pressed="' + (t.vorbereitung === "offen") + '">offen</button>' +
             '<button type="button" data-v="vorbereitet" aria-pressed="' + (t.vorbereitung === "vorbereitet") + '">vorbereitet</button>' +
