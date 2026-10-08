@@ -94,7 +94,9 @@
           return "<span>" + esc(v.titel) + " · " + (v.entscheidung === "ja" ? "freigegeben" : v.entscheidung === "anders" ? "anders" : "später") + "</span>"; }).join("") + "</p>" : "") +
       "</section>" +
       '<section class="st4-block"><h2 class="st4-h">Sparring starten</h2><div class="st4-sparring">' + sparring() + '</div><p class="st4-hinweis" data-spar-hinweis hidden></p></section>' +
-      '<section class="st4-block"><h2 class="st4-h">Die nächsten Wochen</h2><div class="st4-wochen" tabindex="0" aria-label="Wochen – seitlich wischen">' + wochen() + "</div></section>";
+      '<section class="st4-block"><h2 class="st4-h">Die nächsten Wochen</h2>' +
+        '<p class="mk-legende"><span class="mk mk--frist">Frist einer Aufgabe</span><span class="mk mk--termin">Termin</span><span class="mk mk--ziel">Meilenstein</span></p>' +
+        '<div class="st4-wochen" tabindex="0" aria-label="Wochen – seitlich wischen">' + wochen() + "</div></section>";
     verdrahten();
   }
 

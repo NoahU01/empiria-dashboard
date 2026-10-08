@@ -121,7 +121,7 @@
     try { aav = localStorage.getItem("pr-auf-ansicht") === "kanban" ? "kanban" : "liste"; } catch (x) {}
     function frist(a) {
       var ueber = a.status === "offen" && a.faellig_am && new Date(a.faellig_am) < new Date(new Date().toDateString());
-      return '<span class="pr-frist' + (ueber ? " pr-ueber" : "") + '">' + (a.faellig_am ? kurz(a.faellig_am) : "ohne Termin") + "</span>";
+      return '<span class="pr-frist' + (a.faellig_am ? " mk mk--frist" : "") + (ueber ? " pr-ueber" : "") + '">' + (a.faellig_am ? kurz(a.faellig_am) : "ohne Termin") + "</span>";
     }
     // Aufgeklappt: nur die Details als Stichpunkte (assets/aufgaben-details.js)
     function det(a) { if (a._det === undefined) a._det = window.AufgabenDetails ? AufgabenDetails.html(a) : ""; return a._det; }
@@ -164,7 +164,7 @@
     function eintrag(e, mitPersonen, dreieck) {
       var zuk = new Date(e.datum) > jetzt, hat = pkt.some(function (x) { return x.ereignis_id === e.id; }) || auf.some(function (x) { return x.ereignis_id === e.id; });
       return '<button type="button" data-ev="' + e.id + '" class="' + (zuk ? "pr-zuk " : "") + (start && e.id === start.id ? "an" : "") + '"><span class="pr-d">' + (zuk ? "geplant · " : "") + kurz(e.datum) +
-        zeit(e.datum, " · ") + (hat ? ' <i class="pr-hat-details" title="Protokoll vorhanden"></i>' : "") + "</span><b>" + esc(e.titel) + "</b>" +
+        zeit(e.datum, " · ") + (hat ? ' <i class="pr-hat-details" title="Protokoll vorhanden"></i>' : "") + "</span><b class=\"mk mk--" + (e.art === "Meilenstein" ? "ziel" : "termin") + "\">" + esc(e.titel) + "</b>" +
         '<small>' + esc(format(e)) + (mitPersonen && personen(e) ? " (" + esc(personen(e)) + ")" : "") + "</small>" +
         (dreieck && hat ? '<span class="tl-dreieck" aria-hidden="true"></span>' : "") + "</button>";
     }

@@ -1321,3 +1321,10 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
 .an-t { align-items: start; } .an-zeit, .an-vorb { margin-top: 2px; }
 .an-t--laeuft .an-vorb button[data-v="laeuft"][aria-pressed="true"] { background: #e8e6e2; color: var(--ink); font-weight: 600; }
 .kb-entscheid--warten { margin-top: 12px; } .kb-entscheid--warten button[data-w="nachfassen"] { background: var(--ink); color: #fff; }
+
+/* Markierungen – überall gleich: gelb = Frist einer Aufgabe, grau = Termin, schwarz = Meilenstein
+   (Steuerung „Die nächsten Wochen“, Projekt-Timeline, Projekt-Aufgaben, Aufgaben-Kanban) */
+.mk { padding-left: 7px; border-left: 3px solid #d6d3cf; }
+.mk--frist { border-left-color: var(--hl); }
+.mk--ziel { border-left-color: var(--ink); }
+.mk-legende { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: -6px 0 22px; font-size: .74rem; line-height: 1.3; color: var(--grey-50); }
