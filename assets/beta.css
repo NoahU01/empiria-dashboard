@@ -1183,3 +1183,28 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
 /* Aufgaben (Kanban, Projekt-Aufgaben): Frist ohne Strich – nur überschritten rot mit Strich (Daniel, 08.10.2026) */
 .pr-frist.mk--frist { padding-left: 0; border-left: 0; }
 .pr-frist.mk--frist.pr-ueber { padding-left: 7px; border-left: 3px solid var(--fehler); }
+
+/* Marketing → Analyse und Entscheidung: ruhige Karten – eine Schrift, drei Größen, keine Großbuchstaben, keine Pillen-Etiketten (08.10.2026) */
+[data-mk-analyse] .ma-liste { gap: var(--s3); }
+[data-mk-analyse] .ma-k { gap: 12px; padding: 20px 22px; border-radius: 12px; }
+[data-mk-analyse] .ma-meta { margin: 0; font-size: var(--fs-xs); color: var(--grey-50); }
+[data-mk-analyse] .ma-k h4 { margin: 0; font-family: inherit; font-size: var(--fs-l); font-weight: 600; line-height: 1.35; color: var(--ink); }
+[data-mk-analyse] .ma-mess { margin: 0; padding: 10px 14px; border-left: 3px solid var(--cyan); border-radius: 0 8px 8px 0; background: #f2fafc; }
+[data-mk-analyse] .ma-mess span { display: block; margin-bottom: 2px; font-size: var(--fs-xs); font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--grey-50); }
+[data-mk-analyse] .ma-mess p { margin: 0; font-size: var(--fs-s); line-height: 1.45; color: var(--ink); }
+[data-mk-analyse] .ma-mess small { display: block; margin-top: 4px; font-size: var(--fs-xs); color: var(--grey-50); }
+[data-mk-analyse] .ma-aktion { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 4px; }
+[data-mk-analyse] .ma-knoepfe { display: flex; gap: 8px; margin: 0; }
+[data-mk-analyse] .ma-knoepfe button { height: 32px; padding: 0 14px; border: 1px solid var(--linie); border-radius: 999px; background: var(--white); font: inherit; font-size: var(--fs-s); font-weight: 500; color: var(--ink); cursor: pointer; }
+[data-mk-analyse] .ma-knoepfe .ma-ja { background: var(--ink) !important; border-color: var(--ink) !important; color: var(--white) !important; }
+[data-mk-analyse] .ma-warum-k { display: inline-flex; align-items: center; gap: 8px; padding: 0; border: 0; background: none; font: inherit; font-size: var(--fs-s); font-weight: 400; color: var(--grey-70); text-decoration: none; cursor: pointer; white-space: nowrap; }
+[data-mk-analyse] .ma-warum-k:hover { color: var(--ink); }
+[data-mk-analyse] .ma-pfeil { width: 7px; height: 7px; margin-top: -3px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); transition: transform .15s ease; }
+[data-mk-analyse] .ma-warum-k[aria-expanded="true"] .ma-pfeil { margin-top: 3px; transform: rotate(-135deg); }
+[data-mk-analyse] .ma-warum { margin: 0; padding-top: 12px; border-top: 1px solid var(--linie); font-size: var(--fs-s); line-height: 1.5; }
+[data-mk-analyse] .ma-warum b { font-weight: 600; }
+[data-mk-analyse] .ma-stand { margin: 0; font-size: var(--fs-s); }
+[data-mk-analyse] .ma-grund { margin: 0; }
+[data-mk-analyse] .ma-gruende button { height: 30px; padding: 0 12px; border: 1px solid var(--linie); border-radius: 999px; background: var(--white); font-size: var(--fs-s); font-weight: 400; color: var(--ink); }
+[data-mk-analyse] .ma-gruende button:hover { border-color: var(--ink); }
+@media (max-width: 560px) { [data-mk-analyse] .ma-aktion { flex-wrap: wrap; } [data-mk-analyse] .ma-warum-k { order: -1; width: 100%; justify-content: space-between; padding-bottom: 4px; } }

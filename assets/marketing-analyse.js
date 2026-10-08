@@ -34,15 +34,18 @@
       : s === "umgesetzt" ? '<p class="ma-stand ma-stand--an">Übernommen' + (m.pruefen_am ? " · Nachprüfung ab " + d(m.pruefen_am) : "") + (m.ergebnis ? " · Ergebnis: " + esc(m.ergebnis) : "") + "</p>"
       : s === "abgelehnt" ? '<p class="ma-stand">Abgelehnt' + (m.begruendung || m.entscheidung_text ? ": " + esc(m.begruendung || m.entscheidung_text) : "") + "</p>"
       : s === "verfallen" ? '<p class="ma-stand">Verfallen – niemand hat hingesehen</p>' : "";
-    var kn = s === "offen" && !warten ? '<div class="kp-knoepfe ma-knoepfe"><button type="button" class="ma-ja" data-ma-ja>Übernehmen</button><button type="button" data-ma-nein>Ablehnen</button></div>' +
+    var kn = s === "offen" && !warten ? '<div class="ma-knoepfe"><button type="button" class="ma-ja" data-ma-ja>Übernehmen</button><button type="button" data-ma-nein>Ablehnen</button></div>' +
       '<form class="kp-anders ma-grund" hidden><div class="ma-gruende">' + GRUENDE.map(function (g) { return '<button type="button" data-ma-g="' + esc(g) + '">' + esc(g) + "</button>"; }).join("") + "</div>" +
       '<textarea rows="2" placeholder="Oder eigene Begründung – ohne sie weiß später niemand mehr, warum."></textarea><div><button type="submit">Ablehnen</button><button type="button" data-kp-zu>Abbrechen</button></div></form>' : "";
+    var meta = [BEREICH[m.bereich] || m.bereich, KAT[m.kategorie] || m.kategorie, m.erfasst_am ? "erfasst " + d(m.erfasst_am) : "", s === "offen" && m.erfasst_am ? "seit " + a + (a === 1 ? " Tag" : " Tagen") + " offen" : ""].filter(Boolean);
+    var warumK = '<button type="button" class="ma-warum-k" data-ma-w aria-expanded="' + !!auf[m.id] + '">Warum diese Empfehlung<span class="ma-pfeil" aria-hidden="true"></span></button>';
     return '<article class="ma-k' + (s !== "offen" ? " ma-k--weg" : "") + '" data-ma="' + m.id + '">' +
-      '<div class="ma-kopf"><span class="ma-tag">' + esc(BEREICH[m.bereich] || m.bereich || "") + "</span>" + (m.kategorie ? '<span class="ma-kat">' + esc(KAT[m.kategorie] || m.kategorie) + "</span>" : "") +
-        (m.erfasst_am ? '<span class="ma-alter' + (s === "offen" && a >= 14 ? " ma-alter--rot" : "") + '">' + d(m.erfasst_am) + " · " + a + " T</span>" : "") + "</div>" +
+      '<p class="ma-meta">' + meta.map(esc).join(" · ") + "</p>" +
       "<h4>" + esc(m.titel) + "</h4>" +
-      (m.kennzahl ? '<p class="ma-mess"><span>Messpunkt</span>' + esc(m.kennzahl) + (m.vorher ? " – heute: " + esc(m.vorher) : "") + (m.fenster ? "<small>" + esc(fenster(m.fenster)) + "</small>" : "") + "</p>" : "") +
-      '<button type="button" class="ma-warum-k" data-ma-w aria-expanded="' + !!auf[m.id] + '">Warum diese Empfehlung</button>' + warum + stand + kn + "</article>";
+      (m.kennzahl ? '<div class="ma-mess"><span>Messpunkt</span><p>' + esc(m.kennzahl) + (m.vorher ? " – heute: " + esc(m.vorher) : "") + "</p>" + (m.fenster ? "<small>" + esc(fenster(m.fenster)) + "</small>" : "") + "</div>" : "") +
+      stand +
+      '<div class="ma-aktion">' + (kn ? kn.replace(/<form[\s\S]*$/, "") : "<span></span>") + warumK + "</div>" +
+      (kn.indexOf("<form") > -1 ? kn.slice(kn.indexOf("<form")) : "") + warum + "</article>";
   }
   function zeichnen() {
     var l = M.filter(function (m) { return m.konto === wahl && (wahl === "uebergreifend" ? m.quelle === "claude" : m.quelle === "noah"); });
