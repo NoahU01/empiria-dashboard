@@ -10,14 +10,15 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#ffffff">
 <link rel="apple-touch-icon" href="/assets/app-icon-180.png">
-<title>Meilensteine &middot; empiria</title>
-<meta name="description" content="Meilensteine auf dem Weg zum Zielbild.">
+<title>Gesamtdashboard &ndash; empiria</title>
+<meta name="description" content="Entwurf: Analyse und Steuerung auf einer Seite.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="/styles.css">
-<link rel="stylesheet" href="/assets/projekte/projekte.css?v=202610081654">
 <link rel="stylesheet" href="/assets/dashboard-nav.css?v=202610081654">
+<link rel="stylesheet" href="/assets/cockpit.css?v=202610081654">
+<link rel="stylesheet" href="/assets/beta.css?v=202610081654">
 </head>
-<body>
+<body class="ck">
 
 <header class="site-header">
   <div class="container nav nav--hn">
@@ -46,9 +47,9 @@
         <a href="/strategie/oekosystem.html" class="sn-link"><span class="sn-tag">&Ouml;S</span><span class="sn-txt"><b>&Ouml;kosystem</b><small>Schaltplan der Steuerungszentrale</small></span></a>
         <a href="/strategie/sitemap-dashboard.html" class="sn-link"><span class="sn-tag">SM</span><span class="sn-txt"><b>Sitemap Dashboard</b><small>Wie die Seiten zusammenh&auml;ngen</small></span></a>
         <p class="sn-group">Noch zuzuordnen</p>
-        <a href="/strategie/cockpit.html" class="sn-link"><span class="sn-tag">GD</span><span class="sn-txt"><b>Gesamtdashboard (Entwurf)</b><small>Analyse und Steuerung auf einer Seite</small></span></a>
+        <a href="/strategie/cockpit.html" class="sn-link" aria-current="page"><span class="sn-tag">GD</span><span class="sn-txt"><b>Gesamtdashboard (Entwurf)</b><small>Analyse und Steuerung auf einer Seite</small></span></a>
         <a href="/strategie/zielbild.html" class="sn-link"><span class="sn-tag">ZB</span><span class="sn-txt"><b>Strategie und Zielbild</b><small>Wohin empiria will</small></span></a>
-        <a href="/strategie/meilensteine.html" class="sn-link" aria-current="page"><span class="sn-tag">MS</span><span class="sn-txt"><b>Meilensteine</b><small>Etappen auf dem Weg</small></span></a>
+        <a href="/strategie/meilensteine.html" class="sn-link"><span class="sn-tag">MS</span><span class="sn-txt"><b>Meilensteine</b><small>Etappen auf dem Weg</small></span></a>
         <a href="/strategie/dashboard-korrespondenz.html" class="sn-link"><span class="sn-tag">KE</span><span class="sn-txt"><b>Korrespondenz (erster Entwurf)</b><small>Sieben Vorg&auml;nge in drei Gruppen</small></span></a>
         </nav>
       </div>
@@ -58,62 +59,17 @@
 </header>
 
 <main>
-
-  <section class="hero pj-hero">
-    <div class="container">
-      <div class="hero-grid">
-        <div class="hero-head">
-          <p class="kicker">Strategie &middot; empiria</p>
-          <h1 class="h-serif">Die Schritte <span class="hl">dorthin.</span></h1>
-        </div>
-        <div class="hero-copy lead">
-          <p>Der Weg zum Zielbild in Wegmarken: was bis wann steht, wer es verantwortet und woran man erkennt, dass eine Marke erreicht ist.</p>
-        </div>
+  <section class="db"><div class="container">
+    <div class="db-kopf">
+      <div>
+        <p class="kicker" data-st2-datum>Steuerung</p>
+        <h1 class="h-serif">Dein Tag im <span class="hl">Überblick.</span></h1>
       </div>
+      
     </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <div class="pj-kopfzeile">
-        <p class="kicker">Die Wegmarken</p>
-        <h2 class="h-serif">Was sind die <span class="hl">Schritte?</span></h2>
-        <p class="lead">Wenige Marken mit einem klaren Ergebnis sind mehr wert als ein voller Plan, den niemand mehr liest.</p>
-      </div>
-      <div style="margin-top:clamp(26px,3.2vw,40px)">
-      <div class="formate-accordion">
-        <details class="formate-acc-item formate-acc--magenta" name="bst-meilensteine" open>
-          <summary><span>Dieses Jahr</span></summary>
-          <div class="formate-acc-body">
-            <p>Noch offen &ndash; was bis zum 31.12. stehen soll.</p>
-          </div>
-        </details>
-
-        <details class="formate-acc-item formate-acc--violet" name="bst-meilensteine">
-          <summary><span>Erstes Halbjahr 2027</span></summary>
-          <div class="formate-acc-body">
-            <p>Noch offen &ndash; die Schritte, die auf dem aufsetzen, was dieses Jahr fertig wird.</p>
-          </div>
-        </details>
-
-        <details class="formate-acc-item formate-acc--cyan" name="bst-meilensteine">
-          <summary><span>Zweites Halbjahr 2027</span></summary>
-          <div class="formate-acc-body">
-            <p>Noch offen &ndash; was erst sinnvoll ist, wenn das Vorherige steht.</p>
-          </div>
-        </details>
-
-        <details class="formate-acc-item formate-acc--emerald" name="bst-meilensteine">
-          <summary><span>Daueraufgaben</span></summary>
-          <div class="formate-acc-body">
-            <p>Noch offen &ndash; was nie fertig wird, aber regelm&auml;&szlig;ig Aufmerksamkeit braucht.</p>
-          </div>
-        </details>
-      </div>
-      </div>
-    </div>
-  </section>
-
+    <p class="ck-entwurf">Entwurf · Analyse und Steuerung auf einer Seite</p>
+    <div class="ck-grid"><div data-analyse><div class="kb-laedt"><span></span><span></span></div></div><div data-steuerung></div></div>
+  </div></section>
 </main>
 
 <footer class="site-footer">
@@ -124,6 +80,17 @@
 </footer>
 
 <script src="/script.js"></script>
+<script src="/assets/vendor/supabase.js?v=202610081654"></script>
+<script src="/assets/db.js?v=202610081654"></script>
+<script src="/assets/aufgaben-details.js?v=202610081654"></script>
+<script src="/assets/vendor/msal-browser.min.js?v=202610081654"></script>
+<script src="/assets/beta-mail.js?v=202610081654"></script>
+<script src="/assets/marke-fokus.js?v=202610081654"></script>
+<script src="/assets/analyse.js?v=202610081654"></script>
+<script src="/assets/steuerung.js?v=202610081654"></script>
+<script>(function(){var k=document.querySelector("[data-st2-datum]");if(k)k.textContent=new Date().toLocaleDateString("de-DE",{weekday:"long",day:"numeric",month:"long"});})();</script>
+<script src="/assets/cockpit.js?v=202610081654"></script>
+<script src="/assets/anstoss.js?v=202610081654"></script>
 <script src="/assets/dashboard-nav.js?v=202610081654"></script>
 </body>
 </html>

@@ -78,27 +78,6 @@
     }).join("");
   }
 
-  /* ---------- Sechs Wochen ---------- */
-  function wochen() {
-    var mo = new Date(HEUTE); mo.setDate(mo.getDate() - ((mo.getDay() + 6) % 7));
-    var h = "";
-    for (var w = 0; w < 8; w++) {
-      var von = new Date(+mo + w * 7 * 864e5), bis = new Date(+von + 7 * 864e5);
-      var punkte = D.ereignisse.filter(function (e) { var d = new Date(e.datum); return d >= von && d < bis; })
-        .map(function (e) { return { d: new Date(e.datum), art: e.art === "Meilenstein" ? "ziel" : "termin", t: e.titel, p: e.projekt_id }; })
-        .concat(D.aufgaben.filter(function (a) { if (!a.faellig_am) return false; var d = new Date(a.faellig_am.slice(0, 10) + "T12:00:00"); return d >= von && d < bis && d >= HEUTE; })
-          .map(function (a) { return { d: new Date(a.faellig_am.slice(0, 10) + "T12:00:00"), art: "frist", t: a.titel, p: a.projekt_id, m: a.marke }; }))
-        .filter(function (x) { var pp = projekt(x.p); return mf(pp ? pp.marke : x.m); })
-        .sort(function (a, b) { return a.d - b.d; });
-      h += '<div class="st4-woche"><h4>' + von.toLocaleDateString("de-DE", { day: "numeric", month: "short" }) + "</h4>" + punkte.map(function (x) {
-        var p = projekt(x.p);
-        return '<a class="st4-e st4-e--' + x.art + '" href="' + (x.p ? "/strategie/projekte.html#p=" + x.p : "/strategie/aufgaben.html") + '" title="' + esc(x.t + (p ? " · " + p.name : "")) + '">' +
-          '<span class="st4-e-tag">' + x.d.toLocaleDateString("de-DE", { weekday: "short", day: "numeric" }) + '</span><span class="st4-e-titel">' + esc(x.t) + "</span></a>";
-      }).join("") + "</div>";
-    }
-    return h;
-  }
-
   var TISCH = "alle";
   try { TISCH = localStorage.getItem("st-tisch") || "alle"; } catch (x) {}
   function gezeigt(l) { return l.filter(function (v) { return TISCH === "alle" || (TISCH === "rm") === (v.art === "rueckmeldung"); }); }
@@ -120,10 +99,7 @@
         (weg.length ? '<p class="st4-entschieden">' + weg.map(function (v) {
           return "<span>" + esc(v.titel) + " · " + (v.entscheidung === "ja" ? "freigegeben" : v.entscheidung === "anders" ? "anders" : v.entscheidung === "option" ? esc(v.entscheidung_text) : v.entscheidung === "gelesen" ? "gelesen" : "später") + "</span>"; }).join("") + "</p>" : "") +
       "</section>" +
-      '<section class="st4-block"><h2 class="st4-h">Sparring starten</h2><div class="st4-sparring">' + sparring() + '</div></section>' +
-      '<section class="st4-block"><h2 class="st4-h">Die nächsten Wochen</h2>' +
-        '<p class="mk-legende"><span class="mk mk--frist">Frist einer Aufgabe</span><span class="mk mk--termin">Termin</span><span class="mk mk--ziel">Meilenstein</span></p>' +
-        '<div class="st4-wochen" tabindex="0" aria-label="Wochen – seitlich wischen">' + wochen() + "</div></section>";
+      '<section class="st4-block"><h2 class="st4-h">Sparring starten</h2><div class="st4-sparring">' + sparring() + '</div></section>';
     verdrahten();
   }
 

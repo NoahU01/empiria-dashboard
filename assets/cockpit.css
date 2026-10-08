@@ -1,0 +1,93 @@
+/* Gesamtdashboard (Entwurf) – Analyse und Steuerung auf einer Seite.
+   Es laufen die echten Skripte analyse.js und steuerung.js; diese Datei ordnet ihre Abschnitte nur neu an und verdichtet sie:
+     oben     Lage in einer Zeile (kompakte Kennzahl-Kacheln)
+     links    Auf deinem Tisch – Karten flach, Details aufklappbar, darunter Sparring als schmale Leiste
+     rechts   Termine der nächsten 14 Tage – feste Höhe, innen scrollbar, bleibt beim Scrollen stehen */
+body.ck .ck-entwurf { margin: 4px 0 0; font-size: var(--fs-xs); color: var(--grey-50); }
+body.ck .mf { margin-top: 20px; }
+body.ck .ck-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 400px); grid-template-areas: "lage lage" "tisch termine" "spar termine"; grid-template-rows: auto auto 1fr; gap: 28px 32px; align-items: start; margin-top: 24px; }
+body.ck [data-analyse], body.ck [data-steuerung] { display: contents; }
+body.ck .st4-block, body.ck .an-block { margin-top: 0; }
+body.ck .st4-h { margin: 0 0 12px; font-size: var(--fs-l); }
+
+/* ---------- Lage ---------- */
+body.ck .an-signale { grid-area: lage; margin-top: 0; gap: 10px; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+body.ck .an-k { gap: 0; padding: 12px 14px 13px; border-radius: 12px; }
+body.ck .an-zahl { margin-bottom: 6px; font-size: var(--fs-xl); }
+body.ck .an-k--achtung .an-zahl { padding: 1px 8px; border-radius: 6px; }
+body.ck .an-k b { font-size: var(--fs-s); }
+body.ck .an-k small { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 2px; font-size: var(--fs-xs); line-height: 1.35; }
+
+/* ---------- Auf deinem Tisch ---------- */
+body.ck [data-steuerung] > .st4-block:nth-child(1) { grid-area: tisch; }
+body.ck [data-steuerung] > .st4-block:nth-child(2) { grid-area: spar; }
+body.ck .st4-tisch { margin-bottom: 12px; }
+body.ck .st4-karten { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+body.ck .st4-karte { display: flex; flex-direction: column; grid-row: auto; padding: 14px 16px 0; border-radius: 12px; }
+body.ck .st4-kopf { margin-bottom: 6px; }
+body.ck .st4-karte h3 { margin: 0 0 10px; font-size: var(--fs-m); line-height: 1.35; }
+body.ck .st4-mitte { display: none; }
+body.ck .st4-karte.ck-auf .st4-mitte { display: block; }
+body.ck .st4-kern { margin: 0 0 10px; font-size: var(--fs-s); }
+body.ck .st4-unten { margin: auto -16px 0; padding: 10px 16px 12px; }
+body.ck .st4-vorschlag { margin: 0 0 10px; font-size: var(--fs-s); line-height: 1.45; }
+body.ck .st4-karte:not(.ck-auf) .st4-vorschlag { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+body.ck .st4-vorschlag span { margin-bottom: 2px; }
+body.ck .st4-knoepfe button { height: 30px; border-radius: 8px; font-size: var(--fs-xs); }
+body.ck .st4-ablage { font-size: var(--fs-xs); }
+body.ck .ck-mehr { margin-left: auto; padding: 0; border: 0; background: none; font: inherit; font-size: var(--fs-xs); color: var(--grey-50); cursor: pointer; white-space: nowrap; }
+body.ck .ck-mehr:hover { color: var(--ink); }
+body.ck .st4-anders { padding: 14px 16px; border-radius: 12px; }
+body.ck .st4-entschieden { margin-top: 10px; }
+
+/* ---------- Sparring: schmale Leiste ---------- */
+body.ck .st4-sparring { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+body.ck .st4-spar { flex-direction: row; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; }
+body.ck .st4-spar .st4-spar-z { padding: 3px 7px; border-radius: 5px; font-size: 10px; letter-spacing: .04em; white-space: nowrap; }
+body.ck .st4-spar b { padding: 0; font-family: inherit; font-size: var(--fs-s); line-height: 1.3; }
+body.ck .st4-spar .st4-spar-s { display: none; }
+body.ck .st4-spar .st4-spar-los { margin: 0 0 0 auto; padding: 0; font-size: var(--fs-s); }
+body.ck .st4-spar .st4-spar-los { font-size: 0; } body.ck .st4-spar .st4-spar-los i { font-size: var(--fs-m); }
+body.ck .st4-spar--an .st4-spar-los { font-size: var(--fs-xs); }
+body.ck .st4-hinweis { font-size: var(--fs-xs); }
+
+/* ---------- Termine: Kasten mit fester Höhe ---------- */
+body.ck #termine { grid-area: termine; position: sticky; top: 24px; display: flex; flex-direction: column; height: min(calc(100vh - 48px), 780px); border: 1px solid var(--linie); border-radius: 14px; background: #fff; overflow: hidden; }
+body.ck #termine .an-block-kopf { flex-wrap: nowrap; align-items: center; padding: 14px 16px 12px; border-bottom: 1px solid var(--linie); }
+body.ck #termine .st4-h { margin: 0; font-size: var(--fs-m); }
+body.ck .an-sprint { height: 28px; padding: 0 10px; border-radius: 8px; font-size: var(--fs-xs); white-space: nowrap; }
+body.ck .an-sprint { font-size: 0; } body.ck .an-sprint::after { content: "Ideensprint"; font-size: var(--fs-xs); }
+body.ck .an-hinweis { margin: 0; padding: 8px 16px; font-size: var(--fs-xs); }
+body.ck .ck-termine-liste { overflow-y: auto; padding: 0 16px 12px; overscroll-behavior: contain; scrollbar-width: thin; }
+body.ck .an-tag { margin-top: 14px; }
+body.ck .an-tag h4 { position: sticky; top: 0; z-index: 1; margin: 0; padding: 6px 0; background: #fff; font-size: var(--fs-xs); }
+body.ck .an-t { grid-template-columns: 44px minmax(0, 1fr); gap: 4px 10px; padding: 8px 0; }
+body.ck .an-zeit { font-size: var(--fs-xs); }
+body.ck .an-was b { font-size: var(--fs-s); }
+body.ck .an-notiz { display: none; }
+body.ck .an-vorb { grid-column: 2; justify-self: start; margin-top: 4px; }
+body.ck .an-vorb button { height: 24px; padding: 0 8px; font-size: 11px; }
+
+/* ---------- Tablet / Telefon ---------- */
+@media (max-width: 1180px) {
+  body.ck .an-signale { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 1023px) {
+  body.ck .ck-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "lage" "tisch" "termine" "spar"; }
+  body.ck #termine { position: static; max-height: 520px; }
+}
+@media (max-width: 560px) {
+  body.ck .an-signale { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+}
+@media (max-width: 760px) {
+  body.ck .st4-karten { grid-template-columns: minmax(0, 1fr); }
+  body.ck .st4-sparring { grid-template-columns: minmax(0, 1fr); }
+}
+/* Telefon: Kacheln untereinander lesbar – Zahl über dem Text, nicht daneben */
+@media (max-width: 760px) {
+  body.ck .an-k { display: flex; flex-direction: column; align-items: stretch; padding: 12px 14px; }
+  body.ck .an-k .an-zahl { grid-row: auto; align-self: flex-start; margin: 0 0 6px; }
+  body.ck .an-k b { align-self: flex-start; text-align: left; }
+  body.ck .an-k b, body.ck .an-k small { hyphens: manual; }
+  body.ck #termine .an-block-kopf { flex-wrap: wrap; }
+}
