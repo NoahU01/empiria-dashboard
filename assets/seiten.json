@@ -1,0 +1,125 @@
+{
+ "seiten": [
+  {
+   "datei": "analyse.html",
+   "titel": "Analyse",
+   "gruppe": "Dashboard",
+   "eltern": null,
+   "kurz": "Bin ich an den richtigen Sachen dran?",
+   "im_diagramm": true
+  },
+  {
+   "datei": "aufgaben.html",
+   "titel": "Aufgaben",
+   "gruppe": "Dashboard",
+   "eltern": null,
+   "kurz": "Kanban über alle Projekte",
+   "im_diagramm": true
+  },
+  {
+   "datei": "dashboard-korrespondenz.html",
+   "titel": "Korrespondenz (erster Entwurf)",
+   "gruppe": "Noch zuzuordnen",
+   "eltern": null,
+   "kurz": "Sieben Vorgänge in drei Gruppen",
+   "im_diagramm": true
+  },
+  {
+   "datei": "kampagne.html",
+   "titel": "Kampagne",
+   "gruppe": "ohne Menü",
+   "eltern": null,
+   "kurz": "",
+   "im_diagramm": false
+  },
+  {
+   "datei": "kontakte.html",
+   "titel": "Kontakte",
+   "gruppe": "Dashboard",
+   "eltern": null,
+   "kurz": "Kontaktdatenbank (CRM)",
+   "im_diagramm": true
+  },
+  {
+   "datei": "korrespondenz-beta.html",
+   "titel": "Korrespondenz",
+   "gruppe": "Dashboard",
+   "eltern": null,
+   "kurz": "Alle Konten, nach Handlungsbedarf",
+   "im_diagramm": true
+  },
+  {
+   "datei": "korrespondenz-variante-c.html",
+   "titel": "Variante C: Entscheidungs-Sprint",
+   "gruppe": "Dashboard",
+   "eltern": "korrespondenz-beta.html",
+   "kurz": "Eine Mail nach der anderen – fürs iPhone",
+   "im_diagramm": true
+  },
+  {
+   "datei": "korrespondenz-variante-e.html",
+   "titel": "Variante E: Liste und Detail",
+   "gruppe": "Dashboard",
+   "eltern": "korrespondenz-beta.html",
+   "kurz": "Zwei Spalten – für MacBook und iPad",
+   "im_diagramm": true
+  },
+  {
+   "datei": "marketing.html",
+   "titel": "Marketing",
+   "gruppe": "Dashboard",
+   "eltern": null,
+   "kurz": "Zielgruppen, Außenwirkung, Kennzahlen, Aktionen",
+   "im_diagramm": true
+  },
+  {
+   "datei": "meilensteine.html",
+   "titel": "Meilensteine",
+   "gruppe": "Noch zuzuordnen",
+   "eltern": null,
+   "kurz": "Etappen auf dem Weg",
+   "im_diagramm": true
+  },
+  {
+   "datei": "oekosystem.html",
+   "titel": "Ökosystem",
+   "gruppe": "Überblick",
+   "eltern": null,
+   "kurz": "Schaltplan der Steuerungszentrale",
+   "im_diagramm": true
+  },
+  {
+   "datei": "projekte.html",
+   "titel": "Projekte",
+   "gruppe": "Dashboard",
+   "eltern": null,
+   "kurz": "Steckbrief, Timeline, Protokoll",
+   "im_diagramm": true
+  },
+  {
+   "datei": "sitemap-dashboard.html",
+   "titel": "Sitemap Dashboard",
+   "gruppe": "Überblick",
+   "eltern": null,
+   "kurz": "Wie die Seiten zusammenhängen",
+   "im_diagramm": true
+  },
+  {
+   "datei": "steuerung.html",
+   "titel": "Steuerung",
+   "gruppe": "Dashboard",
+   "eltern": null,
+   "kurz": "Entscheiden, Sparring, die nächsten Wochen",
+   "im_diagramm": true
+  },
+  {
+   "datei": "zielbild.html",
+   "titel": "Strategie und Zielbild",
+   "gruppe": "Noch zuzuordnen",
+   "eltern": null,
+   "kurz": "Wohin empiria will",
+   "im_diagramm": true
+  }
+ ],
+ "stand": "08.10.2026, 10:11 Uhr"
+}
