@@ -99,6 +99,19 @@
         block("Aufgaben", a2.map(function (x) { return "<li>" + esc(x.titel) + ' <span class="kt3-leise">· ' + esc(wer(x)) + (x.faellig_am ? ", bis " + kurz(x.faellig_am) : "") + "</span>" + (x.status === "erledigt" ? " ✓" : "") + "</li>"; }))
         : '<p class="kt3-leise">Noch kein Protokoll. Diktiere mir einfach, was besprochen wurde.</p>');
   }
+  /* Absprung zur eigenen Projekt-Website (Tabelle projekte.projektseite: titel, url, repo, zweig, teile[]) –
+     schmale Leiste direkt unter dem Kopf: sichtbar, aber nicht dominant */
+  function projektseite(s) {
+    if (!s || !s.url) return "";
+    var raus = ' target="_blank" rel="noopener"';
+    return '<nav class="pr-seite" aria-label="Projektseite"><span class="pr-seite-marke">Projektseite</span>' +
+      '<a class="pr-seite-titel" href="' + esc(s.url) + '"' + raus + ">" + esc(s.titel || "Website") + ' <i aria-hidden="true">↗</i></a>' +
+      ((s.teile || []).length ? '<span class="pr-seite-teile">' + s.teile.map(function (t) {
+        return '<a href="' + esc(t.url) + '"' + raus + ">" + esc(t.titel) + "</a>"; }).join("") + "</span>" : "") +
+      (s.repo ? '<a class="pr-seite-repo" href="https://github.com/' + esc(s.repo) + (s.zweig ? "/tree/" + esc(s.zweig) : "") + '"' + raus + ' title="Repository auf GitHub">' +
+        esc(s.repo.split("/").pop()) + (s.zweig ? " · " + esc(s.zweig) : "") + "</a>" : "") + "</nav>";
+  }
+
   function zeichnen(p, bet, ere, pkt, auf) {
     STAND = { ere: ere, pkt: pkt, auf: auf };
     var h = '<a class="kb-zurueck" href="#"><span aria-hidden="true">&larr;</span> Projekte</a>';
@@ -107,6 +120,7 @@
       (p.thema ? '<p class="pr-thema">' + esc(p.thema) + "</p>" : "") +
       (p.typ === "intern" && p.naechstes_gate ? '<p class="pr-gate"><span>Nächstes Gate</span>' + esc(p.naechstes_gate) + (p.gate_datum ? " · bis " + kurz(p.gate_datum) : "") + "</p>" : "") + "</div><span class=\"pr-tl-wahl pr-look-wahl\">" + [["weiss", "Weiß"], ["grau", "Grau"], ["schwarz", "Schwarz"], ["sva", "SV Akademie"]].map(function (v) {
         return '<button type="button" data-look="' + v[0] + '" aria-pressed="' + (v[0] === lookWert()) + '">' + v[1] + "</button>"; }).join("") + "</span></div>";
+    h += projektseite(p.projektseite);
     h += '<div class="kt3-raster">';
     // Links: Stoßrichtung (Gesamtblick über alle Termine) – rechts: Aufgaben
     var punkte = (p.ueberlegungen || "").split("\n").map(function (x) { return x.trim(); }).filter(Boolean);

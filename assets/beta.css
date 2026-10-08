@@ -936,3 +936,24 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
   .kt3-stand span { margin-left: 0; }
   body.kt3-detail .db-konto { display: none; }
 }
+
+/* Projektseite – Absprung zur eigenen Website des Projekts (Repository, Daniels Branch) */
+.pr-seite { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s4); margin: var(--s4) 0 var(--s4); padding: 0 var(--s4) 0 0;
+  border: 1px solid var(--linie); border-radius: 14px; background: var(--white); overflow: hidden; }
+.pr-seite-marke { align-self: stretch; display: flex; align-items: center; padding: 12px 16px; background: var(--ink); color: var(--hl);
+  font-size: var(--fs-xs); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.pr-seite-titel { padding: 10px 0; font-family: var(--font-serif); font-size: var(--fs-l); font-weight: 600; color: var(--ink); text-decoration: none; }
+.pr-seite-titel i { font-style: normal; font-family: var(--font-sans); font-size: var(--fs-s); color: var(--grey-50); }
+.pr-seite-titel:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--grey-50); }
+.pr-seite-teile { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.pr-seite-teile a { padding: 5px 12px; border: 1px solid var(--linie); border-radius: 999px; font-size: var(--fs-s); font-weight: 500; color: var(--ink); text-decoration: none; }
+.pr-seite-teile a:hover { border-color: var(--ink); }
+.pr-seite-repo { margin-left: auto; font-size: var(--fs-xs); color: var(--grey-50); text-decoration: none; }
+.pr-seite-repo:hover { color: var(--ink); text-decoration: underline; }
+@media (max-width: 700px) {
+  .pr-seite { padding: 0 0 var(--s3); gap: var(--s2); }
+  .pr-seite-marke { flex: 0 0 100%; padding: 8px 16px; }
+  .pr-seite-titel { padding: 4px 16px 0; flex: 0 0 100%; }
+  .pr-seite-teile { padding: 0 16px; }
+  .pr-seite-repo { margin-left: 16px; }
+}
