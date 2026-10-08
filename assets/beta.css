@@ -957,3 +957,37 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
   .pr-seite-teile { padding: 0 16px; }
   .pr-seite-repo { margin-left: 16px; }
 }
+
+/* Kampagne prüfen (Marketing) – je Person eine Zeile: Person · Links · Kernaussagen · Passt / Anders */
+.kp-regel { max-width: 760px; margin: calc(-1 * var(--s2)) 0 var(--s4); font-size: var(--fs-s); line-height: 1.5; color: var(--grey-70); }
+.kp-filter { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s5); }
+.kp-filter button { padding: 6px 14px; border: 1px solid var(--linie); border-radius: 999px; background: var(--white); font-size: var(--fs-s); color: var(--ink); cursor: pointer; }
+.kp-filter button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--white); }
+.kp-kopf, .kp-zeile { display: grid; grid-template-columns: 220px 230px minmax(0, 1fr) 150px; gap: var(--s4); }
+.kp-kopf { padding-bottom: var(--s2); border-bottom: 1px solid var(--linie); font-size: var(--fs-xs); font-weight: 500; color: var(--grey-50); }
+.kp-liste { list-style: none; margin: 0; padding: 0; }
+.kp-zeile { padding: var(--s4) 0; border-bottom: 1px solid var(--linie-leicht); align-items: start; }
+.kp-zeile--ok { opacity: .55; } .kp-zeile--ok:hover { opacity: 1; }
+.kp-wer b { display: block; font-size: var(--fs-m); font-weight: 600; } .kp-wer small { display: block; margin-top: 2px; font-size: var(--fs-s); color: var(--grey-50); line-height: 1.35; }
+.kp-anrede { display: inline-block; margin-top: 6px; font-size: var(--fs-xs); font-weight: 500; color: var(--grey-70); }
+.kp-links { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.kp-links a { font-size: var(--fs-s); color: var(--ink); text-decoration: underline; text-decoration-color: var(--grey-50); text-underline-offset: 3px; }
+.kp-links a.kp-zusatz { padding-left: 8px; border-left: 3px solid var(--hl); text-decoration: none; font-weight: 500; }
+.kp-was ul { margin: 0; padding-left: 18px; font-size: var(--fs-s); line-height: 1.5; } .kp-was li { margin-bottom: 2px; }
+.kp-satz { margin: var(--s2) 0 0; font-size: var(--fs-s); line-height: 1.5; color: var(--grey-70); font-style: italic; }
+.kp-hinweis { margin: var(--s2) 0 0; padding: 6px 10px; border-left: 3px solid var(--hl); background: #fffbe0; font-size: var(--fs-s); line-height: 1.45; }
+.kp-stand { margin: var(--s2) 0 0; font-size: var(--fs-s); font-weight: 500; } .kp-stand--anders span { display: block; font-size: var(--fs-xs); color: var(--grey-50); }
+.kp-knoepfe { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+.kp-knoepfe button { padding: 6px 12px; border: 1px solid var(--linie); border-radius: 999px; background: var(--white); font-size: var(--fs-s); color: var(--ink); cursor: pointer; }
+.kp-knoepfe button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--white); }
+.kp-anders { grid-column: 1 / -1; display: grid; gap: var(--s2); }
+.kp-anders[hidden] { display: none; }
+.kp-anders textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--linie); border-radius: 10px; font: inherit; font-size: var(--fs-s); }
+.kp-anders div { display: flex; gap: var(--s2); } .kp-anders button { padding: 6px 14px; border-radius: 999px; border: 1px solid var(--ink); background: var(--ink); color: var(--white); font-size: var(--fs-s); }
+.kp-anders button[data-kp-zu] { background: none; color: var(--grey-70); border-color: transparent; }
+@media (max-width: 1000px) {
+  .kp-kopf { display: none; }
+  .kp-zeile { grid-template-columns: minmax(0, 1fr) auto; gap: var(--s2) var(--s4); }
+  .kp-links, .kp-was { grid-column: 1 / -1; } .kp-links { flex-direction: row; flex-wrap: wrap; gap: var(--s3); }
+  .kp-knoepfe { grid-column: 2; grid-row: 1; }
+}
