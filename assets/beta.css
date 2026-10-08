@@ -1163,3 +1163,18 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
 .ab-filter-projekte { box-sizing: border-box; align-content: flex-start; }
 @media (max-width: 700px) { .ab-filter-ohne { display: none; } }
 @media (max-width: 900px) { .ab-kanban .pr-kb-spalte { min-height: 0; } .ab-kanban .ab-spalte-leer .pr-kb-kopf { margin-bottom: 0; } }
+
+/* Korrespondenz → Bei Claude: kompakte Karten, Status auf einen Blick */
+.kb-karte--klein { padding: 0 !important; }
+.kb-klapp { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 12px; align-items: center; width: 100%; padding: 12px 16px; border: 0; background: none; font: inherit; text-align: left; color: inherit; cursor: pointer; }
+.kb-klapp .kb-betreff { font-size: var(--fs-s); color: var(--grey-70); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kb-klapp .tl-dreieck { position: static; margin: -4px 4px 0 0; transform: rotate(45deg); } .kb-karte--klein.offen .kb-klapp .tl-dreieck { transform: rotate(-135deg); margin-top: 4px; }
+.kb-st { padding: 3px 10px; border-radius: 999px; font-size: var(--fs-xs); font-weight: 600; white-space: nowrap; }
+.kb-st--dran { background: #fff8bf; color: var(--ink); } .kb-st--ok { background: #e7f4ec; color: var(--ok); } .kb-st--fehler { background: #fbe9ee; color: var(--fehler); }
+.kb-karte--klein.offen > :not(.kb-klapp) { margin-left: 16px; margin-right: 16px; }
+.kb-karte--klein.offen > .kb-karte-fuss { margin-bottom: 14px; }
+.kb-status { margin: 4px 0 14px; padding: 12px 14px; border-left: 4px solid var(--hl, #fff400); border-radius: 0 10px 10px 0; background: #fffbe0; font-size: var(--fs-s); line-height: 1.5; }
+.kb-status p { margin: 4px 0 0; } .kb-status-k { margin: 0 !important; font-size: var(--fs-m, 1rem); font-weight: 600; }
+.kb-status--ok { border-color: var(--ok); background: #eef7f1; } .kb-status--fehler { border-color: var(--fehler); background: #fdf0f3; }
+.kb-orig { margin-top: 12px; font-size: var(--fs-s); } .kb-orig summary { cursor: pointer; font-weight: 500; color: var(--grey-70); }
+@media (max-width: 560px) { .kb-klapp { grid-template-columns: auto minmax(0, 1fr) auto; } .kb-klapp .kb-st { grid-column: 2 / 4; justify-self: start; grid-row: 2; } .kb-klapp .tl-dreieck { grid-column: 3; grid-row: 1; } }

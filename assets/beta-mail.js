@@ -136,7 +136,7 @@
       return Promise.all(teile.map(function (t) {
         return Promise.all([
           db.from("mail_einschaetzungen").select("internet_message_id, kategorie, zusammenfassung, vorschlag, entwurf, entwurf_art, weiterleiten_an").in("internet_message_id", t),
-          db.from("mail_anweisungen").select("internet_message_id, text, status, ergebnis, angelegt_am").in("internet_message_id", t).order("angelegt_am")
+          db.from("mail_anweisungen").select("internet_message_id, text, status, ergebnis, angelegt_am, erledigt_am").in("internet_message_id", t).order("angelegt_am")
         ]);
       })).then(function (res) {
         var nach = {}, anw = {};
@@ -229,7 +229,7 @@
     return {
       ich: roh.ich, konten: KONTEN, fehler: fehler, demo: demo, stand: new Date(), dbStatus: dbStatus,
       handlung: handlung,
-      beiClaude: ein.filter(function (m) { return m.beiClaude; }).concat(wartenClaude),
+      beiClaude: ein.filter(function (m) { return m.beiClaude; }).concat(wartenClaude).filter(function (m) { var a = m.anweisung; return !(a && a.status === "umgesetzt" && a.erledigt_am && Date.now() - new Date(a.erledigt_am) > 7 * 864e5); }),
       relevant: ein.filter(function (m) { return m.relevant; }),
       nichtRelevant: ein.filter(function (m) { return !m.relevant; }),
       warten: warten,
@@ -291,6 +291,13 @@
       if (!r.ok) throw new Error("Graph " + r.status);
       m.categories = neu; return entscheidungLesen(m);
     });
+  }
+
+  // „Freigeben“ war bisher nur eine Outlook-Kategorie – die liest die stündliche Prüfung nicht. Deshalb wird daraus
+  // zusätzlich ein Auftrag in mail_anweisungen (wie bei „Anders …“).
+  function freigabeText(m) {
+    var a = m.analyse || {}, v = a.vorschlag || (m.vorschlag && m.vorschlag.text) || "Vorschlag umsetzen";
+    return "Freigegeben: " + v + (a.entwurf ? " – Antwortentwurf wie vorgeschlagen in Outlook anlegen (nicht senden)." : "");
   }
 
   /* ---------- Anweisung („Anders …“) an Claude ---------- */
@@ -376,6 +383,6 @@
     return { ich: { displayName: "Daniel Ströbel" }, adressen: adressen, postfaecher: KONTEN.map(function (k) { return nach[k.key]; }) };
   }
 
-  window.BetaMail = { senden: senden, arten: ARTEN, entscheiden: entscheiden, anweisen: anweisen, entscheidungLesen: entscheidungLesen, start: start, anmelden: anmelden, abmelden: abmelden, laden: laden, volltext: volltext,
+  window.BetaMail = { freigabeText: freigabeText, senden: senden, arten: ARTEN, entscheiden: entscheiden, anweisen: anweisen, entscheidungLesen: entscheidungLesen, start: start, anmelden: anmelden, abmelden: abmelden, laden: laden, volltext: volltext,
     konten: KONTEN, esc: esc, wann: wann, badge: badge, absender: absender, istDemo: function () { return demo; } };
 })();

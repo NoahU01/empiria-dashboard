@@ -166,7 +166,39 @@
       '<div><button type="submit" class="kb-knopf kb-knopf--klein">An Claude geben</button><button type="button" class="kb-anders-abbruch">Abbrechen</button></div></form>';
   }
 
+  // Bei Claude: Status auf einen Blick. Wartet (nächste Prüfung) · hängt (über 2 Std. offen) · umgesetzt
+  function naechstePruefung() {
+    var d = new Date(); d.setSeconds(0, 0);
+    if (d.getMinutes() >= 7) d.setHours(d.getHours() + 1); d.setMinutes(7);
+    if (d.getHours() > 22) { d.setDate(d.getDate() + 1); d.setHours(7); } else if (d.getHours() < 7) d.setHours(7);
+    var heute = d.toDateString() === new Date().toDateString();
+    return (heute ? "" : "morgen ") + d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + " Uhr";
+  }
+  function claudeStand(m) {
+    var a = m.anweisung;
+    if (a && a.status === "umgesetzt") return { k: "ok", kurz: "Umgesetzt", lang: "Umgesetzt" + (a.erledigt_am ? " am " + new Date(a.erledigt_am).toLocaleString("de-DE", { day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" }) + " Uhr" : "") };
+    var std = a && a.angelegt_am ? (Date.now() - new Date(a.angelegt_am)) / 36e5 : 0;
+    if (a && std > 2) return { k: "fehler", kurz: "Hängt seit " + Math.floor(std) + " Std.", lang: "Hängt – seit " + Math.floor(std) + " Stunden nicht umgesetzt. Ich sehe mir das an." };
+    if (!a) return { k: "dran", kurz: "Freigegeben – wird übergeben", lang: "Freigegeben – wird gerade als Auftrag an Claude übergeben" };
+    return { k: "dran", kurz: "Wartet auf Claude · " + naechstePruefung(), lang: "Wartet auf Claude – nächste Prüfung " + naechstePruefung() + " (oder sofort mit „Jetzt prüfen“)" };
+  }
+  function karteClaude(m, nr) {
+    var a = m.analyse, s = claudeStand(m), auf = zustand.offen[m.id], w = m.anweisung;
+    var html = '<li class="kb-karte kb-karte--klein' + (auf ? " offen" : "") + '" data-id="' + esc(m.id) + '">' +
+      '<button type="button" class="kb-klapp" aria-expanded="' + !!auf + '"><span class="kb-nr">' + nr + '</span><span class="kb-karte-titel"><span class="kb-von">' + esc(B.absender(m)) + '</span><span class="kb-betreff">' + esc(m.subject || "(ohne Betreff)") + "</span></span>" +
+      '<span class="kb-st kb-st--' + s.k + '">' + esc(s.kurz) + '</span><span class="tl-dreieck" aria-hidden="true"></span></button>';
+    if (!auf) return html + "</li>";
+    html += '<div class="kb-status kb-status--' + s.k + '"><p class="kb-status-k">' + esc(s.lang) + "</p>" +
+      (w ? "<p><b>Dein Auftrag:</b> " + esc(w.text) + "</p>" + (w.ergebnis ? "<p><b>Ergebnis:</b> " + esc(w.ergebnis) + "</p>" : "") : "") + "</div>";
+    html += '<div class="kb-block"><p class="kb-label">' + (a ? "Worum es geht" : "Anfang der Mail") + "</p><p>" + esc(a ? a.zusammenfassung : m.bodyPreview) + "</p></div>";
+    if (a && a.entwurf) html += '<div class="kb-entwurf"><p class="kb-label">Antwortentwurf</p><pre>' + esc(a.entwurf) + "</pre></div>";
+    html += nachtrag(m) + (s.k === "ok" ? '<div class="kb-entscheid"><button type="button" data-abhaken="' + esc(m.id) + '">Passt – abhaken</button></div>' : "");
+    html += '<details class="kb-orig"><summary>Originalmail</summary><pre class="v-original" data-kb-voll="' + esc(m.id) + '">' + esc(m.volltext || m.bodyPreview) + "</pre></details>";
+    return html + '<div class="kb-karte-fuss">' + B.badge(m.konto) + "<span>" + esc(m.grund) + "</span><span>" + zeit(m) + "</span>" + outlookLink(m, "kb-oeffnen") + "</div></li>";
+  }
+
   function karte(m, nr) {
+    if (zustand.tab === "claude") return karteClaude(m, nr);
     var a = m.analyse, html = '<li class="kb-karte" data-id="' + esc(m.id) + '">' +
       '<div class="kb-karte-kopf"><span class="kb-nr">' + nr + '</span><div class="kb-karte-titel">' +
       '<span class="kb-von">' + esc(B.absender(m)) + '</span><span class="kb-betreff">' + esc(m.subject || "(ohne Betreff)") + "</span></div>" +
@@ -246,6 +278,13 @@
     if (!mails.length) return '<p class="kb-leer">' + (zustand.suche ? "Nichts gefunden." : "Hier ist gerade nichts.") + "</p>";
     if (t.entwurfKarten) return '<p class="kb-gruppe-hinweis">Entwürfe aus deinen Postfächern. Senden geht nur mit deinem Klick – mit Signatur und Anhängen, so wie sie in Outlook liegen.</p>' +
       '<ol class="kb-karten">' + mails.map(entwurfKarte).join("") + "</ol>";
+    if (t.key === "claude") {
+      var reihe = { fehler: 0, dran: 1, ok: 2 };
+      mails = mails.slice().sort(function (a, b) { return reihe[claudeStand(a).k] - reihe[claudeStand(b).k]; });
+      var o = mails.filter(function (m) { return claudeStand(m).k !== "ok"; }), u = mails.filter(function (m) { return claudeStand(m).k === "ok"; }), n = 0;
+      return (o.length ? '<p class="kb-gruppe">In Arbeit bei Claude</p><ol class="kb-karten">' + o.map(function (m) { return karte(m, ++n); }).join("") + "</ol>" : '<p class="kb-leer">Claude hat gerade nichts offen.</p>') +
+        (u.length ? '<p class="kb-gruppe">Umgesetzt – zur Kontrolle</p><p class="kb-gruppe-hinweis">Kurz ansehen und abhaken. Nach sieben Tagen verschwinden sie von selbst.</p><ol class="kb-karten">' + u.map(function (m) { return karte(m, ++n); }).join("") + "</ol>" : "");
+    }
     if (!t.gruppen) return '<ul class="kb-liste">' + mails.slice(0, 120).map(zeileSeite).join("") + "</ul>";
     return t.gruppen.map(function (g) {
       var teil = mails.filter(function (m) { return m.vorschlag && m.vorschlag.art === g[0]; });
@@ -293,6 +332,23 @@
 
   function zeilenVerdrahten() {
     volltexteLaden();
+    // Bei Claude: Karten auf- und zuklappen, Umgesetztes abhaken
+    ziel().querySelectorAll(".kb-klapp").forEach(function (b) {
+      b.addEventListener("click", function () { var id = b.closest("[data-id]").getAttribute("data-id"); zustand.offen[id] = !zustand.offen[id]; seite(); });
+    });
+    ziel().querySelectorAll("[data-abhaken]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var m = alleMails().filter(function (x) { return x.id === b.getAttribute("data-abhaken"); })[0], li = b.closest(".kb-karte");
+        b.disabled = true;
+        B.entscheiden(m, "erledigt").then(function () { daten.beiClaude = daten.beiClaude.filter(function (x) { return x !== m; }); li.classList.add("kb-erledigt"); setTimeout(function () { li.remove(); }, 900); })
+          .catch(function (f) { b.disabled = false; alert("Konnte nicht gespeichert werden: " + f.message); });
+      });
+    });
+    // Früher Freigegebenes ohne Auftrag (Freigeben war nur eine Outlook-Kategorie): jetzt nachträglich an Claude übergeben
+    if (zustand.tab === "claude" && daten.dbStatus === "an") (daten.beiClaude || []).forEach(function (m) {
+      if (m.anweisung || m._uebergabe || B.entscheidungLesen(m) !== "freigeben") return;
+      m._uebergabe = 1; B.anweisen(m, B.freigabeText(m)).then(function () { m.anweisung.angelegt_am = new Date().toISOString(); seite(); }).catch(function () {});
+    });
     ziel().querySelectorAll("[data-senden]").forEach(function (box) {
       var m = alleMails().filter(function (x) { return x.id === box.getAttribute("data-senden"); })[0];
       box.querySelector("button").addEventListener("click", function () {
@@ -379,6 +435,9 @@
         b.addEventListener("click", function () {
           box.classList.add("laedt");
           B.entscheiden(m, b.getAttribute("data-e")).then(function (e) {
+            if (e === "freigeben" && !m.anweisung) return B.anweisen(m, B.freigabeText(m)).then(function () { return e; });
+            return e;
+          }).then(function (e) {
             box.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", String(x.getAttribute("data-e") === e)); });
             // Entschieden heißt: Rückmeldung gegeben – die Karte verlässt den Handlungsbedarf
             if ((e === "erledigt" || e === "freigeben") && zustand.tab === "handlung") {
