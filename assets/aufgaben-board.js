@@ -54,9 +54,13 @@
     var l = projekte.filter(function (p) { return p.status !== "abgeschlossen" && (!oben || marken.indexOf(p.marke || "empiria") > -1 || wahl.indexOf(p.id) > -1); });
     var h = '<div class="ab-filter"><div class="ab-filter-zeile ab-filter-haupt">' + knopf("alle", "Alle", !wahl.length) + knopf("op", "Operativ", wahl.indexOf("op") > -1) +
       MARKEN.map(function (m) { return knopf("m:" + m, m, wahl.indexOf("m:" + m) > -1); }).join("") + "</div>" +
-      (l.length ? '<div class="ab-filter-zeile ab-filter-projekte">' + l.map(function (p) {
+      '<div class="ab-filter-zeile ab-filter-projekte' + (l.length ? "" : " ab-filter-ohne") + '">' + l.map(function (p) {
         return knopf(p.id, p.name, wahl.indexOf(p.id) > -1).replace("<button", mitAufgaben[p.id] ? "<button" : '<button class="ab-leer"');
-      }).join("") + "</div>" : "");
+      }).join("") + "</div>" +
+      // unsichtbare Messzeile mit allen Projekten: hält auf großen Bildschirmen den Abstand zum Board fest, egal was oben gewählt ist
+      '<div class="ab-filter-zeile ab-filter-projekte ab-filter-mass" aria-hidden="true">' + projekte.filter(function (p) { return p.status !== "abgeschlossen"; }).map(function (p) {
+        return '<button type="button" tabindex="-1">' + esc(p.name) + "</button>";
+      }).join("") + "</div>";
     return h + "</div>";
   }
 
@@ -79,10 +83,16 @@
     var l = aufgaben.filter(sichtbar).sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });
     wurzel.innerHTML = filter() + '<div class="pr-kanban ab-kanban">' + SPALTEN.map(function (sp) {
       var karten = l.filter(function (a) { return sp[0] === "erledigt" ? a.status === "erledigt" : a.status === "offen" && (a.spalte || "todo") === sp[0]; });
-      return '<div class="pr-kb-spalte" data-spalte="' + sp[0] + '"><p class="pr-kb-kopf">' + sp[1] + "</p>" + karten.map(karte).join("") + "</div>";
+      return '<div class="pr-kb-spalte' + (karten.length ? "" : " ab-spalte-leer") + '" data-spalte="' + sp[0] + '"><p class="pr-kb-kopf">' + sp[1] + "</p>" + karten.map(karte).join("") + "</div>";
     }).join("") + "</div>";
-    verdrahten();
+    verdrahten(); abstand();
   }
+  // Projektzeile auf großen Bildschirmen immer so hoch wie mit allen Projekten – das Board springt nicht; am Handy darf es nachrücken
+  function abstand() {
+    var z = wurzel.querySelector(".ab-filter-projekte:not(.ab-filter-mass)"), m = wurzel.querySelector(".ab-filter-mass");
+    if (z && m) z.style.minHeight = window.innerWidth > 700 ? m.offsetHeight + "px" : "";
+  }
+  window.addEventListener("resize", abstand);
 
   function verdrahten() {
     wurzel.querySelectorAll("[data-f]").forEach(function (b) {

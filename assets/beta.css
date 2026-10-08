@@ -1158,3 +1158,8 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
 .ab-filter-haupt button { height: 36px; padding: 0 18px; font-weight: 500; }
 .ab-filter-projekte { padding-top: 12px; border-top: 1px solid var(--linie); }
 .ab-filter-projekte button { height: 28px; padding: 0 12px; font-size: var(--fs-xs); }
+.ab-filter { position: relative; }
+.ab-filter-mass { position: absolute; left: 0; right: 0; top: 0; visibility: hidden; pointer-events: none; }
+.ab-filter-projekte { box-sizing: border-box; align-content: flex-start; }
+@media (max-width: 700px) { .ab-filter-ohne { display: none; } }
+@media (max-width: 900px) { .ab-kanban .pr-kb-spalte { min-height: 0; } .ab-kanban .ab-spalte-leer .pr-kb-kopf { margin-bottom: 0; } }
