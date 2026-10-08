@@ -97,6 +97,8 @@
   var TABS = [
     { key: "handlung", name: "Handlungsbedarf", liste: "handlung", karten: true,
       gruppen: [["nobrainer", "No-Brainer"], ["termin", "Terminvorschlag nötig"], ["aufgabe", "Aufgabe"], ["tiefer", "Tiefer reinschauen"], ["offen", "Noch nicht eingeschätzt"]] },
+    { key: "claude", name: "Bei Claude", liste: "beiClaude", karten: true,
+      gruppen: [["nobrainer", "No-Brainer"], ["termin", "Terminvorschlag nötig"], ["aufgabe", "Aufgabe"], ["tiefer", "Tiefer reinschauen"], ["offen", "Noch nicht eingeschätzt"]] },
     { key: "relevant", name: "Relevant", liste: "relevant" },
     { key: "nicht", name: "Nicht relevant", liste: "nichtRelevant" },
     { key: "warten", name: "Wartet auf Antwort", liste: "warten", gruppen: [["nachfassen", "Nachfassen"], ["warten", "Noch abwarten"]] },
@@ -225,7 +227,7 @@
     }).join("");
   }
 
-  function alleMails() { return daten.handlung.concat(daten.relevant, daten.nichtRelevant, daten.warten, daten.entwuerfe || []); }
+  function alleMails() { return daten.handlung.concat(daten.beiClaude || [], daten.relevant, daten.nichtRelevant, daten.warten, daten.entwuerfe || []); }
 
   function verdrahten() {
     var z = ziel();
@@ -292,6 +294,11 @@
           p.innerHTML = "<span>Deine Anweisung – wird umgesetzt</span>" + esc(t);
           var alt = box.previousElementSibling; if (alt && alt.classList.contains("kb-anweisung")) alt.remove();
           box.parentNode.insertBefore(p, box); form.hidden = true; form.querySelector("textarea").value = "";
+          if (zustand.tab === "handlung") {
+            daten.handlung = daten.handlung.filter(function (x) { return x !== m; });
+            if (daten.beiClaude.indexOf(m) < 0) daten.beiClaude.push(m);
+            var karte2 = box.closest(".kb-karte"); if (karte2) { setTimeout(function () { karte2.classList.add("kb-erledigt"); setTimeout(function () { karte2.remove(); }, 900); }, 1200); }
+          }
         }).catch(function (f) { alert("Nicht gespeichert: " + f.message); }).then(function () { form.classList.remove("laedt"); });
       });
       box.querySelectorAll("button[data-e]").forEach(function (b) {
@@ -299,7 +306,12 @@
           box.classList.add("laedt");
           B.entscheiden(m, b.getAttribute("data-e")).then(function (e) {
             box.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", String(x.getAttribute("data-e") === e)); });
-            if (e === "erledigt") { var karte = box.closest(".kb-karte"); if (karte) { karte.classList.add("kb-erledigt"); setTimeout(function () { karte.remove(); }, 900); } }
+            // Entschieden heißt: Rückmeldung gegeben – die Karte verlässt den Handlungsbedarf
+            if ((e === "erledigt" || e === "freigeben") && zustand.tab === "handlung") {
+              daten.handlung = daten.handlung.filter(function (x) { return x !== m; });
+              if (e === "freigeben" && daten.beiClaude.indexOf(m) < 0) daten.beiClaude.push(m);
+              var karte = box.closest(".kb-karte"); if (karte) { karte.classList.add("kb-erledigt"); setTimeout(function () { karte.remove(); }, 900); }
+            }
           }).catch(function (f) { alert("Konnte nicht gespeichert werden: " + f.message); })
             .then(function () { box.classList.remove("laedt"); });
         });

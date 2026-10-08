@@ -189,11 +189,15 @@
       m.beantwortet = (letzteAntwort[m.conversationId] || 0) > +new Date(m.receivedDateTime);
       m.neueste = letzterEingang[m.conversationId].id === m.id;
       m.analyse = analyse(m);
-      // „Schon erledigt“ (z. B. per WhatsApp oder Telefon beantwortet) nimmt die Mail aus dem Handlungsbedarf
-      var offen = k.handlung && m.neueste && !m.beantwortet && entscheidungLesen(m) !== "erledigt";
+      // Hat Daniel entschieden (Freigeben, Anders …, Schon erledigt), ist die Rückmeldung gegeben:
+      // raus aus dem Handlungsbedarf. Freigegeben und „Anders …“ landen unter „Bei Claude“.
+      m.entscheidung = entscheidungLesen(m);
+      var grundOffen = k.handlung && m.neueste && !m.beantwortet;
+      m.beiClaude = grundOffen && (m.entscheidung === "freigeben" || !!m.anweisung) && m.entscheidung !== "erledigt";
+      var offen = grundOffen && !m.entscheidung && !m.anweisung;
       if (m.analyse) m.handlung = offen && m.analyse.kategorie !== "keine" && !!ARTEN[m.analyse.kategorie];
       else m.handlung = offen && (m.claude || m.markiert || (m.relevant && m.direkt && !m.automatisch && m.alter <= TAGE_HANDLUNG));
-      if (m.handlung) { m.grund = grund(m); m.vorschlag = vorschlag(m); }
+      if (m.handlung || m.beiClaude) { m.grund = grund(m); m.vorschlag = vorschlag(m); }
     });
 
     // Eigene Mails ohne Rückmeldung: neueste gesendete Mail je Gespräch,
@@ -223,6 +227,7 @@
     return {
       ich: roh.ich, konten: KONTEN, fehler: fehler, demo: demo, stand: new Date(), dbStatus: dbStatus,
       handlung: handlung,
+      beiClaude: ein.filter(function (m) { return m.beiClaude; }),
       relevant: ein.filter(function (m) { return m.relevant; }),
       nichtRelevant: ein.filter(function (m) { return !m.relevant; }),
       warten: warten,
