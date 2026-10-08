@@ -1180,3 +1180,6 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
 @media (max-width: 560px) { .kb-klapp { grid-template-columns: auto minmax(0, 1fr) auto; } .kb-klapp .kb-st { grid-column: 2 / 4; justify-self: start; grid-row: 2; } .kb-klapp .tl-dreieck { grid-column: 3; grid-row: 1; } }
 .ab-filter .ab-rueck, .ab-filter .ab-rueck[aria-pressed="true"] { background: var(--cyan); border-color: var(--cyan); color: #fff; font-weight: 600; }
 .ab-rueck-hinweis { font-size: var(--fs-s); color: var(--grey-70); }
+/* Aufgaben (Kanban, Projekt-Aufgaben): Frist ohne Strich – nur überschritten rot mit Strich (Daniel, 08.10.2026) */
+.pr-frist.mk--frist { padding-left: 0; border-left: 0; }
+.pr-frist.mk--frist.pr-ueber { padding-left: 7px; border-left: 3px solid var(--fehler); }
