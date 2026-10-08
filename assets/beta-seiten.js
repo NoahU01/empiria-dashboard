@@ -146,13 +146,23 @@
       '<div class="kb-auf"><p class="kb-an">An: ' + esc(an) + (cc ? "<br>Cc: " + esc(cc) : "") + "</p>" +
       '<pre class="kb-text" data-kb-text>' + esc(m.bodyPreview) + "</pre>" +
       '<div class="kb-schritt">' + (m.vorschlag ? '<span class="kb-vorschlag">Vorschlag: ' + esc(m.vorschlag.text) + "</span><small>" + esc(ERKLAERUNG[m.vorschlag.art] || "") + "</small>" : "") +
-      outlookLink(m, "kb-knopf kb-knopf--klein") + "</div>" + (zustand.tab === "warten" ? reaktionWarten(m) : "") + "</div></li>";
+      outlookLink(m, "kb-knopf kb-knopf--klein") + "</div>" + (zustand.tab === "warten" ? reaktionWarten(m) : zustand.tab === "relevant" || zustand.tab === "nicht" ? reaktionLesen(m) : "") + "</div></li>";
   }
   // Wartet auf Antwort: nachfassen lassen · Rückmeldung an Claude · keine Antwort nötig
   function reaktionWarten(m) {
     return '<div class="kb-entscheid kb-entscheid--warten" data-warten="' + esc(m.id) + '">' +
       '<button type="button" data-w="nachfassen">Nachfassen lassen</button><button type="button" data-w-anders>Anders …</button><button type="button" data-w="erledigt">Keine Antwort nötig</button></div>' +
       '<form class="kb-anders" data-w-form hidden><textarea rows="3" placeholder="Deine Rückmeldung – z. B. „Ich rufe ihn an“ oder „Erst nach dem 20.10. nachhaken“."></textarea>' +
+      '<div><button type="submit" class="kb-knopf kb-knopf--klein">An Claude geben</button><button type="button" class="kb-anders-abbruch">Abbrechen</button></div></form>';
+  }
+
+  // Relevant / Nicht relevant: auch hier reagieren können – Antwort oder Anweisung sprechen/tippen, oder abhaken
+  function reaktionLesen(m) {
+    if (m.anweisung) return '<p class="kb-anweisung"><span>' + (m.anweisung.status === "umgesetzt" ? "Umgesetzt" : "Bei Claude") + "</span>" + esc(m.anweisung.text) + "</p>";
+    if (m.entscheidung === "erledigt") return '<p class="kb-anweisung"><span>Abgehakt</span>Kein Handlungsbedarf.</p>';
+    return '<div class="kb-entscheid kb-entscheid--warten" data-warten="' + esc(m.id) + '">' +
+      '<button type="button" data-w-anders>Antworten / Anweisung …</button><button type="button" data-w="erledigt">Kein Handlungsbedarf</button></div>' +
+      '<form class="kb-anders" data-w-form hidden><textarea rows="3" placeholder="Sag oder tippe, was passieren soll – z. B. „Kurz zusagen, Termin passt“ oder „An Tobias weiterleiten“. Claude legt einen Entwurf an, gesendet wird erst nach deiner Freigabe. Auf dem iPhone: Mikrofon auf der Tastatur."></textarea>' +
       '<div><button type="submit" class="kb-knopf kb-knopf--klein">An Claude geben</button><button type="button" class="kb-anders-abbruch">Abbrechen</button></div></form>';
   }
 
@@ -292,15 +302,24 @@
       var m = alleMails().filter(function (x) { return x.id === box.getAttribute("data-warten"); })[0];
       var form = box.nextElementSibling, li = box.closest(".kb-mail");
       function weg(nachClaude) {
+        // Relevant / Nicht relevant sind Übersichten: die Mail bleibt stehen und zeigt ihren Stand
+        if (zustand.tab === "relevant" || zustand.tab === "nicht") {
+          if (nachClaude && daten.beiClaude.indexOf(m) < 0) { m.beiClaude = true; daten.beiClaude.push(m); }
+          if (!nachClaude) m.entscheidung = "erledigt";
+          daten.handlung = daten.handlung.filter(function (x) { return x !== m; });
+          form.hidden = true;
+          box.outerHTML = '<p class="kb-anweisung"><span>' + (nachClaude ? "An Claude gegeben" : "Abgehakt") + "</span>" + (nachClaude ? "Claude legt einen Entwurf an – gesendet wird erst nach deiner Freigabe." : "Kein Handlungsbedarf.") + "</p>";
+          return;
+        }
         daten.warten = daten.warten.filter(function (x) { return x !== m; });
         if (nachClaude && daten.beiClaude.indexOf(m) < 0) { m.beiClaude = true; daten.beiClaude.push(m); }
         li.classList.add("kb-erledigt"); setTimeout(function () { li.remove(); }, 900);
       }
       function anweisen(text) {
         box.classList.add("laedt");
-        B.anweisen(m, text).then(function () { weg(true); }).catch(function (f) { box.classList.remove("laedt"); alert("Nicht gespeichert: " + f.message); });
+        B.anweisen(m, text).then(function () { m.anweisung = { text: text, status: "offen" }; weg(true); }).catch(function (f) { box.classList.remove("laedt"); alert("Nicht gespeichert: " + f.message); });
       }
-      box.querySelector('[data-w="nachfassen"]').addEventListener("click", function () { anweisen("Bitte eine kurze, freundliche Nachfass-Mail als Entwurf vorbereiten."); });
+      var nf = box.querySelector('[data-w="nachfassen"]'); if (nf) nf.addEventListener("click", function () { anweisen("Bitte eine kurze, freundliche Nachfass-Mail als Entwurf vorbereiten."); });
       box.querySelector('[data-w="erledigt"]').addEventListener("click", function () {
         box.classList.add("laedt");
         B.entscheiden(m, "erledigt").then(function () { weg(false); }).catch(function (f) { box.classList.remove("laedt"); alert("Konnte nicht gespeichert werden: " + f.message); });
