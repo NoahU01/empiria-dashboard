@@ -716,8 +716,8 @@ a.sm-k:hover { box-shadow: 0 0 0 1.5px var(--ink); }
 .sm-wurzel::after { content: ""; position: absolute; left: 50%; bottom: -26px; height: 26px; border-left: 2px solid var(--ink); }
 .sm-hauptreihe { position: relative; display: grid; gap: 28px; margin-top: 26px; padding-top: 26px; }
 @media (min-width: 900px) {
-  .sm-hauptreihe { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .sm-hauptreihe::before { content: ""; position: absolute; top: 0; left: 12.5%; right: 12.5%; border-top: 2px solid var(--ink); }
+  .sm-hauptreihe { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .sm-hauptreihe::before { content: ""; position: absolute; top: 0; left: 10%; right: 10%; border-top: 2px solid var(--ink); }
   .sm-zweig::before { content: ""; position: absolute; top: -26px; left: 50%; height: 26px; border-left: 2px solid var(--ink); }
 }
 .sm-zweig { position: relative; display: grid; gap: 10px; align-content: start; }
@@ -1086,3 +1086,17 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
 @media (max-width: 600px) { .kg-dl { grid-template-columns: minmax(0, 1fr); gap: 2px; } .kg-dl dd { margin-bottom: 10px; } }
 .pr-zu > .kg-inhalt { display: none; }
 [data-kampagne] > .kb-zurueck { display: inline-block; margin-top: var(--s5); }
+
+/* Sitemap: automatische Seitenliste */
+.sma { margin: var(--s6) 0 var(--s7); }
+.sma-kopf { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--s3); }
+.sma-kopf .sm-h2 { margin: 0; }
+.sma-rechts { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.sma-hinweis { margin: var(--s4) 0 0; padding: 8px 12px; border-left: 3px solid var(--hl); background: #fffbe0; font-size: var(--fs-s); }
+.sma-gruppen { display: grid; gap: var(--s5); grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: var(--s5); }
+.sma-gruppen ul { margin: 0; padding-left: 18px; font-size: var(--fs-m); line-height: 1.6; }
+.sma-gruppen ul ul { padding-left: 16px; font-size: var(--fs-s); }
+.sma-gruppen a { color: var(--ink); }
+.sma-gruppen small { color: var(--grey-50); font-size: var(--fs-xs); }
+.sma-neu { padding: 1px 6px; border-radius: 5px; background: var(--hl); font-size: var(--fs-xs); font-weight: 600; }
+@media (max-width: 600px) { .sma-rechts { align-items: flex-start; } }
