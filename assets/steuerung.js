@@ -115,7 +115,7 @@
       '<section class="st4-block"><h2 class="st4-h">Die nächsten Wochen</h2><div class="st4-wochen" tabindex="0" aria-label="Wochen – seitlich wischen">' + wochen() + "</div></section>";
     var kopf = document.querySelector(".db-kopf");
     if (kopf && !kopf.querySelector(".st4-nav")) kopf.insertAdjacentHTML("beforeend", '<nav class="st4-nav" aria-label="Hauptseiten">' +
-      [["Projekte", "/strategie/projekte.html"], ["Aufgaben", "/strategie/aufgaben.html"], ["Korrespondenz", "/strategie/korrespondenz-beta.html"], ["Kontakte", "/strategie/kontakte.html"]]
+      '<a class="st4-nav-sicht" href="/strategie/analyse.html">Analyse</a>' + [["Projekte", "/strategie/projekte.html"], ["Aufgaben", "/strategie/aufgaben.html"], ["Korrespondenz", "/strategie/korrespondenz-beta.html"], ["Kontakte", "/strategie/kontakte.html"]]
         .map(function (x) { return '<a href="' + x[1] + '">' + x[0] + "</a>"; }).join("") + "</nav>");
     verdrahten();
   }
