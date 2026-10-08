@@ -2,12 +2,12 @@
   "redirects": [
     {
       "source": "/",
-      "destination": "/strategie/oekosystem.html",
+      "destination": "/strategie/analyse.html",
       "permanent": false
     },
     {
       "source": "/index.html",
-      "destination": "/strategie/oekosystem.html",
+      "destination": "/strategie/analyse.html",
       "permanent": false
     },
     {
