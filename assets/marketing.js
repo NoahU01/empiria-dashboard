@@ -29,16 +29,16 @@
   });
 
   // Kampagnen je Marke – fehlt bei einer Marke eine Kampagne, steht das deutlich da
-  var KAMP = { k: [], t: [] }, MARKEN = ["empiria", "sofortsichtbar", "Müller&Ströbel."];
+  var KAMP_OFFEN = true, KAMP = { k: [], t: [] }, MARKEN = ["empiria", "sofortsichtbar", "Müller&Ströbel."];
   function kampagnen() {
-    return '<section class="st4-block"><h2 class="st4-h">Kampagnen</h2><div class="kg-marken">' + MARKEN.map(function (m) {
+    return '<section class="kt3-box kt3-breit kg-bereich' + (KAMP_OFFEN ? "" : " pr-zu") + '" data-bereich="kamp"><h3><button type="button" class="pr-klapp" aria-expanded="' + KAMP_OFFEN + '"><span>Kampagnen</span><span class="tl-dreieck" aria-hidden="true"></span></button></h3><div class="kg-inhalt"><div class="kg-marken">' + MARKEN.map(function (m) {
       var l = KAMP.k.filter(function (k) { return (k.marke || "empiria") === m; });
       return '<div class="kg-marke"><h3>' + esc(m) + "</h3>" + (l.length ? '<div class="kg-karten">' + l.map(function (k) {
         var n = KAMP.t.filter(function (t) { return t.kampagne_id === k.id; }).length;
         return '<a class="kg-k" href="/strategie/kampagne.html#k=' + k.id + '"><span class="kg-zeit">' + esc(k.zeitraum) + '</span><b>' + esc(k.name) + "</b>" +
           '<small>' + esc(k.status) + " · " + n + " Personen</small>" + (k.naechster_schritt ? '<span class="kg-next"><i>Nächster Schritt</i>' + esc(k.naechster_schritt) + "</span>" : "") + "</a>";
       }).join("") + "</div>" : '<p class="kg-leer">Keine Kampagne geplant.</p>') + "</div>";
-    }).join("") + "</div></section>";
+    }).join("") + "</div></div></section>";
   }
 
   function kachel(link, zahl, titel, unter) {
@@ -62,13 +62,16 @@
         '<span class="mk-posts-text">' + esc(p.text) + "<small>" + f(p.reaktionen) + " Reaktionen · " + f(p.kommentare) + " Kommentare</small></span></a></li>";
     }).join("") + "</ol>" : '<p class="st4-leer">Noch keine Beiträge gelesen.</p>';
 
-    wurzel.innerHTML = kampagnen() +
+    var wk = document.querySelector("[data-wirkung]");   // Wirkung (marketing-wirkung.js) bleibt beim Neuzeichnen erhalten
+    wurzel.innerHTML =
       '<p class="mk-kreis">' + KREIS.map(function (x) { return "<span>" + x + "</span>"; }).join('<i aria-hidden="true">→</i>') + "</p>" +
-      '<section class="st4-block"><h2 class="st4-h">Kennzahlen</h2><div class="an-signale">' + kacheln + "</div></section>" +
-      '<section class="st4-block"><h2 class="st4-h">Beiträge mit der größten Reichweite</h2><p class="mk-unter">LinkedIn, letzte 12 Monate · Impressionen</p>' + liste + "</section>" +
+      '<div class="kg-bereiche">' + kampagnen() + '<div data-wirkung-platz></div></div>' +
       '<section class="st4-block"><h2 class="st4-h">Zielgruppen, Außenwirkung, Stoßrichtungen</h2><div class="st4-sparring mk-themen">' + THEMEN.map(function (t) {
         return '<button type="button" class="st4-spar" data-thema="' + t.k + '"><span class="st4-spar-z">' + esc(t.m) + "</span><b>" + esc(t.n) + '</b><span class="st4-spar-s">' + esc(t.s) + '</span><span class="st4-spar-los">Erarbeiten <i aria-hidden="true">→</i></span></button>';
       }).join("") + '</div></section>';
+    if (wk) wurzel.querySelector("[data-wirkung-platz]").replaceWith(wk);
+    var kb = wurzel.querySelector("[data-bereich=kamp] .pr-klapp");
+    if (kb) kb.onclick = function () { KAMP_OFFEN = !KAMP_OFFEN; var sek = kb.closest("[data-bereich]"); sek.classList.toggle("pr-zu", !KAMP_OFFEN); kb.setAttribute("aria-expanded", String(KAMP_OFFEN)); };
 
     wurzel.querySelectorAll("[data-thema]").forEach(function (b) {
       b.onclick = function () {

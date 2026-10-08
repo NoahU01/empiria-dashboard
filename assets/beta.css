@@ -1100,3 +1100,29 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
 .sma-gruppen small { color: var(--grey-50); font-size: var(--fs-xs); }
 .sma-neu { padding: 1px 6px; border-radius: 5px; background: var(--hl); font-size: var(--fs-xs); font-weight: 600; }
 @media (max-width: 600px) { .sma-rechts { align-items: flex-start; } }
+
+/* Marketing → Wirkung: Aussagen + Verläufe */
+.wk .kp-filter { margin-bottom: var(--s4); }
+.wk-aussagen { display: grid; gap: var(--s3); grid-template-columns: minmax(0, 1fr); margin-bottom: var(--s5); }
+@media (min-width: 900px) { .wk-aussagen { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.wk-a { padding: 14px 16px; border-left: 3px solid var(--ink); background: #f7f6f4; border-radius: 0 12px 12px 0; }
+.wk-a-k { margin: 0; font-size: var(--fs-xs); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-50); }
+.wk-a-z { margin: 2px 0 6px; font-size: var(--fs-s); font-weight: 600; color: var(--ink); }
+.wk-a-t { margin: 0; font-size: var(--fs-m); line-height: 1.5; }
+.wk-charts { display: grid; gap: var(--s5); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { .wk-charts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.wk-charts figure { margin: 0; }
+.wk-charts figcaption { margin-bottom: var(--s2); font-size: var(--fs-s); font-weight: 600; }
+.wk-svg { width: 100%; height: auto; display: block; }
+.wk-gitter { stroke: #eeece9; stroke-width: 1; }
+.wk-achse { font-size: 10px; fill: var(--grey-50); font-family: var(--font-sans); }
+.wk-l { fill: none; stroke-width: 1.6; stroke-linejoin: round; }
+.wk-l.wk-l1 { stroke: #c9c5c0; } .wk-l.wk-l2 { stroke: var(--ink); stroke-width: 2.2; } .wk-l.wk-l3 { stroke: #d4a800; stroke-width: 2; }
+.wk-leg { display: flex; gap: 16px; margin: 6px 0 0; font-size: var(--fs-xs); color: var(--grey-70); }
+.wk-leg span::before { content: ""; display: inline-block; width: 14px; height: 3px; margin-right: 6px; vertical-align: middle; background: #c9c5c0; }
+.wk-leg .wk-l2::before { background: var(--ink); } .wk-leg .wk-l3::before { background: #d4a800; }
+.wk-balken { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.wk-balken li { display: grid; grid-template-columns: 130px minmax(0, 1fr) 44px; align-items: center; gap: 10px; font-size: var(--fs-s); }
+.wk-balken i { display: block; height: 10px; border-radius: 5px; background: var(--ink); }
+.wk-balken b { font-weight: 500; text-align: right; }
+.wk-stand { margin: var(--s4) 0 0; font-size: var(--fs-xs); color: var(--grey-50); }
