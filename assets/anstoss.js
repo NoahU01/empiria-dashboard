@@ -1,5 +1,5 @@
-/* „Jetzt prüfen“ (Analyse, Steuerung): legt einen Anstoß in der Tabelle anstoesse ab. Ein Wächter auf dem Always-on-Mac
-   schaut jede Minute nach und startet sofort die Prüfung (Korrespondenz-Anweisungen, entschiedene Karten).
+/* „Jetzt prüfen“ (Analyse, Steuerung, Marketing, Projekte, Aufgaben, Korrespondenz): legt einen Anstoß in der Tabelle anstoesse ab. Ein Wächter auf dem Always-on-Mac
+   schaut jede Minute nach, gleicht Aufgaben und Noahs Analytics neu ab und startet sofort die Prüfung (Korrespondenz-Anweisungen, entschiedene Karten).
    Der Knopf zeigt den Stand und lädt die Seite neu, sobald die Prüfung fertig ist. */
 (function () {
   "use strict";
