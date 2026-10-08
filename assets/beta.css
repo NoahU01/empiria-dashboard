@@ -991,3 +991,19 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
   .kp-links, .kp-was { grid-column: 1 / -1; } .kp-links { flex-direction: row; flex-wrap: wrap; gap: var(--s3); }
   .kp-knoepfe { grid-column: 2; grid-row: 1; }
 }
+
+/* Steuerung: Rückmeldungen zu Aufträgen und Vorschläge auf dem Tisch */
+.st4-tisch { display: flex; flex-wrap: wrap; gap: var(--s2); margin: calc(-1 * var(--s2)) 0 var(--s4); }
+.st4-tisch button { padding: 6px 14px; border: 1px solid var(--linie); border-radius: 999px; background: var(--white); font-size: var(--fs-s); color: var(--ink); cursor: pointer; }
+.st4-tisch button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--white); }
+.st4-art { padding: 3px 8px; border-radius: 6px; background: #f2f1ef; font-size: var(--fs-xs); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--grey-70); }
+.st4-art--rm { background: var(--ink); color: var(--hl); }
+.st4-mitte { min-width: 0; }
+.st4-punkte { margin: 0 0 18px; padding-left: 18px; font-size: var(--fs-s); font-weight: 300; line-height: 1.5; color: var(--ink-2); }
+.st4-punkte li { margin-bottom: 3px; }
+.st4-ablage { margin: 6px 0 0; font-size: var(--fs-xs); color: var(--grey-50); overflow-wrap: anywhere; }
+.st4-knoepfe button[data-opt] { white-space: normal; text-align: left; }
+.st4-knoepfe:has([data-opt]) { display: flex; flex-wrap: wrap; }
+.st4-knoepfe:has([data-opt]) button { height: auto; min-height: 36px; padding: 7px 12px; line-height: 1.3; }
+.st4-art, .st4-frist { white-space: nowrap; }
+.st4-karte--rm .st4-kern { display: block; -webkit-line-clamp: unset; overflow: visible; }
