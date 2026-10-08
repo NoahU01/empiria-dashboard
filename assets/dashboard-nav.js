@@ -74,3 +74,12 @@
   var dd = document.querySelector("[data-sn-dd]");
   if (dd) new MutationObserver(function () { if (!dd.classList.contains("is-open")) zu(); }).observe(dd, { attributes: true, attributeFilter: ["class"] });
 })();
+
+/* Hauptseiten-Leiste: auf schmalen Geräten die aktuelle Seite ins Bild rücken */
+(function () {
+  var hn = document.querySelector(".hn"), a = hn && hn.querySelector('[aria-current="page"]');
+  if (a && hn.scrollWidth > hn.clientWidth) hn.scrollLeft = Math.max(0, a.offsetLeft - 16);
+  // Verlauf am rechten Rand nur, solange rechts noch etwas kommt
+  function rand() { if (hn) hn.classList.toggle("hn--mehr", hn.scrollLeft + hn.clientWidth < hn.scrollWidth - 4); }
+  if (hn) { hn.addEventListener("scroll", rand, { passive: true }); window.addEventListener("resize", rand); rand(); }
+})();

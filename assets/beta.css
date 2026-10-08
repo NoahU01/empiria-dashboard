@@ -1066,15 +1066,6 @@ main.pr-look-schwarz .pr-ziel-leer .pr-ziel-kopf h3::before { content: ""; width
 .st4-entschieden span::before { content: "✓ "; color: var(--ink); }
 .st4-leer { font-size: .9rem; color: var(--grey-50); }
 /* Sparring: sechs Kacheln, Regel erscheint beim Zeigen */
-.st4-sparring { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-@media (min-width: 900px) { .st4-sparring { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
-.st4-spar { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-height: 132px; padding: 16px; border: 0; border-radius: 16px; background: #f4f2ef; text-align: left; color: var(--ink); cursor: pointer; transition: background-color .15s ease; }
-.st4-spar:hover { background: var(--ink); color: #fff; }
-.st4-spar-z { font-size: .7rem; font-weight: 600; color: var(--grey-50); }
-.st4-spar b { font-family: var(--font-serif); font-size: 1.05rem; font-weight: 600; line-height: 1.2; }
-.st4-spar > span:not(.st4-spar-z) { font-size: .78rem; font-weight: 300; line-height: 1.4; }
-.st4-spar small { display: none; font-size: .74rem; line-height: 1.4; color: var(--hl); }
-.st4-spar:hover small { display: block; } .st4-spar:hover > span:not(.st4-spar-z) { display: none; } .st4-spar:hover .st4-spar-z { color: rgba(255,255,255,.6); }
 .st4-hinweis { margin: 12px 0 0; font-size: .82rem; color: var(--ink-2); }
 /* Sechs Wochen */
 .st4-wochen { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border-top: 1px solid #e9e7e4; }
@@ -1088,7 +1079,6 @@ main.pr-look-schwarz .pr-ziel-leer .pr-ziel-kopf h3::before { content: ""; width
 .st4-e--ziel .st4-e-titel { border-left-color: var(--ink); font-weight: 600; }
 .st4-e:hover .st4-e-titel { text-decoration: underline; text-underline-offset: 2px; }
 @media (max-width: 900px) { .st4-wochen { grid-template-columns: repeat(2, minmax(0, 1fr)); } .st4-woche:nth-child(2n+1) { border-left: 0; padding-left: 0; } }
-.st4-spar b { font-size: .95rem; hyphens: auto; overflow-wrap: anywhere; } .st4-spar { min-width: 0; }
 /* ===== Sitemap Dashboard ===== */
 .sm-baum { margin-top: 30px; }
 .sm-k { display: block; padding: 12px 14px; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px #e4e1dd; color: var(--ink); text-decoration: none; }
@@ -1135,17 +1125,6 @@ a.sm-k:hover { box-shadow: 0 0 0 1.5px var(--ink); }
 .st4-projekte { padding: 20px 0 14px; }
 .st4-marke h4 { padding-bottom: 6px; border-bottom: 1px solid #e4e1dd; margin-bottom: 0; }
 /* Sparring: ruhige Liste in drei Spalten, kein Kasten */
-.st4-sparring { display: grid; gap: 0 40px; grid-template-columns: minmax(0, 1fr); border-top: 1px solid #e4e1dd; }
-@media (min-width: 900px) { .st4-sparring { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-.st4-spar { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; min-height: 0; padding: 14px 0; border: 0; border-bottom: 1px solid #f0eeeb; border-radius: 0; background: none; text-align: left; color: var(--ink); }
-.st4-spar:hover { background: none; color: var(--ink); }
-.st4-spar b { font-family: var(--font-serif); font-size: 1.05rem; font-weight: 600; hyphens: manual; overflow-wrap: normal; }
-.st4-spar .st4-spar-z { align-self: center; font-size: .74rem; font-weight: 500; color: var(--grey-50); }
-.st4-spar .st4-spar-s { grid-column: 1; font-size: .8rem; font-weight: 300; color: var(--grey-70); }
-.st4-spar .st4-spar-los { grid-column: 2; grid-row: 2; align-self: center; font-size: .76rem; font-weight: 600; color: var(--ink); opacity: 0; transition: opacity .15s ease; }
-.st4-spar:hover .st4-spar-los, .st4-spar:focus-visible .st4-spar-los { opacity: 1; }
-.st4-spar:hover .st4-spar-z { opacity: 0; }
-.st4-spar small { display: none !important; }
 .st4-unten .st4-knoepfe { align-self: stretch; }
 /* Steuerung: Absprung in die vier Hauptseiten */
 .st4-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 26px; }
@@ -1169,18 +1148,6 @@ a.sm-k:hover { box-shadow: 0 0 0 1.5px var(--ink); }
 .st4-marke p em { font-style: normal; color: #c9c5c0; }
 .st4-art { display: inline-block; min-width: 54px; font-size: .7rem; font-weight: 600; letter-spacing: .04em; color: var(--grey-50); }
 /* Sparring: startbare Knöpfe */
-.st4-sparring { gap: 10px; border-top: 0; }
-@media (min-width: 900px) { .st4-sparring { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-.st4-spar { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid #e4e1dd; border-radius: 14px; background: #fff; transition: border-color .15s ease, box-shadow .15s ease; }
-.st4-spar:hover { border-color: var(--ink); box-shadow: 0 6px 18px rgba(0,0,0,.06); background: #fff; color: var(--ink); }
-.st4-play { position: relative; width: 34px; height: 34px; border-radius: 50%; background: #f2f1ef; transition: background-color .15s ease; }
-.st4-play::after { content: ""; position: absolute; left: 13px; top: 10px; border-style: solid; border-width: 7px 0 7px 11px; border-color: transparent transparent transparent var(--ink); transition: border-color .15s ease; }
-.st4-spar:hover .st4-play { background: var(--ink); } .st4-spar:hover .st4-play::after { border-left-color: #fff; }
-.st4-spar-text { display: flex; flex-direction: column; min-width: 0; }
-.st4-spar .st4-spar-text b { font-family: var(--font-serif); font-size: 1rem; font-weight: 600; }
-.st4-spar .st4-spar-s { font-size: .78rem; font-weight: 300; color: var(--grey-70); display: block !important; }
-.st4-spar .st4-spar-z { align-self: center; font-size: .72rem; color: var(--grey-50); opacity: 1 !important; }
-.st4-spar .st4-spar-los { display: none; }
 /* Wochen: breite Spalten, größere Schrift, seitlich wischen */
 .st4-wochen { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(250px, 1fr); grid-template-columns: none; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; padding-bottom: 8px; }
 .st4-woche { scroll-snap-align: start; padding: 12px 16px 6px; }
@@ -1217,17 +1184,6 @@ a.sm-k:hover { box-shadow: 0 0 0 1.5px var(--ink); }
   .st4-idx-zelle em { display: inline-block; min-width: 56px; font-style: normal; font-size: .72rem; font-weight: 600; color: var(--grey-50); }
 }
 /* Sparring: ruhige Karten, „Starten →“ immer sichtbar */
-.st4-sparring { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 0; }
-@media (min-width: 1000px) { .st4-sparring { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-.st4-spar { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-height: 0; padding: 18px 20px 16px; border: 1px solid #e9e7e4; border-radius: 16px; background: #fff; text-align: left; color: var(--ink); cursor: pointer; transition: border-color .15s ease; }
-.st4-spar:hover { border-color: var(--ink); background: #fff; color: var(--ink); box-shadow: none; }
-.st4-spar .st4-spar-z { order: 0; font-size: .7rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-50); opacity: 1 !important; }
-.st4-spar b { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; line-height: 1.25; }
-.st4-spar .st4-spar-s { display: block !important; margin-bottom: 10px; font-size: .84rem; font-weight: 300; line-height: 1.45; color: var(--grey-70); }
-.st4-spar .st4-spar-los { display: inline-block !important; margin-top: auto; font-size: .82rem; font-weight: 600; color: var(--ink); opacity: 1 !important; }
-.st4-spar .st4-spar-los i { display: inline-block; font-style: normal; transition: transform .15s ease; }
-.st4-spar:hover .st4-spar-los i { transform: translateX(4px); }
-.st4-play { display: none; }
 @media (max-width: 700px) {
   .db-kopf .st4-nav { gap: 6px 18px; }
   .db-kopf .st4-nav a { padding: 0; border-left: 0; }
@@ -1238,7 +1194,6 @@ a.sm-k:hover { box-shadow: 0 0 0 1.5px var(--ink); }
   .st4-idx-zelle > :not(em) { grid-column: 2; }
   .st4-idx-zelle { column-gap: 8px; }
 }
-.st4-spar .st4-spar-z, .st4-spar .st4-spar-los { align-self: flex-start !important; } .st4-spar b { hyphens: manual; overflow-wrap: normal; max-width: 100%; }
 /* Vorschlag von Claude an einer Aufgabe – Markierung im Kanban und in der Projekt-Aufgabenliste */
 .ad-v { margin-top: 8px; }
 .ad-v.laedt { opacity: .5; pointer-events: none; }
@@ -1343,3 +1298,19 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
 @media (max-width: 600px) { .mk-posts a { grid-template-columns: 72px minmax(0, 1fr); gap: 12px; } .mk-posts-zahl { font-size: 1.05rem; } }
 .mk-themen { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 @media (max-width: 900px) { .mk-themen { grid-template-columns: minmax(0, 1fr); } }
+
+
+/* Sparring-Kästen (Steuerung, Marketing) – schwarzer Balken oben mit der Dauer in Gelb, bleibt auch beim Darüberfahren */
+.st4-sparring { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 600px) { .st4-sparring { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1000px) { .st4-sparring { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.st4-spar { display: flex; flex-direction: column; align-items: stretch; min-width: 0; padding: 0; overflow: hidden; border: 1px solid #e9e7e4; border-radius: 16px;
+  background: var(--white); text-align: left; color: var(--ink); font: inherit; cursor: pointer; transition: border-color .15s ease; }
+.st4-spar:hover, .st4-spar:focus-visible { border-color: var(--ink); }
+.st4-spar .st4-spar-z { display: block; padding: 8px 20px; background: var(--ink); color: var(--hl); font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.st4-spar b { display: block; padding: 18px 20px 0; font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; line-height: 1.25; }
+.st4-spar .st4-spar-s { display: block; padding: 6px 20px 0; font-size: .84rem; font-weight: 300; line-height: 1.45; color: var(--grey-70); }
+.st4-spar .st4-spar-los { display: block; margin-top: auto; padding: 16px 20px 18px; font-size: .82rem; font-weight: 600; color: var(--ink); }
+.st4-spar .st4-spar-los i { display: inline-block; font-style: normal; transition: transform .15s ease; }
+.st4-spar:hover .st4-spar-los i { transform: translateX(4px); }
+.st4-hinweis { margin: 14px 0 0; font-size: .84rem; color: var(--grey-70); }
