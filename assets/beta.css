@@ -1064,3 +1064,25 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
 .mf { display: flex; flex-wrap: wrap; gap: var(--s2); margin: var(--s5) 0 0; }
 .mf button { padding: 7px 14px; border: 1px solid var(--linie); border-radius: 999px; background: var(--white); font: inherit; font-size: var(--fs-s); font-weight: 500; color: var(--ink); cursor: pointer; }
 .mf button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--white); }
+
+/* Marketing: Kampagnen je Marke · Kampagnen-Unterseite */
+.kg-marken { display: grid; gap: var(--s5); }
+.kg-marke h3 { margin: 0 0 var(--s3); font-size: var(--fs-xs); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-50); }
+.kg-karten { display: grid; gap: var(--s4); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 760px) { .kg-karten { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .kg-karten { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.kg-k { display: flex; flex-direction: column; gap: 4px; padding: 18px 20px; border: 1px solid var(--linie); border-radius: 16px; background: var(--white); color: var(--ink); text-decoration: none; }
+.kg-k:hover { border-color: var(--ink); }
+.kg-zeit { align-self: flex-start; padding: 2px 8px; border-radius: 6px; background: var(--ink); color: var(--hl); font-size: var(--fs-xs); font-weight: 600; }
+.kg-k b { margin-top: 6px; font-family: var(--font-serif); font-size: var(--fs-l); font-weight: 600; }
+.kg-k small { font-size: var(--fs-s); color: var(--grey-50); }
+.kg-next { margin-top: var(--s2); font-size: var(--fs-s); line-height: 1.45; color: var(--ink-2); }
+.kg-next i { display: block; font-style: normal; font-size: var(--fs-xs); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--grey-50); }
+.kg-leer { margin: 0; padding: 14px 18px; border: 1px dashed var(--grey-50); border-radius: 14px; font-size: var(--fs-s); color: var(--grey-70); }
+.kg-bereiche { display: grid; gap: var(--s4); margin-top: var(--s4); }
+.kg-bereich h3 { margin: 0 0 var(--s4); }
+.kg-dl { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 8px 20px; margin: 0; font-size: var(--fs-m); line-height: 1.5; }
+.kg-dl dt { font-size: var(--fs-s); color: var(--grey-50); } .kg-dl dd { margin: 0; }
+@media (max-width: 600px) { .kg-dl { grid-template-columns: minmax(0, 1fr); gap: 2px; } .kg-dl dd { margin-bottom: 10px; } }
+.pr-zu > .kg-inhalt { display: none; }
+[data-kampagne] > .kb-zurueck { display: inline-block; margin-top: var(--s5); }

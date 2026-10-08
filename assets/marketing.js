@@ -22,9 +22,24 @@
     if (!s.data.session) { wurzel.innerHTML = '<div class="kb-hinweis"><p>Bitte einmal auf der <a href="/strategie/kontakte.html?zurueck=' + encodeURIComponent(location.pathname) + '">Kontaktseite</a> anmelden – dann erscheint hier das Marketing.</p></div>'; return; }
     Promise.all([
       db.from("linkedin_kennzahlen").select("stichtag, follower, kontakte, impressionen, interaktionen, profilaufrufe").eq("quelle", "profil").order("stichtag", { ascending: false }).limit(2),
-      db.from("linkedin_posts").select("text, link, impressionen, reaktionen, kommentare, stand").order("impressionen", { ascending: false }).limit(5)
-    ]).then(function (r) { zeichnen(r[0].data || [], (r[1].data || []).slice().sort(function (a, b) { return (b.impressionen || 0) - (a.impressionen || 0); }).slice(0, 5)); });
+      db.from("linkedin_posts").select("text, link, impressionen, reaktionen, kommentare, stand").order("impressionen", { ascending: false }).limit(5),
+      db.from("kampagnen").select("id, kampagnen_nr, name, zeitraum, status, marke, naechster_schritt, start").order("start"),
+      db.from("kampagnen_teilnehmer").select("kampagne_id, pruefung")
+    ]).then(function (r) { KAMP = { k: r[2].data || [], t: r[3].data || [] }; zeichnen(r[0].data || [], (r[1].data || []).slice().sort(function (a, b) { return (b.impressionen || 0) - (a.impressionen || 0); }).slice(0, 5)); });
   });
+
+  // Kampagnen je Marke – fehlt bei einer Marke eine Kampagne, steht das deutlich da
+  var KAMP = { k: [], t: [] }, MARKEN = ["empiria", "sofortsichtbar", "Müller&Ströbel."];
+  function kampagnen() {
+    return '<section class="st4-block"><h2 class="st4-h">Kampagnen</h2><div class="kg-marken">' + MARKEN.map(function (m) {
+      var l = KAMP.k.filter(function (k) { return (k.marke || "empiria") === m; });
+      return '<div class="kg-marke"><h3>' + esc(m) + "</h3>" + (l.length ? '<div class="kg-karten">' + l.map(function (k) {
+        var n = KAMP.t.filter(function (t) { return t.kampagne_id === k.id; }).length;
+        return '<a class="kg-k" href="/strategie/kampagne.html#k=' + k.id + '"><span class="kg-zeit">' + esc(k.zeitraum) + '</span><b>' + esc(k.name) + "</b>" +
+          '<small>' + esc(k.status) + " · " + n + " Personen</small>" + (k.naechster_schritt ? '<span class="kg-next"><i>Nächster Schritt</i>' + esc(k.naechster_schritt) + "</span>" : "") + "</a>";
+      }).join("") + "</div>" : '<p class="kg-leer">Keine Kampagne geplant.</p>') + "</div>";
+    }).join("") + "</div></section>";
+  }
 
   function kachel(link, zahl, titel, unter) {
     return '<a class="an-k" href="' + link + '" target="_blank" rel="noopener"><span class="an-zahl">' + zahl + "</span><b>" + titel + "</b><small>" + unter + "</small></a>";
@@ -47,7 +62,7 @@
         '<span class="mk-posts-text">' + esc(p.text) + "<small>" + f(p.reaktionen) + " Reaktionen · " + f(p.kommentare) + " Kommentare</small></span></a></li>";
     }).join("") + "</ol>" : '<p class="st4-leer">Noch keine Beiträge gelesen.</p>';
 
-    wurzel.innerHTML =
+    wurzel.innerHTML = kampagnen() +
       '<p class="mk-kreis">' + KREIS.map(function (x) { return "<span>" + x + "</span>"; }).join('<i aria-hidden="true">→</i>') + "</p>" +
       '<section class="st4-block"><h2 class="st4-h">Kennzahlen</h2><div class="an-signale">' + kacheln + "</div></section>" +
       '<section class="st4-block"><h2 class="st4-h">Beiträge mit der größten Reichweite</h2><p class="mk-unter">LinkedIn, letzte 12 Monate · Impressionen</p>' + liste + "</section>" +
