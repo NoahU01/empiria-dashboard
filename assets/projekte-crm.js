@@ -23,9 +23,21 @@
     m.classList.remove("pr-look-grau", "pr-look-schwarz", "pr-look-sva");
     if (an && lookWert() !== "weiss") m.classList.add("pr-look-" + lookWert());
   }
+  // Kopf der Seite: in der Detailansicht (Darstellung Weiß) wie alle anderen Seiten – Rücksprung als Kicker, Projektname gelb hinterlegt
+  var KOPF = null;
+  function kopf(p) {
+    var k = document.querySelector(".db-kopf .kicker"), t = document.querySelector(".db-kopf h1");
+    if (!k || !t) return;
+    if (!KOPF) KOPF = { k: k.innerHTML, t: t.innerHTML };
+    if (!p) { k.innerHTML = KOPF.k; t.innerHTML = KOPF.t; return; }
+    k.innerHTML = '<a class="pr-kopf-zurueck" href="#"><span aria-hidden="true">&larr;</span> Projekte</a><span class="pr-kopf-marke">' +
+      (p.organisationen ? esc(p.organisationen.name) : esc(p.marke || "")) + "</span>";
+    t.innerHTML = '<span class="hl">' + esc(p.name) + ".</span>";
+  }
   function route() {
     var h = location.hash.replace("#", "");
     document.body.classList.toggle("kt3-detail", /^p=\d+$/.test(h));
+    if (!/^p=\d+$/.test(h)) kopf(null);
     look(/^p=\d+$/.test(h));
     if (/^p=\d+$/.test(h)) { if (+h.slice(2) !== KLAPP.id) KLAPP = { id: null, z: {} }; projekt(+h.slice(2)); }
     else { KLAPP = { id: null, z: {} }; liste(); }
@@ -141,6 +153,7 @@
 
   function zeichnen(p, bet, ere, pkt, auf) {
     STAND = { ere: ere, pkt: pkt, auf: auf };
+    kopf(p);
     var h = '<a class="kb-zurueck" href="#"><span aria-hidden="true">&larr;</span> Projekte</a>';
     h += '<div class="kt3-kopf"><div><h2 class="kt3-name">' + esc(p.name) + '</h2><p class="kt3-sub">' +
       (p.organisationen ? '<a href="/strategie/kontakte.html#f=' + p.organisationen.id + '">' + esc(p.organisationen.name) + "</a>" : esc(p.marke || "")) + "</p>" +

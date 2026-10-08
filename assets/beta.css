@@ -1208,3 +1208,14 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
 [data-mk-analyse] .ma-gruende button { height: 30px; padding: 0 12px; border: 1px solid var(--linie); border-radius: 999px; background: var(--white); font-size: var(--fs-s); font-weight: 400; color: var(--ink); }
 [data-mk-analyse] .ma-gruende button:hover { border-color: var(--ink); }
 @media (max-width: 560px) { [data-mk-analyse] .ma-aktion { flex-wrap: wrap; } [data-mk-analyse] .ma-warum-k { order: -1; width: 100%; justify-content: space-between; padding-bottom: 4px; } }
+
+/* Projekt-Detail, Darstellung Weiß: Kopf wie auf allen anderen Seiten (Kicker + gelb hinterlegter Titel), 08.10.2026 */
+body.kt3-detail main:not(.pr-look-grau):not(.pr-look-schwarz):not(.pr-look-sva) .db-kopf .kicker,
+body.kt3-detail main:not(.pr-look-grau):not(.pr-look-schwarz):not(.pr-look-sva) .db-kopf h1 { display: block; }
+body.kt3-detail main:not(.pr-look-grau):not(.pr-look-schwarz):not(.pr-look-sva) .kb-zurueck,
+body.kt3-detail main:not(.pr-look-grau):not(.pr-look-schwarz):not(.pr-look-sva) .kt3-name,
+body.kt3-detail main:not(.pr-look-grau):not(.pr-look-schwarz):not(.pr-look-sva) .kt3-sub { display: none; }
+body.kt3-detail main:not(.pr-look-grau):not(.pr-look-schwarz):not(.pr-look-sva) .kt3-kopf { margin-top: 10px; align-items: flex-start; }
+body.kt3-detail main:not(.pr-look-grau):not(.pr-look-schwarz):not(.pr-look-sva) .pr-thema { margin-top: 0; }
+.pr-kopf-zurueck { color: var(--grey-50); text-decoration: none; } .pr-kopf-zurueck:hover { color: var(--ink); }
+.pr-kopf-marke::before { content: " · "; }
