@@ -17,7 +17,7 @@
   });
   window.addEventListener("hashchange", function () { route(); window.scrollTo(0, 0); });
   // Darstellung der Projektansicht: weiß (Standard), grau, schwarz – zur Auswahl
-  function lookWert() { try { return localStorage.getItem("pr-look") || "weiss"; } catch (x) { return "weiss"; } }
+  function lookWert() { return "weiss"; }   // Darstellung fest auf Weiß (Daniel, 08.10.2026) – Auswahl Grau/Schwarz/SV Akademie entfernt
   function look(an) {
     var m = document.querySelector("main"); if (!m) return;
     m.classList.remove("pr-look-grau", "pr-look-schwarz", "pr-look-sva");
@@ -32,7 +32,8 @@
     if (!p) { k.innerHTML = KOPF.k; t.innerHTML = KOPF.t; return; }
     k.innerHTML = '<a class="pr-kopf-zurueck" href="#"><span aria-hidden="true">&larr;</span> Projekte</a><span class="pr-kopf-marke">' +
       (p.organisationen ? esc(p.organisationen.name) : esc(p.marke || "")) + "</span>";
-    t.innerHTML = '<span class="hl">' + esc(p.name) + ".</span>";
+    var w = String(p.name).split(" "), last = w.pop();
+    t.innerHTML = (w.length ? esc(w.join(" ")) + " " : "") + '<span class="hl">' + esc(last) + ".</span>";
   }
   function route() {
     var h = location.hash.replace("#", "");
@@ -158,8 +159,7 @@
     h += '<div class="kt3-kopf"><div><h2 class="kt3-name">' + esc(p.name) + '</h2><p class="kt3-sub">' +
       (p.organisationen ? '<a href="/strategie/kontakte.html#f=' + p.organisationen.id + '">' + esc(p.organisationen.name) + "</a>" : esc(p.marke || "")) + "</p>" +
       (p.thema ? '<p class="pr-thema">' + esc(p.thema) + "</p>" : "") +
-      (p.typ === "intern" && p.naechstes_gate ? '<p class="pr-gate"><span>Nächstes Gate</span>' + esc(p.naechstes_gate) + (p.gate_datum ? " · bis " + kurz(p.gate_datum) : "") + "</p>" : "") + "</div><span class=\"pr-tl-wahl pr-look-wahl\">" + [["weiss", "Weiß"], ["grau", "Grau"], ["schwarz", "Schwarz"], ["sva", "SV Akademie"]].map(function (v) {
-        return '<button type="button" data-look="' + v[0] + '" aria-pressed="' + (v[0] === lookWert()) + '">' + v[1] + "</button>"; }).join("") + "</span></div>";
+      (p.typ === "intern" && p.naechstes_gate ? '<p class="pr-gate"><span>Nächstes Gate</span>' + esc(p.naechstes_gate) + (p.gate_datum ? " · bis " + kurz(p.gate_datum) : "") + "</p>" : "") + "</div></div>";
     h += projektseite(p.projektseite);
     h += '<div class="kt3-raster">';
     // Links: Stoßrichtung (Gesamtblick über alle Termine) – rechts: Aufgaben

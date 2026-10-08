@@ -1219,3 +1219,11 @@ body.kt3-detail main:not(.pr-look-grau):not(.pr-look-schwarz):not(.pr-look-sva) 
 body.kt3-detail main:not(.pr-look-grau):not(.pr-look-schwarz):not(.pr-look-sva) .pr-thema { margin-top: 0; }
 .pr-kopf-zurueck { color: var(--grey-50); text-decoration: none; } .pr-kopf-zurueck:hover { color: var(--ink); }
 .pr-kopf-marke::before { content: " · "; }
+
+/* Projekt-Detail: ruhiger Kopf – kleiner Rücksprung, mehr Luft (08.10.2026) */
+body.kt3-detail .db-kopf .kicker { margin-bottom: 14px; font-size: var(--fs-s); }
+.pr-kopf-zurueck { display: inline-flex; gap: 6px; font-size: var(--fs-s); }
+.pr-kopf-marke { font-size: var(--fs-s); color: var(--grey-50); }
+body.kt3-detail .kt3-kopf { margin-top: 18px; }
+body.kt3-detail .pr-thema { margin: 0; max-width: 62ch; font-size: var(--fs-l); font-weight: 300; line-height: 1.5; color: var(--ink-2); }
+body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; }
