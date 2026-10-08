@@ -35,9 +35,9 @@
 
   function laden() {
     Promise.all([
-      db.from("vorlagen").select("id, titel, kern, vorschlag, knopf_ja, frist, projekt_id, link, rang, status, entscheidung, entscheidung_text, art, punkte, optionen, ablage, auftrag_am").in("status", ["offen", "entschieden"]).order("rang"),
+      db.from("vorlagen").select("id, titel, kern, vorschlag, knopf_ja, frist, projekt_id, link, rang, status, entscheidung, entscheidung_text, art, punkte, optionen, ablage, auftrag_am, marke").in("status", ["offen", "entschieden"]).order("rang"),
       db.from("projekte").select("id, name, marke, typ, status"),
-      db.from("aufgaben").select("id, status, faellig_am, projekt_id, titel").eq("status", "offen"),
+      db.from("aufgaben").select("id, status, faellig_am, projekt_id, titel, marke").eq("status", "offen"),
       db.from("projekt_ereignisse").select("id, projekt_id, datum, art, titel").gte("datum", HEUTE.toISOString())
     ]).then(function (r) {
       D = { vorlagen: r[0].data || [], projekte: r[1].data || [], aufgaben: r[2].data || [], ereignisse: r[3].data || [] };
@@ -87,7 +87,8 @@
       var punkte = D.ereignisse.filter(function (e) { var d = new Date(e.datum); return d >= von && d < bis; })
         .map(function (e) { return { d: new Date(e.datum), art: e.art === "Meilenstein" ? "ziel" : "termin", t: e.titel, p: e.projekt_id }; })
         .concat(D.aufgaben.filter(function (a) { if (!a.faellig_am) return false; var d = new Date(a.faellig_am.slice(0, 10) + "T12:00:00"); return d >= von && d < bis && d >= HEUTE; })
-          .map(function (a) { return { d: new Date(a.faellig_am.slice(0, 10) + "T12:00:00"), art: "frist", t: a.titel, p: a.projekt_id }; }))
+          .map(function (a) { return { d: new Date(a.faellig_am.slice(0, 10) + "T12:00:00"), art: "frist", t: a.titel, p: a.projekt_id, m: a.marke }; }))
+        .filter(function (x) { var pp = projekt(x.p); return mf(pp ? pp.marke : x.m); })
         .sort(function (a, b) { return a.d - b.d; });
       h += '<div class="st4-woche"><h4>' + von.toLocaleDateString("de-DE", { day: "numeric", month: "short" }) + "</h4>" + punkte.map(function (x) {
         var p = projekt(x.p);
@@ -101,6 +102,7 @@
   var TISCH = "alle";
   try { TISCH = localStorage.getItem("st-tisch") || "alle"; } catch (x) {}
   function gezeigt(l) { return l.filter(function (v) { return TISCH === "alle" || (TISCH === "rm") === (v.art === "rueckmeldung"); }); }
+  function mf(m) { return !window.MarkeFokus || MarkeFokus.passt(m); }
   function tischFilter(l) {
     var rm = l.filter(function (v) { return v.art === "rueckmeldung"; }).length;
     if (!rm || rm === l.length) return "";
@@ -109,11 +111,12 @@
   }
 
   function zeichnen() {
-    var offen = D.vorlagen.filter(function (v) { return v.status === "offen" && v.entscheidung !== "spaeter"; });
-    var weg = D.vorlagen.filter(function (v) { return v.status === "entschieden" || v.entscheidung === "spaeter"; });
+    var alleV = D.vorlagen.filter(function (v) { return mf(v.marke); });
+    var offen = alleV.filter(function (v) { return v.status === "offen" && v.entscheidung !== "spaeter"; });
+    var weg = alleV.filter(function (v) { return v.status === "entschieden" || v.entscheidung === "spaeter"; });
     wurzel.innerHTML =
       '<section class="st4-block"><h2 class="st4-h">Auf deinem Tisch</h2>' + tischFilter(offen) +
-        (gezeigt(offen).length ? '<div class="st4-karten">' + gezeigt(offen).map(karte).join("") + "</div>" : '<p class="st4-leer">Nichts zu entscheiden.</p>') +
+        (gezeigt(offen).length ? '<div class="st4-karten">' + gezeigt(offen).map(karte).join("") + "</div>" : '<p class="st4-leer">' + (window.MarkeFokus && MarkeFokus.wert() !== "alle" ? "Für " + esc(MarkeFokus.wert()) + " liegt gerade nichts auf dem Tisch." : "Nichts zu entscheiden.") + "</p>") +
         (weg.length ? '<p class="st4-entschieden">' + weg.map(function (v) {
           return "<span>" + esc(v.titel) + " · " + (v.entscheidung === "ja" ? "freigegeben" : v.entscheidung === "anders" ? "anders" : v.entscheidung === "option" ? esc(v.entscheidung_text) : v.entscheidung === "gelesen" ? "gelesen" : "später") + "</span>"; }).join("") + "</p>" : "") +
       "</section>" +
@@ -129,6 +132,8 @@
     b.classList.add("st4-spar--an");
     b.querySelector(".st4-spar-los").textContent = "✓ Angefragt – Startsatz ist kopiert, im Chat mit Claude einfügen.";
   }
+
+  document.addEventListener("markefokus", function () { if (D.vorlagen) zeichnen(); });
 
   function speichern(id, felder, karte) {
     karte.classList.add("laedt");

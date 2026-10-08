@@ -17,10 +17,10 @@
     if (!s.data.session) { wurzel.innerHTML = '<div class="kb-hinweis"><p>Bitte einmal auf der <a href="/strategie/kontakte.html?zurueck=' + encodeURIComponent(location.pathname) + '">Kontaktseite</a> anmelden – dann erscheint hier die Analyse.</p></div>'; return; }
     var bis14 = new Date(+HEUTE + 15 * 864e5).toISOString();
     Promise.all([
-      db.from("vorlagen").select("id, entscheidung").eq("status", "offen"),
+      db.from("vorlagen").select("id, entscheidung, marke").eq("status", "offen"),
       db.from("termine").select("id, start, ende, ganztags, betreff, ort, teilnehmer, extern, postfach, projekt_id, vorbereitung, vorbereitung_notiz, abgesagt").gte("ende", JETZT.toISOString()).lte("start", bis14).order("start"),
-      db.from("aufgaben").select("id, status, faellig_am, antwort_am, mail_gesendet_am").eq("status", "offen"),
-      db.from("projekte").select("id, name"),
+      db.from("aufgaben").select("id, status, faellig_am, antwort_am, mail_gesendet_am, projekt_id, marke").eq("status", "offen"),
+      db.from("projekte").select("id, name, marke"),
       db.from("linkedin_kennzahlen").select("stichtag, follower, kontakte, impressionen, interaktionen, profilaufrufe").eq("quelle", "profil").order("stichtag", { ascending: false }).limit(2)
     ]).then(function (r) {
       D.vorlagen = r[0].data || []; D.termine = (r[1].data || []).filter(function (t) { return !t.abgesagt; }); D.aufgaben = r[2].data || []; D.projekte = r[3].data || [];
@@ -30,21 +30,26 @@
   });
 
   function projekt(id) { return D.projekte.filter(function (p) { return p.id === id; })[0]; }
+  // Markensicht (MarkeFokus): Vorlagen über ihre Marke, Aufgaben über das Projekt, Termine über das Postfach, Mails über das Konto
+  function mf(m) { return !window.MarkeFokus || MarkeFokus.passt(m); }
+  function V() { return D.vorlagen.filter(function (v) { return mf(v.marke); }); }
+  function A() { return D.aufgaben.filter(function (a) { var p = projekt(a.projekt_id); return mf(p ? p.marke : a.marke); }); }
+  function T() { return D.termine.filter(function (t) { var p = projekt(t.projekt_id); return mf(p ? p.marke : /sofort ?sichtbar/i.test(t.betreff || "") ? "sofortsichtbar" : t.postfach); }); }
   function kachel(link, zahl, titel, unter, ton) {
     return '<a class="an-k' + (ton ? " an-k--" + ton : "") + '" href="' + link + '"><span class="an-zahl">' + zahl + '</span><b>' + titel + "</b>" + (unter ? "<small>" + unter + "</small>" : "") + "</a>";
   }
 
   function signale() {
-    var vor = D.vorlagen.filter(function (v) { return v.entscheidung !== "spaeter"; }).length;
+    var vor = V().filter(function (v) { return v.entscheidung !== "spaeter"; }).length;
     var bis7 = new Date(+HEUTE + 8 * 864e5);
-    var offen = D.termine.filter(function (t) { return t.vorbereitung === "offen"; });
+    var offen = T().filter(function (t) { return t.vorbereitung === "offen"; });
     var offen7 = offen.filter(function (t) { return new Date(t.start) < bis7; }).length;
-    var laeuft = D.termine.filter(function (t) { return t.vorbereitung === "laeuft"; }).length;
+    var laeuft = T().filter(function (t) { return t.vorbereitung === "laeuft"; }).length;
     var morgen = iso(new Date(+HEUTE + 864e5)), sonntag = new Date(HEUTE); sonntag.setDate(sonntag.getDate() + (7 - ((sonntag.getDay() + 6) % 7)) - 1);
-    var ueber = D.aufgaben.filter(function (a) { return a.faellig_am && a.faellig_am.slice(0, 10) < iso(HEUTE); }).length;
-    var woche = D.aufgaben.filter(function (a) { return a.faellig_am && a.faellig_am.slice(0, 10) >= iso(HEUTE) && a.faellig_am.slice(0, 10) <= iso(sonntag); }).length;
-    var rueck = D.aufgaben.filter(function (a) { return a.antwort_am; }).length;
-    var warten = D.aufgaben.filter(function (a) { return a.mail_gesendet_am && !a.antwort_am; }).length;
+    var ueber = A().filter(function (a) { return a.faellig_am && a.faellig_am.slice(0, 10) < iso(HEUTE); }).length;
+    var woche = A().filter(function (a) { return a.faellig_am && a.faellig_am.slice(0, 10) >= iso(HEUTE) && a.faellig_am.slice(0, 10) <= iso(sonntag); }).length;
+    var rueck = A().filter(function (a) { return a.antwort_am; }).length;
+    var warten = A().filter(function (a) { return a.mail_gesendet_am && !a.antwort_am; }).length;
     var m;
     if (D.mails === "laedt") m = kachel("/strategie/korrespondenz-beta.html", "…", "Mails", "werden geprüft");
     else if (D.mails === "anmelden") m = '<button type="button" class="an-k an-k--leer" data-ms><span class="an-zahl">–</span><b>Mails</b><small>mit Microsoft anmelden</small></button>';
@@ -55,7 +60,7 @@
       m +
       kachel("/strategie/aufgaben.html", ueber, "Aufgaben überfällig", woche + " fällig bis Sonntag", ueber ? "achtung" : "") +
       kachel("/strategie/aufgaben.html", rueck, "Rückmeldungen eingegangen", warten + " warten noch auf Antwort") +
-      linkedin() +
+      (mf("empiria") ? linkedin() : "") +
       "</div>";
   }
 
@@ -71,9 +76,9 @@
   }
 
   function termine() {
-    if (!D.termine.length) return '<p class="an-leer">Keine Termine in den nächsten 14 Tagen.</p>';
+    if (!T().length) return '<p class="an-leer">Keine Termine in den nächsten 14 Tagen.</p>';
     var tage = {};
-    D.termine.forEach(function (t) { var k = iso(new Date(t.start)); (tage[k] = tage[k] || []).push(t); });
+    T().forEach(function (t) { var k = iso(new Date(t.start)); (tage[k] = tage[k] || []).push(t); });
     return Object.keys(tage).sort().map(function (k) {
       var d = new Date(k + "T12:00:00");
       return '<section class="an-tag"><h4>' + d.toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" }) + "</h4><ul>" + tage[k].map(function (t) {
@@ -117,7 +122,7 @@
     });
     var sp = wurzel.querySelector("[data-sprint]"), hw = wurzel.querySelector("[data-sprint-hinweis]");
     sp.onclick = function () {
-      var offen = D.termine.filter(function (t) { return t.vorbereitung === "offen"; });
+      var offen = T().filter(function (t) { return t.vorbereitung === "offen"; });
       var satz = "Ideensprint zur Terminvorbereitung starten. Offen: " + offen.map(function (t) {
         return new Date(t.start).toLocaleDateString("de-DE", { day: "numeric", month: "numeric" }) + " " + (t.betreff || ""); }).join("; ") + ".";
       db.from("sparring").insert({ modus: "Ideensprint Terminvorbereitung" }).then(function () {});
@@ -126,6 +131,11 @@
     };
   }
 
+  function mailZahlen() {
+    var d = D.mailRoh, vor24 = Date.now() - 864e5, k = function (m) { return mf(m.konto && m.konto.name); };
+    return { neu: d.relevant.concat(d.nichtRelevant).filter(function (m) { return k(m) && new Date(m.receivedDateTime) > vor24; }).length, handlung: d.handlung.filter(k).length };
+  }
+  document.addEventListener("markefokus", function () { if (!D.vorlagen) return; if (D.mailRoh) D.mails = mailZahlen(); zeichnen(); });
   // Mails: neu in 24 h und Handlungsbedarf – nur mit Microsoft-Anmeldung (wie Korrespondenz)
   function mails() {
     if (!B) { D.mails = "anmelden"; zeichnen(); return; }
@@ -134,7 +144,7 @@
       return B.laden().then(function (d) {
         var vor24 = Date.now() - 864e5;
         var neu = d.relevant.concat(d.nichtRelevant).filter(function (m) { return new Date(m.receivedDateTime) > vor24; }).length;
-        D.mails = { neu: neu, handlung: d.handlung.length }; zeichnen();
+        D.mailRoh = d; D.mails = mailZahlen(); zeichnen();
       });
     }).catch(function () { D.mails = "anmelden"; zeichnen(); });
   }

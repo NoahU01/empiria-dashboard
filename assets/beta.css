@@ -1059,3 +1059,8 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
 .ans-stand { max-width: 320px; margin: 0; font-size: var(--fs-xs); line-height: 1.4; color: var(--grey-70); text-align: right; }
 .ans-stand:empty { display: none; }
 @media (max-width: 700px) { .db-kopf .ans { align-items: flex-start; margin-left: 0; width: 100%; } .ans-stand { text-align: left; } }
+
+/* Markensicht (Analyse, Steuerung) */
+.mf { display: flex; flex-wrap: wrap; gap: var(--s2); margin: var(--s5) 0 0; }
+.mf button { padding: 7px 14px; border: 1px solid var(--linie); border-radius: 999px; background: var(--white); font: inherit; font-size: var(--fs-s); font-weight: 500; color: var(--ink); cursor: pointer; }
+.mf button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--white); }
