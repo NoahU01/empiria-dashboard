@@ -49,12 +49,14 @@
     aufgaben.forEach(function (a) { if (a.projekt_id) mitAufgaben[a.projekt_id] = 1; });
     // Zeile 1: Alle · Operativ · Marken – Zeile 2: alle laufenden Projekte (bei gewählter Marke nur deren Projekte). Eine Ebene, keine Farben.
     var marken = MARKEN.filter(function (m) { return wahl.indexOf("m:" + m) > -1; });
-    var l = projekte.filter(function (p) { return p.status !== "abgeschlossen" && (!marken.length || marken.indexOf(p.marke || "empiria") > -1 || wahl.indexOf(p.id) > -1); });
+    // Ist oben etwas gewählt (Operativ oder Marke), stehen unten nur die passenden Projekte – Operativ hat keine, die Zeile entfällt dann.
+    var oben = marken.length || wahl.indexOf("op") > -1;
+    var l = projekte.filter(function (p) { return p.status !== "abgeschlossen" && (!oben || marken.indexOf(p.marke || "empiria") > -1 || wahl.indexOf(p.id) > -1); });
     var h = '<div class="ab-filter"><div class="ab-filter-zeile ab-filter-haupt">' + knopf("alle", "Alle", !wahl.length) + knopf("op", "Operativ", wahl.indexOf("op") > -1) +
       MARKEN.map(function (m) { return knopf("m:" + m, m, wahl.indexOf("m:" + m) > -1); }).join("") + "</div>" +
-      '<div class="ab-filter-zeile ab-filter-projekte">' + l.map(function (p) {
+      (l.length ? '<div class="ab-filter-zeile ab-filter-projekte">' + l.map(function (p) {
         return knopf(p.id, p.name, wahl.indexOf(p.id) > -1).replace("<button", mitAufgaben[p.id] ? "<button" : '<button class="ab-leer"');
-      }).join("") + "</div>";
+      }).join("") + "</div>" : "");
     return h + "</div>";
   }
 
