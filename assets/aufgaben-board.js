@@ -35,7 +35,11 @@
   }
 
   function projektVon(a) { return projekte.filter(function (p) { return p.id === a.projekt_id; })[0]; }
+  // Aus Analyse „Rückmeldungen eingegangen“ (#rueckmeldungen): nur Aufgaben zeigen, auf die eine Antwort gekommen ist
+  var nurRueck = location.hash === "#rueckmeldungen";
+  function rueck(a) { return a.status === "offen" && !!a.antwort_am; }
   function sichtbar(a) {
+    if (nurRueck) return rueck(a);
     if (!wahl.length) return true;
     if (!a.projekt_id) return wahl.indexOf("op") > -1;
     var p = projektVon(a);
@@ -61,6 +65,8 @@
       '<div class="ab-filter-zeile ab-filter-projekte ab-filter-mass" aria-hidden="true">' + projekte.filter(function (p) { return p.status !== "abgeschlossen"; }).map(function (p) {
         return '<button type="button" tabindex="-1">' + esc(p.name) + "</button>";
       }).join("") + "</div>";
+    if (nurRueck) h = '<div class="ab-filter"><div class="ab-filter-zeile ab-filter-haupt"><button type="button" class="ab-rueck" aria-pressed="true" data-rueck-aus>Neue Rückmeldungen (' + aufgaben.filter(rueck).length + ') <span aria-hidden="true">×</span></button>' +
+      '<span class="ab-rueck-hinweis">Nur Aufgaben, auf die eine Antwort eingegangen ist</span></div><div class="ab-filter-zeile ab-filter-projekte ab-filter-ohne"></div>';
     return h + "</div>";
   }
 
@@ -95,6 +101,8 @@
   window.addEventListener("resize", abstand);
 
   function verdrahten() {
+    var ra = wurzel.querySelector("[data-rueck-aus]");
+    if (ra) ra.onclick = function () { nurRueck = false; history.replaceState(null, "", location.pathname); zeichnen(); };
     wurzel.querySelectorAll("[data-f]").forEach(function (b) {
       b.onclick = function () {
         var f = b.getAttribute("data-f");

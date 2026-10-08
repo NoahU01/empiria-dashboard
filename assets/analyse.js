@@ -59,7 +59,7 @@
       kachel("#termine", offen7, "Termine ohne Vorbereitung", "in den nächsten 7 Tagen · " + offen.length + " in 14 Tagen · " + laeuft + " in Vorbereitung", offen7 ? "achtung" : "") +
       m +
       kachel("/strategie/aufgaben.html", ueber, "Aufgaben überfällig", woche + " fällig bis Sonntag", ueber ? "achtung" : "") +
-      kachel("/strategie/aufgaben.html", rueck, "Rückmeldungen eingegangen", warten + " warten noch auf Antwort") +
+      kachel("/strategie/aufgaben.html#rueckmeldungen", rueck, "Rückmeldungen eingegangen", warten + " warten noch auf Antwort") +
       (mf("empiria") ? linkedin() : "") +
       "</div>";
   }
