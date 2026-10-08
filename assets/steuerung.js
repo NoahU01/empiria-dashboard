@@ -9,6 +9,8 @@
   var db = window.empiriaDb, wurzel = document.querySelector("[data-steuerung]");
   if (!db || !wurzel) return;
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
+  // Links in Karten anklickbar machen (Daniel: bei Ausarbeitungen immer die URL zeigen, um live nachzusehen)
+  function mitLinks(t) { return esc(t).replace(/(https?:\/\/[^\s<)]+)/g, function (u) { var kurz = u.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, ""); return '<a href="' + u + '" target="_blank" rel="noopener">' + (kurz.length > 42 ? kurz.slice(0, 40) + "…" : kurz) + "</a>"; }); }
   var HEUTE = new Date(new Date().toDateString());
   function frist(f) {
     if (!f) return '<span class="st4-frist st4-frist--leer"></span>';
@@ -60,9 +62,9 @@
     return '<article class="st4-karte' + (rm ? " st4-karte--rm" : "") + '" data-v="' + v.id + '">' +
       '<div class="st4-kopf">' + tag + frist(v.frist) + '<span class="st4-wo">' + esc(p ? p.name : "Operativ") + "</span></div>" +
       '<h3><a href="' + esc(v.link || "#") + '">' + esc(v.titel) + "</a></h3>" +
-      '<div class="st4-mitte">' + (v.kern ? '<p class="st4-kern">' + esc(v.kern) + "</p>" : "") +
-      (punkte.length ? '<ul class="st4-punkte">' + punkte.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "") + "</div>" +
-      '<div class="st4-unten"><p class="st4-vorschlag"><span>' + (rm ? "Was ich von dir brauche" : "Mein Vorschlag") + "</span>" + esc(v.vorschlag) + "</p>" +
+      '<div class="st4-mitte">' + (v.kern ? '<p class="st4-kern">' + mitLinks(v.kern) + "</p>" : "") +
+      (punkte.length ? '<ul class="st4-punkte">' + punkte.map(function (x) { return "<li>" + mitLinks(x) + "</li>"; }).join("") + "</ul>" : "") + "</div>" +
+      '<div class="st4-unten"><p class="st4-vorschlag"><span>' + (rm ? "Was ich von dir brauche" : "Mein Vorschlag") + "</span>" + mitLinks(v.vorschlag) + "</p>" +
       (v.ablage ? '<p class="st4-ablage">Ablage: ' + esc(v.ablage) + "</p>" : "") +
       '<div class="st4-knoepfe">' + knoepfe + "</div></div>" +
       '<form class="st4-anders" hidden><textarea rows="4" placeholder="Was soll stattdessen passieren? – sprechen oder tippen"></textarea><div><button type="submit">An Claude geben</button><button type="button" data-zu>Abbrechen</button></div></form>' +
