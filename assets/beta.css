@@ -1265,3 +1265,22 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
   .tr-det { padding-left: 4px; }
   .tr-kasten { flex-direction: column; align-items: flex-start; }
 }
+
+/* Aufgaben: Umschalter Liste/Kanban und Liste nach Frist */
+.ab-ansicht { display: inline-flex; margin-left: auto; padding: 3px; border-radius: 999px; background: #f2f1ef; }
+.ab-filter .ab-ansicht button { height: 30px; padding: 0 14px; border: 0; background: none; font-weight: 500; color: var(--grey-70); }
+.ab-filter .ab-ansicht button[aria-pressed="true"] { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.ab-liste { max-width: 900px; }
+.al-tag { margin-top: 22px; }
+.al-tag h4 { margin: 0 0 4px; padding-bottom: 6px; border-bottom: 1px solid #e4e1dd; font-size: var(--fs-s); font-weight: 600; color: var(--grey-70); }
+.al-tag--heute h4 { color: var(--ink); } .al-tag--ueber h4 { color: var(--fehler); } .al-tag--ohne h4 { color: var(--grey-50); }
+.al-tag ul { list-style: none; margin: 0; padding: 0; }
+.al-z { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 10px 0; border-bottom: 1px solid #f2f1ef; }
+.al-haken { width: 18px; height: 18px; margin: 3px 0 0; accent-color: var(--ink); cursor: pointer; }
+.al-was .pr-auf-titel { font-size: var(--fs-m); font-weight: 500; }
+.al-was > small { display: block; margin-top: 2px; font-size: var(--fs-xs); color: var(--grey-50); }
+.al-was > small a { color: inherit; } .al-was .pr-hinweis, .al-was .pr-wartet { margin-left: 0; }
+.al-sp { margin-top: 2px; padding: 2px 9px; border-radius: 999px; background: #f2f1ef; font-size: var(--fs-xs); font-weight: 500; color: var(--grey-70); white-space: nowrap; }
+.al-sp--arbeit { background: var(--ink); color: #fff; } .al-sp--pruefung { background: var(--hl); color: var(--ink); }
+.al-z--fertig .pr-auf-titel { text-decoration: line-through; color: var(--grey-50); }
+@media (max-width: 600px) { .ab-ansicht { margin-left: 0; } .al-z { grid-template-columns: 24px minmax(0, 1fr); } .al-sp { grid-column: 2; justify-self: start; } }
