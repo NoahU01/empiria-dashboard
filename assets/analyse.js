@@ -80,10 +80,6 @@
       '<section class="an-block" id="termine"><div class="an-block-kopf"><h2 class="st4-h">Termine der nächsten 14 Tage</h2>' +
       '<button type="button" class="an-sprint" data-sprint>Ideensprint zur Vorbereitung starten</button></div>' +
       '<p class="an-hinweis" data-sprint-hinweis hidden></p>' + termine() + "</section>";
-    var kopf = document.querySelector(".db-kopf");
-    if (kopf && !kopf.querySelector(".st4-nav")) kopf.insertAdjacentHTML("beforeend", '<nav class="st4-nav" aria-label="Hauptseiten"><a class="st4-nav-sicht" href="/strategie/steuerung.html">Steuerung</a>' +
-      [["Projekte", "/strategie/projekte.html"], ["Aufgaben", "/strategie/aufgaben.html"], ["Korrespondenz", "/strategie/korrespondenz-beta.html"], ["Kontakte", "/strategie/kontakte.html"]]
-        .map(function (x) { return '<a href="' + x[1] + '">' + x[0] + "</a>"; }).join("") + "</nav>");
     verdrahten();
   }
 

@@ -1297,3 +1297,22 @@ button.an-k--leer { cursor: pointer; }
 .sm-zwei { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 14px; }
 .sm-pendel { font-size: 1.4rem; color: var(--grey-50); }
 .an-k b { hyphens: auto; overflow-wrap: break-word; } .an-k { min-width: 0; }
+/* Hauptnavigation – durchgängig auf Analyse, Steuerung, Projekte, Aufgaben, Korrespondenz, Kontakte */
+.db-rechts { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.db-rechts .st4-nav { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px 0; margin: 0 0 10px; }
+.db-rechts .st4-nav a { padding: 0 14px; border-left: 1px solid #e4e1dd; font-family: var(--font-sans); font-size: .88rem; font-weight: 500; color: var(--grey-70); text-decoration: none; }
+.db-rechts .st4-nav a:first-child { border-left: 0; }
+.db-rechts .st4-nav a:last-child { padding-right: 0; }
+.db-rechts .st4-nav a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; text-decoration-color: #c9c5c0; }
+.db-rechts .st4-nav a[aria-current="page"] { color: var(--ink); font-weight: 600; }
+.db-rechts .db-konto { margin: 0; }
+body.kt3-detail .db-kopf { justify-content: flex-end; }
+@media (max-width: 760px) {
+  .db-rechts { align-items: flex-start; width: 100%; }
+  .db-rechts .st4-nav { justify-content: flex-start; gap: 6px 18px; margin: 6px 0 0; }
+  .db-rechts .st4-nav a { padding: 0; border-left: 0; }
+  body.kt3-detail .db-kopf { justify-content: flex-start; }
+}
+.db-rechts .db-konto { order: -1; } .db-rechts .db-konto:empty { display: none; }
+body.kt3-detail .db-kopf { margin-bottom: 18px; }
+@media (max-width: 760px) { .pr-tab td { overflow-wrap: anywhere; hyphens: auto; } }

@@ -1,5 +1,4 @@
 /* Steuerung – die zentrale Startseite. Zuarbeit wie von einer Referentin.
-     Projekte        – ruhiger Index je Marke, ein Klick ins Projekt (keine Bewertung)
      Auf deinem Tisch – Vorlagen von Claude (Tabelle vorlagen): Frist, Thema, Kern, Vorschlag, Ja · Anders · Später.
                         Karten im Raster mit Subgrid – gleichartige Teile stehen auf gleicher Höhe, Knöpfe immer unten.
      Sparring        – sechs Arten zu reden; Klick legt die Anfrage ab und kopiert den Startsatz für den Chat.
@@ -45,22 +44,6 @@
   }
   function projekt(id) { return D.projekte.filter(function (p) { return p.id === id; })[0]; }
 
-  /* ---------- Projekte: Index je Marke ---------- */
-  function projekte() {
-    function liste(l) {
-      if (!l.length) return '<span class="st4-leer2">–</span>';
-      return l.map(function (p) { return '<a href="/strategie/projekte.html#p=' + p.id + '"' + (p.status === "pausiert" ? ' class="st4-pause"' : "") + ">" + esc(p.name) + "</a>"; })
-        .join(' <span class="st4-sep" aria-hidden="true">·</span> ');
-    }
-    return '<div class="st4-idx-kopf"><span></span><span>Kunden</span><span>Intern</span></div>' +
-      ["empiria", "sofortsichtbar", "Müller&Ströbel."].map(function (m) {
-        var l = D.projekte.filter(function (p) { return (p.marke || "empiria") === m && p.status !== "abgeschlossen"; }).sort(function (a, b) { return a.name.localeCompare(b.name); });
-        return '<div class="st4-idx-zeile"><span class="st4-idx-marke">' + esc(m) + "</span>" +
-          '<span class="st4-idx-zelle"><em>Kunden</em><span>' + liste(l.filter(function (p) { return p.typ !== "intern"; })) + "</span></span>" +
-          '<span class="st4-idx-zelle"><em>Intern</em><span>' + liste(l.filter(function (p) { return p.typ === "intern"; })) + "</span></span></div>";
-      }).join("");
-  }
-
   /* ---------- Vorlagen ---------- */
   function karte(v) {
     var p = projekt(v.projekt_id);
@@ -105,7 +88,6 @@
     var offen = D.vorlagen.filter(function (v) { return v.status === "offen" && v.entscheidung !== "spaeter"; });
     var weg = D.vorlagen.filter(function (v) { return v.status === "entschieden" || v.entscheidung === "spaeter"; });
     wurzel.innerHTML =
-      '<section class="st4-index" aria-label="Projekte">' + projekte() + "</section>" +
       '<section class="st4-block"><h2 class="st4-h">Auf deinem Tisch</h2>' +
         (offen.length ? '<div class="st4-karten">' + offen.map(karte).join("") + "</div>" : '<p class="st4-leer">Nichts zu entscheiden.</p>') +
         (weg.length ? '<p class="st4-entschieden">' + weg.map(function (v) {
@@ -113,10 +95,6 @@
       "</section>" +
       '<section class="st4-block"><h2 class="st4-h">Sparring starten</h2><div class="st4-sparring">' + sparring() + '</div><p class="st4-hinweis" data-spar-hinweis hidden></p></section>' +
       '<section class="st4-block"><h2 class="st4-h">Die nächsten Wochen</h2><div class="st4-wochen" tabindex="0" aria-label="Wochen – seitlich wischen">' + wochen() + "</div></section>";
-    var kopf = document.querySelector(".db-kopf");
-    if (kopf && !kopf.querySelector(".st4-nav")) kopf.insertAdjacentHTML("beforeend", '<nav class="st4-nav" aria-label="Hauptseiten">' +
-      '<a class="st4-nav-sicht" href="/strategie/analyse.html">Analyse</a>' + [["Projekte", "/strategie/projekte.html"], ["Aufgaben", "/strategie/aufgaben.html"], ["Korrespondenz", "/strategie/korrespondenz-beta.html"], ["Kontakte", "/strategie/kontakte.html"]]
-        .map(function (x) { return '<a href="' + x[1] + '">' + x[0] + "</a>"; }).join("") + "</nav>");
     verdrahten();
   }
 
