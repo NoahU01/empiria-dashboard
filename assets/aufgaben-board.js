@@ -47,15 +47,14 @@
     function knopf(wert, text, an) { return '<button type="button" data-f="' + wert + '" aria-pressed="' + an + '">' + esc(text) + "</button>"; }
     var mitAufgaben = {};
     aufgaben.forEach(function (a) { if (a.projekt_id) mitAufgaben[a.projekt_id] = 1; });
-    var h = '<div class="ab-filter"><div class="ab-filter-zeile"><span class="ab-marke"></span>' + knopf("alle", "Alle", !wahl.length) + knopf("op", "Operativ", wahl.indexOf("op") > -1) + "</div>";
-    MARKEN.forEach(function (m) {
-      var l = projekte.filter(function (p) { return (p.marke || "empiria") === m && p.status !== "abgeschlossen"; });
-      if (!l.length) return;
-      // Marke selbst ist auch auswählbar (alle Projekte dieser Marke)
-      h += '<div class="ab-filter-zeile">' + knopf("m:" + m, m, wahl.indexOf("m:" + m) > -1).replace("<button", '<button class="ab-marke-knopf"') + l.map(function (p) {
+    // Zeile 1: Alle · Operativ · Marken – Zeile 2: alle laufenden Projekte (bei gewählter Marke nur deren Projekte). Eine Ebene, keine Farben.
+    var marken = MARKEN.filter(function (m) { return wahl.indexOf("m:" + m) > -1; });
+    var l = projekte.filter(function (p) { return p.status !== "abgeschlossen" && (!marken.length || marken.indexOf(p.marke || "empiria") > -1 || wahl.indexOf(p.id) > -1); });
+    var h = '<div class="ab-filter"><div class="ab-filter-zeile ab-filter-haupt">' + knopf("alle", "Alle", !wahl.length) + knopf("op", "Operativ", wahl.indexOf("op") > -1) +
+      MARKEN.map(function (m) { return knopf("m:" + m, m, wahl.indexOf("m:" + m) > -1); }).join("") + "</div>" +
+      '<div class="ab-filter-zeile ab-filter-projekte">' + l.map(function (p) {
         return knopf(p.id, p.name, wahl.indexOf(p.id) > -1).replace("<button", mitAufgaben[p.id] ? "<button" : '<button class="ab-leer"');
       }).join("") + "</div>";
-    });
     return h + "</div>";
   }
 
