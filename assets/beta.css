@@ -1142,3 +1142,20 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
 .ma-stand { margin: 12px 0 0; font-size: var(--fs-s); color: var(--grey-70); } .ma-stand--an { color: var(--ink); font-weight: 500; }
 .ma-knoepfe { justify-content: flex-start; margin-top: 14px; }
 .ma-h { margin: var(--s5) 0 var(--s3); font-size: var(--fs-xs); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-50); }
+.ma-kat { padding: 2px 8px; border-radius: 6px; background: #f2f1ef; font-size: var(--fs-xs); font-weight: 500; color: var(--grey-70); }
+.ma-alter { margin-left: auto; font-size: var(--fs-xs); color: var(--grey-50); } .ma-alter--rot { color: var(--fehler); font-weight: 600; }
+.ma-mess { margin: 0 0 10px; padding: 10px 12px; border-left: 3px solid var(--cyan); background: #f2fafc; font-size: var(--fs-s); line-height: 1.45; }
+.ma-mess span { display: block; font-size: var(--fs-xs); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--grey-50); }
+.ma-mess small { display: block; margin-top: 2px; font-size: var(--fs-xs); color: var(--grey-50); }
+.ma-warum-k { align-self: flex-start; padding: 0; border: 0; background: none; font: inherit; font-size: var(--fs-s); font-weight: 500; color: var(--ink); text-decoration: underline; text-decoration-color: var(--grey-50); text-underline-offset: 3px; cursor: pointer; }
+.ma-warum { margin-top: 8px; font-size: var(--fs-s); line-height: 1.5; } .ma-warum p { margin: 0 0 6px; }
+.ma-belege { margin: 4px 0 0; padding-left: 18px; color: var(--grey-70); }
+.ma-ja { background: var(--ink) !important; border-color: var(--ink) !important; color: var(--white) !important; }
+.ma-gruende { display: flex; flex-wrap: wrap; gap: 6px; }
+.ma-gruende button { padding: 5px 10px; border: 1px solid var(--linie); border-radius: 999px; background: var(--white); font-size: var(--fs-xs); cursor: pointer; }
+.ma-stand--fehler { color: var(--fehler); }
+.ma-stand-leiste { margin: 0 0 var(--s3); } .ma-stand-leiste p { margin: 6px 0 0; font-size: var(--fs-s); color: var(--grey-70); }
+.ma-balken { height: 8px; border-radius: 4px; background: #eeece9; overflow: hidden; } .ma-balken i { display: block; height: 100%; background: var(--cyan); }
+.ma-bereiche { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: var(--s4); }
+.ma-bereiche button { padding: 4px 12px; border: 0; border-radius: 999px; background: none; font-size: var(--fs-s); color: var(--grey-70); cursor: pointer; }
+.ma-bereiche button[aria-pressed="true"] { background: #f2f1ef; color: var(--ink); font-weight: 600; }
