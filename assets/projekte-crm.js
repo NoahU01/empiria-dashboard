@@ -49,7 +49,7 @@
   function liste() {
     wurzel.innerHTML = '<div class="kb-laedt"><span></span><span></span></div>';
     Promise.all([
-      db.from("projekte").select("id, name, typ, marke, status, naechstes_gate, gate_datum, organisationen(id, name)").order("name"),
+      db.from("projekte").select("id, name, typ, marke, status, naechstes_gate, gate_datum, organisationen(id, name)").order("reihenfolge", { nullsFirst: false }).order("name"),
       db.from("projekt_ereignisse").select("projekt_id, datum, titel").gte("datum", new Date().toISOString()).order("datum")
     ]).then(function (r) {
       var p = r[0].data || [], nae = {};
