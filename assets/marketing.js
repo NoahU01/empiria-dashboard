@@ -29,7 +29,7 @@
   });
 
   // Kampagnen je Marke – fehlt bei einer Marke eine Kampagne, steht das deutlich da
-  var KAMP_OFFEN = true, KAMP = { k: [], t: [] }, MARKEN = ["empiria", "sofortsichtbar", "Müller&Ströbel."];
+  var KAMP_OFFEN = false, KAMP = { k: [], t: [] }, MARKEN = ["empiria", "sofortsichtbar", "Müller&Ströbel."];
   function kampagnen() {
     return '<section class="kt3-box kt3-breit kg-bereich' + (KAMP_OFFEN ? "" : " pr-zu") + '" data-bereich="kamp"><h3><button type="button" class="pr-klapp" aria-expanded="' + KAMP_OFFEN + '"><span>Kampagnen</span><span class="tl-dreieck" aria-hidden="true"></span></button></h3><div class="kg-inhalt"><div class="kg-marken">' + MARKEN.map(function (m) {
       var l = KAMP.k.filter(function (k) { return (k.marke || "empiria") === m; });
