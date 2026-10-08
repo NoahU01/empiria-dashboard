@@ -1319,3 +1319,4 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
 .an-notiz { margin: 6px 0 0; padding-left: 1.05em; }
 .an-notiz li { font-size: .8rem; font-weight: 300; line-height: 1.45; color: var(--ink-2); }
 .an-t { align-items: start; } .an-zeit, .an-vorb { margin-top: 2px; }
+.an-t--laeuft .an-vorb button[data-v="laeuft"][aria-pressed="true"] { background: #e8e6e2; color: var(--ink); font-weight: 600; }

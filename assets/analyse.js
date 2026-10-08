@@ -1,7 +1,7 @@
 /* Analyse – „Bin ich an den richtigen Sachen dran?“
    Signale mit Zahl, jedes führt per Klick dorthin, wo es bearbeitet wird:
      Entscheidungsvorschläge · Termine ohne Vorbereitung · Mails (neu / Handlungsbedarf) · Aufgaben · Rückmeldungen · LinkedIn
-   Darunter: Termine der nächsten 14 Tage mit Vorbereitungsstand (offen · vorbereitet · nicht nötig),
+   Darunter: Termine der nächsten 14 Tage mit Vorbereitungsstand (offen · läuft · vorbereitet · nicht nötig),
    Ideensprint zur Vorbereitung startbar. Pendant zur Steuerung (dort die Vorschläge). */
 (function () {
   "use strict";
@@ -37,6 +37,7 @@
     var bis7 = new Date(+HEUTE + 8 * 864e5);
     var offen = D.termine.filter(function (t) { return t.vorbereitung === "offen"; });
     var offen7 = offen.filter(function (t) { return new Date(t.start) < bis7; }).length;
+    var laeuft = D.termine.filter(function (t) { return t.vorbereitung === "laeuft"; }).length;
     var morgen = iso(new Date(+HEUTE + 864e5)), sonntag = new Date(HEUTE); sonntag.setDate(sonntag.getDate() + (7 - ((sonntag.getDay() + 6) % 7)) - 1);
     var ueber = D.aufgaben.filter(function (a) { return a.faellig_am && a.faellig_am.slice(0, 10) < iso(HEUTE); }).length;
     var woche = D.aufgaben.filter(function (a) { return a.faellig_am && a.faellig_am.slice(0, 10) >= iso(HEUTE) && a.faellig_am.slice(0, 10) <= iso(sonntag); }).length;
@@ -48,7 +49,7 @@
     else m = kachel("/strategie/korrespondenz-beta.html", D.mails.handlung, "Mails mit Handlungsbedarf", D.mails.neu + " neu in den letzten 24 Stunden", D.mails.handlung ? "achtung" : "");
     return '<div class="an-signale">' +
       kachel("/strategie/steuerung.html", vor, "Entscheidungs&shy;vorschläge", "liegen auf deinem Tisch", vor ? "achtung" : "") +
-      kachel("#termine", offen7, "Termine ohne Vorbereitung", "in den nächsten 7 Tagen · " + offen.length + " in 14 Tagen", offen7 ? "achtung" : "") +
+      kachel("#termine", offen7, "Termine ohne Vorbereitung", "in den nächsten 7 Tagen · " + offen.length + " in 14 Tagen · " + laeuft + " in Vorbereitung", offen7 ? "achtung" : "") +
       m +
       kachel("/strategie/aufgaben.html", ueber, "Aufgaben überfällig", woche + " fällig bis Sonntag", ueber ? "achtung" : "") +
       kachel("/strategie/aufgaben.html", rueck, "Rückmeldungen eingegangen", warten + " warten noch auf Antwort") +
@@ -70,6 +71,7 @@
             (t.vorbereitung_notiz ? '<ul class="an-notiz">' + t.vorbereitung_notiz.split("\n").filter(Boolean).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "") + "</span>" +
           '<span class="an-vorb" role="group" aria-label="Vorbereitung">' +
             '<button type="button" data-v="offen" aria-pressed="' + (t.vorbereitung === "offen") + '">offen</button>' +
+            '<button type="button" data-v="laeuft" aria-pressed="' + (t.vorbereitung === "laeuft") + '">läuft</button>' +
             '<button type="button" data-v="vorbereitet" aria-pressed="' + (t.vorbereitung === "vorbereitet") + '">vorbereitet</button>' +
             '<button type="button" data-v="nicht_noetig" aria-pressed="' + (t.vorbereitung === "nicht_noetig") + '">nicht nötig</button></span></li>';
       }).join("") + "</ul></section>";
