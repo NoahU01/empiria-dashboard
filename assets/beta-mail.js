@@ -4,7 +4,7 @@
    gespeichert oder an einen Server geschickt: die Mails existieren nur in
    diesem Browserfenster. Nur lesen – die Seite verändert keine Mails.
 
-   Gemeinsam genutzt von dashboard-beta.html (Kachel) und
+   Rücksprung der Anmeldung: dashboard-beta.html (nur technisch). Genutzt von
    korrespondenz-beta.html (Unterseite). */
 (function () {
   "use strict";

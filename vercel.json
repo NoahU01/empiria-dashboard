@@ -17,32 +17,32 @@
     },
     {
       "source": "/steuerungszentrale",
-      "destination": "/strategie/dashboard.html",
+      "destination": "/strategie/steuerung.html",
       "permanent": false
     },
     {
       "source": "/lage",
-      "destination": "/strategie/dashboard-lage.html",
+      "destination": "/strategie/steuerung.html",
       "permanent": false
     },
     {
       "source": "/entwuerfe",
-      "destination": "/strategie/dashboard-entwuerfe.html",
+      "destination": "/strategie/steuerung.html",
       "permanent": false
     },
     {
       "source": "/entwuerfe-2",
-      "destination": "/strategie/dashboard-entwuerfe-2.html",
+      "destination": "/strategie/steuerung.html",
       "permanent": false
     },
     {
       "source": "/entwuerfe-dashboard",
-      "destination": "/strategie/entwuerfe-dashboard.html",
+      "destination": "/strategie/steuerung.html",
       "permanent": false
     },
     {
       "source": "/beta",
-      "destination": "/strategie/dashboard-beta.html",
+      "destination": "/strategie/steuerung.html",
       "permanent": false
     },
     {

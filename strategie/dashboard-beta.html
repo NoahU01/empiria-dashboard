@@ -3,124 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dashboard Beta &ndash; empiria</title>
-<meta name="description" content="Dashboard Beta – der Stand, der wirklich läuft.">
+<title>Anmeldung &ndash; empiria</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="/styles.css">
-<link rel="stylesheet" href="/assets/dashboard-nav.css">
-<link rel="stylesheet" href="/assets/beta.css">
 </head>
 <body>
-
-<header class="site-header">
-  <div class="container nav">
-    <div class="sn">
-      <a class="brand" href="/strategie/oekosystem.html" aria-label="empiria &ndash; zur Startseite">
-        <img src="/assets/empiria-logo.svg" alt="empiria">
-      </a>
-      <div class="sn-dd" data-sn-dd>
-        <button class="sn-toggle" type="button" aria-expanded="false" aria-controls="snPanel" aria-label="Seiten anzeigen">
-          <svg class="sn-chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <nav class="sn-panel" id="snPanel" aria-label="Seiten">
-        <p class="sn-group">Strategie</p>
-        <a href="/strategie/oekosystem.html" class="sn-link"><span class="sn-tag">&Ouml;S</span><span class="sn-txt"><b>&Ouml;kosystem</b><small>Schaltplan der Steuerungszentrale</small></span></a>
-        <div class="sn-sub"><a href="/strategie/dashboard-beta.html" class="sn-link" aria-current="page"><span class="sn-tag">DB</span><span class="sn-txt"><b>Dashboard Beta</b><small>Der Stand, der wirklich l&auml;uft</small></span></a><button class="sn-sub-toggle" type="button" aria-expanded="false" aria-controls="snKinderDB" aria-label="Unterseiten anzeigen"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
-        <div class="sn-kinder" id="snKinderDB">
-          <a href="/strategie/steuerung.html" class="sn-link"><span class="sn-tag">ST</span><span class="sn-txt"><b>Steuerung</b><small>Reagieren, entscheiden, Bewegung</small></span></a>
-          <a href="/strategie/analyse.html" class="sn-link"><span class="sn-tag">AN</span><span class="sn-txt"><b>Analyse</b><small>Bin ich an den richtigen Sachen dran?</small></span></a>
-          <a href="/strategie/sitemap-dashboard.html" class="sn-link"><span class="sn-tag">SM</span><span class="sn-txt"><b>Sitemap Dashboard</b><small>Wie die Seiten zusammenhängen</small></span></a>
-          <a href="/strategie/dashboard-varianten.html" class="sn-link"><span class="sn-tag">DV</span><span class="sn-txt"><b>Dashboard-Varianten</b><small>Entw&uuml;rfe zur Unternehmenssteuerung</small></span></a>
-          <a href="/strategie/korrespondenz-beta.html" class="sn-link"><span class="sn-tag">KO</span><span class="sn-txt"><b>Korrespondenz</b><small>Alle Konten, nach Handlungsbedarf</small></span></a>
-          <a href="/strategie/korrespondenz-variante-a.html" class="sn-link"><span class="sn-tag">VA</span><span class="sn-txt"><b>Variante A: Karten</b><small>Alles offen untereinander</small></span></a>
-          <a href="/strategie/korrespondenz-variante-c.html" class="sn-link"><span class="sn-tag">VC</span><span class="sn-txt"><b>Variante C: Entscheidungs-Sprint</b><small>Eine Mail nach der anderen – fürs iPhone</small></span></a>
-          <a href="/strategie/korrespondenz-variante-e.html" class="sn-link"><span class="sn-tag">VE</span><span class="sn-txt"><b>Variante E: Liste und Detail</b><small>Zwei Spalten – für MacBook und iPad</small></span></a>
-        </div>
-        <a href="/strategie/projekte.html" class="sn-link"><span class="sn-tag">PR</span><span class="sn-txt"><b>Projekte</b><small>Steckbrief, Timeline, Protokoll</small></span></a>
-        <a href="/strategie/aufgaben.html" class="sn-link"><span class="sn-tag">AU</span><span class="sn-txt"><b>Aufgaben</b><small>Kanban &uuml;ber alle Projekte</small></span></a>
-        <div class="sn-sub"><a href="/strategie/kontakte.html" class="sn-link"><span class="sn-tag">KT</span><span class="sn-txt"><b>Kontakte</b><small>Kontaktdatenbank (CRM)</small></span></a><button class="sn-sub-toggle" type="button" aria-expanded="false" aria-controls="snKinderKT" aria-label="Unterseiten anzeigen"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
-        <div class="sn-kinder" id="snKinderKT">
-        </div>
-        </nav>
-      </div>
-    </div>
-  </div>
-</header>
-
-<main>
-  <section class="db"><div class="container">
-    <div class="db-kopf">
-      <div>
-        <p class="kicker" data-db-datum>Dashboard Beta</p>
-        <h1 class="h-serif">Guten Tag, <span class="hl">Daniel.</span></h1>
-      </div>
-      <div class="db-konto" data-kb-konto></div>
-    </div>
-
-    <!-- Statusleiste: Platzhalter, bis die Anbindungen stehen -->
-    <div class="db-status" aria-label="Status">
-      <span class="db-chip db-chip--leer" title="Platzhalter – Anbindung folgt"><i></i>Linked Helper <b>&ndash;</b></span>
-      <span class="db-chip db-chip--leer" title="Platzhalter – Anbindung folgt"><i></i>Kampagne <b>&ndash;</b></span>
-      <span class="db-chip db-chip--leer" title="Platzhalter – Anbindung folgt">LinkedIn Follower <b>&ndash;</b></span>
-      <span class="db-chip db-chip--leer" title="Platzhalter – Anbindung folgt">LinkedIn Kontakte <b>&ndash;</b></span>
-      <a class="db-chip db-chip--leer" href="/strategie/korrespondenz-beta.html#relevant/kontakt" data-kb-kontakt><i></i>kontakt@ <b>&ndash;</b></a>
-      <span class="db-chip db-chip--trenn">Projekte</span>
-      <span class="db-chip">SV Akademie</span>
-      <span class="db-chip">SV Schadenmanagement</span>
-      <span class="db-chip">MSP Digitaler Vertrieb</span>
-      <span class="db-chip">MSP Landing Page</span>
-      <span class="db-chip">VVDE Strategie</span>
-    </div>
-
-    <div class="db-raster">
-      <article class="db-karte" data-kb="kachel">
-        <div class="db-karte-kopf">
-          <h2>Korrespondenz</h2>
-          <small>Handlungsbedarf</small>
-        </div>
-        <div data-kb-inhalt></div>
-        <a class="db-mehr" href="/strategie/korrespondenz-beta.html">Alle Mails ansehen <span aria-hidden="true">&rarr;</span></a>
-      </article>
-
-      <div class="db-seite">
-        <article class="db-karte">
-          <div class="db-karte-kopf"><h2>Termine</h2><small>als N&auml;chstes</small></div>
-          <div data-start-termine><p class="db-folgt">&hellip;</p></div>
-        </article>
-        <article class="db-karte">
-          <div class="db-karte-kopf"><h2>Aufgaben</h2><small>offen</small></div>
-          <div data-start-aufgaben><p class="db-folgt">&hellip;</p></div>
-          <a class="db-mehr" href="/strategie/aufgaben.html">Alle Aufgaben <span aria-hidden="true">&rarr;</span></a>
-        </article>
-        <article class="db-karte">
-          <div class="db-karte-kopf"><h2>Wieder dran</h2><small>Beziehungspflege</small></div>
-          <div data-start-dran><p class="db-folgt">&hellip;</p></div>
-          <a class="db-mehr" href="/strategie/kontakte.html#faellig">Beziehungspflege <span aria-hidden="true">&rarr;</span></a>
-        </article>
-      </div>
-    </div>
-  </div></section>
-</main>
-
-<footer class="site-footer">
-  <div class="container footer-row">
-    <span>empiria GmbH 2026</span>
-    <span class="footer-links"><a href="https://www.empiria.de/impressum.html">Impressum</a> <span>|</span> <a href="https://www.empiria.de/datenschutz.html">Datenschutz</a> <span>|</span> <button type="button" data-cookie-settings>Cookie-Einstellungen</button></span>
-  </div>
-</footer>
-
-<script src="/script.js"></script>
-<script src="/assets/dashboard-nav.js"></script>
+<!-- Technische Rücksprung-Seite der Microsoft-Anmeldung (in Entra als einzige Adresse hinterlegt).
+     MSAL schickt von hier zurück auf die Seite, auf der die Anmeldung begann.
+     Wer die Adresse direkt aufruft, landet auf der Steuerung. Nicht im Menü. -->
+<main class="container" style="padding:64px 16px"><p>Anmeldung wird abgeschlossen &hellip;</p></main>
 <script src="/assets/vendor/msal-browser.min.js"></script>
-<script src="/assets/vendor/supabase.js"></script>
-<script src="/assets/db.js"></script>
 <script src="/assets/beta-mail.js"></script>
-<script src="/assets/beta-seiten.js"></script>
-<script src="/assets/beta-start.js"></script>
 <script>
-  (function () { var d = document.querySelector("[data-db-datum]"); var h = new Date().getHours();
-    d.textContent = new Date().toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" });
-    document.querySelector(".db-kopf h1").innerHTML = (h < 11 ? "Guten Morgen, " : h < 18 ? "Guten Tag, " : "Guten Abend, ") + '<span class="hl">Daniel.</span>'; })();
+  (function () {
+    if (!/[#&?](code|error|state)=/.test(location.hash + location.search)) { location.replace("/strategie/steuerung.html"); return; }
+    if (window.BetaMail) window.BetaMail.start().catch(function () {}).then(function () {
+      setTimeout(function () { location.replace("/strategie/steuerung.html"); }, 4000);
+    });
+  })();
 </script>
 </body>
 </html>
