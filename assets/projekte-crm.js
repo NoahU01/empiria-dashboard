@@ -245,18 +245,22 @@
   /* Darstellung „SV Akademie“: aufklappbare Module 01–05 wie auf der Seite Projekt SV Akademie.
      Die fertig gezeichneten Kästen werden in die Module umgehängt (Knöpfe behalten ihre Funktion). */
   var MODUL_OFFEN = { kurs: false, auf: true, tl: true, ziel: false, team: false };
+  // Auf-/Zugeklappt merkt sich jede Seite je Projekt und Gerät (Daniel, 08.10.2026): { kurs: false, auf: true, … } – true = offen
+  function klappLesen(id) { try { return JSON.parse(localStorage.getItem("pr-klapp-" + id) || "{}"); } catch (x) { return {}; } }
+  function klappSchreiben(id, key, offen) { var k = klappLesen(id); k[key] = offen; try { localStorage.setItem("pr-klapp-" + id, JSON.stringify(k)); } catch (x) {} }
   function module(p) {
     var r = wurzel.querySelector(".kt3-raster"), liste = document.createElement("div"), n = 0;
     liste.className = "fl-ebenen pr-module kt3-breit";
     function modul(key, titel, sub, teile) {
       var nr = ++n < 10 ? "0" + n : String(n), sek = document.createElement("section");
-      sek.className = "fl-ebene" + (MODUL_OFFEN[key] ? " is-offen" : "");
-      sek.innerHTML = '<button type="button" class="fl-kopf" aria-expanded="' + MODUL_OFFEN[key] + '"><span class="fl-kopf-nr">' + nr + '</span><span class="fl-kopf-text"><b>' + esc(titel) + "</b>" +
+      var gemerkt = klappLesen(p.id), offenJetzt = key in gemerkt ? gemerkt[key] : !!MODUL_OFFEN[key];
+      sek.className = "fl-ebene" + (offenJetzt ? " is-offen" : "");
+      sek.innerHTML = '<button type="button" class="fl-kopf" aria-expanded="' + offenJetzt + '"><span class="fl-kopf-nr">' + nr + '</span><span class="fl-kopf-text"><b>' + esc(titel) + "</b>" +
         (sub ? "<small>" + esc(sub) + "</small>" : "") + '</span><span class="fl-kopf-pfeil" aria-hidden="true"></span></button><div class="fl-koerper"></div>';
       var k = sek.querySelector(".fl-koerper");
       teile.forEach(function (t) { if (t) k.appendChild(t); });
       sek.querySelector(".fl-kopf").onclick = function () {
-        var auf = !sek.classList.contains("is-offen"); sek.classList.toggle("is-offen", auf); this.setAttribute("aria-expanded", String(auf)); MODUL_OFFEN[key] = auf;
+        var auf = !sek.classList.contains("is-offen"); sek.classList.toggle("is-offen", auf); this.setAttribute("aria-expanded", String(auf)); klappSchreiben(p.id, key, auf);
       };
       liste.appendChild(sek);
     }
@@ -280,7 +284,24 @@
     r.innerHTML = ""; r.appendChild(liste);
   }
 
+  function klappbar(p) {
+    if (lookWert() === "sva") return;
+    var gemerkt = klappLesen(p.id);
+    [[".pr-kurs", "kurs"], [".pr-pakete", "pak"], [".pr-aufgaben", "auf"], [".pr-tl-frei", "tl"], [".pr-team", "team"]].forEach(function (x) {
+      var sek = wurzel.querySelector(x[0]); if (!sek) return;
+      var kopf = sek.querySelector(":scope > .pr-tl-kopf") || sek.querySelector(":scope > h3"); if (!kopf) return;
+      var h = kopf.tagName === "H3" ? kopf : kopf.querySelector("h3");
+      var b = document.createElement("button"); b.type = "button"; b.className = "pr-klapp";
+      b.innerHTML = '<span>' + h.innerHTML + '</span><span class="tl-dreieck" aria-hidden="true"></span>';
+      h.innerHTML = ""; h.appendChild(b);
+      function setzen(offen) { sek.classList.toggle("pr-zu", !offen); b.setAttribute("aria-expanded", String(offen)); }
+      setzen(x[1] in gemerkt ? gemerkt[x[1]] : true);
+      b.onclick = function () { var offen = sek.classList.contains("pr-zu"); setzen(offen); klappSchreiben(p.id, x[1], offen); };
+    });
+  }
+
   function verdrahten(p) {
+    klappbar(p);
     wurzel.querySelectorAll("[data-pk]").forEach(function (b) {
       b.onclick = function () { var auf = b.getAttribute("aria-expanded") !== "true"; b.setAttribute("aria-expanded", String(auf)); b.nextElementSibling.hidden = !auf; };
     });
