@@ -20,9 +20,11 @@
       db.from("vorlagen").select("id, entscheidung").eq("status", "offen"),
       db.from("termine").select("id, start, ende, ganztags, betreff, ort, teilnehmer, extern, postfach, projekt_id, vorbereitung, vorbereitung_notiz, abgesagt").gte("ende", JETZT.toISOString()).lte("start", bis14).order("start"),
       db.from("aufgaben").select("id, status, faellig_am, antwort_am, mail_gesendet_am").eq("status", "offen"),
-      db.from("projekte").select("id, name")
+      db.from("projekte").select("id, name"),
+      db.from("linkedin_kennzahlen").select("stichtag, follower, kontakte, impressionen, interaktionen, profilaufrufe").eq("quelle", "profil").order("stichtag", { ascending: false }).limit(2)
     ]).then(function (r) {
       D.vorlagen = r[0].data || []; D.termine = (r[1].data || []).filter(function (t) { return !t.abgesagt; }); D.aufgaben = r[2].data || []; D.projekte = r[3].data || [];
+      D.linkedin = r[4].data || [];
       zeichnen(); mails();
     });
   });
@@ -53,8 +55,19 @@
       m +
       kachel("/strategie/aufgaben.html", ueber, "Aufgaben überfällig", woche + " fällig bis Sonntag", ueber ? "achtung" : "") +
       kachel("/strategie/aufgaben.html", rueck, "Rückmeldungen eingegangen", warten + " warten noch auf Antwort") +
-      '<div class="an-k an-k--leer"><span class="an-zahl">–</span><b>LinkedIn</b><small>Kontakte und Postings – noch nicht angebunden</small></div>' +
+      linkedin() +
       "</div>";
+  }
+
+  // LinkedIn: wöchentlich vom Mac gelesen (linkedin_abgleich.py) – Reichweite der letzten 28 Tage, Klick zur LinkedIn-Analyse
+  function linkedin() {
+    var j = D.linkedin[0], v = D.linkedin[1];
+    if (!j) return '<div class="an-k an-k--leer"><span class="an-zahl">–</span><b>LinkedIn</b><small>noch keine Daten</small></div>';
+    var f = function (n) { return n == null ? "–" : Number(n).toLocaleString("de-DE"); };
+    var diff = v && v.follower != null && j.follower != null ? " (" + (j.follower - v.follower >= 0 ? "+" : "") + f(j.follower - v.follower) + ")" : "";
+    var stand = new Date(j.stichtag + "T12:00:00").toLocaleDateString("de-DE", { day: "numeric", month: "numeric" });
+    return '<a class="an-k" href="https://www.linkedin.com/analytics/creator/content/" target="_blank" rel="noopener"><span class="an-zahl">' + f(j.impressionen) + "</span><b>LinkedIn-Reichweite</b><small>Impressionen in 28 Tagen · " +
+      f(j.interaktionen) + " Interaktionen · " + f(j.follower) + " Follower" + diff + " · " + f(j.kontakte) + " Kontakte · Stand " + stand + "</small></a>";
   }
 
   function termine() {
