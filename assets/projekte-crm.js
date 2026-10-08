@@ -32,8 +32,9 @@
     if (!p) { k.innerHTML = KOPF.k; t.innerHTML = KOPF.t; return; }
     k.innerHTML = '<a class="pr-kopf-zurueck" href="#"><span aria-hidden="true">&larr;</span> Projekte</a><span class="pr-kopf-marke">' +
       (p.organisationen ? esc(p.organisationen.name) : esc(p.marke || "")) + "</span>";
-    var w = String(p.name).split(" "), last = w.pop();
-    t.innerHTML = (w.length ? esc(w.join(" ")) + " " : "") + '<span class="hl">' + esc(last) + ".</span>";
+    // Hervorgehoben: das letzte Wort – bei drei und mehr Wörtern die letzten beiden
+    var w = String(p.name).split(" "), n = w.length >= 3 ? 2 : 1, hinten = w.splice(w.length - n, n).join(" ");
+    t.innerHTML = (w.length ? esc(w.join(" ")) + " " : "") + '<span class="hl">' + esc(hinten) + ".</span>";
   }
   function route() {
     var h = location.hash.replace("#", "");
