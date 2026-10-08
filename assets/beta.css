@@ -1117,12 +1117,28 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
 .wk-gitter { stroke: #eeece9; stroke-width: 1; }
 .wk-achse { font-size: 10px; fill: var(--grey-50); font-family: var(--font-sans); }
 .wk-l { fill: none; stroke-width: 1.6; stroke-linejoin: round; }
-.wk-l.wk-l1 { stroke: #c9c5c0; } .wk-l.wk-l2 { stroke: var(--ink); stroke-width: 2.2; } .wk-l.wk-l3 { stroke: #d4a800; stroke-width: 2; }
+.wk-l.wk-l1 { stroke: var(--cyan); stroke-opacity: .55; } .wk-l.wk-l2 { stroke: var(--ink); stroke-width: 2.2; } .wk-l.wk-l3 { stroke: var(--magenta); stroke-width: 2; } .wk-l.wk-l4 { stroke: var(--violett); stroke-width: 2; }
 .wk-leg { display: flex; gap: 16px; margin: 6px 0 0; font-size: var(--fs-xs); color: var(--grey-70); }
-.wk-leg span::before { content: ""; display: inline-block; width: 14px; height: 3px; margin-right: 6px; vertical-align: middle; background: #c9c5c0; }
-.wk-leg .wk-l2::before { background: var(--ink); } .wk-leg .wk-l3::before { background: #d4a800; }
+.wk-leg span::before { content: ""; display: inline-block; width: 14px; height: 3px; margin-right: 6px; vertical-align: middle; background: var(--cyan); }
+.wk-leg .wk-l2::before { background: var(--ink); } .wk-leg .wk-l3::before { background: var(--magenta); } .wk-leg .wk-l4::before { background: var(--violett); }
 .wk-balken { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .wk-balken li { display: grid; grid-template-columns: 130px minmax(0, 1fr) 44px; align-items: center; gap: 10px; font-size: var(--fs-s); }
-.wk-balken i { display: block; height: 10px; border-radius: 5px; background: var(--ink); }
+.wk-balken i { display: block; height: 10px; border-radius: 5px; background: var(--cyan); }
 .wk-balken b { font-weight: 500; text-align: right; }
 .wk-stand { margin: var(--s4) 0 0; font-size: var(--fs-xs); color: var(--grey-50); }
+
+/* Marketing → Analyse und Entscheidung */
+.ma-liste { display: grid; gap: var(--s4); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 1000px) { .ma-liste { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.ma-k { display: flex; flex-direction: column; padding: 18px 20px; border: 1px solid var(--linie); border-radius: 16px; background: var(--white); }
+.ma-k--spaeter { opacity: .6; } .ma-k--weg { background: #f7f6f4; }
+.ma-kopf { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 8px; }
+.ma-tag { padding: 2px 8px; border-radius: 6px; background: var(--ink); color: var(--hl); font-size: var(--fs-xs); font-weight: 600; }
+.ma-quelle { font-size: var(--fs-xs); color: var(--grey-50); }
+.ma-k h4 { margin: 0 0 10px; font-family: var(--font-serif); font-size: var(--fs-l); font-weight: 600; line-height: 1.3; }
+.ma-k dl { margin: 0; display: grid; gap: 8px; }
+.ma-z dt { font-size: var(--fs-xs); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--grey-50); }
+.ma-z dd { margin: 2px 0 0; font-size: var(--fs-s); line-height: 1.5; }
+.ma-stand { margin: 12px 0 0; font-size: var(--fs-s); color: var(--grey-70); } .ma-stand--an { color: var(--ink); font-weight: 500; }
+.ma-knoepfe { justify-content: flex-start; margin-top: 14px; }
+.ma-h { margin: var(--s5) 0 var(--s3); font-size: var(--fs-xs); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-50); }

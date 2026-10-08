@@ -7,6 +7,7 @@
   --fs-l: 1.08rem;   /* 17,3 px – Kartentitel */
   --fs-xl: 1.38rem;  /* 22 px – Abschnittsüberschriften */
   --fs-xxl: 1.85rem; /* 29,6 px – Kennzahlen */
+  --magenta: #C51F5D; --violett: #8613A1; --cyan: #0B9FBD;   /* Sekundärfarben aus dem CD (Goldbraun nur in Ausnahmefällen) */
   --ok: #2e7d4f; --dran: #a8660a; --fehler: #c0392b;
   --linie: #e9e7e4; --linie-leicht: #f2f1ef;
   --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px; --s9: 80px;

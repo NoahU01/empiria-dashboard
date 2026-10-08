@@ -69,7 +69,9 @@
       '<section class="st4-block"><h2 class="st4-h">Zielgruppen, Außenwirkung, Stoßrichtungen</h2><div class="st4-sparring mk-themen">' + THEMEN.map(function (t) {
         return '<button type="button" class="st4-spar" data-thema="' + t.k + '"><span class="st4-spar-z">' + esc(t.m) + "</span><b>" + esc(t.n) + '</b><span class="st4-spar-s">' + esc(t.s) + '</span><span class="st4-spar-los">Erarbeiten <i aria-hidden="true">→</i></span></button>';
       }).join("") + '</div></section>';
+    var ma = document.querySelector("[data-mk-analyse]");
     if (wk) wurzel.querySelector("[data-wirkung-platz]").replaceWith(wk);
+    if (ma && wk) wk.insertAdjacentElement("afterend", ma);
     var kb = wurzel.querySelector("[data-bereich=kamp] .pr-klapp");
     if (kb) kb.onclick = function () { KAMP_OFFEN = !KAMP_OFFEN; var sek = kb.closest("[data-bereich]"); sek.classList.toggle("pr-zu", !KAMP_OFFEN); kb.setAttribute("aria-expanded", String(KAMP_OFFEN)); };
 
