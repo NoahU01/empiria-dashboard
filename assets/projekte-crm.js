@@ -27,7 +27,8 @@
     var h = location.hash.replace("#", "");
     document.body.classList.toggle("kt3-detail", /^p=\d+$/.test(h));
     look(/^p=\d+$/.test(h));
-    if (/^p=\d+$/.test(h)) projekt(+h.slice(2)); else liste();
+    if (/^p=\d+$/.test(h)) { if (+h.slice(2) !== KLAPP.id) KLAPP = { id: null, z: {} }; projekt(+h.slice(2)); }
+    else { KLAPP = { id: null, z: {} }; liste(); }
   }
 
   /* ---------- Übersicht ---------- */
@@ -218,8 +219,8 @@
     // Projektziel: schmal, aufklappbar – Kernsatz immer sichtbar, Details beim Aufklappen
     if (p.ziel || (p.ziel_details || []).length) {
       var zd = p.ziel_details || [];
-      h += '<section class="kt3-box kt3-breit pr-ziel"><button type="button" class="pr-ziel-kopf" data-ziel aria-expanded="false"' + (zd.length ? "" : " disabled") + '><h3>Projektziel</h3>' +
-        '<span class="pr-ziel-satz">' + esc(p.ziel || "") + "</span>" + (zd.length ? '<span class="tl-dreieck" aria-hidden="true"></span>' : "") + "</button>" +
+      h += '<section class="kt3-box kt3-breit pr-ziel"><button type="button" class="pr-ziel-kopf" data-ziel aria-expanded="false"><h3>Projektziel</h3>' +
+        '<span class="pr-ziel-satz">' + esc(p.ziel || "") + "</span>" + '<span class="tl-dreieck" aria-hidden="true"></span>' + "</button>" +
         '<div class="pr-ziel-det" hidden>' + zd.map(function (z) {
           return "<h4>" + esc(z.titel) + "</h4>" + (z.text ? "<p>" + esc(z.text) + "</p>" : "") +
             ((z.punkte || []).length ? "<ul>" + z.punkte.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "");
@@ -244,10 +245,13 @@
 
   /* Darstellung „SV Akademie“: aufklappbare Module 01–05 wie auf der Seite Projekt SV Akademie.
      Die fertig gezeichneten Kästen werden in die Module umgehängt (Knöpfe behalten ihre Funktion). */
-  var MODUL_OFFEN = { kurs: false, auf: true, tl: true, ziel: false, team: false };
-  // Auf-/Zugeklappt merkt sich jede Seite je Projekt und Gerät (Daniel, 08.10.2026): { kurs: false, auf: true, … } – true = offen
-  function klappLesen(id) { try { return JSON.parse(localStorage.getItem("pr-klapp-" + id) || "{}"); } catch (x) { return {}; } }
-  function klappSchreiben(id, key, offen) { var k = klappLesen(id); k[key] = offen; try { localStorage.setItem("pr-klapp-" + id, JSON.stringify(k)); } catch (x) {} }
+  var MODUL_OFFEN = { kurs: false, pak: false, auf: true, tl: false, ziel: false, team: false };
+  // Grundeinstellung (Daniel, 08.10.2026): beim Öffnen eines Projekts ist alles zugeklappt, nur die Aufgaben sind offen.
+  // Was man während des Besuchs auf-/zuklappt, gilt bis zum Verlassen des Projekts – beim nächsten Öffnen wieder die Grundeinstellung.
+  var KLAPP = { id: null, z: {} };
+  function klappLesen(id) { if (KLAPP.id !== id) KLAPP = { id: id, z: {} }; return KLAPP.z; }
+  function klappSchreiben(id, key, offen) { klappLesen(id)[key] = offen; }
+
   function module(p) {
     var r = wurzel.querySelector(".kt3-raster"), liste = document.createElement("div"), n = 0;
     liste.className = "fl-ebenen pr-module kt3-breit";
@@ -273,7 +277,7 @@
     modul("auf", "Aufgaben", "Was als Nächstes ansteht.", [auf]);
     modul("tl", "Timeline", "Termine mit Protokoll, Entscheidungen und Aufgaben.", [tl]);
     var det = ziel && ziel.querySelector(".pr-ziel-det");
-    if (det) { det.hidden = false; modul("ziel", "Projektziel", p.ziel || "", [det]); }
+    if (det) { det.hidden = false; if (!det.children.length) det.innerHTML = '<p class="pr-ziel-voll">' + esc(p.ziel || "") + "</p>"; modul("ziel", "Projektziel", p.ziel || "", [det]); }
     else {
       var leer = document.createElement("p"); leer.innerHTML = '<span class="pr-offen">Noch kein Projektziel – bitte diktieren.</span>';
       modul("ziel", "Projektziel", "Noch nicht definiert", [leer]);
@@ -295,7 +299,7 @@
       b.innerHTML = '<span>' + h.innerHTML + '</span><span class="tl-dreieck" aria-hidden="true"></span>';
       h.innerHTML = ""; h.appendChild(b);
       function setzen(offen) { sek.classList.toggle("pr-zu", !offen); b.setAttribute("aria-expanded", String(offen)); }
-      setzen(x[1] in gemerkt ? gemerkt[x[1]] : true);
+      setzen(x[1] in gemerkt ? gemerkt[x[1]] : !!MODUL_OFFEN[x[1]]);
       b.onclick = function () { var offen = sek.classList.contains("pr-zu"); setzen(offen); klappSchreiben(p.id, x[1], offen); };
     });
   }

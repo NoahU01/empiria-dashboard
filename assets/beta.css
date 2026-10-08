@@ -1047,3 +1047,4 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
 .pr-zu > .pr-tl-kopf > :not(h3) { display: none !important; }
 .pr-zu > h3, .pr-zu > .pr-tl-kopf { margin-bottom: 0 !important; }
 .st4-karte .st4-punkte a, .st4-karte .st4-kern a, .st4-vorschlag a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--grey-50); text-underline-offset: 2px; overflow-wrap: anywhere; }
+.pr-ziel-voll { margin: 0; font-size: var(--fs-m); line-height: 1.55; }
