@@ -22,13 +22,13 @@
    "gruppe": "Noch zuzuordnen",
    "eltern": null,
    "kurz": "Sieben Vorgänge in drei Gruppen",
-   "im_diagramm": true
+   "im_diagramm": false
   },
   {
    "datei": "kampagne.html",
    "titel": "Kampagne",
-   "gruppe": "ohne Menü",
-   "eltern": null,
+   "gruppe": "Dashboard",
+   "eltern": "marketing.html",
    "kurz": "",
    "im_diagramm": false
   },
@@ -70,7 +70,7 @@
    "gruppe": "Dashboard",
    "eltern": null,
    "kurz": "Zielgruppen, Außenwirkung, Kennzahlen, Aktionen",
-   "im_diagramm": true
+   "im_diagramm": false
   },
   {
    "datei": "meilensteine.html",
@@ -78,7 +78,7 @@
    "gruppe": "Noch zuzuordnen",
    "eltern": null,
    "kurz": "Etappen auf dem Weg",
-   "im_diagramm": true
+   "im_diagramm": false
   },
   {
    "datei": "oekosystem.html",
@@ -121,5 +121,5 @@
    "im_diagramm": true
   }
  ],
- "stand": "08.10.2026, 10:11 Uhr"
+ "stand": "08.10.2026, 10:12 Uhr"
 }
