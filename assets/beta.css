@@ -1328,3 +1328,18 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
 .mk--frist { border-left-color: var(--hl); }
 .mk--ziel { border-left-color: var(--ink); }
 .mk-legende { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: -6px 0 22px; font-size: .74rem; line-height: 1.3; color: var(--grey-50); }
+
+/* Marketing */
+.mk-kreis { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 8px 0 0; font-size: .84rem; color: var(--grey-70); }
+.mk-kreis i { font-style: normal; color: var(--grey-50); }
+.mk-unter { margin: -8px 0 16px; font-size: .78rem; color: var(--grey-50); }
+.mk-posts { list-style: none; margin: 0; padding: 0; border-top: 1px solid #e9e7e4; }
+.mk-posts li { border-bottom: 1px solid #f2f1ef; }
+.mk-posts a { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 16px; padding: 14px 0; color: inherit; text-decoration: none; }
+.mk-posts a:hover .mk-posts-text { text-decoration: underline; text-underline-offset: 2px; }
+.mk-posts-zahl { font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; line-height: 1.2; }
+.mk-posts-text { font-size: .9rem; line-height: 1.45; }
+.mk-posts-text small { display: block; margin-top: 4px; font-size: .76rem; color: var(--grey-50); }
+@media (max-width: 600px) { .mk-posts a { grid-template-columns: 72px minmax(0, 1fr); gap: 12px; } .mk-posts-zahl { font-size: 1.05rem; } }
+.mk-themen { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 900px) { .mk-themen { grid-template-columns: minmax(0, 1fr); } }

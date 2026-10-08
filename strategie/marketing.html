@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Aufgaben &ndash; empiria</title>
-<meta name="description" content="Alle Aufgaben als Kanban-Board – über alle Projekte und operativ.">
+<title>Marketing &ndash; empiria</title>
+<meta name="description" content="Marketing – Zielgruppen, Außenwirkung, Kennzahlen, Stoßrichtungen und Aktionen.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="/styles.css">
 <link rel="stylesheet" href="/assets/dashboard-nav.css">
@@ -26,9 +26,9 @@
         <p class="sn-group">Dashboard</p>
         <a href="/strategie/analyse.html" class="sn-link"><span class="sn-tag">AN</span><span class="sn-txt"><b>Analyse</b><small>Bin ich an den richtigen Sachen dran?</small></span></a>
         <a href="/strategie/steuerung.html" class="sn-link"><span class="sn-tag">ST</span><span class="sn-txt"><b>Steuerung</b><small>Entscheiden, Sparring, die nächsten Wochen</small></span></a>
-        <a href="/strategie/marketing.html" class="sn-link"><span class="sn-tag">MK</span><span class="sn-txt"><b>Marketing</b><small>Zielgruppen, Au&szlig;enwirkung, Kennzahlen, Aktionen</small></span></a>
+        <a href="/strategie/marketing.html" class="sn-link" aria-current="page"><span class="sn-tag">MK</span><span class="sn-txt"><b>Marketing</b><small>Zielgruppen, Au&szlig;enwirkung, Kennzahlen, Aktionen</small></span></a>
         <a href="/strategie/projekte.html" class="sn-link"><span class="sn-tag">PR</span><span class="sn-txt"><b>Projekte</b><small>Steckbrief, Timeline, Protokoll</small></span></a>
-        <a href="/strategie/aufgaben.html" class="sn-link" aria-current="page"><span class="sn-tag">AU</span><span class="sn-txt"><b>Aufgaben</b><small>Kanban &uuml;ber alle Projekte</small></span></a>
+        <a href="/strategie/aufgaben.html" class="sn-link"><span class="sn-tag">AU</span><span class="sn-txt"><b>Aufgaben</b><small>Kanban &uuml;ber alle Projekte</small></span></a>
         <div class="sn-sub"><a href="/strategie/korrespondenz-beta.html" class="sn-link"><span class="sn-tag">KO</span><span class="sn-txt"><b>Korrespondenz</b><small>Alle Konten, nach Handlungsbedarf</small></span></a><button class="sn-sub-toggle" type="button" aria-expanded="false" aria-controls="snKinderKO" aria-label="Unterseiten anzeigen"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
         <div class="sn-kinder" id="snKinderKO">
           <a href="/strategie/korrespondenz-variante-c.html" class="sn-link"><span class="sn-tag">VC</span><span class="sn-txt"><b>Variante C: Entscheidungs-Sprint</b><small>Eine Mail nach der anderen &ndash; f&uuml;rs iPhone</small></span></a>
@@ -49,15 +49,15 @@
 </header>
 
 <main>
-  <section class="db ab-seite"><div class="ab-voll">
+  <section class="db"><div class="container">
     <div class="db-kopf">
       <div>
-        <p class="kicker">Kanban über alle Projekte</p>
-        <h1 class="h-serif"><span class="hl">Aufgaben.</span></h1>
+        <p class="kicker" data-st2-datum>Marketing</p>
+        <h1 class="h-serif"><span class="hl">Marketing.</span></h1>
       </div>
-      <div class="db-rechts"><nav class="st4-nav hauptnav" aria-label="Hauptseiten"><a href="/strategie/analyse.html">Analyse</a><a href="/strategie/steuerung.html">Steuerung</a><a href="/strategie/marketing.html">Marketing</a><a href="/strategie/projekte.html">Projekte</a><a href="/strategie/aufgaben.html" aria-current="page">Aufgaben</a><a href="/strategie/korrespondenz-beta.html">Korrespondenz</a><a href="/strategie/kontakte.html">Kontakte</a></nav></div>
+      <div class="db-rechts"><nav class="st4-nav hauptnav" aria-label="Hauptseiten"><a href="/strategie/analyse.html">Analyse</a><a href="/strategie/steuerung.html">Steuerung</a><a href="/strategie/marketing.html" aria-current="page">Marketing</a><a href="/strategie/projekte.html">Projekte</a><a href="/strategie/aufgaben.html">Aufgaben</a><a href="/strategie/korrespondenz-beta.html">Korrespondenz</a><a href="/strategie/kontakte.html">Kontakte</a></nav></div>
     </div>
-    <div data-aufgaben-board><div class="kb-laedt"><span></span><span></span></div></div>
+    <div data-marketing><div class="kb-laedt"><span></span><span></span></div></div>
   </div></section>
 </main>
 
@@ -71,8 +71,8 @@
 <script src="/script.js"></script>
 <script src="/assets/vendor/supabase.js"></script>
 <script src="/assets/db.js"></script>
-<script src="/assets/aufgaben-details.js"></script>
-<script src="/assets/aufgaben-board.js"></script>
+<script src="/assets/marketing.js"></script>
+<script>(function(){var k=document.querySelector("[data-st2-datum]");if(k)k.textContent=new Date().toLocaleDateString("de-DE",{weekday:"long",day:"numeric",month:"long"});})();</script>
 <script src="/assets/dashboard-nav.js"></script>
 </body>
 </html>
