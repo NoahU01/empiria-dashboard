@@ -391,7 +391,7 @@ body.kt3-detail .db-kopf { min-height: 0; }
 /* Projekte: oben Stoßrichtung (links) und Aufgaben (rechts) */
 .pr-kurs ul { margin: 0; padding-left: 1.1em; } .pr-kurs li { margin-bottom: 8px; font-size: var(--fs-m); line-height: 1.5; }
 .pr-kurs li::marker { color: var(--ink); }
-.pr-aufgaben .pr-auf-zeile { grid-template-columns: 28px 78px minmax(0, 1fr); }
+.pr-aufgaben .pr-auf-zeile { grid-template-columns: 28px 96px minmax(0, 1fr); }
 .pr-aufgaben .pr-wer { grid-column: 3; margin-top: -6px; font-size: var(--fs-xs); }
 .pr-aufgaben .pr-auf-details { padding-left: 114px; }
 @media (max-width: 600px) { .pr-aufgaben .pr-auf-zeile { grid-template-columns: 28px minmax(0, 1fr); } .pr-aufgaben .pr-wer, .pr-aufgaben .pr-frist { grid-column: 2; } .pr-aufgaben .pr-auf-details { padding-left: 36px; } }
@@ -930,3 +930,9 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
   .pr-auf-zeile { align-items: start; row-gap: 2px; padding: 10px 0; }
 }
 @media (max-width: 600px) { .pr-aufgaben .pr-wartet, .pr-aufgaben .pr-hinweis, .pr-aufgaben .ad-v { margin-left: 36px; } }
+/* Kontakt auf dem Telefon: Angaben als saubere zwei Spalten (Bezeichnung · Wert); Anmeldezeile im Detail ausblenden */
+@media (max-width: 600px) {
+  .kt3-stand { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 16px; }
+  .kt3-stand span { margin-left: 0; }
+  body.kt3-detail .db-konto { display: none; }
+}

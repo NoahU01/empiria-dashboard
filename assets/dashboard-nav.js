@@ -78,7 +78,9 @@
 /* Hauptseiten-Leiste: auf schmalen Geräten die aktuelle Seite ins Bild rücken */
 (function () {
   var hn = document.querySelector(".hn"), a = hn && hn.querySelector('[aria-current="page"]');
-  if (a && hn.scrollWidth > hn.clientWidth) hn.scrollLeft = Math.max(0, a.offsetLeft - 16);
+  function zeigen() { if (a && hn.scrollWidth > hn.clientWidth) hn.scrollLeft = Math.max(0, a.offsetLeft - hn.offsetLeft - 16); }
+  zeigen(); window.addEventListener("load", function () { zeigen(); rand(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { zeigen(); rand(); });
   // Verlauf am rechten Rand nur, solange rechts noch etwas kommt
   function rand() { if (hn) hn.classList.toggle("hn--mehr", hn.scrollLeft + hn.clientWidth < hn.scrollWidth - 4); }
   if (hn) { hn.addEventListener("scroll", rand, { passive: true }); window.addEventListener("resize", rand); rand(); }
