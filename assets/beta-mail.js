@@ -267,7 +267,7 @@
     var t = (m.subject + " " + m.bodyPreview).toLowerCase();
     if (m.markiert && !m.direkt) return "Nachverfolgen";
     if (/termin|uhrzeit|kalender|meeting|call\b|telefonat|treffen|verschieben|zeitfenster|wann passt/.test(t)) return "Termin klären";
-    if (/angebot|rechnung|vertrag|freigabe|unterschrift|kosten|preis|budget/.test(t)) return "Prüfen und freigeben";
+    if (/angebot|rechnung|vertrag|freigabe|unterschrift|kosten|preis|budget/.test(t)) return "Angebot/Rechnung ansehen";
     if (m.markiert) return "Nachverfolgen";
     return "Antworten";
   }
@@ -297,7 +297,17 @@
   // zusätzlich ein Auftrag in mail_anweisungen (wie bei „Anders …“).
   function freigabeText(m) {
     var a = m.analyse || {}, v = a.vorschlag || (m.vorschlag && m.vorschlag.text) || "Vorschlag umsetzen";
-    return "Freigegeben: " + v + (a.entwurf ? " – Antwortentwurf wie vorgeschlagen in Outlook anlegen (nicht senden)." : "");
+    return "Freigegeben: " + v + (a.weiterleiten_an ? " – Weiterleitung an " + a.weiterleiten_an + " als Entwurf anlegen (nicht senden)."
+      : a.entwurf ? " – Antwortentwurf wie vorgeschlagen in Outlook anlegen (nicht senden)." : " – Mails nur als Entwurf, nichts senden.");
+  }
+  /* Was ein Klick auf den Freigabe-Knopf auslöst – steht auf dem Knopf und darunter (Daniel, 09.10.2026).
+     Ohne Claudes Einschätzung gibt es nichts freizugeben: dann null, und die Karte zeigt nur „Anders …“ und „Schon erledigt“. */
+  function folge(m) {
+    var a = m.analyse; if (!a || a.kategorie === "keine") return null;
+    var pf = "Postfach " + m.konto.name, nichts = " Gesendet wird nichts – abschicken kannst du unter „Entwürfe“ mit „Freigeben und senden“.";
+    if (a.weiterleiten_an) return { knopf: "Weiterleitung als Entwurf anlegen", text: "Claude legt eine Weiterleitung an " + a.weiterleiten_an + " als Entwurf im " + pf + " an." + nichts };
+    if (a.entwurf) return { knopf: "Antwort als Entwurf anlegen", text: "Claude legt genau den Antwortentwurf oben im " + pf + " an." + nichts };
+    return { knopf: "Vorschlag umsetzen lassen", text: "Claude setzt um: „" + (a.vorschlag || "").replace(/[.!]+$/, "") + "“. Kalendereinträge und Aufgaben legt Claude direkt an, Mails nur als Entwurf – gesendet wird nichts." };
   }
 
   /* ---------- Anweisung („Anders …“) an Claude ---------- */
@@ -383,6 +393,6 @@
     return { ich: { displayName: "Daniel Ströbel" }, adressen: adressen, postfaecher: KONTEN.map(function (k) { return nach[k.key]; }) };
   }
 
-  window.BetaMail = { freigabeText: freigabeText, senden: senden, arten: ARTEN, entscheiden: entscheiden, anweisen: anweisen, entscheidungLesen: entscheidungLesen, start: start, anmelden: anmelden, abmelden: abmelden, laden: laden, volltext: volltext,
+  window.BetaMail = { freigabeText: freigabeText, folge: folge, senden: senden, arten: ARTEN, entscheiden: entscheiden, anweisen: anweisen, entscheidungLesen: entscheidungLesen, start: start, anmelden: anmelden, abmelden: abmelden, laden: laden, volltext: volltext,
     konten: KONTEN, esc: esc, wann: wann, badge: badge, absender: absender, istDemo: function () { return demo; } };
 })();

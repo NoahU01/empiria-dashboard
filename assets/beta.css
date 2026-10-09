@@ -252,6 +252,9 @@ a.db-chip:hover { background: #e2e0dd; color: var(--ink); }
 .kb-anders div { display: flex; gap: 10px; align-items: center; margin-top: 8px; }
 .kb-anders-abbruch { border: 0; background: none; font-size: var(--fs-s); color: var(--grey-50); text-decoration: underline; }
 .kb-anders.laedt { opacity: .5; pointer-events: none; }
+/* Was der Freigabe-Knopf auslöst (Daniel, 09.10.2026) */
+.kb-folge { margin: 14px 0 0; font-size: var(--fs-s); font-weight: 300; line-height: 1.5; color: var(--grey-70); }
+.kb-folge b { font-weight: 600; color: var(--ink); }
 .kb-anweisung { margin: 14px 0 0; padding: 4px 0 4px 14px; box-shadow: inset 3px 0 0 var(--ink); font-size: var(--fs-m); font-weight: 300; }
 .kb-anweisung span { display: block; font-size: var(--fs-s); font-weight: 500; color: var(--grey-70); }
 .kb-anweisung small { color: var(--grey-50); }

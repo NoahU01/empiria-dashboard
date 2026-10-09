@@ -145,7 +145,7 @@
       '<span class="kb-betreff">' + esc(m.subject || "(ohne Betreff)") + '</span><span class="kb-meta">' + meta + "</span></button>" +
       '<div class="kb-auf"><p class="kb-an">An: ' + esc(an) + (cc ? "<br>Cc: " + esc(cc) : "") + "</p>" +
       '<pre class="kb-text" data-kb-text>' + esc(m.bodyPreview) + "</pre>" +
-      '<div class="kb-schritt">' + (m.vorschlag ? '<span class="kb-vorschlag">Vorschlag: ' + esc(m.vorschlag.text) + "</span><small>" + esc(ERKLAERUNG[m.vorschlag.art] || "") + "</small>" : "") +
+      '<div class="kb-schritt">' + (m.vorschlag ? '<span class="kb-vorschlag">' + (m.analyse ? "Vorschlag: " : "Erste Einordnung: ") + esc(m.vorschlag.text) + "</span><small>" + esc(ERKLAERUNG[m.vorschlag.art] || "") + "</small>" : "") +
       outlookLink(m, "kb-knopf kb-knopf--klein") + "</div>" + (zustand.tab === "warten" ? reaktionWarten(m) : zustand.tab === "relevant" || zustand.tab === "nicht" ? reaktionLesen(m) : "") + "</div></li>";
   }
   // Wartet auf Antwort: nachfassen lassen · Rückmeldung an Claude · keine Antwort nötig
@@ -204,7 +204,7 @@
       '<span class="kb-von">' + esc(B.absender(m)) + '</span><span class="kb-betreff">' + esc(m.subject || "(ohne Betreff)") + "</span></div>" +
       '<span class="kb-zeit">' + zeit(m) + "</span></div>";
     html += '<div class="kb-block"><p class="kb-label">' + (a ? "Worum es geht" : "Anfang der Mail") + "</p><p>" + esc(a ? a.zusammenfassung : m.bodyPreview) + "</p></div>";
-    html += '<div class="kb-block"><p class="kb-label">Vorschlag</p><p class="kb-vorschlag-text">' + esc(m.vorschlag.text) + "</p></div>";
+    html += '<div class="kb-block"><p class="kb-label">' + (a ? "Vorschlag" : "Erste Einordnung – nur nach Stichworten") + '</p><p class="kb-vorschlag-text">' + esc(m.vorschlag.text) + "</p></div>";
     if (a && a.entwurf) html += '<div class="kb-entwurf"><p class="kb-label">Antwortentwurf</p><pre>' + esc(a.entwurf) + "</pre></div>";
     html += zustand.tab === "claude" ? statusBeiClaude(m) + nachtrag(m) : knoepfe(m);
     html += '<div class="kb-block"><p class="kb-label">Originalmail</p><pre class="v-original" data-kb-voll="' + esc(m.id) + '">' + esc(m.volltext || m.bodyPreview) + "</pre></div>";
@@ -225,12 +225,17 @@
     return '<p class="kb-anweisung"><span>Freigegeben</span>Claude setzt um.</p>';
   }
   // Drei Möglichkeiten: Freigeben (passt) · Anders … (sprechen/tippen, Claude setzt um) · Schon erledigt
+  // Freigabe-Knopf nennt die Folge; ohne Einschätzung kein Freigeben
+  function folgeZeile(f) {
+    return f ? '<p class="kb-folge"><b>Beim Klick auf „' + esc(f.knopf) + '“:</b> ' + esc(f.text) + " Die Mail wandert nach „Bei Claude“.</p>"
+      : '<p class="kb-folge">Noch nicht von Claude eingeschätzt – darum gibt es hier nichts freizugeben. Sag mit „Anders …“, was passieren soll, oder hake mit „Schon erledigt“ ab.</p>';
+  }
   function knoepfe(m) {
-    var e = B.entscheidungLesen(m), a = m.anweisung;
+    var f = B.folge(m), e = B.entscheidungLesen(m), a = m.anweisung;
     var anw = a ? '<p class="kb-anweisung"><span>' + (a.status === "offen" ? "Deine Anweisung – wird umgesetzt" : a.status === "umgesetzt" ? "Umgesetzt" : "Verworfen") +
       "</span>" + esc(a.text) + (a.ergebnis ? "<br><small>" + esc(a.ergebnis) + "</small>" : "") + "</p>" : "";
-    return anw + '<div class="kb-entscheid" data-entscheid="' + esc(m.id) + '">' +
-      '<button type="button" data-e="freigeben" aria-pressed="' + (e === "freigeben") + '">Freigeben</button>' +
+    return anw + folgeZeile(f) + '<div class="kb-entscheid" data-entscheid="' + esc(m.id) + '">' +
+      (f ? '<button type="button" data-e="freigeben" aria-pressed="' + (e === "freigeben") + '">' + esc(f.knopf) + "</button>" : "") +
       '<button type="button" data-anders aria-expanded="false">Anders …</button>' +
       '<button type="button" data-e="erledigt" aria-pressed="' + (e === "erledigt") + '">Schon erledigt</button></div>' +
       '<form class="kb-anders" data-anders-form hidden><textarea rows="3" placeholder="Sag oder tippe, was passieren soll – z. B. „An Tobias weiterleiten, er soll den Termin übernehmen.“ Auf dem iPhone: Mikrofon auf der Tastatur."></textarea>' +
