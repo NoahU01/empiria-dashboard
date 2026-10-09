@@ -14,7 +14,7 @@
    "titel": "Steuerung",
    "gruppe": "Dashboard",
    "eltern": null,
-   "kurz": "Entscheiden, Sparring, die nächsten Wochen",
+   "kurz": "Entscheiden und Sparring",
    "pos": 1,
    "im_diagramm": true
   },
@@ -109,12 +109,21 @@
    "im_diagramm": true
   },
   {
+   "datei": "cockpit.html",
+   "titel": "Gesamtdashboard (Entwurf)",
+   "gruppe": "Noch zuzuordnen",
+   "eltern": null,
+   "kurz": "Analyse und Steuerung auf einer Seite",
+   "pos": 11,
+   "im_diagramm": false
+  },
+  {
    "datei": "zielbild.html",
    "titel": "Strategie und Zielbild",
    "gruppe": "Noch zuzuordnen",
    "eltern": null,
    "kurz": "Wohin empiria will",
-   "pos": 11,
+   "pos": 12,
    "im_diagramm": true
   },
   {
@@ -123,7 +132,7 @@
    "gruppe": "Noch zuzuordnen",
    "eltern": null,
    "kurz": "Etappen auf dem Weg",
-   "pos": 12,
+   "pos": 13,
    "im_diagramm": true
   },
   {
@@ -132,9 +141,18 @@
    "gruppe": "Noch zuzuordnen",
    "eltern": null,
    "kurz": "Sieben Vorgänge in drei Gruppen",
-   "pos": 13,
+   "pos": 14,
    "im_diagramm": true
+  },
+  {
+   "datei": "treffen.html",
+   "titel": "Treffen vor Ort",
+   "gruppe": "ohne Menü",
+   "eltern": null,
+   "kurz": "",
+   "im_diagramm": false,
+   "pos": 999
   }
  ],
- "stand": "08.10.2026, 10:13 Uhr"
+ "stand": "09.10.2026, 06:30 Uhr"
 }
