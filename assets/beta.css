@@ -1296,6 +1296,7 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 .bf-titel b { display: block; padding: 8px 0; font-size: var(--fs-s); font-weight: 600; }
 .bf-meta { display: block; margin-top: 6px; font-size: var(--fs-xs); color: var(--grey-50); }
 .bf-meta a { color: inherit; }
+.bf-meta a.bf-pdf { color: var(--ink); font-weight: 600; text-decoration: none; white-space: nowrap; } .bf-meta a.bf-pdf:hover { text-decoration: underline; } .bf-pdf i { margin-right: 4px; font-style: normal; font-size: .8em; }
 .bf-betrag { padding-top: 8px; font-size: var(--fs-s); font-weight: 600; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .bf-zu { padding-top: 6px; font-size: var(--fs-xs); line-height: 1.45; color: var(--grey-70); }
 .bf-tag { display: inline-block; margin: 0 6px 4px 0; padding: 2px 8px; border-radius: 6px; background: #f2f1ef; font-weight: 600; letter-spacing: .02em; color: var(--ink); }

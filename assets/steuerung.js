@@ -39,7 +39,7 @@
       db.from("projekte").select("id, name, marke, typ, status"),
       db.from("aufgaben").select("id, status, faellig_am, projekt_id, titel, marke").eq("status", "offen"),
       db.from("projekt_ereignisse").select("id, projekt_id, datum, art, titel").gte("datum", HEUTE.toISOString()),
-      db.from("belege_eingang").select("id, postfach, absender, absender_name, betreff, mail_link, status, zuordnung, begruendung, titel, lieferant, belegdatum, betrag, kategorie, ust, pk_belegnr, fehler, hochgeladen_am")
+      db.from("belege_eingang").select("id, postfach, absender, absender_name, betreff, pdf_link, status, zuordnung, begruendung, titel, lieferant, belegdatum, betrag, kategorie, ust, pk_belegnr, fehler, hochgeladen_am")
         .or("status.in.(vorschlag,freigegeben,lädt,fehler),hochgeladen_am.gte." + HEUTE.toISOString()).order("belegdatum")
     ]).then(function (r) {
       D = { vorlagen: r[0].data || [], projekte: r[1].data || [], aufgaben: r[2].data || [], ereignisse: r[3].data || [], belege: r[4].data || [] };
@@ -87,7 +87,7 @@
     return '<li class="bf-zeile bf--' + esc(b.status) + '" data-b="' + b.id + '">' +
       '<div class="bf-titel">' + (fertig || laeuft ? "<b>" + esc(b.titel) + "</b>" : '<input type="text" value="' + esc(b.titel || "") + '" aria-label="Titel in Papierkram">') +
         '<span class="bf-meta">' + esc(b.lieferant || b.absender_name || b.absender) + " · " + datum(b.belegdatum) + " · " + esc(b.kategorie || "") + (b.ust ? " · " + esc(b.ust) : "") +
-        (b.mail_link ? ' · <a href="' + esc(b.mail_link) + '" target="_blank" rel="noopener">Mail mit PDF</a>' : "") + "</span></div>" +
+        (b.pdf_link ? ' · <a class="bf-pdf" href="' + esc(b.pdf_link) + '" target="_blank" rel="noopener"><i aria-hidden="true">▶</i>PDF</a>' : "") + "</span></div>" +
       '<div class="bf-betrag">' + euro(b.betrag) + "</div>" +
       '<div class="bf-zu"><span class="bf-tag bf-tag--' + esc(b.zuordnung || "unklar") + '">' + esc(ZUORDNUNG[b.zuordnung] || "unklar") + "</span>" +
         (b.begruendung ? '<span class="bf-grund">' + esc(b.begruendung) + "</span>" : "") +
