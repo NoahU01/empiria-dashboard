@@ -1314,3 +1314,13 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
   .bf-knoepfe { grid-column: 1 / -1; justify-content: flex-start; }
 }
 @media (max-width: 600px) { .bf-zeile { padding: 14px 16px; } .bf-knoepfe button { flex: 1 1 auto; } }
+
+/* Projekt › Aufgaben (Liste): Phase im Kanban als Pille vor der zuständigen Person */
+.pr-phase { display: inline-flex; align-items: center; gap: 6px; margin-right: 8px; padding: 1px 8px 1px 6px; border-radius: 999px; background: #f2f1ef; font-size: var(--fs-xs); font-weight: 600; color: var(--ink-2); vertical-align: 1px; }
+.pr-phase-bahn { display: inline-flex; gap: 2px; }
+.pr-phase-bahn i { width: 7px; height: 4px; border-radius: 2px; background: #d9d6d1; }
+.pr-phase-bahn i.an { background: var(--ink); }
+.pr-phase--arbeit { background: var(--hl); color: var(--ink); }
+.pr-phase--pruefung { background: var(--ink); color: #fff; }
+.pr-phase--pruefung .pr-phase-bahn i.an { background: var(--hl); }
+.pr-phase--backlog { color: var(--grey-50); }
