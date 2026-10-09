@@ -15,8 +15,7 @@
   var projekte = [], aufgaben = [], wahl = [];   // wahl: leer = alle; sonst Projekt-IDs und/oder "op"
   try { wahl = JSON.parse(localStorage.getItem("ab-filter") || "[]"); } catch (x) { wahl = []; }
   // Ansicht: Kanban oder Liste nach Frist (wie die Termine auf der Analyse) – wird gemerkt
-  var ANSICHT = "kanban";
-  try { ANSICHT = localStorage.getItem("ab-ansicht") === "liste" ? "liste" : "kanban"; } catch (x) {}
+  var ANSICHT = "liste";   // startet immer als Liste (Daniel, 09.10.2026); Kanban per Umschalter
 
   db.auth.getSession().then(function (s) {
     if (!s.data.session) { wurzel.innerHTML = '<div class="kb-hinweis"><p>Bitte einmal auf der <a href="/strategie/kontakte.html?zurueck=' + encodeURIComponent(location.pathname) + '">Kontaktseite</a> anmelden – dann erscheinen hier die Aufgaben.</p></div>'; return; }
@@ -150,7 +149,7 @@
       };
     });
     wurzel.querySelectorAll("[data-ansicht]").forEach(function (b) {
-      b.onclick = function () { ANSICHT = b.getAttribute("data-ansicht"); try { localStorage.setItem("ab-ansicht", ANSICHT); } catch (x) {} zeichnen(); };
+      b.onclick = function () { ANSICHT = b.getAttribute("data-ansicht"); zeichnen(); };
     });
     wurzel.querySelectorAll("[data-fertig]").forEach(function (c) {
       c.onchange = function () {

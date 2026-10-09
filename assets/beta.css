@@ -1275,12 +1275,14 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 .al-tag { margin-top: 22px; }
 .al-tag h4 { margin: 0 0 4px; padding-bottom: 6px; border-bottom: 1px solid #e4e1dd; font-size: var(--fs-s); font-weight: 600; color: var(--grey-70); }
 .al-tag--heute h4 { color: var(--ink); } .al-tag--ueber h4 { color: var(--fehler); } .al-tag--ohne h4 { color: var(--grey-50); }
-.al-tag ul { list-style: none; margin: 0; padding: 0; }
+.al-tag > ul { list-style: none; margin: 0; padding: 0; }
 .al-z { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; align-items: start; padding: 10px 0; border-bottom: 1px solid #f2f1ef; }
 .al-haken { width: 18px; height: 18px; margin: 3px 0 0; accent-color: var(--ink); cursor: pointer; }
 .al-was .pr-auf-titel { font-size: var(--fs-m); font-weight: 500; }
 .al-was > small { display: block; margin-top: 2px; font-size: var(--fs-xs); color: var(--grey-50); }
 .al-was > small a { color: inherit; } .al-was .pr-hinweis, .al-was .pr-wartet { margin-left: 0; }
+/* Aufgaben-Seite: Details stehen in derselben Spalte wie der Titel – kein Einzug wie auf der Projektseite */
+.al-was .pr-auf-details { padding: 6px 34px 4px 0 !important; }
 .al-sp { margin-top: 2px; padding: 2px 9px; border-radius: 999px; background: #f2f1ef; font-size: var(--fs-xs); font-weight: 500; color: var(--grey-70); white-space: nowrap; }
 .al-sp--arbeit { background: var(--ink); color: #fff; } .al-sp--pruefung { background: var(--hl); color: var(--ink); }
 .al-z--fertig .pr-auf-titel { text-decoration: line-through; color: var(--grey-50); }
