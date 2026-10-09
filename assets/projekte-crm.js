@@ -188,13 +188,9 @@
     function details(a) { return det(a) ? '<div class="pr-auf-details" hidden>' + det(a) + "</div>" : ""; }
     // Immer sichtbar: „Hängt ab von …“ und Hinweise wie „Wartet auf Rückmeldung von …“
     function zusatz(a) { return window.AufgabenDetails ? AufgabenDetails.lage(a, auf) : ""; }
-    // Listenansicht: Phase im Kanban als kleine Pille – vier Striche zeigen, wie weit die Aufgabe ist, daneben der Name der Phase
-    var PHASEN = [["backlog", "Backlog"], ["todo", "To-do"], ["arbeit", "In Arbeit"], ["pruefung", "Prüfung"]];
-    function phase(a) {
-      var i = Math.max(0, PHASEN.map(function (x) { return x[0]; }).indexOf(a.spalte || "todo"));
-      return '<span class="pr-phase pr-phase--' + PHASEN[i][0] + '" title="Kanban: ' + PHASEN[i][1] + '"><span class="pr-phase-bahn" aria-hidden="true">' +
-        PHASEN.map(function (x, j) { return "<i" + (j <= i ? ' class="an"' : "") + "></i>"; }).join("") + "</span>" + PHASEN[i][1] + "</span>";
-    }
+    // Listenansicht: Phase im Kanban schlicht in der grauen Zeile („In Arbeit · Daniel“) – Daniel, 09.10.2026
+    var PHASE = { backlog: "Backlog", todo: "To-do", arbeit: "In Arbeit", pruefung: "Prüfung" };
+    function phase(a) { return PHASE[a.spalte || "todo"] || "To-do"; }
     var wahl = '<span class="pr-tl-wahl">' + [["liste", "Liste"], ["kanban", "Kanban"]].map(function (v) {
       return '<button type="button" data-aav="' + v[0] + '" aria-pressed="' + (v[0] === aav) + '">' + v[1] + "</button>"; }).join("") + "</span>";
     var aufInhalt;
@@ -215,7 +211,7 @@
       var offen = auf.filter(function (a) { return a.status === "offen"; }).sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });
       aufInhalt = offen.length ? '<ul class="pr-auf2">' + offen.map(function (a) {
         return '<li data-a="' + a.id + '"><div class="pr-auf-zeile"><button type="button" class="st-haken" aria-label="Erledigt"></button>' + frist(a) + titel(a) +
-          '<span class="pr-wer">' + phase(a) + esc(wer(a) || "offen") + paketLabel(a) + "</span></div>" + '<div class="pr-auf-zusatz">' + zusatz(a) + "</div>" + details(a) + "</li>";
+          '<span class="pr-wer">' + phase(a) + " · " + esc(wer(a) || "offen") + paketLabel(a) + "</span></div>" + '<div class="pr-auf-zusatz">' + zusatz(a) + "</div>" + details(a) + "</li>";
       }).join("") + "</ul>" : '<p class="kt3-leise">Nichts offen.</p>';
     }
     h += '<section class="kt3-box kt3-breit pr-aufgaben pr-auf-breit' + (aav === "kanban" ? " pr-auf-kanban" : "") + '"><div class="pr-tl-kopf"><h3>Aufgaben</h3>' + wahl + "</div>" + aufInhalt + "</section>";

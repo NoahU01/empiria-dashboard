@@ -91,8 +91,7 @@
     var p = projektVon(a), herkunft = p ? '<a href="/strategie/projekte.html#p=' + p.id + '">' + esc(p.name) + "</a>" : esc(a.organisationen ? a.organisationen.name : "Operativ");
     return '<li class="al-z" data-a="' + a.id + '"><input type="checkbox" class="al-haken" data-fertig aria-label="Erledigt"' + (a.status === "erledigt" ? " checked" : "") + ">" +
       '<div class="al-was">' + (det(a) ? '<button type="button" class="pr-auf-titel" data-auf-auf aria-expanded="false"><span>' + esc(a.titel) + '</span><span class="tl-dreieck" aria-hidden="true"></span></button>' : '<span class="pr-auf-titel">' + esc(a.titel) + "</span>") +
-      '<small>' + herkunft + " · " + esc(wer(a) || "offen") + "</small>" + zusatz(a) + (det(a) ? '<div class="pr-auf-details" hidden>' + det(a) + "</div>" : "") + "</div>" +
-      '<span class="al-sp al-sp--' + (a.spalte || "todo") + '">' + (SP_NAME[a.spalte || "todo"] || "") + "</span></li>";
+      '<small>' + (SP_NAME[a.spalte || "todo"] || "To-do") + " · " + herkunft + " · " + esc(wer(a) || "offen") + "</small>" + zusatz(a) + (det(a) ? '<div class="pr-auf-details" hidden>' + det(a) + "</div>" : "") + "</div></li>";
   }
   function liste(l) {
     var offen = l.filter(function (a) { return a.status === "offen"; }), heute = heuteKey(0), g = {}, ohne = [], ueber = [];
