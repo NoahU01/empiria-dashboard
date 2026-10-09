@@ -101,6 +101,11 @@
       "</section>" +
       '<section class="st4-block"><h2 class="st4-h">Sparring starten</h2><div class="st4-sparring">' + sparring() + '</div></section>';
     verdrahten();
+    // Weißer Teil der Karte hat eine Maximalhöhe; ist mehr Inhalt da, deutet ein Verlauf unten an, dass man scrollen kann
+    wurzel.querySelectorAll(".st4-mitte").forEach(function (m) {
+      function pruefe() { m.classList.toggle("st4-mehr", m.scrollHeight - m.scrollTop - m.clientHeight > 4); }
+      m.addEventListener("scroll", pruefe, { passive: true }); pruefe();
+    });
   }
 
   function bestaetigen(b) {
