@@ -440,7 +440,7 @@
         b.addEventListener("click", function () {
           box.classList.add("laedt");
           B.entscheiden(m, b.getAttribute("data-e")).then(function (e) {
-            if (e === "freigeben" && !m.anweisung) return B.anweisen(m, B.freigabeText(m)).then(function () { return e; });
+            if (e === "freigeben" && (!m.anweisung || m.wiedervorlage)) return B.anweisen(m, B.freigabeText(m)).then(function () { m.wiedervorlage = false; return e; });
             return e;
           }).then(function (e) {
             box.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", String(x.getAttribute("data-e") === e)); });

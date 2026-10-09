@@ -136,7 +136,7 @@
       return Promise.all(teile.map(function (t) {
         return Promise.all([
           db.from("mail_einschaetzungen").select("internet_message_id, kategorie, zusammenfassung, vorschlag, entwurf, entwurf_art, weiterleiten_an").in("internet_message_id", t),
-          db.from("mail_anweisungen").select("internet_message_id, text, status, ergebnis, angelegt_am, erledigt_am").in("internet_message_id", t).order("angelegt_am")
+          db.from("mail_anweisungen").select("internet_message_id, text, status, ergebnis, angelegt_am, erledigt_am, wiedervorlage_am").in("internet_message_id", t).order("angelegt_am")
         ]);
       })).then(function (res) {
         var nach = {}, anw = {};
@@ -193,9 +193,14 @@
       // raus aus dem Handlungsbedarf. Freigegeben und „Anders …“ landen unter „Bei Claude“.
       m.entscheidung = entscheidungLesen(m);
       var grundOffen = k.handlung && m.neueste && !m.beantwortet;
-      m.beiClaude = grundOffen && (m.entscheidung === "freigeben" || !!m.anweisung) && m.entscheidung !== "erledigt";
-      var offen = grundOffen && !m.entscheidung && !m.anweisung;
-      if (m.analyse) m.handlung = offen && m.analyse.kategorie !== "keine" && !!ARTEN[m.analyse.kategorie];
+      // Wiedervorlage (Daniel, 09.10.2026): „Erinnere mich morgen …“ – ab wiedervorlage_am steht die Mail wieder im
+      // Handlungsbedarf, bis Daniel antwortet, abhakt oder neu entscheidet
+      var wv = m.anweisung && m.anweisung.wiedervorlage_am;
+      m.wiedervorlage = !!wv && new Date(wv) <= Date.now() && m.entscheidung !== "erledigt";
+      m.beiClaude = grundOffen && !m.wiedervorlage && (m.entscheidung === "freigeben" || !!m.anweisung) && m.entscheidung !== "erledigt";
+      var offen = grundOffen && (m.wiedervorlage || (!m.entscheidung && !m.anweisung));
+      if (m.wiedervorlage) m.handlung = offen;
+      else if (m.analyse) m.handlung = offen && m.analyse.kategorie !== "keine" && !!ARTEN[m.analyse.kategorie];
       else m.handlung = offen && (m.claude || m.markiert || (m.relevant && m.direkt && !m.automatisch && m.alter <= TAGE_HANDLUNG));
       if (m.handlung || m.beiClaude) { m.grund = grund(m); m.vorschlag = vorschlag(m); }
     });
@@ -248,6 +253,7 @@
   }
 
   function grund(m) {
+    if (m.wiedervorlage) return "Wiedervorlage – du wolltest dich darum kümmern: „" + m.anweisung.text + "“";
     if (m.claude) return "Von Claude als Handlungsbedarf markiert";
     if (m.markiert) {
       var f = m.flag.dueDateTime && m.flag.dueDateTime.dateTime;
@@ -260,7 +266,7 @@
   // Erster, einfacher Vorschlag für den nächsten Schritt – nach Stichworten.
   // Später ersetzt der Always-on-Mac das durch eine echte Einschätzung.
   function vorschlag(m) {
-    if (m.analyse) return { art: m.analyse.kategorie, text: m.analyse.vorschlag || ARTEN[m.analyse.kategorie] };
+    if (m.analyse && !(m.wiedervorlage && !ARTEN[m.analyse.kategorie])) return { art: m.analyse.kategorie, text: m.analyse.vorschlag || ARTEN[m.analyse.kategorie] };
     return { art: "offen", text: stichwort(m) };
   }
   function stichwort(m) {
