@@ -1309,8 +1309,6 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 .bf-knoepfe { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; padding-top: 2px; }
 .bf-knoepfe button { height: 36px; padding: 0 12px; border: 1px solid var(--linie); border-radius: 8px; background: #fff; font: inherit; font-size: var(--fs-s); color: var(--ink); cursor: pointer; white-space: nowrap; }
 .bf-knoepfe button.st4-ja { background: var(--ink); border-color: var(--ink); color: #fff; }
-.bf-ok, .bf-laeuft { padding-top: 8px; font-size: var(--fs-s); font-weight: 600; white-space: nowrap; }
-.bf-laeuft { color: var(--grey-50); }
 @media (max-width: 1100px) {
   .bf-zeile { grid-template-columns: minmax(0, 1fr) auto; }
   .bf-zu { grid-column: 1 / -1; padding-top: 0; }
