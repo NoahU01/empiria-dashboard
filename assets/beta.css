@@ -554,7 +554,7 @@ span.pr-auf-titel:hover span, button.pr-auf-titel:hover span { text-decoration: 
 .pr-auf-titel[aria-expanded="true"] .tl-dreieck { transform: rotate(-135deg); margin-top: -2px; }
 .pr-auf-details p { margin: 0; font-size: var(--fs-m); font-weight: 300; line-height: 1.55; color: var(--ink-2); }
 .pr-auf-details { padding-top: 0; }
-@media (min-width: 601px) { .pr-aufgaben .pr-auf-details { padding-left: 122px; padding-right: 34px; } }
+@media (min-width: 601px) { .pr-aufgaben .pr-auf-details { padding-left: 140px; padding-right: 34px; } }
 /* Aufgaben: Umschalter Liste · Kanban im Kopf */
 .pr-aufgaben > .pr-tl-kopf { margin-bottom: 10px; }
 .pr-aufgaben > .pr-tl-kopf h3 { margin: 0; }
@@ -599,7 +599,7 @@ main.pr-look-grau .pr-kb-spalte { background: #f4f2ef; }
 .pr-wartet { margin: 6px 0 0; font-size: var(--fs-xs); color: var(--grey-50); }
 .pr-wartet::before { content: "⧗ "; }
 .pr-auf-zusatz:empty { display: none; }
-@media (min-width: 601px) { .pr-aufgaben .pr-auf-zusatz { padding: 0 34px 6px 122px; } .pr-aufgaben .pr-auf-zusatz .pr-hinweis { margin-top: 0; } }
+@media (min-width: 601px) { .pr-aufgaben .pr-auf-zusatz { padding: 0 34px 6px 140px; } .pr-aufgaben .pr-auf-zusatz .pr-hinweis { margin-top: 0; } }
 /* Kanban im Projekt: kompaktere Karten (schmale Spalten) */
 .pr-aufgaben .pr-kanban { gap: 10px; }
 .pr-aufgaben .pr-kb-spalte { padding: 8px; }
