@@ -110,6 +110,7 @@
   }
 
   /* ---------- Projekt ---------- */
+  var STRAENGE = [];   // Planungsmodus: Stränge des Projekts (assets/projekt-plan.js)
   function projekt(id) {
     wurzel.innerHTML = '<div class="kb-laedt"><span></span><span></span></div>';
     Promise.all([
@@ -117,9 +118,11 @@
       db.from("projekt_beteiligte").select("id, seite, rolle, name, kontakte(id, vorname, nachname, position)").eq("projekt_id", id),
       db.from("projekt_ereignisse").select("id, datum, art, titel, quelle, format, ort, teilnehmer, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("datum", { ascending: false }),
       db.from("projekt_punkte").select("id, ereignis_id, art, text, angelegt_am, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am", { ascending: false }),
-      db.from("aufgaben").select("id, paket_id, titel, beschreibung, status, spalte, faellig_am, erledigt_am, ereignis_id, weg, vorgaenger, warten_auf, hinweis, zeitblock_vorschlag, mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, unterlagen, person:kontakt_id(id, vorname, nachname), organisationen(id, name), zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
+      db.from("aufgaben").select("id, paket_id, strang_id, reihenfolge, art, titel, beschreibung, status, spalte, faellig_am, erledigt_am, ereignis_id, weg, vorgaenger, warten_auf, hinweis, zeitblock_vorschlag, mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, unterlagen, person:kontakt_id(id, vorname, nachname), organisationen(id, name), zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
       ,db.from("projekt_pakete").select("id, nr, titel, ziel, stand, status").eq("projekt_id", id).order("nr")
+      ,db.from("projekt_straenge").select("id, titel, reihenfolge").eq("projekt_id", id).order("reihenfolge")
     ]).then(function (r) {
+      STRAENGE = (r[6] && r[6].data) || [];
       if (r[0].error) { wurzel.innerHTML = '<p class="kb-leer">Fehler: ' + esc(r[0].error.message) + "</p>"; return; }
       var auf = r[4].data || [];
       PAKETE = (r[5] && r[5].data) || [];
@@ -213,7 +216,9 @@
     var offen = auf.filter(function (a) { return a.status === "offen"; }).sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });
     // Aufgaben als Liste oder Kanban-Board (Backlog · To-do · In Arbeit · Review/Prüfung · Erledigt)
     var aav = "liste";
-    try { aav = localStorage.getItem("pr-auf-ansicht") === "kanban" ? "kanban" : "liste"; } catch (x) {}
+    var plan = STRAENGE.length && window.ProjektPlan;
+    try { aav = localStorage.getItem("pr-auf-ansicht") || "liste"; } catch (x) {}
+    if (aav !== "kanban" && !(aav === "plan" && plan)) aav = "liste";
     function frist(a) {
       var ueber = a.status === "offen" && a.faellig_am && new Date(a.faellig_am) < new Date(new Date().toDateString());
       return '<span class="pr-frist' + (a.faellig_am ? " mk mk--frist" : "") + (ueber ? " pr-ueber" : "") + '">' + (a.faellig_am ? kurz(a.faellig_am) : "ohne Termin") + "</span>";
@@ -230,14 +235,18 @@
     // Listenansicht: Phase im Kanban schlicht in der grauen Zeile („In Arbeit · Daniel“) – Daniel, 09.10.2026
     var PHASE = { backlog: "Backlog", todo: "To-do", arbeit: "In Arbeit", pruefung: "Prüfung" };
     function phase(a) { return PHASE[a.spalte || "todo"] || "To-do"; }
-    var wahl = '<span class="pr-tl-wahl">' + [["liste", "Liste"], ["kanban", "Kanban"]].map(function (v) {
+    var wahl = '<span class="pr-tl-wahl">' + [["liste", "Liste"]].concat(plan ? [["plan", "Plan"]] : [], [["kanban", "Kanban"]]).map(function (v) {
       return '<button type="button" data-aav="' + v[0] + '" aria-pressed="' + (v[0] === aav) + '">' + v[1] + "</button>"; }).join("") + "</span>";
     var aufInhalt;
-    if (aav === "kanban") {
+    var hilfen = { titel: titel, details: details, zusatz: zusatz, phase: phase, wer: wer };
+    if (aav === "plan") aufInhalt = '<div class="pl-rahmen">' + ProjektPlan.bild(STRAENGE, auf) + "</div>";
+    else if (aav === "liste" && plan) aufInhalt = '<div class="pl-rahmen">' + ProjektPlan.liste(STRAENGE, auf, hilfen) + "</div>";
+    else if (aav === "kanban") {
       var vor14 = Date.now() - 14 * 864e5;
       var SPALTEN = [["backlog", "Backlog"], ["todo", "To-do"], ["arbeit", "In Arbeit"], ["pruefung", "Review / Prüfung"], ["erledigt", "Erledigt"]];
       aufInhalt = '<div class="pr-kanban">' + SPALTEN.map(function (sp) {
         var karten = auf.filter(function (a) {
+          if (a.art === "gate") return false;
           if (sp[0] === "erledigt") return a.status === "erledigt" && (!a.erledigt_am || new Date(a.erledigt_am) >= vor14);
           return a.status === "offen" && (a.spalte || "todo") === sp[0];
         }).sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });
@@ -260,7 +269,7 @@
           '<span class="pr-auf-titel">' + esc(a.titel) + '</span><span class="pr-wer">' + esc(wer(a) || "") + "</span></div></li>";
       }).join("") + "</ul>" + (fertig.length > 5 ? '<button type="button" class="kt3-klapp pr-fertig-mehr" data-klapp-knopf aria-expanded="false">Alle zeigen</button>' : "") + "</div>";
     }
-    h += '<section class="kt3-box kt3-breit pr-aufgaben pr-auf-breit' + (aav === "kanban" ? " pr-auf-kanban" : "") + '"><div class="pr-tl-kopf"><h3>Aufgaben</h3>' + wahl + "</div>" + aufInhalt + "</section>";
+    h += '<section class="kt3-box kt3-breit pr-aufgaben pr-auf-breit' + (aav === "kanban" ? " pr-auf-kanban" : "") + (aav === "plan" ? " pr-auf-plan" : "") + '"><div class="pr-tl-kopf"><h3>Aufgaben</h3>' + wahl + "</div>" + aufInhalt + "</section>";
     // Timeline: drei Darstellungen zum Vergleich – ohne äußeren Kasten, mit viel Luft
     var jetzt = Date.now(), tlv = "seite";
     try { tlv = localStorage.getItem("pr-tl-ansicht") || "seite"; } catch (x) {}
@@ -369,6 +378,7 @@
 
   function verdrahten(p) {
     klappbar(p);
+    if (STRAENGE.length && window.ProjektPlan) ProjektPlan.verdrahten(wurzel, db, STRAENGE, STAND.auf, function () { projekt(p.id); });
     wurzel.querySelectorAll("[data-pz-feld]").forEach(function (gr) {
       var feld = gr.getAttribute("data-pz-feld");
       gr.querySelectorAll("button").forEach(function (b) { b.onclick = function () {

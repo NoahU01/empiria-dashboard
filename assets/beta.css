@@ -1380,3 +1380,78 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 .st-haken.an { position: relative; border-color: var(--grey-50); background: var(--grey-bg); }
 .st-haken.an::after { content: ""; position: absolute; left: 6px; top: 2px; width: 6px; height: 11px; border-right: 2px solid var(--grey-70); border-bottom: 2px solid var(--grey-70); transform: rotate(45deg); }
 .pr-fertig-mehr { margin-top: 8px; }
+
+/* ---------- Planungsmodus: Stränge, Gates, Reihenfolge (Daniel, 10.10.2026) ---------- */
+.pl-legende { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin: 0 0 14px; font-size: var(--fs-xs); color: var(--grey-50); }
+.pl-legende > span { margin-left: 10px; } .pl-legende > span:first-child { margin-left: 0; }
+.pl-st { display: inline-block; flex: none; width: 10px; height: 10px; border-radius: 50%; box-sizing: border-box; }
+.pl-st--machbar { border: 2px solid var(--ink); }
+.pl-st--spaeter { border: 1.5px solid #cfccc8; }
+.pl-st--fertig { background: #b9b6b2; }
+.pl-raute { display: inline-block; flex: none; width: 10px; height: 10px; transform: rotate(45deg); background: var(--hl); box-shadow: 0 0 0 1.5px var(--ink); }
+.pl-leg-linie { width: 22px; height: 0; border-top: 1.5px solid var(--grey-50); }
+.pl-leg-linie--gestr { border-top-style: dashed; }
+.pl-strang + .pl-strang { margin-top: 26px; }
+.pl-strang-titel { margin: 0 0 4px; padding-bottom: 6px; border-bottom: 1px solid var(--ink); font-size: var(--fs-s); font-weight: 600; }
+.pl-strang-titel--ohne { color: var(--grey-50); border-color: var(--linie); }
+.pl-liste { list-style: none; margin: 0; padding: 0; }
+.pl-liste.laedt { opacity: .5; pointer-events: none; }
+.pl-z { display: grid; grid-template-columns: 14px 20px 26px 12px minmax(0, 1fr); gap: 0 8px; align-items: start; padding: 9px 0; border-top: 1px solid #f2f1ef; }
+.pl-z:first-child { border-top: 0; }
+.pl-z > .st-haken, .pl-z > .pl-st, .pl-z > .pl-raute { margin-top: 3px; }
+.pl-z > .pl-st, .pl-z > .pl-raute { margin-top: 7px; justify-self: center; }
+.pl-inhalt { min-width: 0; }
+.pl-inhalt .pr-wer { display: block; margin-top: 2px; font-size: var(--fs-xs); color: var(--grey-50); }
+.pl-z--spaeter .pr-auf-titel { color: var(--grey-70); }
+.pl-z--fertig .pr-auf-titel, .pl-z--fertig .pl-titel { color: var(--grey-50); text-decoration: line-through; text-decoration-color: rgba(0,0,0,.25); }
+.pl-griff { width: 10px; height: 18px; margin-top: 4px; cursor: grab; opacity: .45;
+  background-image: radial-gradient(circle, var(--grey-70) 1.2px, transparent 1.4px); background-size: 5px 6px; }
+.pl-griff--leer { visibility: hidden; }
+.pl-pfeile { display: flex; flex-direction: column; gap: 2px; opacity: 0; transition: opacity .15s; }
+.pl-pfeile button { width: 20px; height: 13px; border: 0; padding: 0; background: none; font-size: 8px; line-height: 1; color: var(--grey-70); }
+.pl-pfeile button:disabled { visibility: hidden; }
+.pl-z:hover .pl-pfeile, .pl-z:focus-within .pl-pfeile { opacity: 1; }
+@media (hover: none) { .pl-pfeile { opacity: 1; } .pl-griff { display: none; } .pl-z { grid-template-columns: 20px 26px 12px minmax(0, 1fr); } }
+.pl-zieht { opacity: .4; }
+.pl-gate { margin: 4px 0; padding: 11px 0; border-top: 0; background: #fffde6; box-shadow: inset 0 1px 0 #f0e9a0, inset 0 -1px 0 #f0e9a0; }
+.pl-gate + .pl-z { border-top: 0; }
+.pl-gate .pl-raute { width: 11px; height: 11px; }
+.pl-gate.pl-z--fertig .pl-raute { background: var(--ink); }
+.pl-gate-kicker { display: block; font-size: var(--fs-xs); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--grey-70); }
+.pl-titel { display: block; font-size: var(--fs-m); font-weight: 600; }
+.pl-gate-stand { display: block; margin-top: 2px; font-size: var(--fs-xs); color: var(--grey-70); }
+/* Plan */
+.pl-plan { overflow-x: auto; margin: 0 -4px; padding: 4px; }
+.pl-plan-innen { position: relative; display: grid; gap: 12px; min-width: max-content; }
+.pl-svg { position: absolute; top: 0; left: 0; pointer-events: none; overflow: visible; }
+.pl-pfad { fill: none; stroke: #9a9792; stroke-width: 1.4; }
+.pl-pfad--gestr { stroke-dasharray: 5 4; }
+.pl-spitze { fill: #9a9792; }
+.pl-bahn { display: grid; grid-template-columns: 150px auto; border-radius: 12px; }
+.pl-bahn--0 { background: rgba(197, 31, 93, .07); box-shadow: inset 3px 0 0 #C51F5D; }
+.pl-bahn--1 { background: rgba(134, 19, 161, .07); box-shadow: inset 3px 0 0 #8613A1; }
+.pl-bahn--2 { background: rgba(11, 159, 189, .08); box-shadow: inset 3px 0 0 #0B9FBD; }
+.pl-bahn-kopf { padding: 16px 14px 16px 18px; font-size: var(--fs-s); line-height: 1.35; }
+.pl-bahn-spur { display: flex; align-items: center; gap: 46px; padding: 16px 28px 16px 8px; }
+.pl-knoten { position: relative; z-index: 1; }
+.pl-karte { display: flex; gap: 9px; align-items: flex-start; width: 178px; min-height: 58px; padding: 11px 12px; box-sizing: border-box; border-radius: 10px; background: #fff; box-shadow: 0 0 0 1px #e6e3df; font-size: var(--fs-s); line-height: 1.35; }
+.pl-karte b { font-weight: 500; }
+.pl-karte .pl-st { margin-top: 4px; }
+.pl-karte.pl-z--machbar { box-shadow: 0 0 0 1.5px var(--ink), 0 3px 10px rgba(0,0,0,.06); }
+.pl-karte.pl-z--spaeter { background: rgba(255,255,255,.6); color: var(--grey-70); }
+.pl-karte.pl-z--fertig { background: rgba(255,255,255,.5); color: var(--grey-50); }
+.pl-karte.pl-z--fertig b { text-decoration: line-through; text-decoration-color: rgba(0,0,0,.25); }
+.pl-k-gate { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 120px; text-align: center; font-size: var(--fs-s); line-height: 1.3; }
+.pl-k-gate b { font-weight: 600; }
+.pl-raute--gross { width: 18px; height: 18px; }
+.pl-k-gate.pl-z--fertig .pl-raute--gross { background: var(--ink); }
+@media (max-width: 600px) { .pl-bahn { grid-template-columns: 1fr; } .pl-bahn-kopf { padding-bottom: 0; } .pl-bahn-spur { padding-left: 18px; } }
+.pl-legende { margin-bottom: 20px; }
+.pl-inhalt .pr-auf-zusatz, .pl-inhalt .pr-auf-details { padding-left: 0 !important; padding-right: 0 !important; }
+.pl-inhalt .pr-auf-titel { padding-right: 34px; }
+.pl-z--fertig > .pl-st { visibility: hidden; }
+.pl-karte { width: 158px; }
+.pl-bahn-spur { gap: 38px; }
+.pl-bahn { grid-template-columns: 132px auto; }
+.pl-rahmen .pl-legende { margin: 0 0 22px; }
+@media (max-width: 600px) { .pl-bahn { grid-template-columns: 1fr; } .pl-bahn-kopf { padding: 14px 16px 0; } .pl-bahn-spur { padding: 12px 20px 16px 16px; } }
