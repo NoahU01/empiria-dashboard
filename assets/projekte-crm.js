@@ -110,7 +110,7 @@
   }
 
   /* ---------- Projekt ---------- */
-  var STRAENGE = [];   // Planungsmodus: Stränge des Projekts (assets/projekt-plan.js)
+  var STRAENGE = [], EXTERN = [];   // Planungsmodus: Stränge des Projekts (assets/projekt-plan.js)
   function projekt(id) {
     wurzel.innerHTML = '<div class="kb-laedt"><span></span><span></span></div>';
     Promise.all([
@@ -125,9 +125,13 @@
       STRAENGE = (r[6] && r[6].data) || [];
       if (r[0].error) { wurzel.innerHTML = '<p class="kb-leer">Fehler: ' + esc(r[0].error.message) + "</p>"; return; }
       var auf = r[4].data || [];
+      // Abhängigkeiten aus anderen Projekten mitladen (z. B. Release 3.0 wartet auf eine Aufgabe aus „Corporate Design“)
+      var eigene = {}; auf.forEach(function (a) { eigene[a.id] = 1; });
+      var fremd = []; auf.forEach(function (a) { (a.vorgaenger || []).forEach(function (v) { v = +v; if (!eigene[v] && fremd.indexOf(v) < 0) fremd.push(v); }); });
+      var extern = fremd.length ? db.from("aufgaben").select("id, titel, status, projekt_id").in("id", fremd).then(function (x) { EXTERN = x.data || []; }) : Promise.resolve(EXTERN = []);
       PAKETE = (r[5] && r[5].data) || [];
       var weiter = function () { zeichnen(r[0].data, r[1].data || [], r[2].data || [], r[3].data || [], auf); };
-      if (window.AufgabenDetails) AufgabenDetails.vorlagenAnhaengen(db, auf).then(weiter); else weiter();
+      extern.then(function () { if (window.AufgabenDetails) AufgabenDetails.vorlagenAnhaengen(db, auf).then(weiter); else weiter(); });
     });
   }
 
@@ -231,7 +235,7 @@
     }
     function details(a) { return det(a) ? '<div class="pr-auf-details" hidden>' + det(a) + "</div>" : ""; }
     // Immer sichtbar: „Hängt ab von …“ und Hinweise wie „Wartet auf Rückmeldung von …“
-    function zusatz(a) { return window.AufgabenDetails ? AufgabenDetails.lage(a, auf) : ""; }
+    function zusatz(a) { return window.AufgabenDetails ? AufgabenDetails.lage(a, auf.concat(EXTERN)) : ""; }
     // Listenansicht: Phase im Kanban schlicht in der grauen Zeile („In Arbeit · Daniel“) – Daniel, 09.10.2026
     var PHASE = { backlog: "Backlog", todo: "To-do", arbeit: "In Arbeit", pruefung: "Prüfung" };
     function phase(a) { return PHASE[a.spalte || "todo"] || "To-do"; }
@@ -239,8 +243,8 @@
       return '<button type="button" data-aav="' + v[0] + '" aria-pressed="' + (v[0] === aav) + '">' + v[1] + "</button>"; }).join("") + "</span>";
     var aufInhalt;
     var hilfen = { titel: titel, details: details, zusatz: zusatz, phase: phase, wer: wer };
-    if (aav === "plan") aufInhalt = '<div class="pl-rahmen">' + ProjektPlan.bild(STRAENGE, auf) + "</div>";
-    else if (aav === "liste" && plan) aufInhalt = '<div class="pl-rahmen">' + ProjektPlan.liste(STRAENGE, auf, hilfen) + "</div>";
+    if (aav === "plan") aufInhalt = '<div class="pl-rahmen">' + ProjektPlan.bild(STRAENGE, auf, auf.concat(EXTERN)) + "</div>";
+    else if (aav === "liste" && plan) aufInhalt = '<div class="pl-rahmen">' + ProjektPlan.liste(STRAENGE, auf, hilfen, auf.concat(EXTERN)) + "</div>";
     else if (aav === "kanban") {
       var vor14 = Date.now() - 14 * 864e5;
       var SPALTEN = [["backlog", "Backlog"], ["todo", "To-do"], ["arbeit", "In Arbeit"], ["pruefung", "Review / Prüfung"], ["erledigt", "Erledigt"]];

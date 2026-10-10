@@ -31,15 +31,17 @@
   }
 
   /* ---------- Liste ---------- */
-  function liste(straenge, auf, h) {
+  // alle = Aufgaben des Projekts + Abhängigkeiten aus anderen Projekten (nur für Zustand und „Es fehlt noch“)
+  function liste(straenge, auf, h, alle) {
+    alle = alle || auf;
     var je = ordnen(straenge, auf), ohne = auf.filter(function (a) { return !a.strang_id && a.status === "offen"; });
     var html = "";
     straenge.slice().sort(function (a, b) { return a.reihenfolge - b.reihenfolge; }).forEach(function (s) {
       html += '<section class="pl-strang" data-strang="' + s.id + '"><h4 class="pl-strang-titel">' + esc(s.titel) + '</h4><ol class="pl-liste" data-pl-liste="' + s.id + '">' +
-        je[s.id].map(function (a, i) { return zeile(a, auf, h, i === 0, i === je[s.id].length - 1); }).join("") + "</ol></section>";
+        je[s.id].map(function (a, i) { return zeile(a, alle, h, i === 0, i === je[s.id].length - 1); }).join("") + "</ol></section>";
     });
     if (ohne.length) html += '<section class="pl-strang"><h4 class="pl-strang-titel pl-strang-titel--ohne">Noch keinem Strang zugeordnet</h4><ol class="pl-liste">' +
-      ohne.map(function (a) { return zeile(a, auf, h, true, true, true); }).join("") + "</ol></section>";
+      ohne.map(function (a) { return zeile(a, alle, h, true, true, true); }).join("") + "</ol></section>";
     return html;
   }
   function pfeile(a, erst, letzt, ohneStrang) {
@@ -65,14 +67,15 @@
   }
 
   /* ---------- Plan (visuell) ---------- */
-  function bild(straenge, auf) {
+  function bild(straenge, auf, alle) {
+    alle = alle || auf;
     var je = ordnen(straenge, auf);
     return '<p class="pl-legende"><span class="pl-leg-linie"></span>Abfolge<span class="pl-leg-linie pl-leg-linie--gestr"></span>wartet auf anderen Strang</p>' +
       '<div class="pl-plan" data-pl-plan><div class="pl-plan-innen"><svg class="pl-svg" data-pl-svg aria-hidden="true"></svg>' +
       straenge.slice().sort(function (a, b) { return a.reihenfolge - b.reihenfolge; }).map(function (s, i) {
         return '<div class="pl-bahn pl-bahn--' + (i % 3) + '"><div class="pl-bahn-kopf"><b>' + esc(s.titel) + '</b></div><div class="pl-bahn-spur">' +
           je[s.id].map(function (a) {
-            var z = zustand(a, auf);
+            var z = zustand(a, alle);
             if (a.art === "gate") return '<div class="pl-knoten pl-k-gate pl-z--' + z + '" data-k="' + a.id + '"><span class="pl-gate-kicker">Gate</span><b>' + esc(a.titel) + "</b></div>";
             return '<div class="pl-knoten pl-karte pl-z--' + z + '" data-k="' + a.id + '"><b>' + esc(a.titel) + "</b></div>";
           }).join("") + "</div></div>";
