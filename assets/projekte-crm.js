@@ -252,6 +252,13 @@
         return '<li data-a="' + a.id + '"><div class="pr-auf-zeile"><button type="button" class="st-haken" aria-label="Erledigt"></button>' + frist(a) + titel(a) +
           '<span class="pr-wer">' + phase(a) + " · " + esc(wer(a) || "offen") + paketLabel(a) + "</span></div>" + '<div class="pr-auf-zusatz">' + zusatz(a) + "</div>" + details(a) + "</li>";
       }).join("") + "</ul>" : '<p class="kt3-leise">Nichts offen.</p>';
+      // Erledigte Aufgaben bleiben sichtbar – hellgrau mit Haken unter den offenen, neueste zuerst (Daniel, 10.10.2026)
+      var fertig = auf.filter(function (a) { return a.status === "erledigt"; }).sort(function (a, b) { return String(b.erledigt_am || "").localeCompare(String(a.erledigt_am || "")); });
+      if (fertig.length) aufInhalt += '<div class="pr-fertig"><p class="pr-fertig-kopf">Erledigt</p><ul class="pr-auf2 pr-auf-fertig">' + fertig.map(function (a, i) {
+        return '<li data-a="' + a.id + '"' + (i >= 5 ? " data-mehr hidden" : "") + '><div class="pr-auf-zeile"><button type="button" class="st-haken an" aria-label="Wieder öffnen" title="Wieder öffnen"></button>' +
+          '<span class="pr-frist">' + (a.erledigt_am ? "erledigt " + new Date(a.erledigt_am).toLocaleDateString("de-DE", { day: "numeric", month: "numeric" }) : "erledigt") + "</span>" +
+          '<span class="pr-auf-titel">' + esc(a.titel) + '</span><span class="pr-wer">' + esc(wer(a) || "") + "</span></div></li>";
+      }).join("") + "</ul>" + (fertig.length > 5 ? '<button type="button" class="kt3-klapp pr-fertig-mehr" data-klapp-knopf aria-expanded="false">Alle zeigen</button>' : "") + "</div>";
     }
     h += '<section class="kt3-box kt3-breit pr-aufgaben pr-auf-breit' + (aav === "kanban" ? " pr-auf-kanban" : "") + '"><div class="pr-tl-kopf"><h3>Aufgaben</h3>' + wahl + "</div>" + aufInhalt + "</section>";
     // Timeline: drei Darstellungen zum Vergleich – ohne äußeren Kasten, mit viel Luft
@@ -431,9 +438,11 @@
     var ta = wurzel.querySelector("[data-ueb]"), sp = wurzel.querySelector("[data-ueb-speichern]"), bt = wurzel.querySelector("[data-ueb-bearbeiten]"), tx = wurzel.querySelector("[data-ueb-text]");
     bt.onclick = function () { ta.hidden = false; tx.hidden = true; bt.hidden = true; sp.hidden = false; ta.focus(); };
     sp.onclick = function () { sp.disabled = true; db.from("projekte").update({ ueberlegungen: ta.value }).eq("id", p.id).then(function (r) { sp.disabled = false; if (r.error) alert(r.error.message); else projekt(p.id); }); };
+    // Haken: offene Aufgabe erledigen bzw. erledigte wieder öffnen – danach steht sie im jeweils anderen Block
     wurzel.querySelectorAll("[data-a] .st-haken").forEach(function (b) {
-      b.onclick = function () { var li = b.closest("li"); li.classList.add("st-weg");
-        db.from("aufgaben").update({ status: "erledigt", erledigt_am: new Date().toISOString() }).eq("id", +li.getAttribute("data-a")).then(function (r) { if (r.error) { li.classList.remove("st-weg"); alert(r.error.message); } }); };
+      b.onclick = function () { var li = b.closest("li"), zu = !b.classList.contains("an"); li.classList.add("st-weg");
+        db.from("aufgaben").update(zu ? { status: "erledigt", erledigt_am: new Date().toISOString() } : { status: "offen", erledigt_am: null }).eq("id", +li.getAttribute("data-a"))
+          .then(function (r) { if (r.error) { li.classList.remove("st-weg"); alert(r.error.message); return; } setTimeout(function () { projekt(p.id); }, zu ? 500 : 0); }); };
     });
   }
   document.addEventListener("click", function (e) {

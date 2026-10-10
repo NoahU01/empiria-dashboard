@@ -1372,3 +1372,11 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 .kb-mail > .kb-entscheid--warten { margin-top: 10px; }
 .kb-mail > .kb-entscheid--warten button { height: 34px; padding: 0 14px; }
 .kb-mail > .kb-anders, .kb-mail > .kb-anweisung { margin-top: 10px; }
+
+/* Projekt › Aufgaben: erledigte unter den offenen, hellgrau mit Haken (Daniel, 10.10.2026) */
+.pr-fertig-kopf { margin: 22px 0 4px; padding-top: 14px; border-top: 1px solid var(--linie); font-size: var(--fs-xs); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-50); }
+.pr-auf-fertig .pr-auf-titel, .pr-auf-fertig .pr-frist, .pr-auf-fertig .pr-wer { color: var(--grey-50); font-weight: 400; }
+.pr-auf-fertig .pr-auf-titel { text-decoration: line-through; text-decoration-color: rgba(0,0,0,.25); }
+.st-haken.an { position: relative; border-color: var(--grey-50); background: var(--grey-bg); }
+.st-haken.an::after { content: ""; position: absolute; left: 6px; top: 2px; width: 6px; height: 11px; border-right: 2px solid var(--grey-70); border-bottom: 2px solid var(--grey-70); transform: rotate(45deg); }
+.pr-fertig-mehr { margin-top: 8px; }
