@@ -43,64 +43,66 @@
   function V() { return D.vorlagen.filter(function (v) { return mf(v.marke); }); }
   function A() { return D.aufgaben.filter(function (a) { var p = projekt(a.projekt_id); return mf(p ? p.marke : a.marke); }); }
   function T() { return D.termine.filter(function (t) { var p = projekt(t.projekt_id); return mf(p ? p.marke : /sofort ?sichtbar/i.test(t.betreff || "") ? "sofortsichtbar" : t.postfach); }); }
-  function kachel(link, zahl, titel, unter, ton) {
-    return '<a class="an-k' + (ton ? " an-k--" + ton : "") + '" href="' + link + '"><span class="an-zahl">' + zahl + '</span><b>' + titel + "</b>" + (unter ? "<small>" + unter + "</small>" : "") + "</a>";
-  }
 
+  /* Status als Lage-Liste (Daniel, 10.10.2026: Aussagekraft vor Designspielerei): je Signal eine Zeile –
+     Zahl, Aussage, Zusammenhang, Pfeil dorthin, wo es erledigt wird. Sortiert nach Dringlichkeit; gelb nur, was heute
+     Handeln verlangt. Signale ohne Handlungsbedarf stehen gesammelt in einer leisen Zeile. */
   function signale() {
     var vor = V().filter(function (v) { return v.entscheidung !== "spaeter"; }).length;
-    var bis7 = new Date(+HEUTE + 8 * 864e5);
+    var bis7 = new Date(+HEUTE + 8 * 864e5), bis2 = new Date(+HEUTE + 3 * 864e5);
     var offen = T().filter(function (t) { return t.vorbereitung === "offen"; });
-    var offen7 = offen.filter(function (t) { return new Date(t.start) < bis7; }).length;
-    var laeuft = T().filter(function (t) { return t.vorbereitung === "laeuft"; }).length;
-    var morgen = iso(new Date(+HEUTE + 864e5)), sonntag = new Date(HEUTE); sonntag.setDate(sonntag.getDate() + (7 - ((sonntag.getDay() + 6) % 7)) - 1);
+    var offen7 = offen.filter(function (t) { return new Date(t.start) < bis7; }).length, offen2 = offen.filter(function (t) { return new Date(t.start) < bis2; }).length;
+    var sonntag = new Date(HEUTE); sonntag.setDate(sonntag.getDate() + (7 - ((sonntag.getDay() + 6) % 7)) - 1);
     var ueber = A().filter(function (a) { return a.faellig_am && a.faellig_am.slice(0, 10) < iso(HEUTE); }).length;
     var woche = A().filter(function (a) { return a.faellig_am && a.faellig_am.slice(0, 10) >= iso(HEUTE) && a.faellig_am.slice(0, 10) <= iso(sonntag); }).length;
     var rueck = A().filter(function (a) { return a.antwort_am; }).length;
     var warten = A().filter(function (a) { return a.mail_gesendet_am && !a.antwort_am; }).length;
-    var m;
-    if (D.mails === "laedt") m = kachel("/strategie/korrespondenz-beta.html", "…", "Mails", "werden geprüft");
-    else if (D.mails === "anmelden") m = '<button type="button" class="an-k an-k--leer" data-ms><span class="an-zahl">–</span><b>Mails</b><small>mit Microsoft anmelden</small></button>';
-    else m = kachel("/strategie/korrespondenz-beta.html", D.mails.handlung, "Mails mit Handlungsbedarf", D.mails.neu + " neu in den letzten 24 Stunden", D.mails.handlung ? "achtung" : "");
-    return '<div class="an-signale">' +
-      kachel("/strategie/steuerung.html", vor, "Entscheidungs&shy;vorschläge", "liegen auf deinem Tisch", vor ? "achtung" : "") +
-      kachel("/strategie/steuerung.html#termine", offen7, "Termine ohne Vorbereitung", "in den nächsten 7 Tagen · " + offen.length + " in 14 Tagen · " + laeuft + " in Vorbereitung", offen7 ? "achtung" : "") +
-      m +
-      kachel("/strategie/aufgaben.html", ueber, "Aufgaben überfällig", woche + " fällig bis Sonntag", ueber ? "achtung" : "") +
-      kachel("/strategie/aufgaben.html#rueckmeldungen", rueck, "Rückmeldungen eingegangen", warten + " warten noch auf Antwort") +
-      (mf("empiria") ? linkedin() : "") +
-      "</div>";
+    var z = [
+      { n: ueber, jetzt: ueber > 0, t: ueber === 1 ? "Aufgabe überfällig" : "Aufgaben überfällig", k: woche ? woche + " weitere fällig bis Sonntag" : "", l: "/strategie/aufgaben.html", leer: "Aufgaben" },
+      { n: offen7, jetzt: offen2 > 0, t: offen7 === 1 ? "Termin ohne Vorbereitung" : "Termine ohne Vorbereitung", k: "in den nächsten 7 Tagen" + (offen2 ? " · " + offen2 + " davon bis übermorgen" : ""), l: "/strategie/steuerung.html#termine", leer: "Terminvorbereitung" },
+      { n: vor, t: vor === 1 ? "Entscheidung liegt auf deinem Tisch" : "Entscheidungen liegen auf deinem Tisch", k: "", l: "/strategie/steuerung.html#tisch", leer: "Entscheidungen" },
+      D.mails === "laedt" ? { n: "…", t: "Mails werden geprüft", k: "", l: "/strategie/korrespondenz-beta.html" }
+        : D.mails === "anmelden" ? { n: "–", t: "Mails", k: "mit Microsoft anmelden", ms: true }
+        : { n: D.mails.handlung, t: D.mails.handlung === 1 ? "Mail mit Handlungsbedarf" : "Mails mit Handlungsbedarf", k: D.mails.neu + " neu in 24 Stunden", l: "/strategie/korrespondenz-beta.html", leer: "Mails" },
+      { n: rueck, t: rueck === 1 ? "Rückmeldung eingegangen" : "Rückmeldungen eingegangen", k: warten ? warten + " warten noch auf Antwort" : "", l: "/strategie/aufgaben.html#rueckmeldungen", leer: "Rückmeldungen" }
+    ];
+    var aktiv = z.filter(function (x) { return !(typeof x.n === "number" && x.n === 0); }), ruhig = z.filter(function (x) { return x.n === 0; });
+    function zeile(x) {
+      var inner = '<span class="lg-zahl">' + x.n + '</span><span class="lg-was"><b>' + x.t + "</b>" + (x.k ? "<small>" + esc(x.k) + "</small>" : "") + '</span><span class="lg-pfeil" aria-hidden="true">→</span>';
+      return x.ms ? '<button type="button" class="lg-z lg-z--leise" data-ms>' + inner + "</button>" : '<a class="lg-z' + (x.jetzt ? " lg-z--jetzt" : "") + '" href="' + x.l + '">' + inner + "</a>";
+    }
+    return '<div class="lg">' + aktiv.map(zeile).join("") + (mf("empiria") ? linkedin() : "") + "</div>" +
+      (ruhig.length ? '<p class="lg-ruhig">Nichts offen: ' + ruhig.map(function (x) { return esc(x.leer); }).join(" · ") + "</p>" : "");
   }
 
   // LinkedIn: wöchentlich vom Mac gelesen (linkedin_abgleich.py) – Reichweite der letzten 28 Tage, Klick zur LinkedIn-Analyse
   function linkedin() {
     var j = D.linkedin[0], v = D.linkedin[1];
-    if (!j) return '<div class="an-k an-k--leer"><span class="an-zahl">–</span><b>LinkedIn</b><small>noch keine Daten</small></div>';
+    if (!j) return "";
     var f = function (n) { return n == null ? "–" : Number(n).toLocaleString("de-DE"); };
     var diff = v && v.follower != null && j.follower != null ? " (" + (j.follower - v.follower >= 0 ? "+" : "") + f(j.follower - v.follower) + ")" : "";
     var stand = new Date(j.stichtag + "T12:00:00").toLocaleDateString("de-DE", { day: "numeric", month: "numeric" });
-    return '<a class="an-k" href="https://www.linkedin.com/analytics/creator/content/" target="_blank" rel="noopener"><span class="an-zahl">' + f(j.impressionen) + "</span><b>LinkedIn-Reichweite</b><small>Impressionen in 28 Tagen · " +
-      f(j.interaktionen) + " Interaktionen · " + f(j.follower) + " Follower" + diff + " · " + f(j.kontakte) + " Kontakte · Stand " + stand + "</small></a>";
+    return '<a class="lg-z lg-z--info" href="https://www.linkedin.com/analytics/creator/content/" target="_blank" rel="noopener"><span class="lg-zahl">' + f(j.impressionen) + '</span><span class="lg-was"><b>LinkedIn-Impressionen in 28 Tagen</b><small>' +
+      f(j.interaktionen) + " Interaktionen · " + f(j.follower) + " Follower" + diff + " · Stand " + stand + '</small></span><span class="lg-pfeil" aria-hidden="true">↗</span></a>';
   }
 
   /* ---------- Geburtstage (private Kontakte) ---------- */
-  var TAGE_GEB = 7;
+  // Nur heute und morgen (Daniel, 10.10.2026) – eine leise Zeile; Klick auf den Namen öffnet Glückwunsch und „Gratuliert“
   function geburtstage() {
     var l = D.geburtstage.map(function (g) {
       var d = new Date(HEUTE.getFullYear(), g.monat - 1, g.tag); if (d < HEUTE) d = new Date(HEUTE.getFullYear() + 1, g.monat - 1, g.tag);
       return { g: g, d: d, t: Math.round((d - HEUTE) / 864e5) };
-    }).filter(function (x) { return x.t <= TAGE_GEB && x.g.gratuliert_jahr !== x.d.getFullYear(); }).sort(function (a, b) { return a.d - b.d; });
+    }).filter(function (x) { return x.t <= 1 && x.g.gratuliert_jahr !== x.d.getFullYear(); }).sort(function (a, b) { return a.t - b.t; });
     if (!l.length) return "";
-    return '<div class="gb"><h4 class="gb-h">Geburtstage</h4><ul class="gb-liste">' + l.map(function (x) {
+    return '<div class="gb"><p class="gb-zeile"><span class="gb-h">Geburtstag</span>' + l.map(function (x) {
       var g = x.g, n = [g.vorname, g.nachname].filter(Boolean).join(" "), alter = g.jahr ? x.d.getFullYear() - g.jahr : null;
-      var wann = x.t === 0 ? "heute" : x.t === 1 ? "morgen" : x.d.toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "numeric" });
+      return '<button type="button" class="gb-name" data-gb-text="' + g.id + '">' + (x.t === 0 ? "heute" : "morgen") + ": <b>" + esc(n) + "</b>" + (alter ? " (" + alter + ")" : "") + "</button>";
+    }).join("") + "</p>" + l.map(function (x) {
+      var g = x.g, n = [g.vorname, g.nachname].filter(Boolean).join(" "), alter = g.jahr ? x.d.getFullYear() - g.jahr : null;
       var rund = alter && alter % 10 === 0 ? "zum " + alter + ". Geburtstag" : "zum Geburtstag";
       var txt = "Hallo " + (g.vorname || n) + ",\n\nherzlichen Glückwunsch " + rund + "! Ich wünsche Dir einen richtig schönen Tag, Gesundheit und alles Gute für das neue Lebensjahr. Lass Dich feiern!\n\nViele Grüße\nDaniel";
-      return '<li class="gb-z' + (x.t <= 1 ? " gb-z--jetzt" : "") + '" data-gb="' + g.id + '" data-jahr="' + x.d.getFullYear() + '"><span class="gb-wann">' + esc(wann) + "</span>" +
-        '<span class="gb-wer"><b>' + esc(n) + "</b><small>" + esc([alter ? "wird " + alter : "", g.firma].filter(Boolean).join(" · ")) + "</small></span>" +
-        '<span class="gb-knoepfe"><button type="button" data-gb-text aria-expanded="false">Glückwunsch</button><button type="button" data-gb-fertig>Gratuliert</button></span>' +
-        '<div class="ad-prompt gb-text" hidden><p class="ad-prompt-kopf"><span>Glückwunsch – Anrede prüfen, dann selbst senden</span><button type="button" data-prompt-kopieren>Kopieren</button></p><pre>' + esc(txt) + "</pre></div></li>";
-    }).join("") + "</ul></div>";
+      return '<div class="ad-prompt gb-text" data-gb="' + g.id + '" data-jahr="' + x.d.getFullYear() + '" hidden><p class="ad-prompt-kopf"><span>' + esc(n) + ' – Anrede prüfen, selbst senden</span><span class="gb-knoepfe"><button type="button" data-prompt-kopieren>Kopieren</button><button type="button" data-gb-fertig>Gratuliert</button></span></p><pre>' + esc(txt) + "</pre></div>";
+    }).join("") + "</div>";
   }
 
   /* ---------- Strategie je Marke ---------- */
@@ -157,11 +159,11 @@
   function verdrahten() {
     var ms = wurzel.querySelector("[data-ms]"); if (ms && B) ms.onclick = B.anmelden;
     wurzel.querySelectorAll("[data-gb-text]").forEach(function (b) {
-      b.onclick = function () { var t = b.closest("li").querySelector(".gb-text"); t.hidden = !t.hidden; b.setAttribute("aria-expanded", String(!t.hidden)); };
+      b.onclick = function () { var t = wurzel.querySelector('.gb-text[data-gb="' + b.getAttribute("data-gb-text") + '"]'); t.hidden = !t.hidden; b.setAttribute("aria-expanded", String(!t.hidden)); };
     });
     wurzel.querySelectorAll("[data-gb-fertig]").forEach(function (b) {
       b.onclick = function () {
-        var li = b.closest("li"), id = +li.getAttribute("data-gb"), jahr = +li.getAttribute("data-jahr");
+        var li = b.closest(".gb-text"), id = +li.getAttribute("data-gb"), jahr = +li.getAttribute("data-jahr");
         li.classList.add("laedt");
         db.from("geburtstage_privat").update({ gratuliert_jahr: jahr }).eq("id", id).then(function (r) {
           if (r.error) { li.classList.remove("laedt"); alert("Nicht gespeichert: " + r.error.message); return; }
