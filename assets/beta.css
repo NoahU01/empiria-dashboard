@@ -1618,3 +1618,16 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 .st4-karte.st4-offen .st4-mitte .st4-kern { display: block; -webkit-line-clamp: unset; line-clamp: unset; }
 .an-vorb button { white-space: nowrap; }
 @media (max-width: 420px) { .an-vorb button { padding: 0 6px; font-size: 11px; } }
+
+/* Projekte › Überblick: Spalte „Internes Projekt“ schmaler, rechtsbündig – mehr Luft zu den Kundenprojekten (Daniel, 10.10.2026) */
+@media (min-width: 1000px) { .pr-marke-sek .pr-zwei { grid-template-columns: minmax(0, 1fr) minmax(220px, 24%); column-gap: 110px; } }
+
+/* Überschriften wie auf der empiria-Homepage 2.0 (Daniel, 10.10.2026): Lora durchgehend fett, gleicher Zeichenabstand –
+   auch das gelb markierte Wort hat dieselbe Dicke wie der Rest der Zeile */
+.db-kopf h1, .db-kopf h1 .hl,
+.kt3-name, .kt3-proj b, .pr-det-titel, .pr-h2, .pr-module .fl-kopf-text b, .st4-h, .st4-karte h3,
+.sm-k--wurzel b, .sm-k--haupt b, .sm-h2, .st4-spar b, .pr-seite-titel, .kg-k b, .ma-k h4, .tr-tag h2,
+.sg-marke-h, .sg-zeile-marke, .an-zahl, .lg-zahl { font-weight: 700; letter-spacing: -.015em; }
+.db-kopf h1 { letter-spacing: -.02em; }
+/* Projekte › Überblick: Luft zwischen Umschalter und erster Marke */
+.pz-wahl + .pr-marke-sek { margin-top: 36px; }
