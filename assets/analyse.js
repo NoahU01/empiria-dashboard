@@ -1,8 +1,11 @@
-/* Analyse – „Bin ich an den richtigen Sachen dran?“
-   Signale mit Zahl, jedes führt per Klick dorthin, wo es bearbeitet wird:
-     Entscheidungsvorschläge · Termine ohne Vorbereitung · Mails (neu / Handlungsbedarf) · Aufgaben · Rückmeldungen · LinkedIn
-   Darunter: Termine der nächsten 14 Tage mit Vorbereitungsstand (offen · läuft · vorbereitet · nicht nötig),
-   Ideensprint zur Vorbereitung startbar. Pendant zur Steuerung (dort die Vorschläge). */
+/* Strategie (früher „Analyse“, Daniel 10.10.2026) – drei aufklappbare Bereiche:
+     Status    – sechs Signale (kompakt), jedes führt per Klick dorthin, wo es bearbeitet wird:
+                 Entscheidungsvorschläge · Termine ohne Vorbereitung · Mails · Aufgaben · Rückmeldungen · LinkedIn;
+                 dazu Geburtstage der nächsten Tage (private Kontakte, Tabelle geburtstage_privat) mit Glückwunsch zum Kopieren
+     Strategie – je Marke Vision, zukünftiges Geschäftsmodell, Stoßrichtungen (Tabelle marken_strategie), Abgleich mit
+                 Marketing und Projekten, Empfehlungen (allein umsetzbar · muss gebaut werden · braucht Freigabe)
+     Sparring starten – sechs Arten zu reden (vorher auf der Steuerung)
+   Die Termine der nächsten 14 Tage stehen jetzt auf der Steuerung. */
 (function () {
   "use strict";
   var db = window.empiriaDb, wurzel = document.querySelector("[data-analyse]");
@@ -21,8 +24,13 @@
       db.from("termine").select("id, start, ende, ganztags, betreff, ort, teilnehmer, extern, postfach, projekt_id, vorbereitung, vorbereitung_notiz, abgesagt").gte("ende", JETZT.toISOString()).lte("start", bis14).order("start"),
       db.from("aufgaben").select("id, status, faellig_am, antwort_am, mail_gesendet_am, projekt_id, marke").eq("status", "offen"),
       db.from("projekte").select("id, name, marke"),
-      db.from("linkedin_kennzahlen").select("stichtag, follower, kontakte, impressionen, interaktionen, profilaufrufe").eq("quelle", "profil").order("stichtag", { ascending: false }).limit(2)
+      db.from("linkedin_kennzahlen").select("stichtag, follower, kontakte, impressionen, interaktionen, profilaufrufe").eq("quelle", "profil").order("stichtag", { ascending: false }).limit(2),
+      db.from("geburtstage_privat").select("id, vorname, nachname, firma, tag, monat, jahr, gratuliert_jahr").eq("aktiv", true),
+      db.from("marken_strategie").select("*"),
+      db.from("projekte").select("id, name, marke, typ, status, prioritaet"),
+      db.from("kampagnen").select("id, name, marke, status, start")
     ]).then(function (r) {
+      D.geburtstage = r[5].data || []; D.strategie = r[6].data || []; D.projekteAlle = r[7].data || []; D.kampagnen = r[8].data || [];
       D.vorlagen = r[0].data || []; D.termine = (r[1].data || []).filter(function (t) { return !t.abgesagt; }); D.aufgaben = r[2].data || []; D.projekte = r[3].data || [];
       D.linkedin = r[4].data || [];
       zeichnen(); mails();
@@ -56,7 +64,7 @@
     else m = kachel("/strategie/korrespondenz-beta.html", D.mails.handlung, "Mails mit Handlungsbedarf", D.mails.neu + " neu in den letzten 24 Stunden", D.mails.handlung ? "achtung" : "");
     return '<div class="an-signale">' +
       kachel("/strategie/steuerung.html", vor, "Entscheidungs&shy;vorschläge", "liegen auf deinem Tisch", vor ? "achtung" : "") +
-      kachel("#termine", offen7, "Termine ohne Vorbereitung", "in den nächsten 7 Tagen · " + offen.length + " in 14 Tagen · " + laeuft + " in Vorbereitung", offen7 ? "achtung" : "") +
+      kachel("/strategie/steuerung.html#termine", offen7, "Termine ohne Vorbereitung", "in den nächsten 7 Tagen · " + offen.length + " in 14 Tagen · " + laeuft + " in Vorbereitung", offen7 ? "achtung" : "") +
       m +
       kachel("/strategie/aufgaben.html", ueber, "Aufgaben überfällig", woche + " fällig bis Sonntag", ueber ? "achtung" : "") +
       kachel("/strategie/aufgaben.html#rueckmeldungen", rueck, "Rückmeldungen eingegangen", warten + " warten noch auf Antwort") +
@@ -75,60 +83,104 @@
       f(j.interaktionen) + " Interaktionen · " + f(j.follower) + " Follower" + diff + " · " + f(j.kontakte) + " Kontakte · Stand " + stand + "</small></a>";
   }
 
-  function termine() {
-    if (!T().length) return '<p class="an-leer">Keine Termine in den nächsten 14 Tagen.</p>';
-    var tage = {};
-    T().forEach(function (t) { var k = iso(new Date(t.start)); (tage[k] = tage[k] || []).push(t); });
-    return Object.keys(tage).sort().map(function (k) {
-      var d = new Date(k + "T12:00:00");
-      return '<section class="an-tag"><h4>' + d.toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" }) + "</h4><ul>" + tage[k].map(function (t) {
-        var p = projekt(t.projekt_id), zeit = t.ganztags ? "ganztags" : new Date(t.start).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
-        var mit = (t.teilnehmer || []).slice(0, 3).join(", ") + ((t.teilnehmer || []).length > 3 ? " …" : "");
-        return '<li class="an-t an-t--' + t.vorbereitung + '" data-t="' + t.id + '"><span class="an-zeit">' + zeit + "</span>" +
-          '<span class="an-was"><b>' + esc(t.betreff || "(ohne Titel)") + "</b><small>" + [p ? esc(p.name) : "", esc(mit), esc(t.postfach)].filter(Boolean).join(" · ") + "</small>" +
-            (t.vorbereitung_notiz ? '<ul class="an-notiz">' + t.vorbereitung_notiz.split("\n").filter(Boolean).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "") + "</span>" +
-          '<span class="an-vorb" role="group" aria-label="Vorbereitung">' +
-            '<button type="button" data-v="offen" aria-pressed="' + (t.vorbereitung === "offen") + '">offen</button>' +
-            '<button type="button" data-v="laeuft" aria-pressed="' + (t.vorbereitung === "laeuft") + '">läuft</button>' +
-            '<button type="button" data-v="vorbereitet" aria-pressed="' + (t.vorbereitung === "vorbereitet") + '">vorbereitet</button>' +
-            '<button type="button" data-v="nicht_noetig" aria-pressed="' + (t.vorbereitung === "nicht_noetig") + '">nicht nötig</button></span></li>';
-      }).join("") + "</ul></section>";
-    }).join("");
+  /* ---------- Geburtstage (private Kontakte) ---------- */
+  var TAGE_GEB = 7;
+  function geburtstage() {
+    var l = D.geburtstage.map(function (g) {
+      var d = new Date(HEUTE.getFullYear(), g.monat - 1, g.tag); if (d < HEUTE) d = new Date(HEUTE.getFullYear() + 1, g.monat - 1, g.tag);
+      return { g: g, d: d, t: Math.round((d - HEUTE) / 864e5) };
+    }).filter(function (x) { return x.t <= TAGE_GEB && x.g.gratuliert_jahr !== x.d.getFullYear(); }).sort(function (a, b) { return a.d - b.d; });
+    if (!l.length) return "";
+    return '<div class="gb"><h4 class="gb-h">Geburtstage</h4><ul class="gb-liste">' + l.map(function (x) {
+      var g = x.g, n = [g.vorname, g.nachname].filter(Boolean).join(" "), alter = g.jahr ? x.d.getFullYear() - g.jahr : null;
+      var wann = x.t === 0 ? "heute" : x.t === 1 ? "morgen" : x.d.toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "numeric" });
+      var rund = alter && alter % 10 === 0 ? "zum " + alter + ". Geburtstag" : "zum Geburtstag";
+      var txt = "Hallo " + (g.vorname || n) + ",\n\nherzlichen Glückwunsch " + rund + "! Ich wünsche Dir einen richtig schönen Tag, Gesundheit und alles Gute für das neue Lebensjahr. Lass Dich feiern!\n\nViele Grüße\nDaniel";
+      return '<li class="gb-z' + (x.t <= 1 ? " gb-z--jetzt" : "") + '" data-gb="' + g.id + '" data-jahr="' + x.d.getFullYear() + '"><span class="gb-wann">' + esc(wann) + "</span>" +
+        '<span class="gb-wer"><b>' + esc(n) + "</b><small>" + esc([alter ? "wird " + alter : "", g.firma].filter(Boolean).join(" · ")) + "</small></span>" +
+        '<span class="gb-knoepfe"><button type="button" data-gb-text aria-expanded="false">Glückwunsch</button><button type="button" data-gb-fertig>Gratuliert</button></span>' +
+        '<div class="ad-prompt gb-text" hidden><p class="ad-prompt-kopf"><span>Glückwunsch – Anrede prüfen, dann selbst senden</span><button type="button" data-prompt-kopieren>Kopieren</button></p><pre>' + esc(txt) + "</pre></div></li>";
+    }).join("") + "</ul></div>";
+  }
+
+  /* ---------- Strategie je Marke ---------- */
+  var MARKEN = ["empiria", "sofortsichtbar", "Müller&Ströbel."];
+  var PRIO = { hoch: 0, mittel: 1, niedrig: 2 };
+  function strategie() {
+    var marken = MARKEN.filter(function (m) { return mf(m); });
+    return '<p class="sg-einl">Wohin wir wollen, wie wir dorthin kommen – und ob Marketing, Projekte und Aufgaben darauf einzahlen.</p>' +
+      '<div class="sg-marken">' + marken.map(function (m) {
+        var s = D.strategie.filter(function (x) { return x.marke === m; })[0] || {}, st = s.stossrichtungen || [];
+        var proj = D.projekteAlle.filter(function (p) { return (p.marke || "empiria") === m && p.status !== "abgeschlossen"; })
+          .sort(function (a, b) { return (a.prioritaet ? PRIO[a.prioritaet] : 3) - (b.prioritaet ? PRIO[b.prioritaet] : 3) || a.name.localeCompare(b.name, "de"); });
+        var kamp = D.kampagnen.filter(function (k) { return (k.marke || "empiria") === m; });
+        function feld(titel, wert) { return '<div class="sg-feld"><h5>' + titel + "</h5>" + (wert ? "<p>" + esc(wert) + "</p>" : '<p class="sg-offen">Noch offen – im Sparring erarbeiten</p>') + "</div>"; }
+        return '<section class="sg-marke"><h4 class="sg-marke-h">' + esc(m) + "</h4>" +
+          feld("Vision", s.vision) + feld("Zukünftiges Geschäftsmodell", s.geschaeftsmodell) +
+          '<div class="sg-feld"><h5>Strategische Stoßrichtungen</h5>' + (st.length ? "<ol>" + st.map(function (x) { return "<li><b>" + esc(x.titel) + "</b>" + (x.beschreibung ? " – " + esc(x.beschreibung) : "") + "</li>"; }).join("") + "</ol>" : '<p class="sg-offen">Noch offen</p>') + "</div>" +
+          '<div class="sg-feld"><h5>Abgleich: Projekte</h5>' + (proj.length ? '<ul class="sg-proj">' + proj.map(function (p) {
+            return '<li><a href="/strategie/projekte.html#p=' + p.id + '">' + esc(p.name) + "</a><small>" + esc([p.prioritaet ? "Priorität " + p.prioritaet : "Priorität offen", p.status === "projektidee" ? "Projektidee" : ""].filter(Boolean).join(" · ")) + "</small></li>"; }).join("") + "</ul>" : '<p class="sg-offen">Keine Projekte</p>') + "</div>" +
+          '<div class="sg-feld"><h5>Abgleich: Marketing</h5>' + (kamp.length ? '<ul class="sg-proj">' + kamp.map(function (k) {
+            return '<li><a href="/strategie/marketing.html">' + esc(k.name) + "</a><small>" + esc(k.status || "") + "</small></li>"; }).join("") + "</ul>" : '<p class="sg-offen">Keine Kampagnen</p>') + "</div>" +
+          "</section>";
+      }).join("") + "</div>" +
+      '<div class="sg-empf"><h4 class="gb-h">Empfehlungen</h4><div class="sg-empf-drei">' +
+        [["Kann ich allein umsetzen", "Claude setzt nach deinem Ja direkt um."], ["Muss gebaut werden", "Braucht eine Programmier- oder Gestaltungsrunde."], ["Braucht deine Freigabe", "Entscheidung, Budget oder Zugang durch dich."]].map(function (x) {
+          return '<div class="sg-empf-k"><b>' + x[0] + "</b><small>" + x[1] + '</small><p class="sg-offen">Folgt, sobald Vision und Stoßrichtungen stehen.</p></div>'; }).join("") + "</div></div>";
+  }
+
+  /* ---------- Sparring (vorher auf der Steuerung) ---------- */
+  var SPARRING = [
+    { k: "sprint", n: "Entscheidungssprint", z: "15 Min", s: "Mehrere Entscheidungen am Stück.", r: "Kein Abschweifen. Was nicht entschieden werden kann, wird notiert und verlässt den Sprint." },
+    { k: "deep", n: "Deep Dive", z: "60–90 Min", s: "Volle Tiefe zu einem Thema.", r: "Keine Randthemen. Was auftaucht und nicht dazugehört, wandert auf eine Liste für später." },
+    { k: "360", n: "360°-Blick", z: "45 Min", s: "Ein Thema, alle Zusammenhänge.", r: "Keine Tiefe. Wer hier anfängt zu lösen, verliert die Übersicht." },
+    { k: "ideen", n: "Ideen-Modus", z: "offen", s: "Sammeln ohne Ergebnisdruck.", r: "Kein Entscheidungsdruck. Nichts wird bewertet, solange gesammelt wird." },
+    { k: "status", n: "Status-Check", z: "10 Min", s: "Abgleich über alle drei Marken.", r: "Keine Lösungen. Es wird festgestellt, nicht gearbeitet." },
+    { k: "review", n: "Review", z: "20–30 Min", s: "Bewerten, was fertig ist.", r: "Keine neuen Wünsche. Beurteilt wird, was da ist, nicht was fehlt." }
+  ];
+  function sparring() {
+    return '<div class="st4-sparring">' + SPARRING.map(function (s) {
+      return '<button type="button" class="st4-spar" data-spar="' + s.k + '" title="Regel: ' + esc(s.r) + '"><span class="st4-spar-z">' + s.z + '</span><b>' + esc(s.n).replace("Entscheidungssprint", "Entscheidungs&shy;sprint") + '</b><span class="st4-spar-s">' + esc(s.s) + '</span><span class="st4-spar-los">Starten <i aria-hidden="true">→</i></span></button>';
+    }).join("") + "</div>";
   }
 
   function zeichnen() {
-    wurzel.innerHTML = signale() +
-      '<section class="an-block" id="termine"><div class="an-block-kopf"><h2 class="st4-h">Termine der nächsten 14 Tage</h2>' +
-      '<button type="button" class="an-sprint" data-sprint>Ideensprint zur Vorbereitung starten</button></div>' +
-      '<p class="an-hinweis" data-sprint-hinweis hidden></p>' + termine() + "</section>";
+    var BR = window.Bereiche;
+    wurzel.innerHTML = '<div class="kg-bereiche">' +
+      BR.html("strategie", "status", "Status", signale() + geburtstage()) +
+      BR.html("strategie", "strategie", "Strategie", strategie()) +
+      BR.html("strategie", "sparring", "Sparring starten", sparring()) + "</div>";
+    BR.verdrahten(wurzel, "strategie");
     verdrahten();
   }
 
   function verdrahten() {
     var ms = wurzel.querySelector("[data-ms]"); if (ms && B) ms.onclick = B.anmelden;
-    wurzel.querySelectorAll(".an-t").forEach(function (li) {
-      li.querySelectorAll("[data-v]").forEach(function (b) {
-        b.onclick = function () {
-          var v = b.getAttribute("data-v"), id = +li.getAttribute("data-t");
-          li.classList.add("laedt");
-          db.from("termine").update({ vorbereitung: v, von_hand: true }).eq("id", id).then(function (r) {
-            li.classList.remove("laedt");
-            if (r.error) { alert("Nicht gespeichert: " + r.error.message); return; }
-            D.termine.forEach(function (t) { if (t.id === id) t.vorbereitung = v; });
-            zeichnen();
-          });
-        };
-      });
+    wurzel.querySelectorAll("[data-gb-text]").forEach(function (b) {
+      b.onclick = function () { var t = b.closest("li").querySelector(".gb-text"); t.hidden = !t.hidden; b.setAttribute("aria-expanded", String(!t.hidden)); };
     });
-    var sp = wurzel.querySelector("[data-sprint]"), hw = wurzel.querySelector("[data-sprint-hinweis]");
-    sp.onclick = function () {
-      var offen = T().filter(function (t) { return t.vorbereitung === "offen"; });
-      var satz = "Ideensprint zur Terminvorbereitung starten. Offen: " + offen.map(function (t) {
-        return new Date(t.start).toLocaleDateString("de-DE", { day: "numeric", month: "numeric" }) + " " + (t.betreff || ""); }).join("; ") + ".";
-      db.from("sparring").insert({ modus: "Ideensprint Terminvorbereitung" }).then(function () {});
-      var fertig = function () { hw.hidden = false; hw.textContent = "Angefragt – der Startsatz mit allen offenen Terminen liegt in der Zwischenablage, einfach im Chat mit Claude einfügen."; };
-      if (navigator.clipboard) navigator.clipboard.writeText(satz).then(fertig, fertig); else fertig();
-    };
+    wurzel.querySelectorAll("[data-gb-fertig]").forEach(function (b) {
+      b.onclick = function () {
+        var li = b.closest("li"), id = +li.getAttribute("data-gb"), jahr = +li.getAttribute("data-jahr");
+        li.classList.add("laedt");
+        db.from("geburtstage_privat").update({ gratuliert_jahr: jahr }).eq("id", id).then(function (r) {
+          if (r.error) { li.classList.remove("laedt"); alert("Nicht gespeichert: " + r.error.message); return; }
+          D.geburtstage.forEach(function (g) { if (g.id === id) g.gratuliert_jahr = jahr; }); zeichnen();
+        });
+      };
+    });
+    wurzel.querySelectorAll("[data-spar]").forEach(function (b) {
+      b.onclick = function () {
+        var s = SPARRING.filter(function (x) { return x.k === b.getAttribute("data-spar"); })[0];
+        var satz = s.n + " starten – Regel: " + s.r;
+        db.from("sparring").insert({ modus: s.n }).then(function () {});
+        var fertig = function () {
+          wurzel.querySelectorAll(".st4-spar--an").forEach(function (x) { if (x !== b) { x.classList.remove("st4-spar--an"); x.querySelector(".st4-spar-los").innerHTML = 'Starten <i aria-hidden="true">→</i>'; } });
+          b.classList.add("st4-spar--an"); b.querySelector(".st4-spar-los").textContent = "✓ Angefragt – Startsatz ist kopiert, im Chat mit Claude einfügen.";
+        };
+        if (navigator.clipboard) navigator.clipboard.writeText(satz).then(fertig, fertig); else fertig();
+      };
+    });
   }
 
   function mailZahlen() {

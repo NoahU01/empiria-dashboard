@@ -1492,3 +1492,51 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 .pl-liste--fertig + .pl-liste--fertig { margin-top: 10px; }
 .pl-liste--fertig .pl-gate { margin-top: 0; background: none; box-shadow: inset 0 -1px 0 var(--linie); }
 .pl-liste--fertig .pl-gate .pl-titel { text-decoration: none; color: var(--grey-70); }
+
+/* ---------- Strategie & Steuerung: aufklappbare Bereiche (Daniel, 10.10.2026) ---------- */
+.br-bereich .st4-block:first-child { margin-top: 0; }
+.br-bereich .st4-block + .st4-block { margin-top: 28px; }
+/* Status: Signale kompakter */
+.br-bereich .an-signale { margin-top: 0; gap: 10px; }
+@media (min-width: 1200px) { .br-bereich .an-signale { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+.br-bereich .an-k { padding: 14px 16px; border-radius: 14px; }
+.br-bereich .an-zahl { font-size: 1.8rem; margin-bottom: 6px; }
+.br-bereich .an-k b { font-size: var(--fs-s); }
+.br-bereich .an-k small { font-size: var(--fs-xs); }
+/* Geburtstage */
+.gb { margin-top: 22px; }
+.gb-h { margin: 0 0 6px; font-size: var(--fs-xs); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-50); }
+.gb-liste { list-style: none; margin: 0; padding: 0; }
+.gb-z { display: grid; grid-template-columns: 150px minmax(0, 1fr) auto; gap: 4px 14px; align-items: center; padding: 9px 0; border-top: 1px solid #f2f1ef; }
+.gb-z:first-child { border-top: 0; }
+.gb-wann { font-size: var(--fs-s); color: var(--grey-70); }
+.gb-z--jetzt .gb-wann { font-weight: 600; color: var(--ink); }
+.gb-wer b { font-weight: 500; } .gb-wer small { margin-left: 8px; font-size: var(--fs-xs); color: var(--grey-50); }
+.gb-knoepfe { display: flex; gap: 6px; }
+.gb-knoepfe button { height: 30px; padding: 0 12px; border: 1.5px solid var(--ink); border-radius: 999px; background: #fff; font-size: var(--fs-xs); font-weight: 500; color: var(--ink); }
+.gb-knoepfe [data-gb-fertig] { border-color: var(--linie); color: var(--grey-70); }
+.gb-text { grid-column: 1 / -1; margin-top: 4px; }
+.gb-z.laedt { opacity: .5; }
+@media (max-width: 640px) { .gb-z { grid-template-columns: minmax(0, 1fr); } .gb-wer small { display: block; margin: 0; } }
+/* Strategie je Marke */
+.sg-einl { margin: 0 0 16px; font-size: var(--fs-s); color: var(--grey-70); }
+.sg-marken { display: grid; gap: 22px; }
+@media (min-width: 1000px) { .sg-marken { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.sg-marke { padding: 16px 18px; border: 1px solid #e9e7e4; border-radius: 16px; }
+.sg-marke-h { margin: 0 0 10px; padding-bottom: 8px; border-bottom: 1px solid var(--ink); font-family: var(--font-serif); font-size: var(--fs-l); font-weight: 600; }
+.sg-feld + .sg-feld { margin-top: 14px; }
+.sg-feld h5 { margin: 0 0 4px; font-size: var(--fs-xs); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-50); }
+.sg-feld p, .sg-feld ol { margin: 0; font-size: var(--fs-s); line-height: 1.5; }
+.sg-offen { color: var(--grey-50); font-style: italic; }
+.sg-proj { list-style: none; margin: 0; padding: 0; }
+.sg-proj li { display: flex; justify-content: space-between; gap: 10px; padding: 4px 0; font-size: var(--fs-s); }
+.sg-proj a { color: var(--ink); text-decoration: none; } .sg-proj a:hover { text-decoration: underline; }
+.sg-proj small { flex: none; font-size: var(--fs-xs); color: var(--grey-50); }
+.sg-empf { margin-top: 26px; }
+.sg-empf-drei { display: grid; gap: 12px; }
+@media (min-width: 900px) { .sg-empf-drei { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.sg-empf-k { padding: 14px 16px; border-radius: 14px; background: #f6f5f3; }
+.sg-empf-k b { display: block; font-size: var(--fs-s); } .sg-empf-k small { display: block; margin: 2px 0 8px; font-size: var(--fs-xs); color: var(--grey-70); }
+.sg-empf-k p { margin: 0; font-size: var(--fs-xs); }
+/* Steuerung: Termine-Kopf ohne eigene Überschrift */
+.br-bereich .an-block-kopf { margin-bottom: 8px; }

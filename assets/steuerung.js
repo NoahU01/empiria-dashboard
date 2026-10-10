@@ -1,9 +1,9 @@
-/* Steuerung – die zentrale Startseite. Zuarbeit wie von einer Referentin.
-     Auf deinem Tisch – Vorlagen von Claude (Tabelle vorlagen): Frist, Thema, Kern, Vorschlag, Ja · Anders · Später.
-                        Karten im Raster mit Subgrid – gleichartige Teile stehen auf gleicher Höhe, Knöpfe immer unten.
-     Sparring        – sechs Arten zu reden; Klick legt die Anfrage ab und kopiert den Startsatz für den Chat.
-     Sechs Wochen    – kompakte Leiste: Fristen, Termine, Meilensteine.
-   Keine Zähler, kein Fließtext. */
+/* Steuerung – die zentrale Startseite. Zuarbeit wie von einer Referentin. Zwei aufklappbare Bereiche (Daniel, 10.10.2026):
+     Auf deinem Tisch – Belege freigeben und Vorlagen von Claude (Tabelle vorlagen): Frist, Thema, Kern, Vorschlag,
+                        Ja · Anders · Später. Karten im Raster mit Subgrid – Knöpfe immer unten.
+     Termine der nächsten 14 Tage – mit Vorbereitungsstand (offen · läuft · vorbereitet · nicht nötig), Ideensprint startbar
+                        (vorher auf der Analyse-/Strategie-Seite).
+   Sparring starten steht jetzt auf der Seite Strategie. Keine Zähler, kein Fließtext. */
 (function () {
   "use strict";
   var db = window.empiriaDb, wurzel = document.querySelector("[data-steuerung]");
@@ -18,14 +18,6 @@
     var txt = t < 0 ? "überfällig" : t === 0 ? "heute" : t === 1 ? "morgen" : d.toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "short" });
     return '<span class="st4-frist' + (t <= 1 ? " st4-frist--jetzt" : "") + '">' + txt + "</span>";
   }
-  var SPARRING = [
-    { k: "sprint", n: "Entscheidungssprint", z: "15 Min", s: "Mehrere Entscheidungen am Stück.", r: "Kein Abschweifen. Was nicht entschieden werden kann, wird notiert und verlässt den Sprint." },
-    { k: "deep", n: "Deep Dive", z: "60–90 Min", s: "Volle Tiefe zu einem Thema.", r: "Keine Randthemen. Was auftaucht und nicht dazugehört, wandert auf eine Liste für später." },
-    { k: "360", n: "360°-Blick", z: "45 Min", s: "Ein Thema, alle Zusammenhänge.", r: "Keine Tiefe. Wer hier anfängt zu lösen, verliert die Übersicht." },
-    { k: "ideen", n: "Ideen-Modus", z: "offen", s: "Sammeln ohne Ergebnisdruck.", r: "Kein Entscheidungsdruck. Nichts wird bewertet, solange gesammelt wird." },
-    { k: "status", n: "Status-Check", z: "10 Min", s: "Abgleich über alle drei Marken.", r: "Keine Lösungen. Es wird festgestellt, nicht gearbeitet." },
-    { k: "review", n: "Review", z: "20–30 Min", s: "Bewerten, was fertig ist.", r: "Keine neuen Wünsche. Beurteilt wird, was da ist, nicht was fehlt." }
-  ];
   var D = {};
 
   db.auth.getSession().then(function (s) {
@@ -40,9 +32,12 @@
       db.from("aufgaben").select("id, status, faellig_am, projekt_id, titel, marke").eq("status", "offen"),
       db.from("projekt_ereignisse").select("id, projekt_id, datum, art, titel").gte("datum", HEUTE.toISOString()),
       db.from("belege_eingang").select("id, postfach, absender, absender_name, betreff, pdf_link, status, zuordnung, begruendung, titel, lieferant, belegdatum, betrag, kategorie, ust, pk_belegnr, fehler, hochgeladen_am")
-        .in("status", ["vorschlag", "fehler"]).order("belegdatum")
+        .in("status", ["vorschlag", "fehler"]).order("belegdatum"),
+      db.from("termine").select("id, start, ende, ganztags, betreff, ort, teilnehmer, extern, postfach, projekt_id, vorbereitung, vorbereitung_notiz, abgesagt")
+        .gte("ende", new Date().toISOString()).lte("start", new Date(+HEUTE + 15 * 864e5).toISOString()).order("start")
     ]).then(function (r) {
-      D = { vorlagen: r[0].data || [], projekte: r[1].data || [], aufgaben: r[2].data || [], ereignisse: r[3].data || [], belege: r[4].data || [] };
+      D = { vorlagen: r[0].data || [], projekte: r[1].data || [], aufgaben: r[2].data || [], ereignisse: r[3].data || [], belege: r[4].data || [],
+            termine: (r[5].data || []).filter(function (t) { return !t.abgesagt; }) };
       zeichnen();
     });
   }
@@ -113,10 +108,52 @@
   }
 
   /* ---------- Sparring ---------- */
-  function sparring() {
-    return SPARRING.map(function (s) {
-      return '<button type="button" class="st4-spar" data-spar="' + s.k + '" title="Regel: ' + esc(s.r) + '"><span class="st4-spar-z">' + s.z + '</span><b>' + esc(s.n).replace("Entscheidungssprint", "Entscheidungs&shy;sprint") + '</b><span class="st4-spar-s">' + esc(s.s) + '</span><span class="st4-spar-los">Starten <i aria-hidden="true">→</i></span></button>';
+  /* ---------- Termine der nächsten 14 Tage (von der früheren Analyse-Seite) ---------- */
+  function iso(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+  function T() { return D.termine.filter(function (t) { var p = projekt(t.projekt_id); return mf(p ? p.marke : /sofort ?sichtbar/i.test(t.betreff || "") ? "sofortsichtbar" : t.postfach); }); }
+  function termine() {
+    var kopf = '<div class="an-block-kopf"><span></span><button type="button" class="an-sprint" data-sprint>Ideensprint zur Vorbereitung starten</button></div><p class="an-hinweis" data-sprint-hinweis hidden></p>';
+    if (!T().length) return kopf + '<p class="an-leer">Keine Termine in den nächsten 14 Tagen.</p>';
+    var tage = {};
+    T().forEach(function (t) { var k = iso(new Date(t.start)); (tage[k] = tage[k] || []).push(t); });
+    return kopf + Object.keys(tage).sort().map(function (k) {
+      var d = new Date(k + "T12:00:00");
+      return '<section class="an-tag"><h4>' + d.toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" }) + "</h4><ul>" + tage[k].map(function (t) {
+        var p = projekt(t.projekt_id), zeit = t.ganztags ? "ganztags" : new Date(t.start).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+        var mit = (t.teilnehmer || []).slice(0, 3).join(", ") + ((t.teilnehmer || []).length > 3 ? " …" : "");
+        return '<li class="an-t an-t--' + t.vorbereitung + '" data-t="' + t.id + '"><span class="an-zeit">' + zeit + "</span>" +
+          '<span class="an-was"><b>' + esc(t.betreff || "(ohne Titel)") + "</b><small>" + [p ? esc(p.name) : "", esc(mit), esc(t.postfach)].filter(Boolean).join(" · ") + "</small>" +
+            (t.vorbereitung_notiz ? '<ul class="an-notiz">' + t.vorbereitung_notiz.split("\n").filter(Boolean).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "") + "</span>" +
+          '<span class="an-vorb" role="group" aria-label="Vorbereitung">' +
+            [["offen", "offen"], ["laeuft", "läuft"], ["vorbereitet", "vorbereitet"], ["nicht_noetig", "nicht nötig"]].map(function (v) {
+              return '<button type="button" data-v="' + v[0] + '" aria-pressed="' + (t.vorbereitung === v[0]) + '">' + v[1] + "</button>"; }).join("") + "</span></li>";
+      }).join("") + "</ul></section>";
     }).join("");
+  }
+  function termineVerdrahten() {
+    wurzel.querySelectorAll(".an-t").forEach(function (li) {
+      li.querySelectorAll("[data-v]").forEach(function (b) {
+        b.onclick = function () {
+          var v = b.getAttribute("data-v"), id = +li.getAttribute("data-t");
+          li.classList.add("laedt");
+          db.from("termine").update({ vorbereitung: v, von_hand: true }).eq("id", id).then(function (r) {
+            li.classList.remove("laedt");
+            if (r.error) { alert("Nicht gespeichert: " + r.error.message); return; }
+            D.termine.forEach(function (t) { if (t.id === id) t.vorbereitung = v; });
+            zeichnen();
+          });
+        };
+      });
+    });
+    var sp = wurzel.querySelector("[data-sprint]"), hw = wurzel.querySelector("[data-sprint-hinweis]"); if (!sp) return;
+    sp.onclick = function () {
+      var offen = T().filter(function (t) { return t.vorbereitung === "offen"; });
+      var satz = "Ideensprint zur Terminvorbereitung starten. Offen: " + offen.map(function (t) {
+        return new Date(t.start).toLocaleDateString("de-DE", { day: "numeric", month: "numeric" }) + " " + (t.betreff || ""); }).join("; ") + ".";
+      db.from("sparring").insert({ modus: "Ideensprint Terminvorbereitung" }).then(function () {});
+      var fertig = function () { hw.hidden = false; hw.textContent = "Angefragt – der Startsatz mit allen offenen Terminen liegt in der Zwischenablage, einfach im Chat mit Claude einfügen."; };
+      if (navigator.clipboard) navigator.clipboard.writeText(satz).then(fertig, fertig); else fertig();
+    };
   }
 
   var TISCH = "alle";
@@ -134,25 +171,22 @@
     var alleV = D.vorlagen.filter(function (v) { return mf(v.marke); });
     var offen = alleV.filter(function (v) { return v.status === "offen" && v.entscheidung !== "spaeter"; });
     var weg = alleV.filter(function (v) { return v.status === "entschieden" || v.entscheidung === "spaeter"; });
-    wurzel.innerHTML = belegBlock() +
-      '<section class="st4-block"><h2 class="st4-h">Auf deinem Tisch</h2>' + tischFilter(offen) +
+    var tisch = belegBlock() +
+      '<section class="st4-block">' + tischFilter(offen) +
         (gezeigt(offen).length ? '<div class="st4-karten">' + gezeigt(offen).map(karte).join("") + "</div>" : '<p class="st4-leer">' + (window.MarkeFokus && MarkeFokus.wert() !== "alle" ? "Für " + esc(MarkeFokus.wert()) + " liegt gerade nichts auf dem Tisch." : "Nichts zu entscheiden.") + "</p>") +
         (weg.length ? '<p class="st4-entschieden">' + weg.map(function (v) {
           return "<span>" + esc(v.titel) + " · " + (v.entscheidung === "ja" ? "freigegeben" : v.entscheidung === "anders" ? "anders" : v.entscheidung === "option" ? esc(v.entscheidung_text) : v.entscheidung === "gelesen" ? "gelesen" : "später") + "</span>"; }).join("") + "</p>" : "") +
-      "</section>" +
-      '<section class="st4-block"><h2 class="st4-h">Sparring starten</h2><div class="st4-sparring">' + sparring() + '</div></section>';
-    verdrahten(); belegeVerdrahten();
+      "</section>";
+    var BR = window.Bereiche;
+    wurzel.innerHTML = '<div class="kg-bereiche">' + BR.html("steuerung", "tisch", "Auf deinem Tisch", tisch) +
+      BR.html("steuerung", "termine", "Termine der nächsten 14 Tage", termine()) + "</div>";
+    BR.verdrahten(wurzel, "steuerung");
+    verdrahten(); belegeVerdrahten(); termineVerdrahten();
     // Weißer Teil der Karte hat eine Maximalhöhe; ist mehr Inhalt da, deutet ein Verlauf unten an, dass man scrollen kann
     wurzel.querySelectorAll(".st4-mitte").forEach(function (m) {
       function pruefe() { m.classList.toggle("st4-mehr", m.scrollHeight - m.scrollTop - m.clientHeight > 4); }
       m.addEventListener("scroll", pruefe, { passive: true }); pruefe();
     });
-  }
-
-  function bestaetigen(b) {
-    wurzel.querySelectorAll(".st4-spar--an").forEach(function (x) { if (x !== b) { x.classList.remove("st4-spar--an"); x.querySelector(".st4-spar-los").innerHTML = 'Starten <i aria-hidden="true">→</i>'; } });
-    b.classList.add("st4-spar--an");
-    b.querySelector(".st4-spar-los").textContent = "✓ Angefragt – Startsatz ist kopiert, im Chat mit Claude einfügen.";
   }
 
   document.addEventListener("markefokus", function () { if (D.vorlagen) zeichnen(); });
@@ -186,16 +220,6 @@
     });
     wurzel.querySelectorAll("[data-tisch]").forEach(function (b) {
       b.onclick = function () { TISCH = b.getAttribute("data-tisch"); try { localStorage.setItem("st-tisch", TISCH); } catch (x) {} zeichnen(); };
-    });
-    wurzel.querySelectorAll("[data-spar]").forEach(function (b) {
-      b.onclick = function () {
-        var s = SPARRING.filter(function (x) { return x.k === b.getAttribute("data-spar"); })[0];
-        var satz = s.n + " starten – Regel: " + s.r;
-        db.from("sparring").insert({ modus: s.n }).then(function () {});
-        // Bestätigung direkt im angeklickten Kasten – auf dem iPhone stehen die Kästen untereinander
-        var fertig = function () { bestaetigen(b); };
-        if (navigator.clipboard) navigator.clipboard.writeText(satz).then(fertig, fertig); else fertig();
-      };
     });
   }
 })();
