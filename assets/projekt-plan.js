@@ -35,16 +35,42 @@
   function liste(straenge, auf, h, alle) {
     alle = alle || auf;
     var je = ordnen(straenge, auf), ohne = auf.filter(function (a) { return !a.strang_id && a.status === "offen"; });
-    var html = "", einer = straenge.length === 1;
-    // Nur ein Strang: ohne Strang-Überschrift – sieht aus wie eine einfache Liste
+    var html = "", einer = straenge.length === 1, fertig = [];
+    // Oben nur Offenes. Erreichte Gates rutschen mit ihren Aufgaben nach unten in „Erledigt“, ebenso einzelne erledigte Aufgaben
+    // (Daniel, 10.10.2026). Abschnitt = Aufgaben seit dem letzten Gate bis einschließlich Gate.
     straenge.slice().sort(function (a, b) { return a.reihenfolge - b.reihenfolge; }).forEach(function (s) {
+      var offen = [], gruppen = [], lose = [], abschnitt = [];
+      je[s.id].forEach(function (a) {
+        if (a.art !== "gate") { abschnitt.push(a); return; }
+        if (a.status === "erledigt") {
+          gruppen.push({ gate: a, l: abschnitt.filter(function (x) { return x.status === "erledigt"; }) });
+          offen = offen.concat(abschnitt.filter(function (x) { return x.status !== "erledigt"; }));
+        } else {
+          abschnitt.forEach(function (x) { if (x.status === "erledigt") lose.push(x); else offen.push(x); });
+          offen.push(a);
+        }
+        abschnitt = [];
+      });
+      abschnitt.forEach(function (x) { if (x.status === "erledigt") lose.push(x); else offen.push(x); });
+      if (gruppen.length || lose.length) fertig.push({ s: s, gruppen: gruppen, lose: lose });
       html += '<section class="pl-strang" data-strang="' + s.id + '">' + (einer ? "" : '<h4 class="pl-strang-titel">' + esc(s.titel) + "</h4>") + '<ol class="pl-liste" data-pl-liste="' + s.id + '">' +
-        je[s.id].map(function (a, i) { return zeile(a, alle, h, i === 0, i === je[s.id].length - 1); }).join("") + "</ol>" +
+        offen.map(function (a) { return zeile(a, alle, h); }).join("") + "</ol>" +
         '<p class="pl-neu"><button type="button" data-pl-gate="' + s.id + '">+ Gate</button></p></section>';
     });
     html += '<p class="pl-neu pl-neu--strang"><button type="button" data-pl-strang>+ Strang</button></p>';
     if (ohne.length) html += '<section class="pl-strang"><h4 class="pl-strang-titel pl-strang-titel--ohne">Noch keinem Strang zugeordnet</h4><ol class="pl-liste">' +
       ohne.map(function (a) { return zeile(a, alle, h, true, true, true); }).join("") + "</ol></section>";
+    if (fertig.length) {
+      var zu = true; try { zu = localStorage.getItem("pl-fertig-" + (auf[0] && auf[0].projekt_id)) !== "auf"; } catch (x) {}
+      html += '<section class="pl-fertig"><button type="button" class="pl-fertig-kopf" data-pl-fertig aria-expanded="' + !zu + '">Erledigt<span class="kb-k-pfeil" aria-hidden="true"></span></button>' +
+        '<div class="pl-fertig-inhalt"' + (zu ? " hidden" : "") + ">" + fertig.map(function (f) {
+          return (einer ? "" : '<h4 class="pl-fertig-strang">' + esc(f.s.titel) + "</h4>") +
+            f.gruppen.slice().reverse().map(function (g) {
+              return '<ol class="pl-liste pl-liste--fertig">' + zeile(g.gate, alle, h, true, true, true) + g.l.map(function (a) { return zeile(a, alle, h, true, true, true); }).join("") + "</ol>";
+            }).join("") +
+            (f.lose.length ? '<ol class="pl-liste pl-liste--fertig">' + f.lose.map(function (a) { return zeile(a, alle, h, true, true, true); }).join("") + "</ol>" : "");
+        }).join("") + "</div></section>";
+    }
     return html;
   }
   function pfeile(a, erst, letzt, ohneStrang) {
@@ -114,6 +140,10 @@
   // im Strang + die Abhängigkeiten aus anderen Strängen, die es schon hatte.
   function speichern(db, strangId, ids, auf) {
     var nach = {}; auf.forEach(function (a) { nach[a.id] = a; });
+    // Erledigtes steht unten im Block „Erledigt“ – in der Reihenfolge bleibt es vorne, in seiner bisherigen Abfolge
+    var erl = auf.filter(function (a) { return a.strang_id === strangId && a.status === "erledigt" && ids.indexOf(a.id) < 0; })
+      .sort(function (a, b) { return (a.reihenfolge || 0) - (b.reihenfolge || 0); }).map(function (a) { return a.id; });
+    ids = erl.concat(ids);
     var updates = [], seitGate = [];
     ids.forEach(function (id, i) {
       var a = nach[id], u = { reihenfolge: i + 1, strang_id: strangId };
@@ -128,6 +158,12 @@
   }
   function verdrahten(wurzel, db, straenge, auf, neu) {
     function idsVon(ol) { return Array.prototype.map.call(ol.querySelectorAll(":scope > li[data-a]"), function (li) { return +li.getAttribute("data-a"); }); }
+    // Block „Erledigt“ auf- und zuklappen – je Projekt gemerkt
+    var fk = wurzel.querySelector("[data-pl-fertig]");
+    if (fk) fk.onclick = function () {
+      var auf2 = fk.getAttribute("aria-expanded") !== "true"; fk.setAttribute("aria-expanded", String(auf2)); fk.nextElementSibling.hidden = !auf2;
+      try { localStorage.setItem("pl-fertig-" + projektId(), auf2 ? "auf" : "zu"); } catch (x) {}
+    };
     // + Gate: Zwischenergebnis ans Ende des Strangs – braucht alles seit dem letzten Gate; danach per Griff verschieben
     wurzel.querySelectorAll("[data-pl-gate]").forEach(function (b) {
       b.onclick = function () {
@@ -137,7 +173,7 @@
         l.forEach(function (a) { if (a.art === "gate") seit = []; else seit.push(a.id); });
         b.disabled = true;
         db.from("aufgaben").insert({ titel: titel.trim(), art: "gate", status: "offen", spalte: "backlog", projekt_id: projektId(), strang_id: sid,
-          reihenfolge: l.length + 1, vorgaenger: seit, bereich: "Projekt", zustaendig_name: "Daniel", verantwortlich: "Daniel" })
+          reihenfolge: l.reduce(function (m, x) { return Math.max(m, x.reihenfolge || 0); }, 0) + 1, vorgaenger: seit, bereich: "Projekt", zustaendig_name: "Daniel", verantwortlich: "Daniel" })
           .then(function (r) { if (r.error) { b.disabled = false; alert("Nicht gespeichert: " + r.error.message); return; } neu(); });
       };
     });

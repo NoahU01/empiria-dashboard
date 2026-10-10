@@ -1482,3 +1482,13 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 .pl-frist { display: block; margin-top: 4px; } .pl-frist .pr-frist { font-size: var(--fs-xs); }
 .pl-frist { display: inline-block; margin: 3px 10px 0 0; vertical-align: baseline; }
 .pl-frist + .pr-wer { display: inline-block; }
+
+/* Planungsmodus: Block „Erledigt“ unten, zuklappbar; erreichte Gates mit ihren Aufgaben (Daniel, 10.10.2026) */
+.pl-fertig { margin-top: 22px; border-top: 1px solid var(--linie); }
+.pl-fertig-kopf { display: inline-flex; align-items: center; gap: 9px; margin: 12px 0 0; padding: 0; border: 0; background: none; font-size: var(--fs-xs); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-50); }
+.pl-fertig-kopf[aria-expanded="true"] .kb-k-pfeil { margin-top: 3px; transform: rotate(-135deg); }
+.pl-fertig-inhalt { margin-top: 8px; }
+.pl-fertig-strang { margin: 14px 0 2px; font-size: var(--fs-xs); font-weight: 600; color: var(--grey-50); }
+.pl-liste--fertig + .pl-liste--fertig { margin-top: 10px; }
+.pl-liste--fertig .pl-gate { margin-top: 0; background: none; box-shadow: inset 0 -1px 0 var(--linie); }
+.pl-liste--fertig .pl-gate .pl-titel { text-decoration: none; color: var(--grey-70); }
