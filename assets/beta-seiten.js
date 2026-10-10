@@ -105,7 +105,7 @@
     { key: "entwuerfe", name: "Entwürfe", liste: "entwuerfe", entwurfKarten: true }
   ];
   var HINWEIS = {
-    nobrainer: "Antwort ist klar und vorformuliert. Freigabe gebündelt im Chat, z. B. „No-Brainer 1 bis 3 senden“.",
+    nobrainer: "Antwort ist klar und vorformuliert – ein Klick legt sie als Entwurf an.",
     termin: "Es braucht einen Termin – zusagen, absagen oder Zeit vorschlagen.",
     aufgabe: "Hier ist etwas zu erledigen, eine Antwort allein reicht nicht.",
     tiefer: "Braucht deine inhaltliche Einschätzung.",
@@ -131,6 +131,12 @@
     });
   }
 
+  // Kurze Einordnung für die geschlossene Ansicht: Claudes Zusammenfassung, sonst der Anfang der Mail (Daniel, 10.10.2026)
+  function einordnung(m) {
+    if (m.analyse && m.analyse.zusammenfassung) return m.analyse.zusammenfassung;
+    var t = String(m.bodyPreview || "").replace(/\s+/g, " ").trim();
+    return t.length > 170 ? t.slice(0, 170).replace(/\s\S*$/, "") + " …" : t;
+  }
   function zeileSeite(m) {
     var an = (m.toRecipients || []).map(function (e) { return e.emailAddress.name || e.emailAddress.address; }).join(", ");
     var cc = (m.ccRecipients || []).map(function (e) { return e.emailAddress.name || e.emailAddress.address; }).join(", ");
@@ -139,14 +145,16 @@
     if (m.grund) meta += "<span>" + esc(m.grund) + "</span>";
     if (m.hasAttachments) meta += "<span>Anhang</span>";
     var offen = zustand.offen[m.id];
+    var reaktion = zustand.tab === "warten" ? reaktionWarten(m) : zustand.tab === "relevant" || zustand.tab === "nicht" ? reaktionLesen(m) : "";
     return '<li class="kb-mail' + (m.isRead === false ? " ungelesen" : "") + (offen ? " offen" : "") + '" data-id="' + esc(m.id) + '">' +
       '<button class="kb-zeile" type="button" aria-expanded="' + (offen ? "true" : "false") + '">' +
       '<span class="kb-von">' + esc(B.absender(m)) + '</span><span class="kb-zeit">' + zeit(m) + "</span>" +
       '<span class="kb-betreff">' + esc(m.subject || "(ohne Betreff)") + '</span><span class="kb-meta">' + meta + "</span></button>" +
+      '<p class="kb-einordnung">' + esc(einordnung(m)) + "</p>" + reaktion +
       '<div class="kb-auf"><p class="kb-an">An: ' + esc(an) + (cc ? "<br>Cc: " + esc(cc) : "") + "</p>" +
       '<pre class="kb-text" data-kb-text>' + esc(m.bodyPreview) + "</pre>" +
       '<div class="kb-schritt">' + (m.vorschlag ? '<span class="kb-vorschlag">' + (m.analyse ? "Vorschlag: " : "Erste Einordnung: ") + esc(m.vorschlag.text) + "</span><small>" + esc(ERKLAERUNG[m.vorschlag.art] || "") + "</small>" : "") +
-      outlookLink(m, "kb-knopf kb-knopf--klein") + "</div>" + (zustand.tab === "warten" ? reaktionWarten(m) : zustand.tab === "relevant" || zustand.tab === "nicht" ? reaktionLesen(m) : "") + "</div></li>";
+      outlookLink(m, "kb-knopf kb-knopf--klein") + "</div></div></li>";
   }
   // Wartet auf Antwort: nachfassen lassen · Rückmeldung an Claude · keine Antwort nötig
   function reaktionWarten(m) {
@@ -159,9 +167,11 @@
   // Relevant / Nicht relevant: auch hier reagieren können – Antwort oder Anweisung sprechen/tippen, oder abhaken
   function reaktionLesen(m) {
     if (m.anweisung) return '<p class="kb-anweisung"><span>' + (m.anweisung.status === "umgesetzt" ? "Umgesetzt" : "Bei Claude") + "</span>" + esc(m.anweisung.text) + "</p>";
+    if (m.irrelevant) return '<p class="kb-anweisung"><span>Irrelevant</span>Mails von diesem Absender landen immer hier.</p>';
     if (m.entscheidung === "erledigt") return '<p class="kb-anweisung"><span>Abgehakt</span>Kein Handlungsbedarf.</p>';
     return '<div class="kb-entscheid kb-entscheid--warten" data-warten="' + esc(m.id) + '">' +
-      '<button type="button" data-w-anders>Antworten / Anweisung …</button><button type="button" data-w="erledigt">Kein Handlungsbedarf</button></div>' +
+      '<button type="button" data-w-anders>Antworten / Anweisung …</button><button type="button" data-w="erledigt">Kein Handlungsbedarf</button>' +
+      '<button type="button" class="kb-irr" data-irrelevant="' + esc(m.id) + '">Irrelevant</button></div>' +
       '<form class="kb-anders" data-w-form hidden><textarea rows="3" placeholder="Sag oder tippe, was passieren soll – z. B. „Kurz zusagen, Termin passt“ oder „An Tobias weiterleiten“. Claude legt einen Entwurf an, gesendet wird erst nach deiner Freigabe. Auf dem iPhone: Mikrofon auf der Tastatur."></textarea>' +
       '<div><button type="submit" class="kb-knopf kb-knopf--klein">An Claude geben</button><button type="button" class="kb-anders-abbruch">Abbrechen</button></div></form>';
   }
@@ -197,19 +207,24 @@
     return html + '<div class="kb-karte-fuss">' + B.badge(m.konto) + "<span>" + esc(m.grund) + "</span><span>" + zeit(m) + "</span>" + outlookLink(m, "kb-oeffnen") + "</div></li>";
   }
 
+  /* Handlungsbedarf (Daniel, 10.10.2026): geschlossen nur Einordnung, Vorschlag und Entscheidungsknöpfe –
+     Folge des Knopfs, Antwortentwurf und Originalmail erst beim Aufklappen („Details“). */
   function karte(m, nr) {
     if (zustand.tab === "claude") return karteClaude(m, nr);
-    var a = m.analyse, html = '<li class="kb-karte" data-id="' + esc(m.id) + '">' +
-      '<div class="kb-karte-kopf"><span class="kb-nr">' + nr + '</span><div class="kb-karte-titel">' +
-      '<span class="kb-von">' + esc(B.absender(m)) + '</span><span class="kb-betreff">' + esc(m.subject || "(ohne Betreff)") + "</span></div>" +
-      '<span class="kb-zeit">' + zeit(m) + "</span></div>";
-    html += '<div class="kb-block"><p class="kb-label">' + (a ? "Worum es geht" : "Anfang der Mail") + "</p><p>" + esc(a ? a.zusammenfassung : m.bodyPreview) + "</p></div>";
-    html += '<div class="kb-block"><p class="kb-label">' + (a ? "Vorschlag" : "Erste Einordnung – nur nach Stichworten") + '</p><p class="kb-vorschlag-text">' + esc(m.vorschlag.text) + "</p></div>";
-    if (a && a.entwurf) html += '<div class="kb-entwurf"><p class="kb-label">Antwortentwurf</p><pre>' + esc(a.entwurf) + "</pre></div>";
-    html += zustand.tab === "claude" ? statusBeiClaude(m) + nachtrag(m) : knoepfe(m);
-    html += '<div class="kb-block"><p class="kb-label">Originalmail</p><pre class="v-original" data-kb-voll="' + esc(m.id) + '">' + esc(m.volltext || m.bodyPreview) + "</pre></div>";
-    html += '<div class="kb-karte-fuss">' + B.badge(m.konto) + "<span>" + esc(m.grund) + '</span>' + outlookLink(m, "kb-oeffnen") + "</div></li>";
-    return html;
+    var a = m.analyse, auf = !!zustand.offen[m.id];
+    var html = '<li class="kb-karte kb-kompakt' + (auf ? " offen" : "") + '" data-id="' + esc(m.id) + '">' +
+      '<div class="kb-k-kopf"><span class="kb-nr">' + nr + '</span><span class="kb-k-titel"><span class="kb-von">' + esc(B.absender(m)) + '</span><span class="kb-betreff">' + esc(m.subject || "(ohne Betreff)") + "</span></span>" +
+      '<span class="kb-zeit">' + zeit(m) + "</span></div>" +
+      '<p class="kb-k-worum">' + esc(einordnung(m)) + "</p>" +
+      '<p class="kb-k-vorschlag"><span>' + (a ? "Vorschlag" : "Erste Einordnung") + "</span>" + esc(m.vorschlag.text) + "</p>" +
+      knoepfe(m, auf);
+    if (auf) {
+      html += '<div class="kb-k-details">' + folgeZeile(B.folge(m));
+      if (a && a.entwurf) html += '<div class="kb-entwurf"><p class="kb-label">Antwortentwurf</p><pre>' + esc(a.entwurf) + "</pre></div>";
+      html += '<div class="kb-block"><p class="kb-label">Originalmail</p><pre class="v-original" data-kb-voll="' + esc(m.id) + '">' + esc(m.volltext || m.bodyPreview) + "</pre></div>";
+      html += '<div class="kb-karte-fuss">' + B.badge(m.konto) + "<span>" + esc(m.grund) + "</span>" + outlookLink(m, "kb-oeffnen") + "</div></div>";
+    }
+    return html + "</li>";
   }
 
   // Bei Claude: nachträglich noch etwas dazu sagen (ergänzt die Anweisung, Claude setzt um)
@@ -230,14 +245,16 @@
     return f ? '<p class="kb-folge"><b>Beim Klick auf „' + esc(f.knopf) + '“:</b> ' + esc(f.text) + " Die Mail wandert nach „Bei Claude“.</p>"
       : '<p class="kb-folge">Noch nicht von Claude eingeschätzt – darum gibt es hier nichts freizugeben. Sag mit „Anders …“, was passieren soll, oder hake mit „Schon erledigt“ ab.</p>';
   }
-  function knoepfe(m) {
+  function knoepfe(m, auf) {
     var f = B.folge(m), e = B.entscheidungLesen(m), a = m.anweisung;
     var anw = a ? '<p class="kb-anweisung"><span>' + (a.status === "offen" ? "Deine Anweisung – wird umgesetzt" : a.status === "umgesetzt" ? "Umgesetzt" : "Verworfen") +
       "</span>" + esc(a.text) + (a.ergebnis ? "<br><small>" + esc(a.ergebnis) + "</small>" : "") + "</p>" : "";
-    return anw + folgeZeile(f) + '<div class="kb-entscheid" data-entscheid="' + esc(m.id) + '">' +
-      (f ? '<button type="button" data-e="freigeben" aria-pressed="' + (e === "freigeben") + '">' + esc(f.knopf) + "</button>" : "") +
+    return anw + '<div class="kb-entscheid" data-entscheid="' + esc(m.id) + '">' +
+      (f ? '<button type="button" data-e="freigeben" aria-pressed="' + (e === "freigeben") + '" title="' + esc(f.text) + '">' + esc(f.knopf) + "</button>" : "") +
       '<button type="button" data-anders aria-expanded="false">Anders …</button>' +
-      '<button type="button" data-e="erledigt" aria-pressed="' + (e === "erledigt") + '">Schon erledigt</button></div>' +
+      '<button type="button" data-e="erledigt" aria-pressed="' + (e === "erledigt") + '" title="Nur diese Mail – schreibt die Person wieder, erscheint die neue Mail">Schon erledigt</button>' +
+      '<button type="button" class="kb-irr" data-irrelevant="' + esc(m.id) + '" title="Auch alle künftigen Mails dieses Absenders landen unter „Nicht relevant“">Irrelevant</button>' +
+      '<button type="button" class="kb-k-mehr" data-details aria-expanded="' + !!auf + '">Details<span class="kb-k-pfeil" aria-hidden="true"></span></button></div>' +
       '<form class="kb-anders" data-anders-form hidden><textarea rows="3" placeholder="Sag oder tippe, was passieren soll – z. B. „An Tobias weiterleiten, er soll den Termin übernehmen.“ Auf dem iPhone: Mikrofon auf der Tastatur."></textarea>' +
       '<div><button type="submit" class="kb-knopf kb-knopf--klein">An Claude geben</button><button type="button" class="kb-anders-abbruch">Abbrechen</button></div></form>';
   }
@@ -337,6 +354,29 @@
 
   function zeilenVerdrahten() {
     volltexteLaden();
+    // Handlungsbedarf: Details auf- und zuklappen
+    ziel().querySelectorAll("[data-details]").forEach(function (b) {
+      b.addEventListener("click", function () { var id = b.closest("[data-id]").getAttribute("data-id"); zustand.offen[id] = !zustand.offen[id]; seite(); });
+    });
+    // Irrelevant: Absender dauerhaft unter „Nicht relevant“ (Daniel, 10.10.2026)
+    ziel().querySelectorAll("[data-irrelevant]").forEach(function (b) {
+      b.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        var m = alleMails().filter(function (x) { return x.id === b.getAttribute("data-irrelevant"); })[0]; if (!m) return;
+        var wer = (m.from && m.from.emailAddress && (m.from.emailAddress.name || m.from.emailAddress.address)) || "diesem Absender";
+        if (!confirm("„" + wer + "“ als irrelevant markieren?\n\nDiese und alle künftigen Mails von " + ((m.from && m.from.emailAddress && m.from.emailAddress.address) || "dieser Adresse") + " erscheinen nur noch unter „Nicht relevant“.")) return;
+        var li = b.closest(".kb-karte, .kb-mail"); b.disabled = true;
+        B.irrelevant(m).then(function () {
+          var adr = ((m.from && m.from.emailAddress && m.from.emailAddress.address) || "").toLowerCase();
+          function gleich(x) { return ((x.from && x.from.emailAddress && x.from.emailAddress.address) || "").toLowerCase() === adr; }
+          alleMails().forEach(function (x) { if (gleich(x)) { x.irrelevant = true; x.relevant = false; } });
+          daten.handlung = daten.handlung.filter(function (x) { return !gleich(x); });
+          daten.relevant = daten.relevant.filter(function (x) { return !gleich(x); });
+          if (daten.nichtRelevant.indexOf(m) < 0) daten.nichtRelevant.unshift(m);
+          if (li) { li.classList.add("kb-erledigt"); setTimeout(function () { seite(); }, 900); } else seite();
+        }).catch(function (f) { b.disabled = false; alert("Nicht gespeichert: " + f.message); });
+      });
+    });
     // Bei Claude: Karten auf- und zuklappen, Umgesetztes abhaken
     ziel().querySelectorAll(".kb-klapp").forEach(function (b) {
       b.addEventListener("click", function () { var id = b.closest("[data-id]").getAttribute("data-id"); zustand.offen[id] = !zustand.offen[id]; seite(); });

@@ -123,7 +123,7 @@
   /* ---------- Claudes Einschätzungen aus der Datenbank ----------
      Nur mit Anmeldung (Login-Link, gleich wie auf der Kontaktseite). Ohne Anmeldung
      bleibt es bei der einfachen Vorsortierung nach Stichworten. */
-  var dbStatus = "aus";
+  var dbStatus = "aus", IRRELEVANT = {};
   function einschaetzungenHolen(postfaecher) {
     var db = window.empiriaDb;
     if (!db) return Promise.resolve();
@@ -133,14 +133,15 @@
       if (!s.data.session) { dbStatus = "abgemeldet"; return; }
       var teile = [];
       for (var i = 0; i < ids.length; i += 150) teile.push(ids.slice(i, i + 150));
-      return Promise.all(teile.map(function (t) {
+      var irr = db.from("mail_irrelevant").select("adresse").then(function (r) { IRRELEVANT = {}; (r.data || []).forEach(function (x) { IRRELEVANT[x.adresse] = 1; }); });
+      return Promise.all([irr].concat(teile.map(function (t) {
         return Promise.all([
           db.from("mail_einschaetzungen").select("internet_message_id, kategorie, zusammenfassung, vorschlag, entwurf, entwurf_art, weiterleiten_an").in("internet_message_id", t),
           db.from("mail_anweisungen").select("internet_message_id, text, status, ergebnis, angelegt_am, erledigt_am, wiedervorlage_am").in("internet_message_id", t).order("angelegt_am")
         ]);
-      })).then(function (res) {
+      }))).then(function (res) {
         var nach = {}, anw = {};
-        res.forEach(function (paar) {
+        res.slice(1).forEach(function (paar) {
           (paar[0].data || []).forEach(function (e) { nach[e.internet_message_id] = e; });
           (paar[1].data || []).forEach(function (a) { anw[a.internet_message_id] = a; });   // jeweils die neueste
         });
@@ -181,7 +182,9 @@
     ein.forEach(function (m) {
       var k = m.konto, eigene = k.adresse ? [k.adresse] : Object.keys(roh.adressen).filter(function (a) { return roh.adressen[a] === "empiria"; });
       m.alter = tageAlt(m.receivedDateTime);
-      m.relevant = m.inferenceClassification !== "other";
+      // „Irrelevant“ (Daniel, 10.10.2026): Absender dauerhaft unter „Nicht relevant“, nie im Handlungsbedarf
+      m.irrelevant = !!IRRELEVANT[adr(m.from)];
+      m.relevant = m.inferenceClassification !== "other" && !m.irrelevant;
       m.direkt = (m.toRecipients || []).some(function (e) { return eigene.indexOf(adr(e)) > -1; });
       m.automatisch = AUTOMATISCH.test(adr(m.from));
       m.markiert = m.flag && m.flag.flagStatus === "flagged";
@@ -192,7 +195,7 @@
       // Hat Daniel entschieden (Freigeben, Anders …, Schon erledigt), ist die Rückmeldung gegeben:
       // raus aus dem Handlungsbedarf. Freigegeben und „Anders …“ landen unter „Bei Claude“.
       m.entscheidung = entscheidungLesen(m);
-      var grundOffen = k.handlung && m.neueste && !m.beantwortet;
+      var grundOffen = k.handlung && m.neueste && !m.beantwortet && !m.irrelevant;
       // Wiedervorlage (Daniel, 09.10.2026): „Erinnere mich morgen …“ – ab wiedervorlage_am steht die Mail wieder im
       // Handlungsbedarf, bis Daniel antwortet, abhakt oder neu entscheidet
       var wv = m.anweisung && m.anweisung.wiedervorlage_am;
@@ -316,6 +319,26 @@
     return { knopf: "Vorschlag umsetzen lassen", text: "Claude setzt um: „" + (a.vorschlag || "").replace(/[.!]+$/, "") + "“. Kalendereinträge und Aufgaben legt Claude direkt an, Mails nur als Entwurf – gesendet wird nichts." };
   }
 
+  /* ---------- Irrelevant (Daniel, 10.10.2026) ----------
+     Unterschied zu „Schon erledigt“: erledigt gilt nur für diese Mail – schreibt die Person wieder, erscheint die neue Mail.
+     Irrelevant gilt für den Absender: alle künftigen Mails stehen nur noch unter „Nicht relevant“. Zusätzlich bekommt Outlook
+     eine Regel „Sonstige“ für den Absender (wenn das nicht klappt, reicht die Liste in der Datenbank). */
+  function irrelevant(m) {
+    var db = window.empiriaDb, a = adr(m.from);
+    if (demo) { IRRELEVANT[a] = 1; m.irrelevant = true; m.relevant = false; return Promise.resolve(); }
+    if (!db) return Promise.reject(new Error("Datenbank nicht geladen"));
+    return db.from("mail_irrelevant").upsert({ adresse: a, name: m.from && m.from.emailAddress && m.from.emailAddress.name, postfach: m.konto.name, betreff: m.subject }).then(function (r) {
+      if (r.error) throw new Error(r.error.message);
+      IRRELEVANT[a] = 1; m.irrelevant = true; m.relevant = false;
+      token().then(function (t) {
+        var h = { Authorization: "Bearer " + t, "Content-Type": "application/json" };
+        fetch(GRAPH + m.konto.pfad + "/messages/" + m.id, { method: "PATCH", headers: h, body: JSON.stringify({ inferenceClassification: "other" }) }).catch(function () {});
+        fetch(GRAPH + m.konto.pfad + "/inferenceClassification/overrides", { method: "POST", headers: h,
+          body: JSON.stringify({ classifyAs: "other", senderEmailAddress: { name: (m.from.emailAddress.name || a), address: a } }) }).catch(function () {});
+      }).catch(function () {});
+    });
+  }
+
   /* ---------- Anweisung („Anders …“) an Claude ---------- */
   function anweisen(m, text) {
     var db = window.empiriaDb;
@@ -399,6 +422,6 @@
     return { ich: { displayName: "Daniel Ströbel" }, adressen: adressen, postfaecher: KONTEN.map(function (k) { return nach[k.key]; }) };
   }
 
-  window.BetaMail = { freigabeText: freigabeText, folge: folge, senden: senden, arten: ARTEN, entscheiden: entscheiden, anweisen: anweisen, entscheidungLesen: entscheidungLesen, start: start, anmelden: anmelden, abmelden: abmelden, laden: laden, volltext: volltext,
+  window.BetaMail = { freigabeText: freigabeText, folge: folge, irrelevant: irrelevant, senden: senden, arten: ARTEN, entscheiden: entscheiden, anweisen: anweisen, entscheidungLesen: entscheidungLesen, start: start, anmelden: anmelden, abmelden: abmelden, laden: laden, volltext: volltext,
     konten: KONTEN, esc: esc, wann: wann, badge: badge, absender: absender, istDemo: function () { return demo; } };
 })();

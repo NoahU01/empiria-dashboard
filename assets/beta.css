@@ -1340,3 +1340,35 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 .pz-feld-titel { font-size: var(--fs-xs); font-weight: 500; color: var(--grey-50); }
 .pz-feld .pr-tl-wahl button { display: inline-flex; align-items: center; gap: 7px; }
 .pz-feld .pr-tl-wahl.laedt { opacity: .5; pointer-events: none; }
+
+/* ---------- Korrespondenz kompakt (Daniel, 10.10.2026) ----------
+   Geschlossen: Einordnung, Vorschlag, Entscheidungsknöpfe. Details erst beim Aufklappen. */
+.kb-kompakt { padding: 14px 16px; }
+.kb-k-kopf { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+.kb-k-titel { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+.kb-k-titel .kb-von { flex: none; max-width: 45%; }
+.kb-k-titel .kb-betreff { min-width: 0; font-size: var(--fs-s); color: var(--grey-70); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kb-k-worum { margin: 8px 0 0 42px; font-size: var(--fs-m); line-height: 1.5; color: var(--ink-2); }
+.kb-k-vorschlag { display: flex; align-items: baseline; gap: 10px; margin: 6px 0 0 42px; font-size: var(--fs-m); font-weight: 500; color: var(--ink); }
+.kb-k-vorschlag span { flex: none; font-size: var(--fs-xs); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-50); }
+.kb-kompakt > .kb-entscheid, .kb-kompakt > .kb-anders, .kb-kompakt > .kb-anweisung { margin-left: 42px; }
+.kb-kompakt .kb-entscheid { margin-top: 12px; align-items: center; }
+.kb-kompakt .kb-entscheid button { height: 36px; padding: 0 16px; }
+.kb-entscheid .kb-irr { border-color: var(--linie); color: var(--grey-70); }
+.kb-entscheid .kb-k-mehr { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; border: 0 !important; background: none !important; padding: 0 4px !important; color: var(--grey-70); }
+.kb-k-pfeil { width: 7px; height: 7px; margin-top: -3px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); transition: transform .2s ease; }
+.kb-k-mehr[aria-expanded="true"] .kb-k-pfeil { margin-top: 3px; transform: rotate(-135deg); }
+.kb-k-details { margin: 14px 0 0 42px; padding-top: 12px; border-top: 1px solid var(--linie); }
+.kb-k-details .kb-folge { margin-top: 0; }
+@media (max-width: 640px) {
+  .kb-k-titel { flex-direction: column; align-items: stretch; gap: 0; } .kb-k-titel .kb-von, .kb-k-titel .kb-betreff { max-width: 100%; }
+  .kb-k-kopf { align-items: start; }
+  .kb-kompakt .kb-entscheid { gap: 6px; } .kb-kompakt .kb-entscheid button, .kb-mail > .kb-entscheid--warten button { height: 34px; padding: 0 12px; font-size: var(--fs-xs); }
+  .kb-k-worum, .kb-k-vorschlag, .kb-kompakt > .kb-entscheid, .kb-kompakt > .kb-anders, .kb-kompakt > .kb-anweisung, .kb-k-details { margin-left: 0; }
+  .kb-k-vorschlag { flex-direction: column; gap: 2px; }
+}
+/* Relevant / Nicht relevant / Wartet auf Antwort: Einordnung und Knöpfe schon in der geschlossenen Zeile */
+.kb-einordnung { margin: 6px 0 0; font-size: var(--fs-s); line-height: 1.5; color: var(--ink-2); }
+.kb-mail > .kb-entscheid--warten { margin-top: 10px; }
+.kb-mail > .kb-entscheid--warten button { height: 34px; padding: 0 14px; }
+.kb-mail > .kb-anders, .kb-mail > .kb-anweisung { margin-top: 10px; }
