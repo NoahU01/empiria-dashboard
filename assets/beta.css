@@ -1318,3 +1318,25 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
   .bf-knoepfe { grid-column: 1 / -1; justify-content: flex-start; }
 }
 @media (max-width: 600px) { .bf-zeile { padding: 14px 16px; } .bf-knoepfe button { flex: 1 1 auto; } }
+
+/* ---------- Projekte: Priorisierung (Daniel, 10.10.2026) ---------- */
+.pz-wahl { margin: 28px 0 0; }
+.pz-zwei { display: grid; gap: 36px; margin-top: 28px; }
+@media (min-width: 900px) { .pz-zwei { grid-template-columns: 1fr 1fr; column-gap: 64px; } }
+.pz-h { margin: 0 0 6px; padding-bottom: 8px; border-bottom: 1px solid var(--ink); font-size: var(--fs-s); font-weight: 600; letter-spacing: .02em; }
+.pz-liste { margin: 0; padding: 0; list-style: none; }
+.pz-z a { display: grid; grid-template-columns: 22px auto minmax(0, 1fr); align-items: baseline; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--linie); color: var(--ink); text-decoration: none; }
+.pz-z a:hover .pz-name { text-decoration: underline; text-underline-offset: 2px; }
+.pz-name { font-weight: 500; }
+.pz-meta { overflow: hidden; font-size: var(--fs-xs); color: var(--grey-50); text-align: right; white-space: nowrap; text-overflow: ellipsis; }
+.pz-z--fertig .pz-name { color: var(--grey-50); font-weight: 400; }
+.pz-prio { display: inline-flex; align-items: flex-end; gap: 2px; height: 11px; }
+.pz-prio i { display: block; width: 4px; border-radius: 1px; background: var(--linie); }
+.pz-prio i:nth-child(1) { height: 5px; } .pz-prio i:nth-child(2) { height: 8px; } .pz-prio i:nth-child(3) { height: 11px; }
+.pz-prio i.an { background: var(--ink); }
+@media (max-width: 560px) { .pz-z a { grid-template-columns: 22px minmax(0, 1fr); gap: 2px 12px; } .pz-meta { grid-column: 2; text-align: left; white-space: normal; } }
+.pz-einstellung { display: flex; flex-wrap: wrap; gap: 10px 36px; margin: 6px 0 26px; }
+.pz-feld { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.pz-feld-titel { font-size: var(--fs-xs); font-weight: 500; color: var(--grey-50); }
+.pz-feld .pr-tl-wahl button { display: inline-flex; align-items: center; gap: 7px; }
+.pz-feld .pr-tl-wahl.laedt { opacity: .5; pointer-events: none; }

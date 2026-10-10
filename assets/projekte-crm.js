@@ -9,7 +9,16 @@
   function datum(d) { return d ? new Date(d).toLocaleDateString("de-DE", { day: "numeric", month: "short", year: "numeric" }) : ""; }
   function kurz(d) { return d ? new Date(d).toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "short" }) : ""; }
   function name(k) { return k ? [k.vorname, k.nachname].filter(Boolean).join(" ") : ""; }
-  var STATUS = { "läuft": "st-laeuft", "wartet auf dich": "st-dich", "blockiert": "st-blockiert", "pausiert": "st-pause", "abgeschlossen": "st-pause" };
+  var STATUS = { "läuft": "st-laeuft", "projektidee": "st-pause", "abgeschlossen": "st-pause" };
+  /* Priorität und Status (Daniel, 10.10.2026): bewusst einfach – drei Stufen, drei Zustände. Marker = drei kleine Balken. */
+  var PRIO = [["hoch", "Hoch"], ["mittel", "Mittel"], ["niedrig", "Niedrig"]], PRIO_RANG = { hoch: 0, mittel: 1, niedrig: 2 };
+  var STATI = [["projektidee", "Projektidee"], ["läuft", "Läuft"], ["abgeschlossen", "Abgeschlossen"]], STATUS_RANG = { "läuft": 0, projektidee: 1, abgeschlossen: 2 };
+  var STATUS_NAME = { projektidee: "Projektidee", "läuft": "Läuft", abgeschlossen: "Abgeschlossen" };
+  function prioMarker(pr) {
+    var n = { hoch: 3, mittel: 2, niedrig: 1 }[pr] || 0;
+    return '<span class="pz-prio pz-prio--' + (pr || "ohne") + '" title="Priorität: ' + (pr ? pr.charAt(0).toUpperCase() + pr.slice(1) : "nicht gesetzt") + '" aria-label="Priorität ' + (pr || "nicht gesetzt") + '">' +
+      [1, 2, 3].map(function (i) { return '<i class="' + (i <= n ? "an" : "") + '"></i>'; }).join("") + "</span>";
+  }
 
   db.auth.getSession().then(function (s) {
     if (!s.data.session) { wurzel.innerHTML = '<div class="kb-hinweis"><p>Bitte einmal auf der <a href="/strategie/kontakte.html?zurueck=' + encodeURIComponent(location.pathname) + '">Kontaktseite</a> anmelden – dann erscheinen hier die Projekte.</p></div>'; return; }
@@ -49,16 +58,39 @@
   function liste() {
     wurzel.innerHTML = '<div class="kb-laedt"><span></span><span></span></div>';
     Promise.all([
-      db.from("projekte").select("id, name, typ, marke, status, naechstes_gate, gate_datum, organisationen(id, name)").order("reihenfolge", { nullsFirst: false }).order("name"),
+      db.from("projekte").select("id, name, typ, marke, status, prioritaet, naechstes_gate, gate_datum, organisationen(id, name)").order("reihenfolge", { nullsFirst: false }).order("name"),
       db.from("projekt_ereignisse").select("projekt_id, datum, titel").gte("datum", new Date().toISOString()).order("datum")
     ]).then(function (r) {
       var p = r[0].data || [], nae = {};
       (r[1].data || []).forEach(function (e) { if (!nae[e.projekt_id]) nae[e.projekt_id] = e; });
       var MARKEN = ["empiria", "sofortsichtbar", "Müller&Ströbel."];
       var kunde = p.filter(function (x) { return x.typ !== "intern"; }), intern = p.filter(function (x) { return x.typ === "intern"; });
-      function name_(x) { return '<a class="kt3-p" href="#p=' + x.id + '">' + esc(x.name) + "</a>" + (x.status !== "läuft" ? ' <span class="pr-st ' + STATUS[x.status] + '">' + esc(x.status) + "</span>" : ""); }
+      function name_(x) { return '<a class="kt3-p" href="#p=' + x.id + '">' + esc(x.name) + "</a>" + (x.status !== "läuft" ? ' <span class="pr-st ' + STATUS[x.status] + '">' + esc(STATUS_NAME[x.status] || x.status) + "</span>" : ""); }
+      // Umschaltung Überblick (je Marke) · Priorisierung (zwei Spalten, nach Priorität) – Daniel, 10.10.2026
+      var ansicht = "ueberblick";
+      try { ansicht = localStorage.getItem("pr-ansicht") === "prio" ? "prio" : "ueberblick"; } catch (x) {}
+      var wahl = '<div class="pz-wahl pr-tl-wahl">' + [["ueberblick", "Überblick"], ["prio", "Priorisierung"]].map(function (v) {
+        return '<button type="button" data-pr-ansicht="' + v[0] + '" aria-pressed="' + (v[0] === ansicht) + '">' + v[1] + "</button>"; }).join("") + "</div>";
+      function verdrahtenWahl() {
+        wurzel.querySelectorAll("[data-pr-ansicht]").forEach(function (b) { b.onclick = function () {
+          try { localStorage.setItem("pr-ansicht", b.getAttribute("data-pr-ansicht")); } catch (x) {} liste(); }; });
+      }
+      if (ansicht === "prio") {
+        function sortiert(l) { return l.slice().sort(function (a, b) {
+          return (STATUS_RANG[a.status] || 0) - (STATUS_RANG[b.status] || 0) || (a.prioritaet ? PRIO_RANG[a.prioritaet] : 3) - (b.prioritaet ? PRIO_RANG[b.prioritaet] : 3) || a.name.localeCompare(b.name, "de"); }); }
+        function spalte(titel, l, mitKunde) {
+          return '<section class="pz-spalte"><h2 class="pz-h">' + titel + '</h2><ul class="pz-liste">' + (l.length ? sortiert(l).map(function (x) {
+            return '<li class="pz-z' + (x.status === "abgeschlossen" ? " pz-z--fertig" : "") + '"><a href="#p=' + x.id + '">' + prioMarker(x.prioritaet) +
+              '<span class="pz-name">' + esc(x.name) + "</span>" +
+              '<span class="pz-meta">' + esc([mitKunde && x.organisationen ? x.organisationen.name : null, x.status !== "läuft" ? STATUS_NAME[x.status] : null].filter(Boolean).join(" · ")) + "</span></a></li>";
+          }).join("") : '<li class="kt3-leise">Keine.</li>') + "</ul></section>";
+        }
+        wurzel.innerHTML = wahl + '<div class="pz-zwei">' + spalte("Kundenprojekte", kunde, true) + spalte("Interne Projekte", intern, false) + "</div>";
+        verdrahtenWahl();
+        return;
+      }
       // Je Marke eine Sektion: links Kundenprojekte, rechts interne Projekte
-      wurzel.innerHTML = MARKEN.map(function (m) {
+      wurzel.innerHTML = wahl + MARKEN.map(function (m) {
         function von(l) { return l.filter(function (x) { return (x.marke || "empiria") === m; }); }
         var k = von(kunde), i = von(intern);
         return '<section class="pr-marke-sek"><h2 class="pr-h2">' + esc(m) + '</h2><div class="pr-zwei">' +
@@ -73,6 +105,7 @@
           }).join("") : '<tr><td class="kt3-leise">Keine internen Projekte.</td></tr>') + "</tbody></table></div></section>";
       }).join("");
       wurzel.querySelectorAll("tr[data-href]").forEach(function (tr) { tr.onclick = function (e) { if (!e.target.closest("a")) location.hash = tr.getAttribute("data-href"); }; });
+      verdrahtenWahl();
     });
   }
 
@@ -161,6 +194,12 @@
       (p.organisationen ? '<a href="/strategie/kontakte.html#f=' + p.organisationen.id + '">' + esc(p.organisationen.name) + "</a>" : esc(p.marke || "")) + "</p>" +
       (p.thema ? '<p class="pr-thema">' + esc(p.thema) + "</p>" : "") +
       (p.typ === "intern" && p.naechstes_gate ? '<p class="pr-gate"><span>Nächstes Gate</span>' + esc(p.naechstes_gate) + (p.gate_datum ? " · bis " + kurz(p.gate_datum) : "") + "</p>" : "") + "</div></div>";
+    // Priorität und Status – direkt hier ändern (Daniel, 10.10.2026)
+    function wahlZeile(feld, titel, werte, aktuell) {
+      return '<div class="pz-feld"><span class="pz-feld-titel">' + titel + '</span><span class="pr-tl-wahl" data-pz-feld="' + feld + '">' + werte.map(function (v) {
+        return '<button type="button" data-wert="' + v[0] + '" aria-pressed="' + (v[0] === aktuell) + '">' + (feld === "prioritaet" ? prioMarker(v[0]) : "") + v[1] + "</button>"; }).join("") + "</span></div>";
+    }
+    h += '<div class="pz-einstellung">' + wahlZeile("prioritaet", "Priorität", PRIO, p.prioritaet) + wahlZeile("status", "Status", STATI, p.status) + "</div>";
     h += projektseite(p.projektseite);
     h += '<div class="kt3-raster">';
     // Links: Stoßrichtung (Gesamtblick über alle Termine) – rechts: Aufgaben
@@ -323,6 +362,19 @@
 
   function verdrahten(p) {
     klappbar(p);
+    wurzel.querySelectorAll("[data-pz-feld]").forEach(function (gr) {
+      var feld = gr.getAttribute("data-pz-feld");
+      gr.querySelectorAll("button").forEach(function (b) { b.onclick = function () {
+        var w = b.getAttribute("data-wert"), neu = {};
+        if (feld === "prioritaet" && p.prioritaet === w) w = null;   // erneuter Klick nimmt die Priorität wieder weg
+        neu[feld] = w; gr.classList.add("laedt");
+        db.from("projekte").update(neu).eq("id", p.id).then(function (r) {
+          gr.classList.remove("laedt");
+          if (r.error) { alert("Nicht gespeichert: " + r.error.message); return; }
+          p[feld] = w; gr.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", String(x.getAttribute("data-wert") === w)); });
+        });
+      }; });
+    });
     wurzel.querySelectorAll("[data-pk]").forEach(function (b) {
       b.onclick = function () { var auf = b.getAttribute("aria-expanded") !== "true"; b.setAttribute("aria-expanded", String(auf)); b.nextElementSibling.hidden = !auf; };
     });
