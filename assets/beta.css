@@ -1472,3 +1472,13 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 .ad-prompt-kopf { display: flex; justify-content: space-between; align-items: center; margin: 0; padding: 8px 12px; border-bottom: 1px solid var(--linie); font-size: var(--fs-xs); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-50); }
 .ad-prompt-kopf button { height: 28px; padding: 0 12px; border: 1.5px solid var(--ink); border-radius: 999px; background: #fff; font-size: var(--fs-xs); font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--ink); }
 .ad-prompt pre { max-height: 260px; overflow: auto; margin: 0; padding: 12px; white-space: pre-wrap; font-family: var(--font-sans); font-size: var(--fs-s); line-height: 1.5; color: var(--ink-2); }
+
+/* Planungsmodus für alle Projekte: Gate und Strang selbst anlegen, Strang umbenennen */
+.pl-neu { margin: 8px 0 0 48px; }
+.pl-neu button { border: 0; background: none; padding: 2px 0; font-size: var(--fs-xs); font-weight: 500; color: var(--grey-50); }
+.pl-neu button:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.pl-neu--strang { margin: 22px 0 0; padding-top: 12px; border-top: 1px solid var(--linie); }
+.pl-strang-titel { cursor: text; }
+.pl-frist { display: block; margin-top: 4px; } .pl-frist .pr-frist { font-size: var(--fs-xs); }
+.pl-frist { display: inline-block; margin: 3px 10px 0 0; vertical-align: baseline; }
+.pl-frist + .pr-wer { display: inline-block; }

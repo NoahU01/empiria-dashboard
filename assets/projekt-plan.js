@@ -35,11 +35,14 @@
   function liste(straenge, auf, h, alle) {
     alle = alle || auf;
     var je = ordnen(straenge, auf), ohne = auf.filter(function (a) { return !a.strang_id && a.status === "offen"; });
-    var html = "";
+    var html = "", einer = straenge.length === 1;
+    // Nur ein Strang: ohne Strang-Überschrift – sieht aus wie eine einfache Liste
     straenge.slice().sort(function (a, b) { return a.reihenfolge - b.reihenfolge; }).forEach(function (s) {
-      html += '<section class="pl-strang" data-strang="' + s.id + '"><h4 class="pl-strang-titel">' + esc(s.titel) + '</h4><ol class="pl-liste" data-pl-liste="' + s.id + '">' +
-        je[s.id].map(function (a, i) { return zeile(a, alle, h, i === 0, i === je[s.id].length - 1); }).join("") + "</ol></section>";
+      html += '<section class="pl-strang" data-strang="' + s.id + '">' + (einer ? "" : '<h4 class="pl-strang-titel">' + esc(s.titel) + "</h4>") + '<ol class="pl-liste" data-pl-liste="' + s.id + '">' +
+        je[s.id].map(function (a, i) { return zeile(a, alle, h, i === 0, i === je[s.id].length - 1); }).join("") + "</ol>" +
+        '<p class="pl-neu"><button type="button" data-pl-gate="' + s.id + '">+ Gate</button></p></section>';
     });
+    html += '<p class="pl-neu pl-neu--strang"><button type="button" data-pl-strang>+ Strang</button></p>';
     if (ohne.length) html += '<section class="pl-strang"><h4 class="pl-strang-titel pl-strang-titel--ohne">Noch keinem Strang zugeordnet</h4><ol class="pl-liste">' +
       ohne.map(function (a) { return zeile(a, alle, h, true, true, true); }).join("") + "</ol></section>";
     return html;
@@ -62,7 +65,8 @@
     return '<li class="pl-z pl-z--' + z + '" data-a="' + a.id + '">' + pfeile(a, erst, letzt, ohneStrang) +
       '<button type="button" class="st-haken' + (z === "fertig" ? " an" : "") + '" aria-label="' + (z === "fertig" ? "Wieder öffnen" : "Erledigt") + '"></button>' +
       '<div class="pl-inhalt">' + h.titel(a) +
-      '<span class="pr-wer">' + (z === "fertig" ? "erledigt" : h.phase(a)) + " · " + esc(h.wer(a) || "offen") + "</span>" +
+      (z !== "fertig" && a.faellig_am && h.frist ? '<span class="pl-frist">' + h.frist(a) + "</span>" : "") +
+      '<span class="pr-wer">' + (z === "fertig" ? "erledigt" : h.phase(a)) + " · " + esc(h.wer(a) || "offen") + (h.paket ? h.paket(a) : "") + "</span>" +
       (z === "fertig" ? "" : '<div class="pr-auf-zusatz">' + h.zusatz(a) + "</div>") + h.details(a) + "</div></li>";
   }
 
@@ -124,6 +128,39 @@
   }
   function verdrahten(wurzel, db, straenge, auf, neu) {
     function idsVon(ol) { return Array.prototype.map.call(ol.querySelectorAll(":scope > li[data-a]"), function (li) { return +li.getAttribute("data-a"); }); }
+    // + Gate: Zwischenergebnis ans Ende des Strangs – braucht alles seit dem letzten Gate; danach per Griff verschieben
+    wurzel.querySelectorAll("[data-pl-gate]").forEach(function (b) {
+      b.onclick = function () {
+        var sid = +b.getAttribute("data-pl-gate"), titel = prompt("Name des Gates (Zwischenergebnis), z. B. „Release 2.0“ oder „Konzept freigegeben“:");
+        if (!titel || !titel.trim()) return;
+        var l = ordnen(straenge, auf)[sid] || [], seit = [];
+        l.forEach(function (a) { if (a.art === "gate") seit = []; else seit.push(a.id); });
+        b.disabled = true;
+        db.from("aufgaben").insert({ titel: titel.trim(), art: "gate", status: "offen", spalte: "backlog", projekt_id: projektId(), strang_id: sid,
+          reihenfolge: l.length + 1, vorgaenger: seit, bereich: "Projekt", zustaendig_name: "Daniel", verantwortlich: "Daniel" })
+          .then(function (r) { if (r.error) { b.disabled = false; alert("Nicht gespeichert: " + r.error.message); return; } neu(); });
+      };
+    });
+    // + Strang
+    var sb = wurzel.querySelector("[data-pl-strang]");
+    if (sb) sb.onclick = function () {
+      var titel = prompt(straenge.length === 1 ? "Name des neuen Strangs? (Der bisherige heißt „" + straenge[0].titel + "“ – du kannst ihn danach umbenennen.)" : "Name des neuen Strangs:");
+      if (!titel || !titel.trim()) return;
+      sb.disabled = true;
+      db.from("projekt_straenge").insert({ projekt_id: projektId(), titel: titel.trim(), reihenfolge: straenge.length + 1 })
+        .then(function (r) { if (r.error) { sb.disabled = false; alert("Nicht gespeichert: " + r.error.message); return; } neu(); });
+    };
+    // Strang umbenennen: Klick auf die Überschrift
+    wurzel.querySelectorAll(".pl-strang-titel").forEach(function (t) {
+      var sek = t.closest("[data-strang]"); if (!sek) return;
+      t.title = "Klicken zum Umbenennen";
+      t.onclick = function () {
+        var sid = +sek.getAttribute("data-strang"), alt = (straenge.filter(function (s) { return s.id === sid; })[0] || {}).titel, n = prompt("Strang umbenennen:", alt);
+        if (!n || !n.trim() || n.trim() === alt) return;
+        db.from("projekt_straenge").update({ titel: n.trim() }).eq("id", sid).then(function (r) { if (r.error) alert(r.error.message); else neu(); });
+      };
+    });
+    function projektId() { var m = location.hash.match(/p=(\d+)/); return m ? +m[1] : null; }
     // Ziehen am Griff – auch in einen anderen Strang
     var gezogen = null;
     wurzel.querySelectorAll(".pl-griff[draggable]").forEach(function (g) {

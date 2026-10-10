@@ -242,7 +242,7 @@
     var wahl = '<span class="pr-tl-wahl">' + [["liste", "Liste"]].concat(plan ? [["plan", "Plan"]] : [], [["kanban", "Kanban"]]).map(function (v) {
       return '<button type="button" data-aav="' + v[0] + '" aria-pressed="' + (v[0] === aav) + '">' + v[1] + "</button>"; }).join("") + "</span>";
     var aufInhalt;
-    var hilfen = { titel: titel, details: details, zusatz: zusatz, phase: phase, wer: wer };
+    var hilfen = { titel: titel, details: details, zusatz: zusatz, phase: phase, wer: wer, paket: paketLabel, frist: frist };
     if (aav === "plan") aufInhalt = '<div class="pl-rahmen">' + ProjektPlan.bild(STRAENGE, auf, auf.concat(EXTERN)) + "</div>";
     else if (aav === "liste" && plan) aufInhalt = '<div class="pl-rahmen">' + ProjektPlan.liste(STRAENGE, auf, hilfen, auf.concat(EXTERN)) + "</div>";
     else if (aav === "kanban") {
