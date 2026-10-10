@@ -118,7 +118,7 @@
       db.from("projekt_beteiligte").select("id, seite, rolle, name, kontakte(id, vorname, nachname, position)").eq("projekt_id", id),
       db.from("projekt_ereignisse").select("id, datum, art, titel, quelle, format, ort, teilnehmer, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("datum", { ascending: false }),
       db.from("projekt_punkte").select("id, ereignis_id, art, text, angelegt_am, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am", { ascending: false }),
-      db.from("aufgaben").select("id, paket_id, strang_id, reihenfolge, art, titel, beschreibung, status, spalte, faellig_am, erledigt_am, ereignis_id, weg, vorgaenger, warten_auf, hinweis, zeitblock_vorschlag, mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, unterlagen, person:kontakt_id(id, vorname, nachname), organisationen(id, name), zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
+      db.from("aufgaben").select("id, paket_id, strang_id, reihenfolge, art, titel, beschreibung, prompt, status, spalte, faellig_am, erledigt_am, ereignis_id, weg, vorgaenger, warten_auf, hinweis, zeitblock_vorschlag, mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, unterlagen, person:kontakt_id(id, vorname, nachname), organisationen(id, name), zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
       ,db.from("projekt_pakete").select("id, nr, titel, ziel, stand, status").eq("projekt_id", id).order("nr")
       ,db.from("projekt_straenge").select("id, titel, reihenfolge").eq("projekt_id", id).order("reihenfolge")
     ]).then(function (r) {

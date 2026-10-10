@@ -1455,3 +1455,20 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 .pl-bahn { grid-template-columns: 132px auto; }
 .pl-rahmen .pl-legende { margin: 0 0 22px; }
 @media (max-width: 600px) { .pl-bahn { grid-template-columns: 1fr; } .pl-bahn-kopf { padding: 14px 16px 0; } .pl-bahn-spur { padding: 12px 20px 16px 16px; } }
+
+/* Planungsmodus ruhiger (Daniel, 10.10.2026): keine Pfeile, keine Kreise, keine gelbe Raute – Gate hellgrau mit klaren Linien */
+.pl-z { grid-template-columns: 14px 26px minmax(0, 1fr); }
+.pl-pfeile, .pl-z > .pl-st, .pl-z > .pl-raute { display: none; }
+@media (hover: none) { .pl-griff { display: block; } .pl-z { grid-template-columns: 14px 26px minmax(0, 1fr); } }
+.pl-gate { margin: 6px 0; padding: 12px 0; background: #f3f2f0; box-shadow: inset 0 1px 0 var(--ink), inset 0 -1px 0 var(--ink); }
+.pl-gate .pl-gate-kicker { color: var(--grey-50); }
+.pl-gate.pl-z--fertig { background: none; box-shadow: inset 0 1px 0 var(--linie), inset 0 -1px 0 var(--linie); }
+.pl-k-gate { width: 128px; gap: 3px; padding: 11px 12px; box-sizing: border-box; border-radius: 10px; background: #f3f2f0; box-shadow: inset 0 0 0 1.5px var(--ink); align-items: flex-start; text-align: left; }
+.pl-k-gate .pl-gate-kicker { font-size: var(--fs-xs); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--grey-50); }
+.pl-k-gate.pl-z--fertig { box-shadow: inset 0 0 0 1px var(--linie); color: var(--grey-50); }
+.pl-karte { gap: 0; }
+/* Prompt zum Kopieren in den Aufgabendetails */
+.ad-prompt { margin-top: 12px; border-radius: 10px; background: #f6f5f3; }
+.ad-prompt-kopf { display: flex; justify-content: space-between; align-items: center; margin: 0; padding: 8px 12px; border-bottom: 1px solid var(--linie); font-size: var(--fs-xs); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-50); }
+.ad-prompt-kopf button { height: 28px; padding: 0 12px; border: 1.5px solid var(--ink); border-radius: 999px; background: #fff; font-size: var(--fs-xs); font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--ink); }
+.ad-prompt pre { max-height: 260px; overflow: auto; margin: 0; padding: 12px; white-space: pre-wrap; font-family: var(--font-sans); font-size: var(--fs-s); line-height: 1.5; color: var(--ink-2); }

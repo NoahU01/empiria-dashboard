@@ -26,7 +26,7 @@
     var vor14 = new Date(Date.now() - 14 * 864e5).toISOString();
     Promise.all([
       db.from("projekte").select("id, name, typ, marke, status").order("reihenfolge", { nullsFirst: false }).order("name"),
-      db.from("aufgaben").select("id, titel, beschreibung, status, spalte, faellig_am, erledigt_am, projekt_id, weg, vorgaenger, warten_auf, hinweis, zustaendig_name, verantwortlich, kontakte:zustaendig_kontakt_id(vorname, nachname), organisationen(id, name), person:kontakt_id(id, vorname, nachname), ereignis:ereignis_id(id, titel, datum, projekt_id), mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, zeitblock_vorschlag, unterlagen")
+      db.from("aufgaben").select("id, titel, beschreibung, prompt, status, spalte, faellig_am, erledigt_am, projekt_id, weg, vorgaenger, warten_auf, hinweis, zustaendig_name, verantwortlich, kontakte:zustaendig_kontakt_id(vorname, nachname), organisationen(id, name), person:kontakt_id(id, vorname, nachname), ereignis:ereignis_id(id, titel, datum, projekt_id), mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, zeitblock_vorschlag, unterlagen")
         .or("status.eq.offen,and(status.eq.erledigt,erledigt_am.gte." + vor14 + ")")
     ]).then(function (r) {
       if (r[1].error) { wurzel.innerHTML = '<p class="kb-leer">Fehler: ' + esc(r[1].error.message) + "</p>"; return; }

@@ -15,7 +15,9 @@
     var links = (a.unterlagen || []).filter(function (u) { return u && u.url; }).map(function (u) {
       return '<li class="ad-link"><a href="' + esc(u.url) + '" target="_blank" rel="noopener">' + esc(u.titel || "Link") + "</a></li>"; });
     var li = punkte.map(function (x) { return "<li>" + esc(x) + "</li>"; }).concat(links);
-    return li.length ? '<ul class="ad-punkte">' + li.join("") + "</ul>" : "";
+    // Fertiger Prompt zum Kopieren (aufgaben.prompt) – Daniel, 10.10.2026
+    var pr = a.prompt ? '<div class="ad-prompt"><p class="ad-prompt-kopf"><span>Prompt</span><button type="button" data-prompt-kopieren>Kopieren</button></p><pre>' + esc(a.prompt) + "</pre></div>" : "";
+    return (li.length ? '<ul class="ad-punkte">' + li.join("") + "</ul>" : "") + pr;
   }
 
   function lage(a, alle) {
@@ -66,6 +68,15 @@
       box.innerHTML = '<p class="ad-v-erledigt">' + esc(text) + "</p>";
     });
   }
+
+  // Prompt kopieren
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-prompt-kopieren]"); if (!b) return;
+    var t = b.closest(".ad-prompt").querySelector("pre").textContent;
+    function ok() { b.textContent = "Kopiert ✓"; setTimeout(function () { b.textContent = "Kopieren"; }, 1800); }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok, function () { alert("Kopieren nicht möglich – bitte markieren und kopieren."); });
+    else { var ta = document.createElement("textarea"); ta.value = t; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); ok(); } catch (x) {} ta.remove(); }
+  });
 
   // Klick auf „Hängt ab von …“: zur Aufgabe springen
   document.addEventListener("click", function (e) {
