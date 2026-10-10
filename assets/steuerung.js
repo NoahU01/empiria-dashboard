@@ -50,7 +50,7 @@
     var p = projekt(v.projekt_id), rm = v.art === "rueckmeldung";
     var tag = rm ? '<span class="st4-art st4-art--rm"' + (v.auftrag_am ? ' title="Auftrag vom ' + new Date(v.auftrag_am + "T12:00:00").toLocaleDateString("de-DE") + '"' : "") + ">Rückmeldung</span>"
       : '<span class="st4-art">Vorschlag</span>';
-    var punkte = String(v.punkte || "").split("\n").filter(Boolean);
+    var punkte = String(v.punkte || "").replace(/\\n/g, "\n").split("\n").map(function (x) { return x.replace(/^\s*[-•]\s*/, "").trim(); }).filter(Boolean);
     var opt = Array.isArray(v.optionen) ? v.optionen : [];
     var knoepfe = opt.length
       ? opt.map(function (o, i) { return '<button type="button"' + (i === 0 ? ' class="st4-ja"' : "") + ' data-opt="' + esc(o) + '">' + esc(o) + "</button>"; }).join("") + '<button type="button" data-anders>Anders …</button>'
@@ -59,8 +59,10 @@
     return '<article class="st4-karte' + (rm ? " st4-karte--rm" : "") + '" data-v="' + v.id + '">' +
       '<div class="st4-kopf">' + tag + frist(v.frist) + '<span class="st4-wo">' + esc(p ? p.name : "Operativ") + "</span></div>" +
       '<h3><a href="' + esc(v.link || "#") + '">' + esc(v.titel) + "</a></h3>" +
+      // Kern auf drei Zeilen, Stichpunkte hinter „Details“ – die Entscheidung unten bleibt immer sichtbar (Daniel, 10.10.2026)
       '<div class="st4-mitte">' + (v.kern ? '<p class="st4-kern">' + mitLinks(v.kern) + "</p>" : "") +
-      (punkte.length ? '<ul class="st4-punkte">' + punkte.map(function (x) { return "<li>" + mitLinks(x) + "</li>"; }).join("") + "</ul>" : "") + "</div>" +
+      (punkte.length || String(v.kern || "").length > 180 ? '<button type="button" class="st4-details" data-details aria-expanded="false">Details<span class="kb-k-pfeil" aria-hidden="true"></span></button>' : "") +
+      (punkte.length ? '<ul class="st4-punkte" hidden>' + punkte.map(function (x) { return "<li>" + mitLinks(x) + "</li>"; }).join("") + "</ul>" : "") + "</div>" +
       '<div class="st4-unten"><p class="st4-vorschlag"><span>' + (rm ? "Was ich von dir brauche" : "Mein Vorschlag") + "</span>" + mitLinks(v.vorschlag) + "</p>" +
       (v.ablage ? '<p class="st4-ablage">Ablage: ' + esc(v.ablage) + "</p>" : "") +
       '<div class="st4-knoepfe">' + knoepfe + "</div></div>" +
@@ -121,9 +123,11 @@
       return '<section class="an-tag"><h4>' + d.toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" }) + "</h4><ul>" + tage[k].map(function (t) {
         var p = projekt(t.projekt_id), zeit = t.ganztags ? "ganztags" : new Date(t.start).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
         var mit = (t.teilnehmer || []).slice(0, 3).join(", ") + ((t.teilnehmer || []).length > 3 ? " …" : "");
-        return '<li class="an-t an-t--' + t.vorbereitung + '" data-t="' + t.id + '"><span class="an-zeit">' + zeit + "</span>" +
+        // Gelb nur, wenn die Vorbereitung offen ist und der Termin bis übermorgen ansteht (Daniel: nicht blind markieren)
+        var dringend = t.vorbereitung === "offen" && new Date(t.start) < new Date(+HEUTE + 3 * 864e5);
+        return '<li class="an-t an-t--' + t.vorbereitung + (dringend ? " an-t--dringend" : "") + '" data-t="' + t.id + '"><span class="an-zeit">' + zeit + "</span>" +
           '<span class="an-was"><b>' + esc(t.betreff || "(ohne Titel)") + "</b><small>" + [p ? esc(p.name) : "", esc(mit), esc(t.postfach)].filter(Boolean).join(" · ") + "</small>" +
-            (t.vorbereitung_notiz ? '<ul class="an-notiz">' + t.vorbereitung_notiz.split("\n").filter(Boolean).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "") + "</span>" +
+            (t.vorbereitung_notiz ? '<button type="button" class="an-notiz-auf" data-notiz aria-expanded="false">Vorbereitung<span class="kb-k-pfeil" aria-hidden="true"></span></button><ul class="an-notiz" hidden>' + t.vorbereitung_notiz.split("\n").filter(Boolean).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "") + "</span>" +
           '<span class="an-vorb" role="group" aria-label="Vorbereitung">' +
             [["offen", "offen"], ["laeuft", "läuft"], ["vorbereitet", "vorbereitet"], ["nicht_noetig", "nicht nötig"]].map(function (v) {
               return '<button type="button" data-v="' + v[0] + '" aria-pressed="' + (t.vorbereitung === v[0]) + '">' + v[1] + "</button>"; }).join("") + "</span></li>";
@@ -131,6 +135,9 @@
     }).join("");
   }
   function termineVerdrahten() {
+    wurzel.querySelectorAll("[data-notiz]").forEach(function (b) {
+      b.onclick = function () { var u = b.nextElementSibling, auf = u.hidden; u.hidden = !auf; b.setAttribute("aria-expanded", String(auf)); };
+    });
     wurzel.querySelectorAll(".an-t").forEach(function (li) {
       li.querySelectorAll("[data-v]").forEach(function (b) {
         b.onclick = function () {
@@ -203,6 +210,11 @@
   function verdrahten() {
     wurzel.querySelectorAll(".st4-karte").forEach(function (k) {
       var id = +k.getAttribute("data-v"), form = k.querySelector(".st4-anders");
+      var det = k.querySelector("[data-details]");
+      if (det) det.onclick = function () {
+        var auf = det.getAttribute("aria-expanded") !== "true", ul = k.querySelector(".st4-punkte");
+        det.setAttribute("aria-expanded", String(auf)); k.classList.toggle("st4-offen", auf); if (ul) ul.hidden = !auf;
+      };
       k.querySelectorAll("[data-e]").forEach(function (b) {
         var e = b.getAttribute("data-e");
         b.onclick = function () { speichern(id, e === "spaeter" ? { entscheidung: "spaeter" } : e === "gelesen" ? { status: "erledigt", entscheidung: "gelesen" } : { status: "entschieden", entscheidung: "ja" }, k); };

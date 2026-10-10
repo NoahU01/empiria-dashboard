@@ -1572,3 +1572,49 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 .gb-name:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .gb-text { margin-top: 10px; }
 .gb-text .gb-knoepfe { display: flex; gap: 6px; }
+
+/* Steuerung › Auf deinem Tisch: Kern drei Zeilen, Stichpunkte unter „Details“ (Daniel, 10.10.2026) */
+.st4-mitte { max-height: none; overflow: visible; }
+.st4-kern { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 8px !important; }
+.st4-offen .st4-kern { display: block; -webkit-line-clamp: unset; }
+.st4-details { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 16px; padding: 0; border: 0; background: none; font-size: var(--fs-xs); font-weight: 500; color: var(--grey-70); cursor: pointer; }
+.st4-details:hover { color: var(--ink); }
+.st4-details[aria-expanded="true"] .kb-k-pfeil { margin-top: 3px; transform: rotate(-135deg); }
+.st4-punkte { margin: 0 0 16px; padding-left: 18px; font-size: var(--fs-s); font-weight: 300; line-height: 1.5; color: var(--grey-70); }
+.st4-punkte li + li { margin-top: 4px; }
+.st4-karte h3 { font-size: var(--fs-l); }
+
+/* Steuerung › Termine: ruhiger – Zustand leise, gelb nur dringend offen; Vorbereitung zuklappbar (Daniel, 10.10.2026) */
+.an-vorb { border-color: #ebe9e6; }
+.an-vorb button { height: 28px; padding: 0 9px; border-left-color: #f0eeeb; color: var(--grey-50); }
+.an-vorb button[aria-pressed="true"] { background: #efedea; color: var(--ink); font-weight: 600; }
+.an-t--offen .an-vorb button[data-v="offen"][aria-pressed="true"] { background: #efedea; color: var(--ink); font-weight: 600; }
+.an-t--dringend .an-vorb button[data-v="offen"][aria-pressed="true"] { background: var(--hl); }
+.an-t--nicht_noetig .an-was b { color: var(--grey-50); }
+.an-notiz-auf { display: inline-flex; align-items: center; gap: 8px; margin-top: 4px; padding: 0; border: 0; background: none; font-size: var(--fs-xs); font-weight: 500; color: var(--grey-70); cursor: pointer; }
+.an-notiz-auf[aria-expanded="true"] .kb-k-pfeil { margin-top: 3px; transform: rotate(-135deg); }
+
+/* Strategie: Marken ohne Vision als eine Zeile mit Weg zum Zielbild (Daniel, 10.10.2026) */
+.sg-zeilen { list-style: none; margin: 0; padding: 0; }
+.sg-zeile { display: grid; grid-template-columns: 170px minmax(0, 1fr) auto; gap: 6px 20px; align-items: center; padding: 14px 0; border-top: 1px solid #f0eeeb; }
+.sg-zeile:first-child { border-top: 0; }
+.sg-zeile-marke { font-family: var(--font-serif); font-size: var(--fs-l); font-weight: 600; }
+.sg-zeile-status { display: block; font-size: var(--fs-m); }
+.sg-zeile-was small { display: block; margin-top: 2px; font-size: var(--fs-xs); color: var(--grey-50); }
+.sg-zeile-was small a { color: var(--grey-70); text-decoration: none; } .sg-zeile-was small a:hover { color: var(--ink); text-decoration: underline; }
+.sg-los { height: 34px; padding: 0 14px; border: 1.5px solid var(--ink); border-radius: 999px; background: #fff; font-size: var(--fs-xs); font-weight: 500; color: var(--ink); white-space: nowrap; cursor: pointer; }
+.sg-los:hover { background: var(--ink); color: #fff; }
+.sg-los:disabled { border-color: var(--linie); color: var(--grey-70); background: #fff; cursor: default; }
+@media (max-width: 700px) { .sg-zeile { grid-template-columns: minmax(0, 1fr); } .sg-los { justify-self: start; } }
+.sg-zeilen + .sg-marken { margin-top: 18px; }
+
+/* Einheitlich wie die empiria-Homepage (Daniel, 10.10.2026): Kicker mit Strich; Knöpfe als Pillen */
+.db-kopf .kicker:not(:has(a)) { display: flex; align-items: center; gap: 10px; font-size: var(--fs-xs); font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); }
+.db-kopf .kicker:not(:has(a))::before { content: ""; width: 18px; height: 2px; background: var(--ink); }
+.st4-knoepfe button { border-radius: 999px; }
+.br-bereich .an-sprint { height: 34px; padding: 0 14px; border: 1.5px solid var(--ink); border-radius: 999px; background: #fff; color: var(--ink); font-size: var(--fs-xs); font-weight: 500; }
+.br-bereich .an-sprint:hover { background: var(--ink); color: #fff; }
+.st4-karte .st4-mitte .st4-kern { display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; max-height: none; }
+.st4-karte.st4-offen .st4-mitte .st4-kern { display: block; -webkit-line-clamp: unset; line-clamp: unset; }
+.an-vorb button { white-space: nowrap; }
+@media (max-width: 420px) { .an-vorb button { padding: 0 6px; font-size: 11px; } }

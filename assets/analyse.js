@@ -110,25 +110,35 @@
   var PRIO = { hoch: 0, mittel: 1, niedrig: 2 };
   function strategie() {
     var marken = MARKEN.filter(function (m) { return mf(m); });
-    return '<p class="sg-einl">Wohin wir wollen, wie wir dorthin kommen – und ob Marketing, Projekte und Aufgaben darauf einzahlen.</p>' +
-      '<div class="sg-marken">' + marken.map(function (m) {
-        var s = D.strategie.filter(function (x) { return x.marke === m; })[0] || {}, st = s.stossrichtungen || [];
-        var proj = D.projekteAlle.filter(function (p) { return (p.marke || "empiria") === m && p.status !== "abgeschlossen"; })
-          .sort(function (a, b) { return (a.prioritaet ? PRIO[a.prioritaet] : 3) - (b.prioritaet ? PRIO[b.prioritaet] : 3) || a.name.localeCompare(b.name, "de"); });
-        var kamp = D.kampagnen.filter(function (k) { return (k.marke || "empiria") === m; });
-        function feld(titel, wert) { return '<div class="sg-feld"><h5>' + titel + "</h5>" + (wert ? "<p>" + esc(wert) + "</p>" : '<p class="sg-offen">Noch offen – im Sparring erarbeiten</p>') + "</div>"; }
-        return '<section class="sg-marke"><h4 class="sg-marke-h">' + esc(m) + "</h4>" +
-          feld("Vision", s.vision) + feld("Zukünftiges Geschäftsmodell", s.geschaeftsmodell) +
-          '<div class="sg-feld"><h5>Strategische Stoßrichtungen</h5>' + (st.length ? "<ol>" + st.map(function (x) { return "<li><b>" + esc(x.titel) + "</b>" + (x.beschreibung ? " – " + esc(x.beschreibung) : "") + "</li>"; }).join("") + "</ol>" : '<p class="sg-offen">Noch offen</p>') + "</div>" +
-          '<div class="sg-feld"><h5>Abgleich: Projekte</h5>' + (proj.length ? '<ul class="sg-proj">' + proj.map(function (p) {
-            return '<li><a href="/strategie/projekte.html#p=' + p.id + '">' + esc(p.name) + "</a><small>" + esc([p.prioritaet ? "Priorität " + p.prioritaet : "Priorität offen", p.status === "projektidee" ? "Projektidee" : ""].filter(Boolean).join(" · ")) + "</small></li>"; }).join("") + "</ul>" : '<p class="sg-offen">Keine Projekte</p>') + "</div>" +
-          '<div class="sg-feld"><h5>Abgleich: Marketing</h5>' + (kamp.length ? '<ul class="sg-proj">' + kamp.map(function (k) {
-            return '<li><a href="/strategie/marketing.html">' + esc(k.name) + "</a><small>" + esc(k.status || "") + "</small></li>"; }).join("") + "</ul>" : '<p class="sg-offen">Keine Kampagnen</p>') + "</div>" +
-          "</section>";
-      }).join("") + "</div>" +
+    function daten(m) {
+      var s = D.strategie.filter(function (x) { return x.marke === m; })[0] || {};
+      var proj = D.projekteAlle.filter(function (p) { return (p.marke || "empiria") === m && p.status !== "abgeschlossen"; })
+        .sort(function (a, b) { return (a.prioritaet ? PRIO[a.prioritaet] : 3) - (b.prioritaet ? PRIO[b.prioritaet] : 3) || a.name.localeCompare(b.name, "de"); });
+      return { s: s, st: s.stossrichtungen || [], proj: proj, kamp: D.kampagnen.filter(function (k) { return (k.marke || "empiria") === m; }), leer: !s.vision && !s.geschaeftsmodell && !(s.stossrichtungen || []).length };
+    }
+    function projLink(p) { return '<a href="/strategie/projekte.html#p=' + p.id + '">' + esc(p.name) + "</a>"; }
+    // Noch ohne Vision: je Marke eine Zeile – Schwerpunkt-Projekte und der Weg zum Zielbild (Deep Dive)
+    var leer = marken.filter(function (m) { return daten(m).leer; }), voll = marken.filter(function (m) { return !daten(m).leer; });
+    var h = "";
+    if (leer.length) h += '<ul class="sg-zeilen">' + leer.map(function (m) {
+      var d = daten(m), schwer = d.proj.filter(function (p) { return p.prioritaet === "hoch"; });
+      if (!schwer.length) schwer = d.proj.slice(0, 3);
+      return '<li class="sg-zeile"><b class="sg-zeile-marke">' + esc(m) + '</b><span class="sg-zeile-was"><span class="sg-zeile-status">Vision und Stoßrichtungen noch offen</span>' +
+        (schwer.length ? '<small>' + (d.proj.some(function (p) { return p.prioritaet === "hoch"; }) ? "Priorität hoch: " : "Projekte: ") + schwer.map(projLink).join(" · ") + "</small>" : "") + "</span>" +
+        '<button type="button" class="sg-los" data-deep="' + esc(m) + '">Deep Dive starten <i aria-hidden="true">→</i></button></li>';
+    }).join("") + "</ul>";
+    if (voll.length) h += '<div class="sg-marken">' + voll.map(function (m) {
+      var d = daten(m);
+      function feld(titel, wert) { return '<div class="sg-feld"><h5>' + titel + "</h5>" + (wert ? "<p>" + esc(wert) + "</p>" : '<p class="sg-offen">Noch offen</p>') + "</div>"; }
+      return '<section class="sg-marke"><h4 class="sg-marke-h">' + esc(m) + "</h4>" + feld("Vision", d.s.vision) + feld("Zukünftiges Geschäftsmodell", d.s.geschaeftsmodell) +
+        '<div class="sg-feld"><h5>Strategische Stoßrichtungen</h5>' + (d.st.length ? "<ol>" + d.st.map(function (x) { return "<li><b>" + esc(x.titel) + "</b>" + (x.beschreibung ? " – " + esc(x.beschreibung) : "") + "</li>"; }).join("") + "</ol>" : '<p class="sg-offen">Noch offen</p>') + "</div>" +
+        '<div class="sg-feld"><h5>Abgleich: Projekte</h5>' + (d.proj.length ? '<ul class="sg-proj">' + d.proj.map(function (p) { return "<li>" + projLink(p) + "<small>" + esc(p.prioritaet ? "Priorität " + p.prioritaet : "Priorität offen") + "</small></li>"; }).join("") + "</ul>" : '<p class="sg-offen">Keine Projekte</p>') + "</div>" +
+        '<div class="sg-feld"><h5>Abgleich: Marketing</h5>' + (d.kamp.length ? '<ul class="sg-proj">' + d.kamp.map(function (k) { return '<li><a href="/strategie/marketing.html">' + esc(k.name) + "</a><small>" + esc(k.status || "") + "</small></li>"; }).join("") + "</ul>" : '<p class="sg-offen">Keine Kampagnen</p>') + "</div></section>";
+    }).join("") + "</div>" +
       '<div class="sg-empf"><h4 class="gb-h">Empfehlungen</h4><div class="sg-empf-drei">' +
         [["Kann ich allein umsetzen", "Claude setzt nach deinem Ja direkt um."], ["Muss gebaut werden", "Braucht eine Programmier- oder Gestaltungsrunde."], ["Braucht deine Freigabe", "Entscheidung, Budget oder Zugang durch dich."]].map(function (x) {
-          return '<div class="sg-empf-k"><b>' + x[0] + "</b><small>" + x[1] + '</small><p class="sg-offen">Folgt, sobald Vision und Stoßrichtungen stehen.</p></div>'; }).join("") + "</div></div>";
+          return '<div class="sg-empf-k"><b>' + x[0] + "</b><small>" + x[1] + "</small></div>"; }).join("") + "</div></div>";
+    return '<p class="sg-einl">Wohin wir wollen, wie wir dorthin kommen – und ob Marketing, Projekte und Aufgaben darauf einzahlen. Aus Vision und Stoßrichtungen leite ich die Schwerpunkte und meine Empfehlungen ab.</p>' + h;
   }
 
   /* ---------- Sparring (vorher auf der Steuerung) ---------- */
@@ -169,6 +179,15 @@
           if (r.error) { li.classList.remove("laedt"); alert("Nicht gespeichert: " + r.error.message); return; }
           D.geburtstage.forEach(function (g) { if (g.id === id) g.gratuliert_jahr = jahr; }); zeichnen();
         });
+      };
+    });
+    // Deep Dive je Marke: Startsatz in die Zwischenablage
+    wurzel.querySelectorAll("[data-deep]").forEach(function (b) {
+      b.onclick = function () {
+        var m = b.getAttribute("data-deep"), satz = "Deep Dive Strategie " + m + " starten – Vision, zukünftiges Geschäftsmodell und strategische Stoßrichtungen erarbeiten. Regel: Keine Randthemen.";
+        db.from("sparring").insert({ modus: "Deep Dive Strategie " + m }).then(function () {});
+        var fertig = function () { b.innerHTML = "✓ Startsatz kopiert – im Chat einfügen"; b.disabled = true; };
+        if (navigator.clipboard) navigator.clipboard.writeText(satz).then(fertig, fertig); else fertig();
       };
     });
     wurzel.querySelectorAll("[data-spar]").forEach(function (b) {
