@@ -196,6 +196,26 @@
     // Noch ohne Vision: je Marke eine Zeile – Schwerpunkt-Projekte und der Weg zum Zielbild (Deep Dive)
     var leer = marken.filter(function (m) { return daten(m).leer; }), voll = marken.filter(function (m) { return !daten(m).leer; });
     var h = "";
+    // Marke mit Inhalt: Zwischenziel und Stränge (je mit Verantwortung und verknüpften Projekten) links,
+    // Vision, Geschäftsmodell, Marketing und nicht zugeordnete Projekte rechts (Daniel, 11.10.2026)
+    if (voll.length) h += voll.map(function (m) {
+      var d = daten(m), zugeordnet = {};
+      d.st.forEach(function (x) { (x.projekte || []).forEach(function (id) { zugeordnet[id] = 1; }); });
+      function feld(titel, wert, offenText) { return '<div class="sg-feld"><h5>' + titel + "</h5>" + (wert ? "<p>" + esc(wert) + "</p>" : '<p class="sg-offen">' + (offenText || "Noch offen") + "</p>") + "</div>"; }
+      var weitere = d.proj.filter(function (p) { return !zugeordnet[p.id]; });
+      return '<section class="sg-voll"><h4 class="sg-marke-h">' + esc(m) + "</h4><div class=\"sg-voll-zwei\"><div>" +
+        feld("Zwischenziel", d.s.zwischenziel) +
+        '<div class="sg-feld"><h5>Stränge</h5>' + (d.st.length ? '<ol class="sg-straenge">' + d.st.map(function (x) {
+          var pl = (x.projekte || []).map(function (id) { return D.projekteAlle.filter(function (p) { return p.id === id; })[0]; }).filter(Boolean);
+          return "<li><b>" + esc(x.titel) + "</b>" + (x.verantwortlich ? '<span class="sg-wer">' + esc(x.verantwortlich) + "</span>" : "") + (x.stand ? '<span class="sg-wer">· ' + esc(x.stand) + "</span>" : "") +
+            (x.beschreibung ? "<p>" + esc(x.beschreibung) + "</p>" : "") +
+            (pl.length ? '<p class="sg-proj-l">' + pl.map(function (p) { return '<a href="/strategie/projekte.html#p=' + p.id + '">' + esc(p.name) + " →</a>"; }).join("") + "</p>" : "") + "</li>"; }).join("") + "</ol>" : '<p class="sg-offen">Noch offen</p>') + "</div>" +
+        "</div><div>" +
+        feld("Vision", d.s.vision, "Noch offen – folgt") + feld("Zukünftiges Geschäftsmodell", d.s.geschaeftsmodell, "Noch offen – folgt") +
+        '<div class="sg-feld"><h5>Marketing</h5>' + (d.kamp.length ? '<ul class="sg-proj">' + d.kamp.map(function (k) { return '<li><a href="/strategie/marketing.html">' + esc(k.name) + "</a><small>" + esc(k.status || "") + "</small></li>"; }).join("") + "</ul>" : '<p class="sg-offen">Noch keine Kampagne</p>') + "</div>" +
+        (weitere.length ? '<div class="sg-feld"><h5>Weitere Projekte</h5><ul class="sg-proj">' + weitere.map(function (p) { return "<li>" + projLink(p) + "<small>" + esc(p.typ === "intern" ? "intern" : "Kunde") + "</small></li>"; }).join("") + "</ul></div>" : "") +
+        "</div></div></section>";
+    }).join("");
     if (leer.length) h += '<ul class="sg-zeilen">' + leer.map(function (m) {
       var d = daten(m), schwer = d.proj.filter(function (p) { return p.prioritaet === "hoch"; });
       if (!schwer.length) schwer = d.proj.slice(0, 3);
@@ -203,17 +223,6 @@
         (schwer.length ? '<small>' + (d.proj.some(function (p) { return p.prioritaet === "hoch"; }) ? "Priorität hoch: " : "Projekte: ") + schwer.map(projLink).join(" · ") + "</small>" : "") + "</span>" +
         '<button type="button" class="sg-los" data-deep="' + esc(m) + '">Deep Dive starten <i aria-hidden="true">→</i></button></li>';
     }).join("") + "</ul>";
-    if (voll.length) h += '<div class="sg-marken">' + voll.map(function (m) {
-      var d = daten(m);
-      function feld(titel, wert) { return '<div class="sg-feld"><h5>' + titel + "</h5>" + (wert ? "<p>" + esc(wert) + "</p>" : '<p class="sg-offen">Noch offen</p>') + "</div>"; }
-      return '<section class="sg-marke"><h4 class="sg-marke-h">' + esc(m) + "</h4>" + feld("Vision", d.s.vision) + feld("Zukünftiges Geschäftsmodell", d.s.geschaeftsmodell) +
-        '<div class="sg-feld"><h5>Strategische Stoßrichtungen</h5>' + (d.st.length ? "<ol>" + d.st.map(function (x) { return "<li><b>" + esc(x.titel) + "</b>" + (x.beschreibung ? " – " + esc(x.beschreibung) : "") + "</li>"; }).join("") + "</ol>" : '<p class="sg-offen">Noch offen</p>') + "</div>" +
-        '<div class="sg-feld"><h5>Abgleich: Projekte</h5>' + (d.proj.length ? '<ul class="sg-proj">' + d.proj.map(function (p) { return "<li>" + projLink(p) + "<small>" + esc(p.prioritaet ? "Priorität " + p.prioritaet : "Priorität offen") + "</small></li>"; }).join("") + "</ul>" : '<p class="sg-offen">Keine Projekte</p>') + "</div>" +
-        '<div class="sg-feld"><h5>Abgleich: Marketing</h5>' + (d.kamp.length ? '<ul class="sg-proj">' + d.kamp.map(function (k) { return '<li><a href="/strategie/marketing.html">' + esc(k.name) + "</a><small>" + esc(k.status || "") + "</small></li>"; }).join("") + "</ul>" : '<p class="sg-offen">Keine Kampagnen</p>') + "</div></section>";
-    }).join("") + "</div>" +
-      '<div class="sg-empf"><h4 class="gb-h">Empfehlungen</h4><div class="sg-empf-drei">' +
-        [["Kann ich allein umsetzen", "Claude setzt nach deinem Ja direkt um."], ["Muss gebaut werden", "Braucht eine Programmier- oder Gestaltungsrunde."], ["Braucht deine Freigabe", "Entscheidung, Budget oder Zugang durch dich."]].map(function (x) {
-          return '<div class="sg-empf-k"><b>' + x[0] + "</b><small>" + x[1] + "</small></div>"; }).join("") + "</div></div>";
     return '<p class="sg-einl">Wohin wir wollen, wie wir dorthin kommen – und ob Marketing, Projekte und Aufgaben darauf einzahlen. Aus Vision und Stoßrichtungen leite ich die Schwerpunkte und meine Empfehlungen ab.</p>' + h;
   }
 

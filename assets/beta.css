@@ -1741,3 +1741,18 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 .oe-teile { margin: 6px 0 4px; padding-left: 18px; font-size: var(--fs-s); line-height: 1.5; color: var(--grey-70); }
 .oe-teile a { color: var(--ink); font-weight: 500; text-decoration: underline; text-decoration-color: var(--grey-50); text-underline-offset: 3px; }
 .oe-teile a:hover { text-decoration-color: var(--ink); }
+
+/* Strategie je Marke mit Inhalt (Daniel, 11.10.2026) */
+.sg-voll { margin-top: 18px; padding: 18px 20px; border: 1px solid #e9e7e4; border-radius: 16px; }
+.sg-voll-zwei { display: grid; gap: 22px 40px; }
+@media (min-width: 1000px) { .sg-voll-zwei { grid-template-columns: 3fr 2fr; } }
+.sg-straenge { margin: 4px 0 0; padding-left: 20px; }
+.sg-straenge li { padding: 6px 0; font-size: var(--fs-s); }
+.sg-straenge li + li { border-top: 1px solid #f2f1ef; }
+.sg-straenge b { font-weight: 600; }
+.sg-wer { margin-left: 8px; font-size: var(--fs-xs); color: var(--grey-50); }
+.sg-straenge p { margin: 2px 0 0; color: var(--grey-70); }
+.sg-proj-l { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 4px !important; }
+.sg-proj-l a { font-size: var(--fs-xs); font-weight: 500; color: var(--ink); text-decoration: none; }
+.sg-proj-l a:hover { text-decoration: underline; }
+.sg-voll + .sg-zeilen { margin-top: 18px; } .sg-voll + .sg-voll { margin-top: 14px; }
