@@ -31,7 +31,7 @@
       db.from("kampagnen").select("id, name, marke, status, start"),
       db.from("repo_stand").select("thema, datum, titel").gte("datum", new Date(Date.now() - 14 * 864e5).toISOString()).order("datum", { ascending: false }),
       db.from("vorlagen").select("id, titel, projekt_id, marke, entschieden_am, art").eq("status", "entschieden"),
-      db.from("vorlagen").select("id, art, thema, titel, kern, vorschlag, link, knopf_ja, entscheidung, angelegt_am, rang").in("art", ["umsetzung", "schritt"]).eq("status", "offen").order("rang")
+      db.from("vorlagen").select("id, art, thema, titel, kern, punkte, vorschlag, link, knopf_ja, entscheidung, angelegt_am, rang").in("art", ["umsetzung", "schritt"]).eq("status", "offen").order("rang")
     ]).then(function (r) {
       D.repo = r[9].data || []; D.auftraege = (r[10].data || []).filter(function (v) { return v.art !== "umsetzung" && v.art !== "schritt"; }); D.umsetzung = r[11].data || [];
       D.geburtstage = r[5].data || []; D.strategie = r[6].data || []; D.projekteAlle = r[7].data || []; D.kampagnen = r[8].data || [];
@@ -140,10 +140,13 @@
       var nx = D.umsetzung.filter(function (v) { return v.art === "schritt" && v.thema === th[0] && v.entscheidung !== "spaeter"; });
       var um = D.repo.filter(function (c) { return c.thema === th[0]; }).slice(0, 5);
       function punkt(v, schritt) {
-        var neu = LETZTER && +new Date(v.angelegt_am) > LETZTER;
         // Zugeklappt nur die sprechende Überschrift, aufgeklappt Text, Frage und Knöpfe (Daniel, 11.10.2026)
-        return '<li class="oe-p' + (neu ? " oe-neu" : "") + '" data-v="' + v.id + '"><button type="button" class="oe-kopf" aria-expanded="false"><b>' + esc(v.titel) + '</b><span class="kb-k-pfeil" aria-hidden="true"></span></button><div class="oe-det" hidden>' +
+        return '<li class="oe-p" data-v="' + v.id + '"><button type="button" class="oe-kopf" aria-expanded="false"><b>' + esc(v.titel) + '</b><span class="kb-k-pfeil" aria-hidden="true"></span></button><div class="oe-det" hidden>' +
           (v.kern ? '<span class="oe-kern">' + esc(v.kern) + "</span>" : "") +
+          // Was im Einzelnen neu ist: Zeilen „Titel | Satz | Link“
+          (v.punkte ? '<ul class="oe-teile">' + String(v.punkte).split("\n").filter(Boolean).map(function (z) {
+            var t = z.split("|").map(function (x) { return x.trim(); });
+            return "<li>" + (t[2] ? '<a href="' + esc(t[2]) + '" target="_blank" rel="noopener">' + esc(t[0]) + "</a>" : "<b>" + esc(t[0]) + "</b>") + (t[1] ? " – " + esc(t[1]) : "") + "</li>"; }).join("") + "</ul>" : "") +
           (v.vorschlag ? '<span class="oe-frage">' + esc(v.vorschlag) + "</span>" : "") +
           '<span class="oe-knoepfe">' + (v.link ? '<a class="oe-an" href="' + esc(v.link) + '" target="_blank" rel="noopener">Ansehen ↗</a>' : "") +
           '<button type="button" class="oe-ja" data-oe="ja">' + esc(schritt ? "Ja" : v.knopf_ja || "Passt") + "</button>" +

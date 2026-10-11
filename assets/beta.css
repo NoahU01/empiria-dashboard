@@ -1700,10 +1700,8 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 .oe-l li { position: relative; padding: 3px 0 3px 0; font-size: var(--fs-s); line-height: 1.45; color: var(--ink-2); }
 .oe-l li small { display: block; font-size: var(--fs-xs); color: var(--grey-50); }
 .oe-wann { display: inline-block; min-width: 92px; margin-right: 8px; font-size: var(--fs-xs); color: var(--grey-50); }
-.oe-neu::before { content: ""; position: absolute; left: -14px; top: 10px; width: 7px; height: 7px; border-radius: 50%; background: var(--hl); box-shadow: 0 0 0 1px var(--ink); }
 .oe-claude { font-weight: 500; color: var(--ink); }
 .oe-leer { margin: 0; font-size: var(--fs-s); color: var(--grey-50); }
-@media (max-width: 900px) { .oe-z { grid-template-columns: minmax(0, 1fr); row-gap: 10px; } .oe-neu::before { left: -11px; } }
 .oe-l li.oe-c { display: grid; grid-template-columns: 92px minmax(0, 1fr); column-gap: 8px; }
 .oe-l li.oe-c .oe-wann { min-width: 0; margin: 0; padding-top: 1px; }
 
@@ -1724,7 +1722,6 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 .oe-form span { display: flex; gap: 6px; } .oe-form button { height: 30px; padding: 0 12px; border: 1px solid #dcd9d5; border-radius: 999px; background: #fff; font-size: var(--fs-xs); }
 .oe-form button[type=submit] { border-color: var(--ink); background: var(--ink); color: #fff; }
 .oe-p.laedt { opacity: .5; pointer-events: none; }
-.oe-neu.oe-p::before { top: 17px; }
 .oe-prot { margin-top: 8px; }
 .oe-prot summary { font-size: var(--fs-xs); color: var(--grey-50); cursor: pointer; }
 .oe-prot .oe-l { margin-top: 6px; }
@@ -1740,5 +1737,7 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 .oe-det { padding: 0 26px 14px 0; }
 .oe-det[hidden] { display: none; }
 .oe-det .oe-kern { margin-top: 0; }
-.oe-neu.oe-p::before { top: 15px; }
 .oe-z { padding: 14px 0; }
+.oe-teile { margin: 6px 0 4px; padding-left: 18px; font-size: var(--fs-s); line-height: 1.5; color: var(--grey-70); }
+.oe-teile a { color: var(--ink); font-weight: 500; text-decoration: underline; text-decoration-color: var(--grey-50); text-underline-offset: 3px; }
+.oe-teile a:hover { text-decoration-color: var(--ink); }
