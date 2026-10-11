@@ -1729,3 +1729,16 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 .oe-prot summary { font-size: var(--fs-xs); color: var(--grey-50); cursor: pointer; }
 .oe-prot .oe-l { margin-top: 6px; }
 .oe-form[hidden] { display: none; }
+/* Strategieumsetzung: zugeklappt nur die Überschrift */
+.oe-p { padding: 0 !important; }
+.oe-p:first-child { padding-top: 0 !important; }
+.oe-kopf { display: grid; grid-template-columns: minmax(0, 1fr) 14px; align-items: center; gap: 12px; width: 100%; padding: 9px 0; border: 0; background: none; font: inherit; text-align: left; cursor: pointer; }
+.oe-kopf b { font-size: var(--fs-s); font-weight: 500; line-height: 1.4; }
+.oe-kopf:hover b { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--grey-50); }
+.oe-kopf .kb-k-pfeil { justify-self: end; color: var(--grey-50); }
+.oe-kopf[aria-expanded="true"] .kb-k-pfeil { margin-top: 3px; transform: rotate(-135deg); }
+.oe-det { padding: 0 26px 14px 0; }
+.oe-det[hidden] { display: none; }
+.oe-det .oe-kern { margin-top: 0; }
+.oe-neu.oe-p::before { top: 15px; }
+.oe-z { padding: 14px 0; }

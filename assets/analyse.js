@@ -141,14 +141,15 @@
       var um = D.repo.filter(function (c) { return c.thema === th[0]; }).slice(0, 5);
       function punkt(v, schritt) {
         var neu = LETZTER && +new Date(v.angelegt_am) > LETZTER;
-        return '<li class="oe-p' + (neu ? " oe-neu" : "") + '" data-v="' + v.id + '"><b>' + esc(v.titel) + "</b>" +
+        // Zugeklappt nur die sprechende Überschrift, aufgeklappt Text, Frage und Knöpfe (Daniel, 11.10.2026)
+        return '<li class="oe-p' + (neu ? " oe-neu" : "") + '" data-v="' + v.id + '"><button type="button" class="oe-kopf" aria-expanded="false"><b>' + esc(v.titel) + '</b><span class="kb-k-pfeil" aria-hidden="true"></span></button><div class="oe-det" hidden>' +
           (v.kern ? '<span class="oe-kern">' + esc(v.kern) + "</span>" : "") +
           (v.vorschlag ? '<span class="oe-frage">' + esc(v.vorschlag) + "</span>" : "") +
           '<span class="oe-knoepfe">' + (v.link ? '<a class="oe-an" href="' + esc(v.link) + '" target="_blank" rel="noopener">Ansehen ↗</a>' : "") +
           '<button type="button" class="oe-ja" data-oe="ja">' + esc(schritt ? "Ja" : v.knopf_ja || "Passt") + "</button>" +
           '<button type="button" data-oe-anders>' + (schritt ? "Anders …" : "Rückmeldung …") + "</button>" +
           (schritt ? '<button type="button" data-oe="spaeter">Später</button>' : "") + "</span>" +
-          '<form class="oe-form" hidden><textarea rows="3" placeholder="' + (schritt ? "Was soll stattdessen passieren?" : "Deine Rückmeldung – sprechen oder tippen") + '"></textarea><span><button type="submit">An Claude geben</button><button type="button" data-oe-zu>Abbrechen</button></span></form></li>';
+          '<form class="oe-form" hidden><textarea rows="3" placeholder="' + (schritt ? "Was soll stattdessen passieren?" : "Deine Rückmeldung – sprechen oder tippen") + '"></textarea><span><button type="submit">An Claude geben</button><button type="button" data-oe-zu>Abbrechen</button></span></form></div></li>';
       }
       return '<section class="oe-z"><h4 class="oe-t">' + esc(th[1]) + "</h4>" +
         '<div class="oe-sp"><p class="oe-k">Ansehen und Rückmeldung geben</p>' + (an.length ? '<ul class="oe-l">' + an.map(function (v) { return punkt(v, false); }).join("") + "</ul>" : '<p class="oe-leer">Nichts Neues zum Ansehen.</p>') +
@@ -159,7 +160,8 @@
   }
   function oekosystemVerdrahten() {
     wurzel.querySelectorAll(".oe-p").forEach(function (li) {
-      var id = +li.getAttribute("data-v"), form = li.querySelector(".oe-form");
+      var id = +li.getAttribute("data-v"), form = li.querySelector(".oe-form"), kopf = li.querySelector(".oe-kopf");
+      kopf.onclick = function () { var auf = kopf.getAttribute("aria-expanded") !== "true"; kopf.setAttribute("aria-expanded", String(auf)); li.querySelector(".oe-det").hidden = !auf; };
       function sichern(f) {
         f.entschieden_am = new Date().toISOString(); li.classList.add("laedt");
         db.from("vorlagen").update(f).eq("id", id).then(function (r) {
