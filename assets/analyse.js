@@ -21,7 +21,7 @@
     var bis14 = new Date(+HEUTE + 15 * 864e5).toISOString();
     Promise.all([
       db.from("vorlagen").select("id, entscheidung, marke").eq("status", "offen"),
-      db.from("termine").select("id, start, ende, ganztags, betreff, ort, teilnehmer, extern, postfach, projekt_id, vorbereitung, vorbereitung_notiz, abgesagt").gte("ende", JETZT.toISOString()).lte("start", bis14).order("start"),
+      db.from("termine").select("id, start, ende, ganztags, betreff, ort, teilnehmer, extern, postfach, projekt_id, vorbereitung, vorbereitung_notiz, abgesagt").eq("im_kalender", true).gte("ende", JETZT.toISOString()).lte("start", bis14).order("start"),
       db.from("aufgaben").select("id, status, faellig_am, antwort_am, mail_gesendet_am, projekt_id, marke").eq("status", "offen"),
       db.from("projekte").select("id, name, marke"),
       db.from("linkedin_kennzahlen").select("stichtag, follower, kontakte, impressionen, interaktionen, profilaufrufe").eq("quelle", "profil").order("stichtag", { ascending: false }).limit(2),
@@ -159,9 +159,10 @@
   function zeichnen() {
     var BR = window.Bereiche;
     wurzel.innerHTML = '<div class="kg-bereiche">' +
-      BR.html("strategie", "status", "Status", signale() + geburtstage()) +
-      BR.html("strategie", "strategie", "Strategie", strategie()) +
-      BR.html("strategie", "sparring", "Sparring starten", sparring()) + "</div>";
+      // Start immer: Status und Strategie offen, Sparring zu (Daniel, 11.10.2026)
+      BR.html("strategie", "status", "Status", signale() + geburtstage(), "auf") +
+      BR.html("strategie", "strategie", "Strategie", strategie(), "auf") +
+      BR.html("strategie", "sparring", "Sparring starten", sparring(), "zu") + "</div>";
     BR.verdrahten(wurzel, "strategie");
     verdrahten();
   }

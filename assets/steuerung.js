@@ -33,7 +33,7 @@
       db.from("projekt_ereignisse").select("id, projekt_id, datum, art, titel").gte("datum", HEUTE.toISOString()),
       db.from("belege_eingang").select("id, postfach, absender, absender_name, betreff, pdf_link, status, zuordnung, begruendung, titel, lieferant, belegdatum, betrag, kategorie, ust, pk_belegnr, fehler, hochgeladen_am")
         .in("status", ["vorschlag", "fehler"]).order("belegdatum"),
-      db.from("termine").select("id, start, ende, ganztags, betreff, ort, teilnehmer, extern, postfach, projekt_id, vorbereitung, vorbereitung_notiz, abgesagt")
+      db.from("termine").select("id, start, ende, ganztags, betreff, ort, teilnehmer, extern, postfach, projekt_id, vorbereitung, vorbereitung_notiz, abgesagt, verschoben_von, verschoben_am").eq("im_kalender", true)
         .gte("ende", new Date().toISOString()).lte("start", new Date(+HEUTE + 15 * 864e5).toISOString()).order("start")
     ]).then(function (r) {
       D = { vorlagen: r[0].data || [], projekte: r[1].data || [], aufgaben: r[2].data || [], ereignisse: r[3].data || [], belege: r[4].data || [],
@@ -127,6 +127,9 @@
         var dringend = t.vorbereitung === "offen" && new Date(t.start) < new Date(+HEUTE + 3 * 864e5);
         return '<li class="an-t an-t--' + t.vorbereitung + (dringend ? " an-t--dringend" : "") + '" data-t="' + t.id + '"><span class="an-zeit">' + zeit + "</span>" +
           '<span class="an-was"><b>' + esc(t.betreff || "(ohne Titel)") + "</b><small>" + [p ? esc(p.name) : "", esc(mit), esc(t.postfach)].filter(Boolean).join(" · ") + "</small>" +
+            // In Outlook verschoben (Prüfmechanismus termine_abgleich.py) – Hinweis eine Woche lang
+            (t.verschoben_von && t.verschoben_am && Date.now() - new Date(t.verschoben_am) < 7 * 864e5 ? '<small class="an-verschoben">verschoben von ' +
+              new Date(t.verschoben_von).toLocaleString("de-DE", { weekday: "short", day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" }) + " Uhr</small>" : "") +
             (t.vorbereitung_notiz ? '<button type="button" class="an-notiz-auf" data-notiz aria-expanded="false">Vorbereitung<span class="kb-k-pfeil" aria-hidden="true"></span></button><ul class="an-notiz" hidden>' + t.vorbereitung_notiz.split("\n").filter(Boolean).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "") + "</span>" +
           '<span class="an-vorb" role="group" aria-label="Vorbereitung">' +
             [["offen", "offen"], ["laeuft", "läuft"], ["vorbereitet", "vorbereitet"], ["nicht_noetig", "nicht nötig"]].map(function (v) {

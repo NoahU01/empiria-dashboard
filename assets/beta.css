@@ -1631,3 +1631,9 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 .db-kopf h1 { letter-spacing: -.02em; }
 /* Projekte › Überblick: Luft zwischen Umschalter und erster Marke */
 .pz-wahl + .pr-marke-sek { margin-top: 36px; }
+.an-verschoben { color: var(--ink) !important; font-weight: 500; }
+/* Gate mit Termin (Daniel, 11.10.2026) */
+.pl-gate-kopf { display: flex; align-items: baseline; gap: 14px; }
+.pl-gate-ziel { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-xs); font-weight: 600; color: var(--ink); }
+.pl-gate-ziel input { height: 26px; padding: 0 6px; border: 1px solid #dcd9d5; border-radius: 6px; background: #fff; font: inherit; font-weight: 500; color: var(--ink); }
+.pl-gate-ziel--ueber input { border-color: var(--fehler); color: var(--fehler); }

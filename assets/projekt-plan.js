@@ -77,6 +77,8 @@
     if (ohneStrang) return '<span class="pl-griff pl-griff--leer"></span>';
     return '<span class="pl-griff" draggable="true" title="Ziehen zum Umsortieren" aria-hidden="true"></span>';
   }
+  function datumKurz(d) { return new Date(String(d).slice(0, 10) + "T12:00:00").toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "numeric" }); }
+  function heuteIso() { var d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
   function zeile(a, auf, h, erst, letzt, ohneStrang) {
     var z = zustand(a, auf);
     if (a.art === "gate") {
@@ -85,7 +87,11 @@
         : f.length ? "Es fehlt noch: " + f.map(function (x) { return x.titel; }).join(" · ") : "Alles erledigt – Gate kann erreicht werden";
       return '<li class="pl-z pl-gate pl-z--' + z + '" data-a="' + a.id + '" data-art="gate">' + pfeile(a, erst, letzt, ohneStrang) +
         '<button type="button" class="st-haken' + (z === "fertig" ? " an" : "") + '" aria-label="' + (z === "fertig" ? "Wieder öffnen" : "Als erreicht abhaken") + '"></button>' +
-        '<div class="pl-inhalt"><span class="pl-gate-kicker">Gate</span><b class="pl-titel">' + esc(a.titel) + "</b>" +
+        // Gate mit Termin (Daniel, 11.10.2026): Datum direkt hier setzen oder ändern
+        '<div class="pl-inhalt"><span class="pl-gate-kopf"><span class="pl-gate-kicker">Gate</span>' +
+          (z === "fertig" ? (a.faellig_am ? '<span class="pl-gate-ziel">geplant ' + datumKurz(a.faellig_am) + "</span>" : "")
+            : '<label class="pl-gate-ziel' + (a.faellig_am && a.faellig_am < heuteIso() ? " pl-gate-ziel--ueber" : "") + '">Termin <input type="date" data-gate-datum="' + a.id + '" value="' + esc(a.faellig_am || "") + '"></label>') +
+        '</span><b class="pl-titel">' + esc(a.titel) + "</b>" +
         '<span class="pl-gate-stand">' + esc(stand) + "</span></div></li>";
     }
     return '<li class="pl-z pl-z--' + z + '" data-a="' + a.id + '">' + pfeile(a, erst, letzt, ohneStrang) +
@@ -106,7 +112,7 @@
         return '<div class="pl-bahn pl-bahn--' + (i % 3) + '"><div class="pl-bahn-kopf"><b>' + esc(s.titel) + '</b></div><div class="pl-bahn-spur">' +
           je[s.id].map(function (a) {
             var z = zustand(a, alle);
-            if (a.art === "gate") return '<div class="pl-knoten pl-k-gate pl-z--' + z + '" data-k="' + a.id + '"><span class="pl-gate-kicker">Gate</span><b>' + esc(a.titel) + "</b></div>";
+            if (a.art === "gate") return '<div class="pl-knoten pl-k-gate pl-z--' + z + '" data-k="' + a.id + '"><span class="pl-gate-kicker">Gate' + (a.faellig_am ? " · " + datumKurz(a.faellig_am) : "") + '</span><b>' + esc(a.titel) + "</b></div>";
             return '<div class="pl-knoten pl-karte pl-z--' + z + '" data-k="' + a.id + '"><b>' + esc(a.titel) + "</b></div>";
           }).join("") + "</div></div>";
       }).join("") + "</div></div>";
@@ -158,6 +164,15 @@
   }
   function verdrahten(wurzel, db, straenge, auf, neu) {
     function idsVon(ol) { return Array.prototype.map.call(ol.querySelectorAll(":scope > li[data-a]"), function (li) { return +li.getAttribute("data-a"); }); }
+    // Gate-Termin speichern
+    wurzel.querySelectorAll("[data-gate-datum]").forEach(function (inp) {
+      inp.onchange = function () {
+        inp.disabled = true;
+        db.from("aufgaben").update({ faellig_am: inp.value || null }).eq("id", +inp.getAttribute("data-gate-datum")).then(function (r) {
+          inp.disabled = false; if (r.error) { alert("Nicht gespeichert: " + r.error.message); return; } neu();
+        });
+      };
+    });
     // Block „Erledigt“ auf- und zuklappen – je Projekt gemerkt
     var fk = wurzel.querySelector("[data-pl-fertig]");
     if (fk) fk.onclick = function () {
