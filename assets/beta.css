@@ -1969,3 +1969,7 @@ a.zg-a:hover { background: #faf9f7; } a.zg-a:hover b { text-decoration: underlin
 .mk-mz-a i { grid-column: 2; grid-row: 1 / 4; align-self: center; font-style: normal; font-size: 1.4rem; color: var(--grey-50); }
 .mk-mz-a:hover i { color: var(--ink); }
 .mk-mz-folgt { margin: 0; padding: 10px 24px 14px; border-top: 1px solid var(--linie); font-size: var(--fs-xs); color: var(--grey-50); }
+/* Sitemap: Entwurf unter den Management-Sichten */
+.sm-entwurf { display: block; margin: 10px auto 0; font-size: var(--fs-xs); color: var(--grey-50); text-align: center; text-decoration: none; }
+.sm-entwurf b { font-weight: 600; color: var(--grey-70); }
+.sm-entwurf:hover b { color: var(--ink); }
