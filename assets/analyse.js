@@ -28,11 +28,13 @@
       db.from("geburtstage_privat").select("id, vorname, nachname, firma, tag, monat, jahr, gratuliert_jahr").eq("aktiv", true),
       db.from("marken_strategie").select("*"),
       db.from("projekte").select("id, name, marke, typ, status, prioritaet"),
-      db.from("kampagnen").select("id, name, marke, status, start"),
+      db.from("kampagnen").select("id, name, marke, status, start, wartet_auf_aufgabe_id, naechster_schritt"),
       db.from("repo_stand").select("thema, datum, titel").gte("datum", new Date(Date.now() - 14 * 864e5).toISOString()).order("datum", { ascending: false }),
       db.from("vorlagen").select("id, titel, projekt_id, marke, entschieden_am, art").eq("status", "entschieden"),
-      db.from("vorlagen").select("id, art, thema, marke, titel, kern, punkte, vorschlag, link, knopf_ja, entscheidung, angelegt_am, rang, einsatz, minuten, ergebnis, danach, strang").in("art", ["umsetzung", "schritt"]).eq("status", "offen").order("rang")
+      db.from("vorlagen").select("id, art, thema, marke, titel, kern, punkte, vorschlag, link, knopf_ja, entscheidung, angelegt_am, rang, einsatz, minuten, ergebnis, danach, strang").in("art", ["umsetzung", "schritt"]).eq("status", "offen").order("rang"),
+      db.from("aufgaben").select("id, titel, status, projekt_id").eq("art", "gate")
     ]).then(function (r) {
+      D.gates = r[12].data || [];
       D.repo = r[9].data || []; D.auftraege = (r[10].data || []).filter(function (v) { return v.art !== "umsetzung" && v.art !== "schritt"; }); D.umsetzung = r[11].data || [];
       D.geburtstage = r[5].data || []; D.strategie = r[6].data || []; D.projekteAlle = r[7].data || []; D.kampagnen = r[8].data || [];
       D.vorlagen = (r[0].data || []).filter(function (v) { return v.art !== "umsetzung" && v.art !== "schritt"; }); D.termine = (r[1].data || []).filter(function (t) { return !t.abgesagt; }); D.aufgaben = r[2].data || []; D.projekte = r[3].data || [];
@@ -235,11 +237,16 @@
     }
     var gDatum = gate && gate.faellig_am ? new Date(gate.faellig_am.slice(0, 10) + "T12:00:00").toLocaleDateString("de-DE", { day: "numeric", month: "numeric" }) : "Termin offen";
     var weitere = d.proj.filter(function (p) { return !zugeordnet[p.id]; });
+    var frei = D.kampagnen.filter(function (k) { return (k.marke || "empiria") === m && k.wartet_auf_aufgabe_id && !/l(ä|ae)uft|abgeschlossen/i.test(k.status || ""); })
+      .map(function (k) { return { k: k, g: (D.gates || []).filter(function (g) { return g.id === k.wartet_auf_aufgabe_id; })[0] }; })
+      .filter(function (x) { return x.g && x.g.status === "erledigt"; });
     function feld(titel, wert) { return wert ? '<div class="sg-feld"><h5>' + titel + "</h5><p>" + esc(wert) + "</p></div>" : ""; }
     return '<section class="zg"><div class="zg-kopf">' + (o.marke === false ? "" : '<h4 class="zg-marke">' + esc(m) + "</h4>") + '<p class="zg-ziel">' + esc(d.s.ziel_kurz || d.s.zwischenziel || "") + "</p></div>" +
       '<ol class="zg-zug">' + vor.map(wagen).join("") +
         '<li class="zg-gate"><span class="zg-gate-k">Gate</span><b>' + esc(gDatum) + "</b></li>" +
         nach.map(function (x) { return wagen(x).replace('class="zg-w', 'class="zg-w zg-w--danach'); }).join("") + "</ol>" +
+      // Logikverbindung (Daniel, 11.10.2026): Gate erreicht → was jetzt starten kann, direkt unter dem Zug
+      frei.map(function (x) { return '<a class="zg-frei" href="/strategie/kampagne.html#k=' + x.k.id + '"><b>Jetzt startklar:</b> Kampagne „' + esc(x.k.name) + '“ – „' + esc(x.g.titel) + '“ ist erreicht <i aria-hidden="true">→</i></a>'; }).join("") +
       (parallel.length ? '<p class="zg-parallel">Parallel: ' + parallel.map(function (x) { return "<b>" + esc(x.titel) + "</b>"; }).join(" · ") + "</p>" : "") +
       (o.mehr === false ? "" : '<details class="zg-mehr"><summary>Mehr anzeigen</summary><div class="sg-voll-zwei"><div>' + feld("Zwischenziel", d.s.zwischenziel) +
         '<div class="sg-feld"><h5>Stränge</h5><ul class="zg-st">' + d.st.map(function (x) {
@@ -352,9 +359,9 @@
       BR.html("strategie", "einsatz", "Was ansteht – nach deinem Einsatz", nachEinsatz(), "auf");
     else if (ANSICHT === "3") mitte = MARKEN.filter(function (m) { return mf(m); }).map(function (m) {
       return BR.html("strategie", "marke-" + m, m, jeMarke(m), "auf"); }).join("");
-    // Start immer: Entscheidungen und Strategieumsetzung offen, Strategie und Sparring zu (Daniel, 11.10.2026)
-    else mitte = BR.html("strategie", "oekosystem", "Strategieumsetzung", oekosystem(), "auf") +
-      BR.html("strategie", "strategie", "Strategie", strategie(), "zu");
+    // Ansicht 1: erst Strategie, dann Strategieumsetzung – beide offen, Sparring zu (Daniel, 11.10.2026)
+    else mitte = BR.html("strategie", "strategie", "Strategie", strategie(), "auf") +
+      BR.html("strategie", "oekosystem", "Strategieumsetzung", oekosystem(), "auf");
     wurzel.innerHTML = '<div class="kg-bereiche' + (ANSICHT === "3" ? " kg-bereiche--marken" : "") + '">' +
       BR.html("strategie", "status", "Entscheidungen", signale() + geburtstage(), "auf") + mitte +
       BR.html("strategie", "sparring", "Sparring starten", sparring(), "zu") + "</div>";

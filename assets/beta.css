@@ -1847,3 +1847,8 @@ a.zg-a:hover { background: #faf9f7; } a.zg-a:hover b { text-decoration: underlin
 .jm + .oe-prot { margin-top: 14px; }
 @media (max-width: 760px) { .jm-g { grid-template-columns: minmax(0, 1fr); } .jm-st { padding-bottom: 0; } }
 .oe-kopf[aria-expanded="true"] .kb-k-pfeil { margin-top: 9px; }
+/* Logikverbindung unter dem Zug: Gate erreicht → jetzt startklar */
+.zg-frei { display: flex; align-items: baseline; gap: 6px; margin: 12px 0 0; padding: 10px 0; border-top: 1px solid var(--ink); border-bottom: 1px solid #ecebe8; font-size: var(--fs-s); color: var(--ink); text-decoration: none; }
+.zg-frei b { font-weight: 600; }
+.zg-frei i { margin-left: auto; font-style: normal; color: var(--grey-50); }
+.zg-frei:hover i { color: var(--ink); }
