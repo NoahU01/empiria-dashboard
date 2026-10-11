@@ -196,25 +196,41 @@
     // Noch ohne Vision: je Marke eine Zeile – Schwerpunkt-Projekte und der Weg zum Zielbild (Deep Dive)
     var leer = marken.filter(function (m) { return daten(m).leer; }), voll = marken.filter(function (m) { return !daten(m).leer; });
     var h = "";
-    // Marke mit Inhalt: Zwischenziel und Stränge (je mit Verantwortung und verknüpften Projekten) links,
-    // Vision, Geschäftsmodell, Marketing und nicht zugeordnete Projekte rechts (Daniel, 11.10.2026)
+    /* Marke mit Inhalt als „Zug“ (Daniel, 11.10.2026 – Idee Volksfestumzug): oben Marke und Ziel in einem Satz,
+       darunter die Stränge als kompakte Wagen (Titel, wer, Stand) und am Ende das Gate (schwarz, gelber Kicker, Datum).
+       Stränge „nach Gate“ fahren hinter dem Gate. Alles Erklärende erst unter „Mehr anzeigen“. */
     if (voll.length) h += voll.map(function (m) {
       var d = daten(m), zugeordnet = {};
       d.st.forEach(function (x) { (x.projekte || []).forEach(function (id) { zugeordnet[id] = 1; }); });
-      function feld(titel, wert, offenText) { return '<div class="sg-feld"><h5>' + titel + "</h5>" + (wert ? "<p>" + esc(wert) + "</p>" : '<p class="sg-offen">' + (offenText || "Noch offen") + "</p>") + "</div>"; }
+      var vor = d.st.filter(function (x) { return !/^(nach|parallel)/i.test(x.stand || ""); }), nach = d.st.filter(function (x) { return /^nach/i.test(x.stand || ""); }),
+          parallel = d.st.filter(function (x) { return /^parallel/i.test(x.stand || ""); });
+      // Wer: nur, wenn nicht (nur) Daniel – das weiß er selbst
+      function wer(v) { v = String(v || ""); return v === "Daniel" ? "" : v.replace(/^Daniel und /, "mit "); }
+      var gate = d.s.gate_aufgabe_id ? D.aufgaben.filter(function (a) { return a.id === d.s.gate_aufgabe_id; })[0] : null;
+      function wagen(x) {
+        var fertig = /erreicht/i.test(x.stand || "");
+        var pl = (x.projekte || []).map(function (id) { return D.projekteAlle.filter(function (p) { return p.id === id; })[0]; }).filter(Boolean);
+        // Wagen: nur Titel und wer – Stand nur, wenn er etwas sagt; Klick führt ins (erste) Projekt
+        var ziel = pl.length === 1 ? "/strategie/projekte.html#p=" + pl[0].id : null;
+        return '<li class="zg-w' + (fertig ? " zg-w--fertig" : "") + '">' + (ziel ? '<a class="zg-a" href="' + ziel + '">' : '<span class="zg-a">') + "<b>" + esc(x.titel) + "</b>" + (wer(x.verantwortlich) ? '<span class="zg-wer">' + esc(wer(x.verantwortlich)) + "</span>" : "") +
+          (fertig ? '<span class="zg-stand">✓ erreicht</span>' : x.stand ? '<span class="zg-stand">' + esc(x.stand) + "</span>" : "") + (ziel ? "</a>" : "</span>") + "</li>";
+      }
+      var gDatum = gate && gate.faellig_am ? new Date(gate.faellig_am.slice(0, 10) + "T12:00:00").toLocaleDateString("de-DE", { day: "numeric", month: "numeric" }) : "Termin offen";
       var weitere = d.proj.filter(function (p) { return !zugeordnet[p.id]; });
-      return '<section class="sg-voll"><h4 class="sg-marke-h">' + esc(m) + "</h4><div class=\"sg-voll-zwei\"><div>" +
-        feld("Zwischenziel", d.s.zwischenziel) +
-        '<div class="sg-feld"><h5>Stränge</h5>' + (d.st.length ? '<ol class="sg-straenge">' + d.st.map(function (x) {
-          var pl = (x.projekte || []).map(function (id) { return D.projekteAlle.filter(function (p) { return p.id === id; })[0]; }).filter(Boolean);
-          return "<li><b>" + esc(x.titel) + "</b>" + (x.verantwortlich ? '<span class="sg-wer">' + esc(x.verantwortlich) + "</span>" : "") + (x.stand ? '<span class="sg-wer">· ' + esc(x.stand) + "</span>" : "") +
-            (x.beschreibung ? "<p>" + esc(x.beschreibung) + "</p>" : "") +
-            (pl.length ? '<p class="sg-proj-l">' + pl.map(function (p) { return '<a href="/strategie/projekte.html#p=' + p.id + '">' + esc(p.name) + " →</a>"; }).join("") + "</p>" : "") + "</li>"; }).join("") + "</ol>" : '<p class="sg-offen">Noch offen</p>') + "</div>" +
-        "</div><div>" +
-        feld("Vision", d.s.vision, "Noch offen – folgt") + feld("Zukünftiges Geschäftsmodell", d.s.geschaeftsmodell, "Noch offen – folgt") +
-        '<div class="sg-feld"><h5>Marketing</h5>' + (d.kamp.length ? '<ul class="sg-proj">' + d.kamp.map(function (k) { return '<li><a href="/strategie/marketing.html">' + esc(k.name) + "</a><small>" + esc(k.status || "") + "</small></li>"; }).join("") + "</ul>" : '<p class="sg-offen">Noch keine Kampagne</p>') + "</div>" +
-        (weitere.length ? '<div class="sg-feld"><h5>Weitere Projekte</h5><ul class="sg-proj">' + weitere.map(function (p) { return "<li>" + projLink(p) + "<small>" + esc(p.typ === "intern" ? "intern" : "Kunde") + "</small></li>"; }).join("") + "</ul></div>" : "") +
-        "</div></div></section>";
+      function feld(titel, wert) { return wert ? '<div class="sg-feld"><h5>' + titel + "</h5><p>" + esc(wert) + "</p></div>" : ""; }
+      return '<section class="zg"><div class="zg-kopf"><h4 class="zg-marke">' + esc(m) + '</h4><p class="zg-ziel">' + esc(d.s.ziel_kurz || d.s.zwischenziel || "") + "</p></div>" +
+        '<ol class="zg-zug">' + vor.map(wagen).join("") +
+          '<li class="zg-gate"><span class="zg-gate-k">Gate</span><b>' + esc(gDatum) + "</b></li>" +
+          nach.map(function (x) { return wagen(x).replace('class="zg-w', 'class="zg-w zg-w--danach'); }).join("") + "</ol>" +
+        (parallel.length ? '<p class="zg-parallel">Parallel: ' + parallel.map(function (x) { return "<b>" + esc(x.titel) + "</b>"; }).join(" · ") + "</p>" : "") +
+        '<details class="zg-mehr"><summary>Mehr anzeigen</summary><div class="sg-voll-zwei"><div>' + feld("Zwischenziel", d.s.zwischenziel) +
+          '<div class="sg-feld"><h5>Stränge</h5><ul class="zg-st">' + d.st.map(function (x) {
+            var pl = (x.projekte || []).map(function (id) { return D.projekteAlle.filter(function (p) { return p.id === id; })[0]; }).filter(Boolean);
+            return "<li><b>" + esc(x.titel) + "</b> – " + esc(x.beschreibung || "") + (pl.length ? '<span class="zg-proj">' + pl.map(function (p) { return '<a href="/strategie/projekte.html#p=' + p.id + '">' + esc(p.name) + " →</a>"; }).join("") + "</span>" : "") + "</li>"; }).join("") + "</ul></div></div><div>" +
+          feld("Vision", d.s.vision) + feld("Zukünftiges Geschäftsmodell", d.s.geschaeftsmodell) +
+          (d.kamp.length ? '<div class="sg-feld"><h5>Marketing</h5><ul class="sg-proj">' + d.kamp.map(function (k) { return '<li><a href="/strategie/marketing.html">' + esc(k.name) + "</a><small>" + esc(k.status || "") + "</small></li>"; }).join("") + "</ul></div>" : "") +
+          (weitere.length ? '<div class="sg-feld"><h5>Weitere Projekte</h5><ul class="sg-proj">' + weitere.map(function (p) { return "<li>" + projLink(p) + "<small>" + esc(p.typ === "intern" ? "intern" : "Kunde") + "</small></li>"; }).join("") + "</ul></div>" : "") +
+        "</div></div></details></section>";
     }).join("");
     if (leer.length) h += '<ul class="sg-zeilen">' + leer.map(function (m) {
       var d = daten(m), schwer = d.proj.filter(function (p) { return p.prioritaet === "hoch"; });
@@ -223,7 +239,7 @@
         (schwer.length ? '<small>' + (d.proj.some(function (p) { return p.prioritaet === "hoch"; }) ? "Priorität hoch: " : "Projekte: ") + schwer.map(projLink).join(" · ") + "</small>" : "") + "</span>" +
         '<button type="button" class="sg-los" data-deep="' + esc(m) + '">Deep Dive starten <i aria-hidden="true">→</i></button></li>';
     }).join("") + "</ul>";
-    return '<p class="sg-einl">Wohin wir wollen, wie wir dorthin kommen – und ob Marketing, Projekte und Aufgaben darauf einzahlen. Aus Vision und Stoßrichtungen leite ich die Schwerpunkte und meine Empfehlungen ab.</p>' + h;
+    return h;
   }
 
   /* ---------- Sparring (vorher auf der Steuerung) ---------- */
