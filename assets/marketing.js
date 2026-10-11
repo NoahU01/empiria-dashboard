@@ -23,7 +23,7 @@
     Promise.all([
       db.from("linkedin_kennzahlen").select("stichtag, follower, kontakte, impressionen, interaktionen, profilaufrufe").eq("quelle", "profil").order("stichtag", { ascending: false }).limit(2),
       db.from("linkedin_posts").select("text, link, impressionen, reaktionen, kommentare, stand").order("impressionen", { ascending: false }).limit(5),
-      db.from("kampagnen").select("id, kampagnen_nr, name, zeitraum, status, marke, naechster_schritt, start").order("start"),
+      db.from("kampagnen").select("id, kampagnen_nr, name, zeitraum, status, marke, naechster_schritt, start, projekt_id").order("start"),
       db.from("kampagnen_teilnehmer").select("kampagne_id, pruefung")
     ]).then(function (r) { KAMP = { k: r[2].data || [], t: r[3].data || [] }; zeichnen(r[0].data || [], (r[1].data || []).slice().sort(function (a, b) { return (b.impressionen || 0) - (a.impressionen || 0); }).slice(0, 5)); });
   });
@@ -35,8 +35,10 @@
       var l = KAMP.k.filter(function (k) { return (k.marke || "empiria") === m; });
       return '<div class="kg-marke"><h3>' + esc(m) + "</h3>" + (l.length ? '<div class="kg-karten">' + l.map(function (k) {
         var n = KAMP.t.filter(function (t) { return t.kampagne_id === k.id; }).length;
-        return '<a class="kg-k" href="/strategie/kampagne.html#k=' + k.id + '"><span class="kg-zeit">' + esc(k.zeitraum) + '</span><b>' + esc(k.name) + "</b>" +
-          '<small>' + esc(k.status) + " · " + n + " Personen</small>" + (k.naechster_schritt ? '<span class="kg-next"><i>Nächster Schritt</i>' + esc(k.naechster_schritt) + "</span>" : "") + "</a>";
+        // Kampagne ohne Kontaktliste, aber mit Projekt (z. B. öffentliche Kampagne über Website und Postings): Klick führt ins Projekt
+        var zumProjekt = k.projekt_id && !n;
+        return '<a class="kg-k" href="' + (zumProjekt ? "/strategie/projekte.html#p=" + k.projekt_id : "/strategie/kampagne.html#k=" + k.id) + '"><span class="kg-zeit">' + esc(k.zeitraum) + '</span><b>' + esc(k.name) + "</b>" +
+          '<small>' + esc(k.status) + " · " + (zumProjekt ? "Website und Postings · zum Projekt" : n + " Personen") + "</small>" + (k.naechster_schritt ? '<span class="kg-next"><i>Nächster Schritt</i>' + esc(k.naechster_schritt) + "</span>" : "") + "</a>";
       }).join("") + "</div>" : '<p class="kg-leer">Keine Kampagne geplant.</p>') + "</div>";
     }).join("") + "</div></div></section>";
   }
