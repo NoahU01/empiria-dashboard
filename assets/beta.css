@@ -1637,3 +1637,31 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 .pl-gate-ziel { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-xs); font-weight: 600; color: var(--ink); }
 .pl-gate-ziel input { height: 26px; padding: 0 6px; border: 1px solid #dcd9d5; border-radius: 6px; background: #fff; font: inherit; font-weight: 500; color: var(--ink); }
 .pl-gate-ziel--ueber input { border-color: var(--fehler); color: var(--fehler); }
+
+/* ---------- Marketing ruhiger und klarer (Daniel, 11.10.2026) ---------- */
+/* Wirkung: Lage-Liste statt grauer Kästen mit Strich – Bereich links, Kennzahl fett, ein Satz Bedeutung */
+.wk-aussagen { gap: 0 40px; margin-bottom: 44px; }
+.wk-a { display: grid; grid-template-columns: 130px minmax(0, 1fr); column-gap: 16px; padding: 14px 0; border: 0; border-bottom: 1px solid #f0eeeb; border-radius: 0; background: none; }
+.wk-a-k { grid-row: span 2; padding-top: 3px; }
+.wk-a-z { margin: 0 0 4px; font-size: var(--fs-m); font-weight: 600; }
+.wk-a-t { font-size: var(--fs-s); line-height: 1.5; color: var(--grey-70); }
+.wk-a-t b { color: var(--ink); }
+@media (max-width: 560px) { .wk-a { grid-template-columns: minmax(0, 1fr); } .wk-a-k { grid-row: auto; padding: 0 0 2px; } }
+/* Diagramme: mehr Luft, Quelle abgesetzt */
+.wk-charts { gap: 48px 48px; }
+.wk-charts figcaption { margin-bottom: 14px; }
+.wk-leg { margin-top: 10px; }
+.wk-stand { margin-top: 40px; padding-top: 12px; border-top: 1px solid #f0eeeb; }
+/* Analyse und Entscheidung: Abstand zwischen Text und Pillen, keine getönten Kästen, weniger Ebenen */
+[data-mk-analyse] .kp-regel { margin: 0 0 18px; }
+[data-mk-analyse] .kp-filter { margin-bottom: 22px; }
+[data-mk-analyse] .ma-balken { display: none; }
+[data-mk-analyse] .ma-stand-leiste p { margin: 0; font-size: var(--fs-xs); color: var(--grey-50); }
+[data-mk-analyse] .ma-bereiche { margin: 14px 0 22px; }
+[data-mk-analyse] .ma-k { gap: 0; padding: 20px 22px; border-color: #ebe9e6; }
+[data-mk-analyse] .ma-mess { margin: 4px 0 18px; padding: 0; border: 0; background: none; font-size: var(--fs-s); line-height: 1.5; color: var(--ink-2); }
+[data-mk-analyse] .ma-mess span { margin-bottom: 2px; }
+[data-mk-analyse] .ma-mess small { margin-top: 3px; }
+.wk-a { align-content: start; }
+[data-mk-analyse] .ma-meta { margin-bottom: 8px !important; }
+[data-mk-analyse] .ma-k h4 { margin-bottom: 14px; }

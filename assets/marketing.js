@@ -29,7 +29,7 @@
   });
 
   // Kampagnen je Marke – fehlt bei einer Marke eine Kampagne, steht das deutlich da
-  var KAMP_OFFEN = false, KAMP = { k: [], t: [] }, MARKEN = ["empiria", "sofortsichtbar", "Müller&Ströbel."];
+  var THEMEN_OFFEN = false, KAMP_OFFEN = false, KAMP = { k: [], t: [] }, MARKEN = ["empiria", "sofortsichtbar", "Müller&Ströbel."];
   function kampagnen() {
     return '<section class="kt3-box kt3-breit kg-bereich' + (KAMP_OFFEN ? "" : " pr-zu") + '" data-bereich="kamp"><h3><button type="button" class="pr-klapp" aria-expanded="' + KAMP_OFFEN + '"><span>Kampagnen</span><span class="tl-dreieck" aria-hidden="true"></span></button></h3><div class="kg-inhalt"><div class="kg-marken">' + MARKEN.map(function (m) {
       var l = KAMP.k.filter(function (k) { return (k.marke || "empiria") === m; });
@@ -65,15 +65,19 @@
     var wk = document.querySelector("[data-wirkung]");   // Wirkung (marketing-wirkung.js) bleibt beim Neuzeichnen erhalten
     wurzel.innerHTML =
       '<p class="mk-kreis">' + KREIS.map(function (x) { return "<span>" + x + "</span>"; }).join('<i aria-hidden="true">→</i>') + "</p>" +
-      '<div class="kg-bereiche">' + kampagnen() + '<div data-wirkung-platz></div></div>' +
-      '<section class="st4-block"><h2 class="st4-h">Zielgruppen, Außenwirkung, Stoßrichtungen</h2><div class="st4-sparring mk-themen">' + THEMEN.map(function (t) {
+      // Alle Teile der Seite als aufklappbare Kästen – auch Zielgruppen, Außenwirkung, Stoßrichtungen (Daniel, 11.10.2026)
+      '<div class="kg-bereiche">' + kampagnen() + '<div data-wirkung-platz></div>' +
+      '<section class="kt3-box kt3-breit kg-bereich' + (THEMEN_OFFEN ? "" : " pr-zu") + '" data-bereich="themen"><h3><button type="button" class="pr-klapp" aria-expanded="' + THEMEN_OFFEN + '"><span>Zielgruppen, Außenwirkung, Stoßrichtungen</span><span class="tl-dreieck" aria-hidden="true"></span></button></h3>' +
+      '<div class="kg-inhalt"><div class="st4-sparring mk-themen">' + THEMEN.map(function (t) {
         return '<button type="button" class="st4-spar" data-thema="' + t.k + '"><span class="st4-spar-z">' + esc(t.m) + "</span><b>" + esc(t.n) + '</b><span class="st4-spar-s">' + esc(t.s) + '</span><span class="st4-spar-los">Erarbeiten <i aria-hidden="true">→</i></span></button>';
-      }).join("") + '</div></section>';
+      }).join("") + "</div></div></section></div>";
     var ma = document.querySelector("[data-mk-analyse]");
     if (wk) wurzel.querySelector("[data-wirkung-platz]").replaceWith(wk);
     if (ma && wk) wk.insertAdjacentElement("afterend", ma);
     var kb = wurzel.querySelector("[data-bereich=kamp] .pr-klapp");
     if (kb) kb.onclick = function () { KAMP_OFFEN = !KAMP_OFFEN; var sek = kb.closest("[data-bereich]"); sek.classList.toggle("pr-zu", !KAMP_OFFEN); kb.setAttribute("aria-expanded", String(KAMP_OFFEN)); };
+    var tb = wurzel.querySelector("[data-bereich=themen] .pr-klapp");
+    if (tb) tb.onclick = function () { THEMEN_OFFEN = !THEMEN_OFFEN; var sek = tb.closest("[data-bereich]"); sek.classList.toggle("pr-zu", !THEMEN_OFFEN); tb.setAttribute("aria-expanded", String(THEMEN_OFFEN)); };
 
     wurzel.querySelectorAll("[data-thema]").forEach(function (b) {
       b.onclick = function () {
