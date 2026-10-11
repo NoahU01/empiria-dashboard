@@ -2,10 +2,10 @@
  "seiten": [
   {
    "datei": "analyse.html",
-   "titel": "Analyse",
+   "titel": "Strategie",
    "gruppe": "Dashboard",
    "eltern": null,
-   "kurz": "Bin ich an den richtigen Sachen dran?",
+   "kurz": "Status, Strategie, Sparring",
    "pos": 0,
    "im_diagramm": true
   },
@@ -14,7 +14,7 @@
    "titel": "Steuerung",
    "gruppe": "Dashboard",
    "eltern": null,
-   "kurz": "Entscheiden und Sparring",
+   "kurz": "Entscheiden und Termine",
    "pos": 1,
    "im_diagramm": true
   },
@@ -154,5 +154,5 @@
    "pos": 999
   }
  ],
- "stand": "09.10.2026, 06:30 Uhr"
+ "stand": "11.10.2026, 06:30 Uhr"
 }
