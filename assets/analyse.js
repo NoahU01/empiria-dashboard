@@ -22,14 +22,17 @@
     Promise.all([
       db.from("vorlagen").select("id, entscheidung, marke").eq("status", "offen"),
       db.from("termine").select("id, start, ende, ganztags, betreff, ort, teilnehmer, extern, postfach, projekt_id, vorbereitung, vorbereitung_notiz, abgesagt").eq("im_kalender", true).gte("ende", JETZT.toISOString()).lte("start", bis14).order("start"),
-      db.from("aufgaben").select("id, status, faellig_am, antwort_am, mail_gesendet_am, projekt_id, marke").eq("status", "offen"),
+      db.from("aufgaben").select("id, titel, art, spalte, status, faellig_am, antwort_am, mail_gesendet_am, projekt_id, marke").eq("status", "offen"),
       db.from("projekte").select("id, name, marke"),
       db.from("linkedin_kennzahlen").select("stichtag, follower, kontakte, impressionen, interaktionen, profilaufrufe").eq("quelle", "profil").order("stichtag", { ascending: false }).limit(2),
       db.from("geburtstage_privat").select("id, vorname, nachname, firma, tag, monat, jahr, gratuliert_jahr").eq("aktiv", true),
       db.from("marken_strategie").select("*"),
       db.from("projekte").select("id, name, marke, typ, status, prioritaet"),
-      db.from("kampagnen").select("id, name, marke, status, start")
+      db.from("kampagnen").select("id, name, marke, status, start"),
+      db.from("repo_stand").select("thema, datum, titel").gte("datum", new Date(Date.now() - 14 * 864e5).toISOString()).order("datum", { ascending: false }),
+      db.from("vorlagen").select("id, titel, projekt_id, marke, entschieden_am").eq("status", "entschieden")
     ]).then(function (r) {
+      D.repo = r[9].data || []; D.auftraege = r[10].data || [];
       D.geburtstage = r[5].data || []; D.strategie = r[6].data || []; D.projekteAlle = r[7].data || []; D.kampagnen = r[8].data || [];
       D.vorlagen = r[0].data || []; D.termine = (r[1].data || []).filter(function (t) { return !t.abgesagt; }); D.aufgaben = r[2].data || []; D.projekte = r[3].data || [];
       D.linkedin = r[4].data || [];
@@ -105,6 +108,43 @@
     }).join("") + "</div>";
   }
 
+  /* ---------- Status Ökosystem (Daniel, 11.10.2026) ----------
+     Je Thema kompakt: was zuletzt umgesetzt wurde (Commits der Arbeitszweige, auch von Claude-Code-Sitzungen über Nacht;
+     Tabelle repo_stand, alle 30 Minuten vom Mac) und was offen ist (Aufträge an Claude, Aufgaben der zugehörigen Projekte).
+     Punkt = neu seit deinem letzten Besuch dieser Seite. */
+  var THEMEN = [["empiria", "empiria"], ["sofortsichtbar", "sofortsichtbar"], ["Müller&Ströbel.", "Müller&Ströbel."], ["Dashboard", "Dashboard"], ["Projekte", "Kundenprojekte"]];
+  var LETZTER = 0;
+  try { LETZTER = +localStorage.getItem("oe-besuch") || 0; localStorage.setItem("oe-besuch", String(Date.now())); } catch (x) {}
+  function themaVon(projektId, marke) {
+    var p = D.projekteAlle.filter(function (x) { return x.id === projektId; })[0];
+    if (p && p.id === 6) return "Dashboard";
+    if (p && p.typ !== "intern") return "Projekte";
+    return p ? (p.marke || "empiria") : (marke || "empiria");
+  }
+  function wannKurz(d) {
+    var x = new Date(d), t = Math.floor((HEUTE - new Date(x.toDateString())) / 864e5), uhr = x.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+    return t <= 0 ? "heute " + uhr : t === 1 ? "gestern " + uhr : x.toLocaleDateString("de-DE", { day: "numeric", month: "numeric" });
+  }
+  function kuerzen(t, n) { t = String(t || ""); return t.length > n ? t.slice(0, n).replace(/\s\S*$/, "") + " …" : t; }
+  function oekosystem() {
+    return '<div class="oe">' + THEMEN.map(function (th) {
+      var um = D.repo.filter(function (c) { return c.thema === th[0]; }).slice(0, 3);
+      var auftr = D.auftraege.filter(function (v) { return themaVon(v.projekt_id, v.marke) === th[0]; }).map(function (v) { return { t: "Auftrag an Claude: " + v.titel, claude: true }; });
+      var RANG = { arbeit: 0, pruefung: 1, todo: 2, backlog: 3 };
+      var auf = D.aufgaben.filter(function (a) { return a.projekt_id && themaVon(a.projekt_id) === th[0] && (a.spalte === "arbeit" || a.spalte === "todo" || a.spalte === "pruefung"); })
+        .sort(function (a, b) { return (RANG[a.spalte] || 3) - (RANG[b.spalte] || 3) || String(a.faellig_am || "9999").localeCompare(String(b.faellig_am || "9999")); })
+        .map(function (a) { var p = projekt(a.projekt_id); return { t: a.titel, k: (a.spalte === "arbeit" ? "in Arbeit" : a.spalte === "pruefung" ? "in Prüfung" : "als Nächstes") + (p ? " · " + p.name : "") }; });
+      var offen = auftr.concat(auf).slice(0, 3);
+      return '<section class="oe-z"><h4 class="oe-t">' + esc(th[1]) + "</h4>" +
+        '<div class="oe-sp"><p class="oe-k">Zuletzt umgesetzt</p>' + (um.length ? '<ul class="oe-l">' + um.map(function (c) {
+          return '<li class="oe-c' + (+new Date(c.datum) > LETZTER && LETZTER ? " oe-neu" : "") + '" title="' + esc(c.titel) + '"><span class="oe-wann">' + wannKurz(c.datum) + "</span><span>" + esc(kuerzen(c.titel, 95)) + "</span></li>"; }).join("") + "</ul>"
+          : '<p class="oe-leer">In den letzten 14 Tagen nichts umgesetzt.</p>') + "</div>" +
+        '<div class="oe-sp"><p class="oe-k">Offen</p>' + (offen.length ? '<ul class="oe-l">' + offen.map(function (o) {
+          return '<li class="' + (o.claude ? "oe-claude" : "") + '">' + esc(kuerzen(o.t, 90)) + (o.k ? '<small>' + esc(o.k) + "</small>" : "") + "</li>"; }).join("") + "</ul>"
+          : '<p class="oe-leer">Nichts in Arbeit.</p>') + "</div></section>";
+    }).join("") + "</div>";
+  }
+
   /* ---------- Strategie je Marke ---------- */
   var MARKEN = ["empiria", "sofortsichtbar", "Müller&Ströbel."];
   var PRIO = { hoch: 0, mittel: 1, niedrig: 2 };
@@ -159,9 +199,10 @@
   function zeichnen() {
     var BR = window.Bereiche;
     wurzel.innerHTML = '<div class="kg-bereiche">' +
-      // Start immer: Status und Strategie offen, Sparring zu (Daniel, 11.10.2026)
-      BR.html("strategie", "status", "Status", signale() + geburtstage(), "auf") +
-      BR.html("strategie", "strategie", "Strategie", strategie(), "auf") +
+      // Start immer: Entscheidungen und Status Ökosystem offen, Strategie und Sparring zu (Daniel, 11.10.2026)
+      BR.html("strategie", "status", "Entscheidungen", signale() + geburtstage(), "auf") +
+      BR.html("strategie", "oekosystem", "Status Ökosystem", oekosystem(), "auf") +
+      BR.html("strategie", "strategie", "Strategie", strategie(), "zu") +
       BR.html("strategie", "sparring", "Sparring starten", sparring(), "zu") + "</div>";
     BR.verdrahten(wurzel, "strategie");
     verdrahten();

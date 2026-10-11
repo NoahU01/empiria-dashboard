@@ -1690,3 +1690,19 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 .db-kopf--heute { align-items: start; grid-template-rows: auto 1fr; }
 .db-kopf--heute > div:first-child { padding-top: 18px; }
 .db-kopf--heute .ans { align-self: start; margin-top: 22px; }
+
+/* ---------- Strategie › Status Ökosystem (Daniel, 11.10.2026) ---------- */
+.oe-z { display: grid; grid-template-columns: 170px minmax(0, 1fr) minmax(0, 1fr); column-gap: 32px; padding: 16px 0; border-top: 1px solid #f0eeeb; }
+.oe-z:first-child { border-top: 0; padding-top: 0; }
+.oe-t { margin: 0; font-family: var(--font-serif); font-size: var(--fs-l); font-weight: 700; letter-spacing: -.015em; }
+.oe-k { margin: 2px 0 6px; font-size: var(--fs-xs); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-50); }
+.oe-l { list-style: none; margin: 0; padding: 0; }
+.oe-l li { position: relative; padding: 3px 0 3px 0; font-size: var(--fs-s); line-height: 1.45; color: var(--ink-2); }
+.oe-l li small { display: block; font-size: var(--fs-xs); color: var(--grey-50); }
+.oe-wann { display: inline-block; min-width: 92px; margin-right: 8px; font-size: var(--fs-xs); color: var(--grey-50); }
+.oe-neu::before { content: ""; position: absolute; left: -14px; top: 10px; width: 7px; height: 7px; border-radius: 50%; background: var(--hl); box-shadow: 0 0 0 1px var(--ink); }
+.oe-claude { font-weight: 500; color: var(--ink); }
+.oe-leer { margin: 0; font-size: var(--fs-s); color: var(--grey-50); }
+@media (max-width: 900px) { .oe-z { grid-template-columns: minmax(0, 1fr); row-gap: 10px; } .oe-neu::before { left: -11px; } }
+.oe-l li.oe-c { display: grid; grid-template-columns: 92px minmax(0, 1fr); column-gap: 8px; }
+.oe-l li.oe-c .oe-wann { min-width: 0; margin: 0; padding-top: 1px; }
