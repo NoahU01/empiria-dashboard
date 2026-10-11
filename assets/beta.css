@@ -1973,3 +1973,5 @@ a.zg-a:hover { background: #faf9f7; } a.zg-a:hover b { text-decoration: underlin
 .sm-entwurf { display: block; margin: 10px auto 0; font-size: var(--fs-xs); color: var(--grey-50); text-align: center; text-decoration: none; }
 .sm-entwurf b { font-weight: 600; color: var(--grey-70); }
 .sm-entwurf:hover b { color: var(--ink); }
+/* Zug: lange Wörter sauber trennen, wenn viele Wagen nebeneinander stehen */
+.zg-a b { -webkit-hyphens: auto; hyphens: auto; overflow-wrap: break-word; }

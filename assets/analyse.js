@@ -171,7 +171,7 @@
   function oekosystem() {
     var leer = !D.strategie.some(function (x) { return x.vision || (x.stossrichtungen || []).length; });
     return '<p class="oe-einl">Links, was du dir ansehen und mir zurückmelden solltest – rechts meine nächsten Schritte.' + (leer ? " Sie werden schärfer, sobald Vision und Stoßrichtungen im Bereich Strategie stehen." : "") + "</p>" +
-      '<div class="oe">' + THEMEN.map(function (th) {
+      '<div class="oe">' + THEMEN.filter(function (th) { return mf(th[0] === "Dashboard" || th[0] === "Projekte" ? "empiria" : th[0]); }).map(function (th) {
       var an = D.umsetzung.filter(function (v) { return v.art === "umsetzung" && v.thema === th[0] && v.entscheidung !== "spaeter"; });
       var nx = D.umsetzung.filter(function (v) { return v.art === "schritt" && v.thema === th[0] && v.entscheidung !== "spaeter"; });
       var um = D.repo.filter(function (c) { return c.thema === th[0]; }).slice(0, 5);
