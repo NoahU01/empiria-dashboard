@@ -41,6 +41,13 @@
     }).join("") + "</div></div></section>";
   }
 
+  // Medienkonzept je Marke (Daniel, 11.10.2026) – eigene Unterseite, beginnend mit empiria
+  function medienkonzept() {
+    return '<section class="kt3-box kt3-breit mk-mz"><a class="mk-mz-a" href="/strategie/medienkonzept.html"><span class="mk-mz-k">Medienkonzept · empiria</span>' +
+      '<b>Jeder Beitrag bezieht Position.</b><small>Strategie · Zielgruppen · Homepage · Regelkontakt · LinkedIn · Wirkung · Fahrplan</small><i aria-hidden="true">→</i></a>' +
+      '<p class="mk-mz-folgt">sofortsichtbar und Müller&amp;Ströbel. folgen nach empiria.</p></section>';
+  }
+
   function kachel(link, zahl, titel, unter) {
     return '<a class="an-k" href="' + link + '" target="_blank" rel="noopener"><span class="an-zahl">' + zahl + "</span><b>" + titel + "</b><small>" + unter + "</small></a>";
   }
@@ -66,7 +73,7 @@
     wurzel.innerHTML =
       '<p class="mk-kreis">' + KREIS.map(function (x) { return "<span>" + x + "</span>"; }).join('<i aria-hidden="true">→</i>') + "</p>" +
       // Alle Teile der Seite als aufklappbare Kästen – auch Zielgruppen, Außenwirkung, Stoßrichtungen (Daniel, 11.10.2026)
-      '<div class="kg-bereiche">' + kampagnen() + '<div data-wirkung-platz></div>' +
+      '<div class="kg-bereiche">' + medienkonzept() + kampagnen() + '<div data-wirkung-platz></div>' +
       '<section class="kt3-box kt3-breit kg-bereich' + (THEMEN_OFFEN ? "" : " pr-zu") + '" data-bereich="themen"><h3><button type="button" class="pr-klapp" aria-expanded="' + THEMEN_OFFEN + '"><span>Zielgruppen, Außenwirkung, Stoßrichtungen</span><span class="tl-dreieck" aria-hidden="true"></span></button></h3>' +
       '<div class="kg-inhalt"><div class="st4-sparring mk-themen">' + THEMEN.map(function (t) {
         return '<button type="button" class="st4-spar" data-thema="' + t.k + '"><span class="st4-spar-z">' + esc(t.m) + "</span><b>" + esc(t.n) + '</b><span class="st4-spar-s">' + esc(t.s) + '</span><span class="st4-spar-los">Erarbeiten <i aria-hidden="true">→</i></span></button>';

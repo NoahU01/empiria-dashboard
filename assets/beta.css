@@ -1852,3 +1852,120 @@ a.zg-a:hover { background: #faf9f7; } a.zg-a:hover b { text-decoration: underlin
 .zg-frei b { font-weight: 600; }
 .zg-frei i { margin-left: auto; font-style: normal; color: var(--grey-50); }
 .zg-frei:hover i { color: var(--ink); }
+
+/* ---------- Marketing › Medienkonzept (Daniel, 11.10.2026) – Kapitel wie das AVRG-Medienkonzept, ruhig, Schwarz-Weiß-Gelb ---------- */
+.db-kopf .kicker a { color: inherit; text-decoration: none; }
+.db-kopf .kicker a:hover { color: var(--ink); }
+.mz-marken button[disabled] { color: var(--grey-50); cursor: default; }
+.mz-auf, .mz-kap { margin-top: 36px; padding: 32px; border: 1px solid var(--linie); border-radius: 18px; background: var(--white); }
+.mz-kick { margin: 0 0 10px; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--grey-50); }
+.mz-kick b { margin-right: 8px; color: var(--ink); }
+.mz-h1 { margin: 0; font-family: var(--font-serif); font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700; line-height: 1.08; letter-spacing: -.02em; }
+.mz-h2 { margin: 0; font-family: var(--font-serif); font-size: clamp(1.6rem, 3.6vw, 2.3rem); font-weight: 700; line-height: 1.12; letter-spacing: -.015em; }
+.mz-h3 { margin: 0 0 10px; font-family: var(--font-serif); font-size: clamp(1.35rem, 2.6vw, 1.7rem); font-weight: 700; line-height: 1.15; }
+.mz-h4 { margin: 28px 0 10px; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--grey-50); }
+.mz-h4 a { color: inherit; }
+.mz-sub { max-width: 760px; margin: 12px 0 0; font-size: var(--fs-m); line-height: 1.55; color: var(--grey-70); }
+.mz-klein { margin: 10px 0 0; font-size: var(--fs-s); line-height: 1.5; color: var(--grey-70); }
+.mz-n { display: block; margin: 0 0 6px; font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--grey-50); }
+.mz-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.mz-nav a { display: inline-flex; gap: 8px; align-items: baseline; padding: 8px 14px; border: 1px solid var(--linie); border-radius: 999px; font-size: var(--fs-s); font-weight: 500; color: var(--ink); text-decoration: none; }
+.mz-nav a b { font-weight: 600; color: var(--grey-50); }
+.mz-nav a:hover { border-color: var(--ink); }
+/* Fluss: vier echte Schritte, der letzte ist das Ziel (schwarz, gelber Kicker – wie das Gate) */
+.mz-fluss, .mz-fahr { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 24px 0 0; padding: 0; }
+.mz-fluss li, .mz-fahr li { display: flex; flex-direction: column; gap: 6px; padding: 16px; border: 1px solid var(--linie); border-radius: 14px; font-size: var(--fs-s); line-height: 1.45; color: var(--grey-70); }
+.mz-fluss li b, .mz-fahr li b { font-size: var(--fs-m); font-weight: 600; color: var(--ink); }
+.mz-fluss .mz-ziel, .mz-fahr .mz-ziel { border-color: var(--ink); background: var(--ink); color: rgba(255, 255, 255, .8); }
+.mz-fluss .mz-ziel b, .mz-fahr .mz-ziel b { color: #fff; }
+.mz-fluss .mz-ziel .mz-n, .mz-fahr .mz-ziel .mz-n { color: var(--hl); }
+.mz-nicht { margin: 18px 0 0; font-size: var(--fs-s); line-height: 1.55; color: var(--grey-70); }
+.mz-nicht b { color: var(--ink); }
+/* Positionierung */
+.mz-pos { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; margin-top: 30px; padding-top: 28px; border-top: 1px solid var(--linie); }
+.mz-zitat { margin: 0; font-family: var(--font-serif); font-size: var(--fs-l); line-height: 1.45; color: var(--ink); }
+.mz-ebenen { list-style: none; margin: 0; padding: 0; }
+.mz-ebenen li { padding: 12px 0; border-top: 1px solid #f0eeeb; }
+.mz-ebenen li:first-child { border-top: 0; padding-top: 0; }
+.mz-ebenen b { display: block; font-size: var(--fs-m); font-weight: 600; }
+.mz-pruef { display: block; margin-top: 4px; font-size: var(--fs-s); line-height: 1.45; color: var(--grey-70); }
+/* Zielgruppen */
+.mz-seg { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 24px; }
+.mz-seg article, .mz-felder article, .mz-arten article { display: flex; flex-direction: column; padding: 16px; border: 1px solid var(--linie); border-radius: 14px; }
+.mz-seg-k { margin: 0 0 6px; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-50); }
+.mz-seg h4, .mz-arten h4 { margin: 0 0 6px; font-size: var(--fs-m); font-weight: 600; line-height: 1.3; }
+.mz-seg p, .mz-arten p { margin: 0; font-size: var(--fs-s); line-height: 1.45; color: var(--grey-70); }
+.mz-seg .mz-seg-r { margin-top: auto; padding-top: 12px; font-size: var(--fs-xs); color: var(--grey-70); }
+.mz-seg .mz-seg-r b { color: var(--ink); }
+.mz-regeln, .mz-liste { margin: 18px 0 0; padding-left: 18px; font-size: var(--fs-s); line-height: 1.55; color: var(--grey-70); }
+.mz-regeln li, .mz-liste li { margin-bottom: 6px; }
+.mz-regeln b, .mz-liste b { color: var(--ink); }
+.mz-liste { margin-top: 0; }
+.mz-liste--nein li::marker { content: "– "; }
+.mz-druck { columns: 2; column-gap: 32px; margin: 0; padding-left: 18px; font-size: var(--fs-s); line-height: 1.55; color: var(--ink-2); }
+.mz-druck li { break-inside: avoid; margin-bottom: 6px; }
+.mz-mehr { margin-top: 18px; border-top: 1px solid var(--linie); }
+.mz-mehr summary { padding: 14px 0 4px; font-size: var(--fs-s); font-weight: 500; color: var(--ink); cursor: pointer; }
+.mz-mehr ul { margin: 8px 0 0; padding-left: 18px; font-size: var(--fs-s); line-height: 1.55; color: var(--grey-70); }
+.mz-mehr li { margin-bottom: 6px; }
+.mz-trends a { margin-left: 4px; font-size: var(--fs-xs); color: var(--grey-50); }
+/* Tabellen */
+.mz-tab-wrap { overflow-x: auto; margin-top: 22px; }
+.mz-tab { width: 100%; border-collapse: collapse; font-size: var(--fs-s); line-height: 1.45; }
+.mz-tab th { padding: 0 14px 8px 0; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-50); text-align: left; }
+.mz-tab td { padding: 10px 14px 10px 0; border-top: 1px solid #f0eeeb; vertical-align: top; color: var(--grey-70); }
+.mz-tab td b { color: var(--ink); }
+.mz-tab--knapp td:last-child { white-space: nowrap; }
+.mz-tab a { color: var(--ink); }
+/* Regelkontakt */
+.mz-takt { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 24px; }
+.mz-takt div { display: flex; flex-direction: column; gap: 4px; padding: 16px; border: 1px solid var(--linie); border-radius: 14px; font-size: var(--fs-s); color: var(--grey-70); }
+.mz-takt b { font-size: var(--fs-m); font-weight: 600; color: var(--ink); }
+.mz-takt small { margin-top: auto; padding-top: 8px; font-size: var(--fs-xs); color: var(--grey-50); }
+.mz-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
+.mz-chips span { padding: 6px 12px; border: 1px solid var(--linie); border-radius: 999px; font-size: var(--fs-xs); color: var(--ink); }
+.mz-schritte, .mz-brauche { margin: 22px 0 0; padding-left: 22px; font-size: var(--fs-s); line-height: 1.55; color: var(--grey-70); }
+.mz-schritte li, .mz-brauche li { margin-bottom: 8px; padding-left: 4px; }
+.mz-schritte b, .mz-brauche b { color: var(--ink); }
+/* LinkedIn */
+.mz-zwei { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; }
+.mz-top { list-style: none; margin: 0; padding: 0; }
+.mz-top li { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 10px; padding: 8px 0; border-top: 1px solid #f0eeeb; font-size: var(--fs-s); line-height: 1.45; color: var(--ink); }
+.mz-top li:first-child { border-top: 0; }
+.mz-top span { font-family: var(--font-serif); font-weight: 600; color: var(--grey-70); }
+.mz-felder { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.mz-felder b { font-family: var(--font-serif); font-size: var(--fs-m); font-weight: 600; line-height: 1.35; }
+.mz-felder span { margin-top: 8px; font-size: var(--fs-s); line-height: 1.45; color: var(--grey-70); }
+.mz-felder ul { margin: 10px 0 0; padding: 10px 0 0 16px; border-top: 1px solid #f0eeeb; font-size: var(--fs-xs); line-height: 1.5; color: var(--grey-70); }
+.mz-arten { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.mz-arten q { display: block; margin-top: auto; padding-top: 12px; font-family: var(--font-serif); font-size: var(--fs-s); line-height: 1.45; color: var(--ink); quotes: "„" "“"; }
+.mz-plan { margin-top: 26px; padding-top: 4px; border-top: 1px solid var(--linie); }
+.mz-plan-st { margin-top: 14px; }
+.mz-plan small { color: var(--grey-50); }
+@media (max-width: 1000px) {
+  .mz-seg, .mz-felder, .mz-arten, .mz-takt, .mz-fluss, .mz-fahr { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  .mz-auf, .mz-kap { padding: 22px 18px; margin-top: 22px; }
+  .mz-seg, .mz-felder, .mz-arten, .mz-takt, .mz-fluss, .mz-fahr, .mz-pos, .mz-zwei { grid-template-columns: minmax(0, 1fr); }
+  .mz-druck { columns: 1; }
+}
+.mz-ton { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; }
+@media (max-width: 700px) { .mz-ton { grid-template-columns: minmax(0, 1fr); } }
+.mz-wert { margin-top: 28px; padding: 24px; border-radius: 14px; background: var(--ink); color: rgba(255, 255, 255, .82); font-size: var(--fs-s); line-height: 1.55; }
+.mz-wert .mz-n { color: var(--hl); }
+.mz-wert .mz-h3 { color: #fff; }
+.mz-wert p { margin: 0; }
+.mz-wert ol { margin: 12px 0 0; padding-left: 20px; }
+.mz-wert li { margin-bottom: 6px; }
+.mz-wert b { color: #fff; }
+.mz-wert + .mz-klein b { color: var(--ink); }
+/* Marketing: Einstieg ins Medienkonzept */
+.mk-mz { padding: 0 !important; overflow: hidden; }
+.mk-mz-a { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; padding: 22px 24px; color: var(--ink); text-decoration: none; }
+.mk-mz-k { grid-column: 1; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--grey-50); }
+.mk-mz-a b { grid-column: 1; margin-top: 6px; font-family: var(--font-serif); font-size: var(--fs-xl); font-weight: 700; line-height: 1.2; }
+.mk-mz-a small { grid-column: 1; margin-top: 6px; font-size: var(--fs-s); color: var(--grey-70); }
+.mk-mz-a i { grid-column: 2; grid-row: 1 / 4; align-self: center; font-style: normal; font-size: 1.4rem; color: var(--grey-50); }
+.mk-mz-a:hover i { color: var(--ink); }
+.mk-mz-folgt { margin: 0; padding: 10px 24px 14px; border-top: 1px solid var(--linie); font-size: var(--fs-xs); color: var(--grey-50); }
