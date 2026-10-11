@@ -37,6 +37,15 @@
    "pos": 2.5
   },
   {
+   "datei": "medienkonzept.html",
+   "titel": "Medienkonzept",
+   "gruppe": "Dashboard",
+   "eltern": "marketing.html",
+   "kurz": "",
+   "im_diagramm": true,
+   "pos": 2.5
+  },
+  {
    "datei": "projekte.html",
    "titel": "Projekte",
    "gruppe": "Dashboard",
@@ -44,6 +53,15 @@
    "kurz": "Steckbrief, Timeline, Protokoll",
    "pos": 3,
    "im_diagramm": true
+  },
+  {
+   "datei": "treffen.html",
+   "titel": "Treffen vor Ort",
+   "gruppe": "Dashboard",
+   "eltern": "projekte.html",
+   "kurz": "",
+   "im_diagramm": true,
+   "pos": 3.5
   },
   {
    "datei": "aufgaben.html",
@@ -115,7 +133,7 @@
    "eltern": null,
    "kurz": "Analyse und Steuerung auf einer Seite",
    "pos": 11,
-   "im_diagramm": false
+   "im_diagramm": true
   },
   {
    "datei": "zielbild.html",
@@ -143,16 +161,7 @@
    "kurz": "Sieben Vorgänge in drei Gruppen",
    "pos": 14,
    "im_diagramm": true
-  },
-  {
-   "datei": "treffen.html",
-   "titel": "Treffen vor Ort",
-   "gruppe": "ohne Menü",
-   "eltern": null,
-   "kurz": "",
-   "im_diagramm": false,
-   "pos": 999
   }
  ],
- "stand": "11.10.2026, 06:30 Uhr"
+ "stand": "11.10.2026, 19:53 Uhr"
 }
