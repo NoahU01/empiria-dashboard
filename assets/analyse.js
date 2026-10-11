@@ -20,7 +20,7 @@
     if (!s.data.session) { wurzel.innerHTML = '<div class="kb-hinweis"><p>Bitte einmal auf der <a href="/strategie/kontakte.html?zurueck=' + encodeURIComponent(location.pathname) + '">Kontaktseite</a> anmelden – dann erscheint hier die Analyse.</p></div>'; return; }
     var bis14 = new Date(+HEUTE + 15 * 864e5).toISOString();
     Promise.all([
-      db.from("vorlagen").select("id, entscheidung, marke").eq("status", "offen"),
+      db.from("vorlagen").select("id, entscheidung, marke, art").eq("status", "offen"),
       db.from("termine").select("id, start, ende, ganztags, betreff, ort, teilnehmer, extern, postfach, projekt_id, vorbereitung, vorbereitung_notiz, abgesagt").eq("im_kalender", true).gte("ende", JETZT.toISOString()).lte("start", bis14).order("start"),
       db.from("aufgaben").select("id, titel, art, spalte, status, faellig_am, antwort_am, mail_gesendet_am, projekt_id, marke").eq("status", "offen"),
       db.from("projekte").select("id, name, marke"),
@@ -30,11 +30,12 @@
       db.from("projekte").select("id, name, marke, typ, status, prioritaet"),
       db.from("kampagnen").select("id, name, marke, status, start"),
       db.from("repo_stand").select("thema, datum, titel").gte("datum", new Date(Date.now() - 14 * 864e5).toISOString()).order("datum", { ascending: false }),
-      db.from("vorlagen").select("id, titel, projekt_id, marke, entschieden_am").eq("status", "entschieden")
+      db.from("vorlagen").select("id, titel, projekt_id, marke, entschieden_am, art").eq("status", "entschieden"),
+      db.from("vorlagen").select("id, art, thema, titel, kern, vorschlag, link, knopf_ja, entscheidung, angelegt_am, rang").in("art", ["umsetzung", "schritt"]).eq("status", "offen").order("rang")
     ]).then(function (r) {
-      D.repo = r[9].data || []; D.auftraege = r[10].data || [];
+      D.repo = r[9].data || []; D.auftraege = (r[10].data || []).filter(function (v) { return v.art !== "umsetzung" && v.art !== "schritt"; }); D.umsetzung = r[11].data || [];
       D.geburtstage = r[5].data || []; D.strategie = r[6].data || []; D.projekteAlle = r[7].data || []; D.kampagnen = r[8].data || [];
-      D.vorlagen = r[0].data || []; D.termine = (r[1].data || []).filter(function (t) { return !t.abgesagt; }); D.aufgaben = r[2].data || []; D.projekte = r[3].data || [];
+      D.vorlagen = (r[0].data || []).filter(function (v) { return v.art !== "umsetzung" && v.art !== "schritt"; }); D.termine = (r[1].data || []).filter(function (t) { return !t.abgesagt; }); D.aufgaben = r[2].data || []; D.projekte = r[3].data || [];
       D.linkedin = r[4].data || [];
       zeichnen(); mails();
     });
@@ -126,23 +127,53 @@
     return t <= 0 ? "heute " + uhr : t === 1 ? "gestern " + uhr : x.toLocaleDateString("de-DE", { day: "numeric", month: "numeric" });
   }
   function kuerzen(t, n) { t = String(t || ""); return t.length > n ? t.slice(0, n).replace(/\s\S*$/, "") + " …" : t; }
+  /* Strategieumsetzung (Daniel, 11.10.2026): je Thema zwei Fragen beantwortet –
+     links: Was von den letzten Entwicklungen solltest du dir jetzt gezielt ansehen und mir Rückmeldung geben? (vorlagen.art = umsetzung)
+     rechts: Was schlage ich als nächste Schritte vor, um in der Gesamtstrategie voranzukommen? (vorlagen.art = schritt)
+     Beides kuratiert Claude; Rückmeldungen laufen wie auf der Steuerung über vorlagen (status entschieden → Claude setzt um).
+     Das Protokoll der Commits (repo_stand) steht klein darunter zum Aufklappen. */
   function oekosystem() {
-    return '<div class="oe">' + THEMEN.map(function (th) {
-      var um = D.repo.filter(function (c) { return c.thema === th[0]; }).slice(0, 3);
-      var auftr = D.auftraege.filter(function (v) { return themaVon(v.projekt_id, v.marke) === th[0]; }).map(function (v) { return { t: "Auftrag an Claude: " + v.titel, claude: true }; });
-      var RANG = { arbeit: 0, pruefung: 1, todo: 2, backlog: 3 };
-      var auf = D.aufgaben.filter(function (a) { return a.projekt_id && themaVon(a.projekt_id) === th[0] && (a.spalte === "arbeit" || a.spalte === "todo" || a.spalte === "pruefung"); })
-        .sort(function (a, b) { return (RANG[a.spalte] || 3) - (RANG[b.spalte] || 3) || String(a.faellig_am || "9999").localeCompare(String(b.faellig_am || "9999")); })
-        .map(function (a) { var p = projekt(a.projekt_id); return { t: a.titel, k: (a.spalte === "arbeit" ? "in Arbeit" : a.spalte === "pruefung" ? "in Prüfung" : "als Nächstes") + (p ? " · " + p.name : "") }; });
-      var offen = auftr.concat(auf).slice(0, 3);
+    var leer = !D.strategie.some(function (x) { return x.vision || (x.stossrichtungen || []).length; });
+    return '<p class="oe-einl">Links, was du dir ansehen und mir zurückmelden solltest – rechts meine nächsten Schritte.' + (leer ? " Sie werden schärfer, sobald Vision und Stoßrichtungen im Bereich Strategie stehen." : "") + "</p>" +
+      '<div class="oe">' + THEMEN.map(function (th) {
+      var an = D.umsetzung.filter(function (v) { return v.art === "umsetzung" && v.thema === th[0] && v.entscheidung !== "spaeter"; });
+      var nx = D.umsetzung.filter(function (v) { return v.art === "schritt" && v.thema === th[0] && v.entscheidung !== "spaeter"; });
+      var um = D.repo.filter(function (c) { return c.thema === th[0]; }).slice(0, 5);
+      function punkt(v, schritt) {
+        var neu = LETZTER && +new Date(v.angelegt_am) > LETZTER;
+        return '<li class="oe-p' + (neu ? " oe-neu" : "") + '" data-v="' + v.id + '"><b>' + esc(v.titel) + "</b>" +
+          (v.kern ? '<span class="oe-kern">' + esc(v.kern) + "</span>" : "") +
+          (v.vorschlag ? '<span class="oe-frage">' + esc(v.vorschlag) + "</span>" : "") +
+          '<span class="oe-knoepfe">' + (v.link ? '<a class="oe-an" href="' + esc(v.link) + '" target="_blank" rel="noopener">Ansehen ↗</a>' : "") +
+          '<button type="button" class="oe-ja" data-oe="ja">' + esc(schritt ? "Ja" : v.knopf_ja || "Passt") + "</button>" +
+          '<button type="button" data-oe-anders>' + (schritt ? "Anders …" : "Rückmeldung …") + "</button>" +
+          (schritt ? '<button type="button" data-oe="spaeter">Später</button>' : "") + "</span>" +
+          '<form class="oe-form" hidden><textarea rows="3" placeholder="' + (schritt ? "Was soll stattdessen passieren?" : "Deine Rückmeldung – sprechen oder tippen") + '"></textarea><span><button type="submit">An Claude geben</button><button type="button" data-oe-zu>Abbrechen</button></span></form></li>';
+      }
       return '<section class="oe-z"><h4 class="oe-t">' + esc(th[1]) + "</h4>" +
-        '<div class="oe-sp"><p class="oe-k">Zuletzt umgesetzt</p>' + (um.length ? '<ul class="oe-l">' + um.map(function (c) {
-          return '<li class="oe-c' + (+new Date(c.datum) > LETZTER && LETZTER ? " oe-neu" : "") + '" title="' + esc(c.titel) + '"><span class="oe-wann">' + wannKurz(c.datum) + "</span><span>" + esc(kuerzen(c.titel, 95)) + "</span></li>"; }).join("") + "</ul>"
-          : '<p class="oe-leer">In den letzten 14 Tagen nichts umgesetzt.</p>') + "</div>" +
-        '<div class="oe-sp"><p class="oe-k">Offen</p>' + (offen.length ? '<ul class="oe-l">' + offen.map(function (o) {
-          return '<li class="' + (o.claude ? "oe-claude" : "") + '">' + esc(kuerzen(o.t, 90)) + (o.k ? '<small>' + esc(o.k) + "</small>" : "") + "</li>"; }).join("") + "</ul>"
-          : '<p class="oe-leer">Nichts in Arbeit.</p>') + "</div></section>";
+        '<div class="oe-sp"><p class="oe-k">Ansehen und Rückmeldung geben</p>' + (an.length ? '<ul class="oe-l">' + an.map(function (v) { return punkt(v, false); }).join("") + "</ul>" : '<p class="oe-leer">Nichts Neues zum Ansehen.</p>') +
+          (um.length ? '<details class="oe-prot"><summary>Alle Änderungen</summary><ul class="oe-l">' + um.map(function (c) {
+            return '<li class="oe-c" title="' + esc(c.titel) + '"><span class="oe-wann">' + wannKurz(c.datum) + "</span><span>" + esc(kuerzen(c.titel, 95)) + "</span></li>"; }).join("") + "</ul></details>" : "") + "</div>" +
+        '<div class="oe-sp"><p class="oe-k">Nächste Schritte – mein Vorschlag</p>' + (nx.length ? '<ul class="oe-l">' + nx.map(function (v) { return punkt(v, true); }).join("") + "</ul>" : '<p class="oe-leer">Kein Vorschlag offen.</p>') + "</div></section>";
     }).join("") + "</div>";
+  }
+  function oekosystemVerdrahten() {
+    wurzel.querySelectorAll(".oe-p").forEach(function (li) {
+      var id = +li.getAttribute("data-v"), form = li.querySelector(".oe-form");
+      function sichern(f) {
+        f.entschieden_am = new Date().toISOString(); li.classList.add("laedt");
+        db.from("vorlagen").update(f).eq("id", id).then(function (r) {
+          if (r.error) { li.classList.remove("laedt"); alert("Nicht gespeichert: " + r.error.message); return; }
+          D.umsetzung = D.umsetzung.filter(function (v) { return v.id !== id; }); zeichnen();
+        });
+      }
+      li.querySelectorAll("[data-oe]").forEach(function (b) {
+        b.onclick = function () { var e = b.getAttribute("data-oe"); sichern(e === "spaeter" ? { entscheidung: "spaeter" } : { status: "entschieden", entscheidung: "ja" }); };
+      });
+      li.querySelector("[data-oe-anders]").onclick = function () { form.hidden = false; form.querySelector("textarea").focus(); };
+      form.querySelector("[data-oe-zu]").onclick = function () { form.hidden = true; };
+      form.onsubmit = function (ev) { ev.preventDefault(); var t = form.querySelector("textarea").value.trim(); if (t) sichern({ status: "entschieden", entscheidung: "anders", entscheidung_text: t }); };
+    });
   }
 
   /* ---------- Strategie je Marke ---------- */
@@ -201,11 +232,11 @@
     wurzel.innerHTML = '<div class="kg-bereiche">' +
       // Start immer: Entscheidungen und Status Ökosystem offen, Strategie und Sparring zu (Daniel, 11.10.2026)
       BR.html("strategie", "status", "Entscheidungen", signale() + geburtstage(), "auf") +
-      BR.html("strategie", "oekosystem", "Status Ökosystem", oekosystem(), "auf") +
+      BR.html("strategie", "oekosystem", "Strategieumsetzung", oekosystem(), "auf") +
       BR.html("strategie", "strategie", "Strategie", strategie(), "zu") +
       BR.html("strategie", "sparring", "Sparring starten", sparring(), "zu") + "</div>";
     BR.verdrahten(wurzel, "strategie");
-    verdrahten();
+    verdrahten(); oekosystemVerdrahten();
   }
 
   function verdrahten() {

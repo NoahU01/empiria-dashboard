@@ -1706,3 +1706,26 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 @media (max-width: 900px) { .oe-z { grid-template-columns: minmax(0, 1fr); row-gap: 10px; } .oe-neu::before { left: -11px; } }
 .oe-l li.oe-c { display: grid; grid-template-columns: 92px minmax(0, 1fr); column-gap: 8px; }
 .oe-l li.oe-c .oe-wann { min-width: 0; margin: 0; padding-top: 1px; }
+
+/* Strategieumsetzung: Ansehen + Rückmeldung | nächste Schritte (Daniel, 11.10.2026) */
+.oe-einl { margin: 0 0 14px; font-size: var(--fs-s); color: var(--grey-70); }
+.oe-z { padding: 18px 0; }
+.oe-p { position: relative; display: block; padding: 10px 0 12px !important; border-top: 1px solid #f2f1ef; }
+.oe-p:first-child { border-top: 0; padding-top: 2px !important; }
+.oe-p b { display: block; font-size: var(--fs-m); font-weight: 600; line-height: 1.35; color: var(--ink); }
+.oe-kern { display: block; margin-top: 3px; font-size: var(--fs-s); color: var(--grey-70); }
+.oe-frage { display: block; margin-top: 6px; font-size: var(--fs-s); font-weight: 500; color: var(--ink); }
+.oe-knoepfe { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 10px; }
+.oe-knoepfe button, .oe-an { height: 30px; padding: 0 12px; border: 1.5px solid #dcd9d5; border-radius: 999px; background: #fff; font-size: var(--fs-xs); font-weight: 500; color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; cursor: pointer; }
+.oe-knoepfe .oe-ja { border-color: var(--ink); background: var(--ink); color: #fff; }
+.oe-an { border-color: var(--ink); }
+.oe-form { display: grid; gap: 6px; margin-top: 8px; }
+.oe-form textarea { width: 100%; padding: 8px 10px; border: 1px solid #dcd9d5; border-radius: 10px; font: inherit; font-size: var(--fs-s); }
+.oe-form span { display: flex; gap: 6px; } .oe-form button { height: 30px; padding: 0 12px; border: 1px solid #dcd9d5; border-radius: 999px; background: #fff; font-size: var(--fs-xs); }
+.oe-form button[type=submit] { border-color: var(--ink); background: var(--ink); color: #fff; }
+.oe-p.laedt { opacity: .5; pointer-events: none; }
+.oe-neu.oe-p::before { top: 17px; }
+.oe-prot { margin-top: 8px; }
+.oe-prot summary { font-size: var(--fs-xs); color: var(--grey-50); cursor: pointer; }
+.oe-prot .oe-l { margin-top: 6px; }
+.oe-form[hidden] { display: none; }

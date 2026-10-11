@@ -37,7 +37,8 @@
       db.from("termine").select("id, start, ende, ganztags, betreff, ort, teilnehmer, extern, postfach, projekt_id, vorbereitung, vorbereitung_notiz, abgesagt, verschoben_von, verschoben_am").eq("im_kalender", true)
         .gte("ende", new Date().toISOString()).lte("start", new Date(+HEUTE + 15 * 864e5).toISOString()).order("start")
     ]).then(function (r) {
-      D = { vorlagen: r[0].data || [], projekte: r[1].data || [], aufgaben: r[2].data || [], ereignisse: r[3].data || [], belege: r[4].data || [],
+      // Strategieumsetzung (art umsetzung/schritt) steht auf der Strategie-Seite, nicht auf dem Tisch
+      D = { vorlagen: (r[0].data || []).filter(function (v) { return v.art !== "umsetzung" && v.art !== "schritt"; }), projekte: r[1].data || [], aufgaben: r[2].data || [], ereignisse: r[3].data || [], belege: r[4].data || [],
             geburtstage: r[5].data || [], termine: (r[6].data || []).filter(function (t) { return !t.abgesagt; }) };
       zeichnen();
     });
