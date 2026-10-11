@@ -33,11 +33,12 @@
       db.from("projekt_ereignisse").select("id, projekt_id, datum, art, titel").gte("datum", HEUTE.toISOString()),
       db.from("belege_eingang").select("id, postfach, absender, absender_name, betreff, pdf_link, status, zuordnung, begruendung, titel, lieferant, belegdatum, betrag, kategorie, ust, pk_belegnr, fehler, hochgeladen_am")
         .in("status", ["vorschlag", "fehler"]).order("belegdatum"),
+      db.from("geburtstage_privat").select("vorname, nachname, tag, monat, gratuliert_jahr").eq("aktiv", true).eq("tag", new Date().getDate()).eq("monat", new Date().getMonth() + 1),
       db.from("termine").select("id, start, ende, ganztags, betreff, ort, teilnehmer, extern, postfach, projekt_id, vorbereitung, vorbereitung_notiz, abgesagt, verschoben_von, verschoben_am").eq("im_kalender", true)
         .gte("ende", new Date().toISOString()).lte("start", new Date(+HEUTE + 15 * 864e5).toISOString()).order("start")
     ]).then(function (r) {
       D = { vorlagen: r[0].data || [], projekte: r[1].data || [], aufgaben: r[2].data || [], ereignisse: r[3].data || [], belege: r[4].data || [],
-            termine: (r[5].data || []).filter(function (t) { return !t.abgesagt; }) };
+            geburtstage: r[5].data || [], termine: (r[6].data || []).filter(function (t) { return !t.abgesagt; }) };
       zeichnen();
     });
   }
@@ -110,6 +111,40 @@
   }
 
   /* ---------- Sparring ---------- */
+  /* ---------- Heute-Kasten im Seitenkopf (Daniel, 11.10.2026) ----------
+     Höchstens drei Dinge, die heute wirklich zählen – das Auge landet zuerst hier. Reihenfolge:
+     Entscheidungen mit Frist heute/überfällig · Termine heute/morgen ohne Vorbereitung · älteste überfällige Aufgabe · Geburtstag heute.
+     Jede Zeile führt dorthin, wo es erledigt wird. Schwarz mit gelber Linie wie der Fragen-Kasten der Homepage. */
+  function heute() {
+    var heuteIso = iso(HEUTE), morgenEnde = new Date(+HEUTE + 2 * 864e5), l = [];
+    function uhr(d) { var x = new Date(d), h = x.toDateString() === HEUTE.toDateString() ? "heute" : "morgen"; return h + " " + x.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + " Uhr"; }
+    D.vorlagen.filter(function (v) { return v.status === "offen" && v.entscheidung !== "spaeter" && v.frist && v.frist.slice(0, 10) <= heuteIso && mf(v.marke); })
+      .sort(function (a, b) { return a.frist < b.frist ? -1 : 1; }).forEach(function (v) {
+        l.push({ t: v.titel, k: (v.frist.slice(0, 10) < heuteIso ? "überfällig" : "heute fällig") + " · auf deinem Tisch", h: "#tisch" }); });
+    T().filter(function (t) { return t.vorbereitung === "offen" && new Date(t.start) < morgenEnde; }).forEach(function (t) {
+      l.push({ t: (t.betreff || "Termin") + " vorbereiten", k: uhr(t.start), h: "#termine" }); });
+    var ueber = D.aufgaben.filter(function (a) { var p = projekt(a.projekt_id); return a.faellig_am && a.faellig_am.slice(0, 10) < heuteIso && mf(p ? p.marke : a.marke); })
+      .sort(function (a, b) { return a.faellig_am < b.faellig_am ? -1 : 1; });
+    if (ueber[0]) { var p0 = projekt(ueber[0].projekt_id);
+      l.push({ t: ueber[0].titel, k: "überfällig seit " + new Date(ueber[0].faellig_am.slice(0, 10) + "T12:00:00").toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "numeric" }) + (p0 ? " · " + p0.name : "") + (ueber.length > 1 ? " · weitere in Aufgaben" : ""), h: "/strategie/aufgaben.html" }); }
+    (D.geburtstage || []).filter(function (g) { return g.gratuliert_jahr !== HEUTE.getFullYear(); }).forEach(function (g) {
+      l.push({ t: "Geburtstag: " + [g.vorname, g.nachname].filter(Boolean).join(" "), k: "Glückwunsch auf der Strategie-Seite", h: "/strategie/analyse.html" }); });
+    l = l.slice(0, 3);
+    return '<aside class="heute" aria-label="Heute"><p class="heute-k">Heute</p>' + (l.length ? '<ol class="heute-l">' + l.map(function (x) {
+      return '<li><a href="' + x.h + '"><b>' + esc(x.t) + "</b><small>" + esc(x.k) + '</small><span class="heute-p" aria-hidden="true">→</span></a></li>'; }).join("") + "</ol>"
+      : '<p class="heute-leer">Heute liegt nichts Dringendes an.</p>') + "</aside>";
+  }
+  function heuteZeigen() {
+    var kopf = document.querySelector(".db-kopf"); if (!kopf) return;
+    kopf.classList.add("db-kopf--heute");
+    var alt = kopf.querySelector(".heute"); if (alt) alt.remove();
+    kopf.insertAdjacentHTML("beforeend", heute());
+    kopf.querySelectorAll(".heute a[href^='#']").forEach(function (a) {
+      a.onclick = function (e) { e.preventDefault(); var z = document.getElementById(a.getAttribute("href").slice(1)); if (!z) return;
+        if (z.classList.contains("pr-zu")) z.querySelector(".pr-klapp").click(); z.scrollIntoView({ behavior: "smooth", block: "start" }); };
+    });
+  }
+
   /* ---------- Termine der nächsten 14 Tage (von der früheren Analyse-Seite) ---------- */
   function iso(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
   function T() { return D.termine.filter(function (t) { var p = projekt(t.projekt_id); return mf(p ? p.marke : /sofort ?sichtbar/i.test(t.betreff || "") ? "sofortsichtbar" : t.postfach); }); }
@@ -191,7 +226,7 @@
     wurzel.innerHTML = '<div class="kg-bereiche">' + BR.html("steuerung", "tisch", "Auf deinem Tisch", tisch) +
       BR.html("steuerung", "termine", "Termine der nächsten 14 Tage", termine()) + "</div>";
     BR.verdrahten(wurzel, "steuerung");
-    verdrahten(); belegeVerdrahten(); termineVerdrahten();
+    verdrahten(); belegeVerdrahten(); termineVerdrahten(); heuteZeigen();
     // Weißer Teil der Karte hat eine Maximalhöhe; ist mehr Inhalt da, deutet ein Verlauf unten an, dass man scrollen kann
     wurzel.querySelectorAll(".st4-mitte").forEach(function (m) {
       function pruefe() { m.classList.toggle("st4-mehr", m.scrollHeight - m.scrollTop - m.clientHeight > 4); }
