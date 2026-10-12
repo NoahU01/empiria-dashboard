@@ -1986,3 +1986,15 @@ a.zg-a:hover { background: #faf9f7; } a.zg-a:hover b { text-decoration: underlin
 .bf-kommando--fertig b { color: var(--ink); }
 .bf-bei { display: inline-block; padding: 8px 12px; border-radius: 8px; background: #f2f1ef; font-size: var(--fs-s); font-weight: 600; color: var(--ink); }
 @media (max-width: 600px) { .bf-kommando div { flex-direction: column; align-items: stretch; } }
+
+/* Briefing als Punkte mit hängendem Einzug (Treffen und CRM) */
+.tr-brief { display: grid; gap: 6px; }
+.tr-brief__titel { font-size: var(--fs-s); font-weight: 600; }
+.tr-punkte, .kt3-punkte { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.tr-punkte li, .kt3-punkte li { position: relative; padding-left: 1.15em; line-height: 1.5; }
+.tr-punkte li::before, .kt3-punkte li::before { content: ""; position: absolute; left: .2em; top: .62em; width: .38em; height: .38em; border-radius: 50%; background: currentColor; opacity: .55; }
+.tr-punkte li { font-size: var(--fs-m); }
+.kt3-punkte { margin: 4px 0 10px; } .kt3-punkte li { font-size: var(--fs-s); }
+.kt3-t--kopf { margin-bottom: 0; font-weight: 600; }
+.tr-bearb summary { cursor: pointer; font-size: var(--fs-xs); color: var(--grey-50); }
+.tr-bearb label { margin-top: 6px; }

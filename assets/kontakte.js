@@ -11,6 +11,16 @@
   var kopfKonto = document.querySelector("[data-kb-konto]");
   var alle = [], vorschlaege = [], aufgaben = [], zustand = { tab: "personen", suche: "" };
 
+  // Kontaktbriefing: Absätze getrennt durch Leerzeile; Zeilen eines Absatzes als Punkte mit hängendem Einzug
+  function briefingHtml(text) {
+    return String(text).split(/\n\s*\n/).map(function (abs) {
+      var z = abs.split(/\n/).map(function (x) { return x.replace(/^\s*[•·\-–]\s*/, "").trim(); }).filter(Boolean);
+      if (!z.length) return "";
+      if (z.length === 1) return '<p class="kt3-t">' + esc(z[0]) + "</p>";
+      var kopf = /:$/.test(z[0]) ? '<p class="kt3-t kt3-t--kopf">' + esc(z.shift()) + "</p>" : "";
+      return kopf + '<ul class="kt3-punkte">' + z.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>";
+    }).join("");
+  }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
   function datum(d) { return d ? new Date(d).toLocaleDateString("de-DE", { day: "numeric", month: "short", year: "numeric" }) : "–"; }
   function name(k) { return [k.vorname, k.nachname].filter(Boolean).join(" "); }
@@ -279,7 +289,7 @@
     var m = {}; (k.kontakt_merkmale || []).forEach(function (x) { if (x.merkmale) (m[x.merkmale.kategorie] = m[x.merkmale.kategorie] || []).push(x.merkmale.wert); });
     var kamp = (k.kampagnen_teilnehmer || []).filter(function (t) { return t.status === "freigegeben" || t.status === "vorgeschlagen"; });
     h += box("Ansatzpunkte",
-      (k.kontaktbriefing ? '<p class="kt3-t">' + esc(k.kontaktbriefing) + "</p>" : "") +
+      (k.kontaktbriefing ? briefingHtml(k.kontaktbriefing) : "") +
       (m.Bedarf ? '<p class="kt3-zeile"><span>Bedarf</span>' + esc(m.Bedarf.join(", ")) + "</p>" : "") +
       (m.Angebot ? '<p class="kt3-zeile"><span>Passt von uns</span>' + esc(m.Angebot.join(", ")) + "</p>" : "") +
       (kamp.length ? '<p class="kt3-zeile"><span>Kampagnen</span>' + kamp.map(function (t) { return esc(t.kampagnen.name) + (t.kampagnen.zeitraum ? " (" + esc(t.kampagnen.zeitraum) + ")" : ""); }).join(", ") + "</p>" : ""),

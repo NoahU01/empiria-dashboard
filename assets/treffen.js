@@ -52,6 +52,10 @@
       var href = w.art === "E-Mail" ? "mailto:" + w.wert : "tel:" + w.wert.replace(/[^+\d]/g, "");
       return '<a href="' + esc(href) + '">' + esc(w.wert) + "</a>"; }).join(" · ") + (k.linkedin_url ? ' · <a href="' + esc(k.linkedin_url) + '" target="_blank" rel="noopener">LinkedIn</a>' : "");
   }
+  function punkte(text) {
+    var z = String(text || "").split(/\n+/).map(function (x) { return x.replace(/^\s*[•·\-–]\s*/, "").trim(); }).filter(Boolean);
+    return z.length ? '<ul class="tr-punkte">' + z.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : '<p class="tr-meta">Noch kein Briefing.</p>';
+  }
   function zeile(t) {
     var veranstaltung = t.art === "Veranstaltung";
     var kopf = '<button type="button" class="tr-kopf" data-auf="' + t.id + '" aria-expanded="' + !!AUF[t.id] + '">' +
@@ -63,9 +67,10 @@
       (t.vermittelt_ueber ? '<p class="tr-meta">Vermittelt über: ' + esc(t.vermittelt_ueber) + "</p>" : "") +
       (wege(t) ? '<p class="tr-meta">' + wege(t) + "</p>" : "") +
       (veranstaltung ? '<p class="tr-hinweis">' + esc(t.naechster_schritt) + "</p>" :
-      '<label>Briefing <small>Hintergrund – wird auch beim Kontakt im CRM gespeichert</small><textarea data-f="briefing" rows="4">' + esc(t.briefing) + "</textarea></label>" +
+      '<div class="tr-brief"><span class="tr-brief__titel">Briefing</span>' + punkte(t.briefing) +
+      '<details class="tr-bearb"><summary>Briefing bearbeiten</summary><label><small>Ein Punkt je Zeile – wird auch beim Kontakt im CRM gespeichert</small><textarea data-f="briefing" rows="6">' + esc(t.briefing) + "</textarea></label></details></div>" +
       '<label>Notizen vom Gespräch<textarea data-f="notizen" rows="4" placeholder="Was wurde besprochen? – tippen oder diktieren (Mikrofon auf der Tastatur)">' + esc(t.notizen) + "</textarea></label>" +
-      '<label>Nächster Schritt<input data-f="naechster_schritt" value="' + esc(t.naechster_schritt) + '"></label>' +
+      '<label>Nächster Schritt<textarea data-f="naechster_schritt" rows="2">' + esc(t.naechster_schritt) + "</textarea></label>" +
       '<div class="tr-knoepfe"><button type="button" class="tr-ja" data-speichern>Speichern</button>' +
       (t.kontakt_id ? '<button type="button" data-protokoll>' + (t.protokolliert_am ? "Erneut protokollieren" : "Protokollieren") + "</button>" : "") +
       '<button type="button" data-erledigt>' + (t.erledigt ? "Wieder öffnen" : "Erledigt") + "</button>" +
@@ -89,10 +94,17 @@
   function felder(li) { var f = {}; li.querySelectorAll("[data-f]").forEach(function (x) { f[x.getAttribute("data-f")] = x.value.trim() || null; }); return f; }
   function speichern(t, f, danach) {
     f.geaendert_am = new Date().toISOString();
+    var alt = t.briefing || "";
     db.from("treffen").update(f).eq("id", t.id).then(function (r) {
       if (r.error) { alert("Nicht gespeichert: " + r.error.message); return; }
       for (var k in f) t[k] = f[k];
-      var crm = t.kontakt_id && "briefing" in f ? db.from("kontakte").update({ kontaktbriefing: f.briefing }).eq("id", t.kontakt_id) : Promise.resolve();
+      // Kontaktbriefing im CRM nur fortschreiben, nie komplett überschreiben (dort stehen auch ältere Briefings)
+      var crm = !(t.kontakt_id && "briefing" in f && f.briefing !== alt) ? Promise.resolve() :
+        db.from("kontakte").select("kontaktbriefing").eq("id", t.kontakt_id).single().then(function (rk) {
+          var kb = (rk.data && rk.data.kontaktbriefing) || "", neu = f.briefing || "";
+          var wert = !kb ? neu : alt && kb.indexOf(alt) >= 0 ? kb.replace(alt, neu) : kb + (neu ? "\n\n" + neu : "");
+          return db.from("kontakte").update({ kontaktbriefing: wert }).eq("id", t.kontakt_id);
+        });
       Promise.resolve(crm).then(function () { if (danach) danach(); else zeichnen(); });
     });
   }
