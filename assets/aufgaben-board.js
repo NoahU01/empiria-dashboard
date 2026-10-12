@@ -125,10 +125,30 @@
   // Immer sichtbar: „Hängt ab von …“ und Hinweise wie „Wartet auf Rückmeldung von …“
   function zusatz(a) { return window.AufgabenDetails ? AufgabenDetails.lage(a, aufgaben) : ""; }
 
+  // + Operative Aufgabe (Daniel, 12.10.2026): Aufgabe ohne Projekt anlegen, Frist optional
+  var NEU = '<p class="pl-neu ab-neu"><button type="button" data-ab-neu>+ Operative Aufgabe</button></p>';
+  function fristLesen(s) {
+    var m = String(s || "").trim().match(/^(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?$/);
+    if (!m) return null;
+    var j = m[3] ? (m[3].length === 2 ? 2000 + +m[3] : +m[3]) : new Date().getFullYear(), d = new Date(j, +m[2] - 1, +m[1]);
+    if (d.getMonth() !== +m[2] - 1) return null;
+    return j + "-" + String(+m[2]).padStart(2, "0") + "-" + String(+m[1]).padStart(2, "0");
+  }
+  function neueAufgabe(b) {
+    var titel = prompt("Neue operative Aufgabe:");
+    if (!titel || !titel.trim()) return;
+    var f = prompt("Fällig am (z. B. 20.10.) – leer lassen für „ohne Frist“:", ""), frist = null;
+    if (f === null) return;
+    if (f.trim()) { frist = fristLesen(f); if (!frist) { alert("Datum nicht erkannt – bitte als TT.MM. oder TT.MM.JJJJ eingeben."); return; } }
+    b.disabled = true;
+    db.from("aufgaben").insert({ titel: titel.trim(), art: "aufgabe", status: "offen", spalte: "todo", projekt_id: null, bereich: "Operativ",
+      faellig_am: frist, zustaendig_name: "Daniel", verantwortlich: "Daniel" })
+      .then(function (r) { b.disabled = false; if (r.error) { alert("Nicht gespeichert: " + r.error.message); return; } laden(); });
+  }
   function zeichnen() {
     var l = aufgaben.filter(sichtbar).sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });
-    if (ANSICHT === "liste") { wurzel.innerHTML = filter() + liste(l); verdrahten(); abstand(); return; }
-    wurzel.innerHTML = filter() + '<div class="pr-kanban ab-kanban">' + SPALTEN.map(function (sp) {
+    if (ANSICHT === "liste") { wurzel.innerHTML = filter() + NEU + liste(l); verdrahten(); abstand(); return; }
+    wurzel.innerHTML = filter() + NEU + '<div class="pr-kanban ab-kanban">' + SPALTEN.map(function (sp) {
       var karten = l.filter(function (a) { return sp[0] === "erledigt" ? a.status === "erledigt" : a.status === "offen" && (a.spalte || "todo") === sp[0]; });
       return '<div class="pr-kb-spalte' + (karten.length ? "" : " ab-spalte-leer") + '" data-spalte="' + sp[0] + '"><p class="pr-kb-kopf">' + sp[1] + "</p>" + karten.map(karte).join("") + "</div>";
     }).join("") + "</div>";
@@ -142,6 +162,7 @@
   window.addEventListener("resize", abstand);
 
   function verdrahten() {
+    var nb = wurzel.querySelector("[data-ab-neu]"); if (nb) nb.onclick = function () { neueAufgabe(nb); };
     wurzel.querySelectorAll("[data-klapp]").forEach(function (d) { d.addEventListener("toggle", function () { KLAPP[d.getAttribute("data-klapp")] = d.open; }); });
     var ra = wurzel.querySelector("[data-rueck-aus]");
     if (ra) ra.onclick = function () { nurRueck = false; history.replaceState(null, "", location.pathname); zeichnen(); };

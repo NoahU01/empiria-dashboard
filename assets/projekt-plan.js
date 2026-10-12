@@ -55,7 +55,7 @@
       if (gruppen.length || lose.length) fertig.push({ s: s, gruppen: gruppen, lose: lose });
       html += '<section class="pl-strang" data-strang="' + s.id + '">' + (einer ? "" : '<h4 class="pl-strang-titel">' + esc(s.titel) + "</h4>") + '<ol class="pl-liste" data-pl-liste="' + s.id + '">' +
         offen.map(function (a) { return zeile(a, alle, h); }).join("") + "</ol>" +
-        '<p class="pl-neu"><button type="button" data-pl-gate="' + s.id + '">+ Gate</button></p></section>';
+        '<p class="pl-neu"><button type="button" data-pl-aufgabe="' + s.id + '">+ Aufgabe</button><button type="button" data-pl-gate="' + s.id + '">+ Gate</button></p></section>';
     });
     html += '<p class="pl-neu pl-neu--strang"><button type="button" data-pl-strang>+ Strang</button></p>';
     if (ohne.length) html += '<section class="pl-strang"><h4 class="pl-strang-titel pl-strang-titel--ohne">Noch keinem Strang zugeordnet</h4><ol class="pl-liste">' +
@@ -190,6 +190,18 @@
         db.from("aufgaben").insert({ titel: titel.trim(), art: "gate", status: "offen", spalte: "backlog", projekt_id: projektId(), strang_id: sid,
           reihenfolge: l.reduce(function (m, x) { return Math.max(m, x.reihenfolge || 0); }, 0) + 1, vorgaenger: seit, bereich: "Projekt", zustaendig_name: "Daniel", verantwortlich: "Daniel" })
           .then(function (r) { if (r.error) { b.disabled = false; alert("Nicht gespeichert: " + r.error.message); return; } neu(); });
+      };
+    });
+    // + Aufgabe (Daniel, 12.10.2026): eigene Aufgabe ans Ende des Strangs – danach per Griff an die richtige Stelle ziehen
+    wurzel.querySelectorAll("[data-pl-aufgabe]").forEach(function (b) {
+      b.onclick = function () {
+        var sid = +b.getAttribute("data-pl-aufgabe"), titel = prompt("Neue Aufgabe:");
+        if (!titel || !titel.trim()) return;
+        var l = ordnen(straenge, auf)[sid] || [];
+        b.disabled = true;
+        db.from("aufgaben").insert({ titel: titel.trim(), art: "aufgabe", status: "offen", spalte: "todo", projekt_id: projektId(), strang_id: sid,
+          reihenfolge: l.reduce(function (m, x) { return Math.max(m, x.reihenfolge || 0); }, 0) + 1, vorgaenger: [], bereich: "Projekt", zustaendig_name: "Daniel", verantwortlich: "Daniel" })
+          .then(function (r) { b.disabled = false; if (r.error) { alert("Nicht gespeichert: " + r.error.message); return; } neu(); });
       };
     });
     // + Strang
