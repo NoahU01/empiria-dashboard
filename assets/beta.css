@@ -1279,6 +1279,13 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 .al-tag h4 { margin: 0 0 4px; padding-bottom: 6px; border-bottom: 1px solid #e4e1dd; font-size: var(--fs-s); font-weight: 600; color: var(--grey-70); }
 .al-tag--heute h4 { color: var(--ink); } .al-tag--ueber h4 { color: var(--fehler); } .al-tag--ohne h4 { color: var(--grey-50); }
 .al-tag > ul { list-style: none; margin: 0; padding: 0; }
+/* Aufklappbare Gruppen in der Aufgabenliste: Dreieck rechts an der Seite */
+.al-klapp > summary { position: relative; list-style: none; cursor: pointer; }
+.al-klapp > summary::-webkit-details-marker { display: none; }
+.al-klapp > summary h4 { padding-right: 28px; }
+.al-klapp > summary .tl-dreieck { top: 3px; }
+.al-klapp[open] > summary .tl-dreieck { transform: rotate(-135deg); top: 7px; }
+.al-tag--wartet h4 { color: var(--grey-70); }
 .al-z { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; align-items: start; padding: 10px 0; border-bottom: 1px solid #f2f1ef; }
 .al-haken { width: 18px; height: 18px; margin: 3px 0 0; accent-color: var(--ink); cursor: pointer; }
 .al-was .pr-auf-titel { font-size: var(--fs-m); font-weight: 500; }

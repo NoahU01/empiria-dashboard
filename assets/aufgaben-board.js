@@ -1,7 +1,7 @@
 /* Aufgaben – Kanban-Board über alle Projekte und die operativen Aufgaben ohne Projekt.
    Oben ein Filter: Alle, Operativ, ganze Marken oder einzelne/mehrere Projekte (merkt sich die Auswahl).
    Spalten: Backlog · To-do · In Arbeit · Review/Prüfung · Erledigt (letzte 14 Tage). Karten zum Ziehen.
-   Umschaltbar auf „Liste“: offene Aufgaben nach Frist – Überfällig, je Tag, ohne Frist (Haken = erledigt).
+   Umschaltbar auf „Liste“: offene Aufgaben nach Frist – Warten auf Rückmeldung (zu), Überfällig (auf), je Tag, ohne Frist (Haken = erledigt).
    Anmeldung wie auf der Kontaktseite (Login-Link). */
 (function () {
   "use strict";
@@ -92,11 +92,19 @@
       '<div class="al-was">' + (det(a) ? '<button type="button" class="pr-auf-titel" data-auf-auf aria-expanded="false"><span>' + esc(a.titel) + '</span><span class="tl-dreieck" aria-hidden="true"></span></button>' : '<span class="pr-auf-titel">' + esc(a.titel) + "</span>") +
       '<small>' + (SP_NAME[a.spalte || "todo"] || "To-do") + " · " + herkunft + " · " + esc(wer(a) || "offen") + "</small>" + zusatz(a) + (det(a) ? '<div class="pr-auf-details" hidden>' + det(a) + "</div>" : "") + "</div></li>";
   }
+  // Wartet auf Rückmeldung: jemand anderes ist dran (warten_auf gesetzt, nicht Daniel selbst) und es ist noch keine Antwort da
+  function wartetAufAndere(a) { return !!a.warten_auf && !a.antwort_am && !/^daniel\b/i.test(a.warten_auf); }
+  var KLAPP = { wartet: false, ueber: true };   // Startzustand; bleibt beim Neuzeichnen erhalten
+  function klappGruppe(k, titel, l) {
+    return '<details class="al-tag al-tag--' + k + ' al-klapp" data-klapp="' + k + '"' + (KLAPP[k] ? " open" : "") + '><summary><h4>' + titel + '</h4><span class="tl-dreieck" aria-hidden="true"></span></summary><ul>' + l.map(zeileListe).join("") + "</ul></details>";
+  }
   function liste(l) {
-    var offen = l.filter(function (a) { return a.status === "offen"; }), heute = heuteKey(0), g = {}, ohne = [], ueber = [];
-    offen.forEach(function (a) { var k = tagKey(a.faellig_am); if (!k) ohne.push(a); else if (k < heute) ueber.push(a); else (g[k] = g[k] || []).push(a); });
+    var offen = l.filter(function (a) { return a.status === "offen"; }), heute = heuteKey(0), g = {}, ohne = [], ueber = [], wartet = [];
+    offen.forEach(function (a) { var k = tagKey(a.faellig_am); if (wartetAufAndere(a)) wartet.push(a); else if (!k) ohne.push(a); else if (k < heute) ueber.push(a); else (g[k] = g[k] || []).push(a); });
     var h = "";
-    if (ueber.length) h += '<section class="al-tag al-tag--ueber"><h4>Überfällig</h4><ul>' + ueber.map(zeileListe).join("") + "</ul></section>";
+    // Ganz oben, aufklappbar (Daniel, 12.10.2026): „Warten auf Rückmeldung“ startet zu, „Überfällig“ startet offen
+    if (wartet.length) h += klappGruppe("wartet", "Warten auf Rückmeldung", wartet);
+    if (ueber.length) h += klappGruppe("ueber", "Überfällig", ueber);
     Object.keys(g).sort().forEach(function (k) { h += '<section class="al-tag' + (k === heute ? " al-tag--heute" : "") + '"><h4>' + tagTitel(k) + "</h4><ul>" + g[k].map(zeileListe).join("") + "</ul></section>"; });
     if (ohne.length) h += '<section class="al-tag al-tag--ohne"><h4>Ohne Frist</h4><ul>' + ohne.map(zeileListe).join("") + "</ul></section>";
     return '<div class="ab-liste">' + (h || '<p class="kb-leer">Keine offenen Aufgaben in dieser Auswahl.</p>') + "</div>";
@@ -134,6 +142,7 @@
   window.addEventListener("resize", abstand);
 
   function verdrahten() {
+    wurzel.querySelectorAll("[data-klapp]").forEach(function (d) { d.addEventListener("toggle", function () { KLAPP[d.getAttribute("data-klapp")] = d.open; }); });
     var ra = wurzel.querySelector("[data-rueck-aus]");
     if (ra) ra.onclick = function () { nurRueck = false; history.replaceState(null, "", location.pathname); zeichnen(); };
     wurzel.querySelectorAll("[data-f]").forEach(function (b) {
