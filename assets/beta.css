@@ -1975,3 +1975,14 @@ a.zg-a:hover { background: #faf9f7; } a.zg-a:hover b { text-decoration: underlin
 .sm-entwurf:hover b { color: var(--ink); }
 /* Zug: lange Wörter sauber trennen, wenn viele Wagen nebeneinander stehen */
 .zg-a b { -webkit-hyphens: auto; hyphens: auto; overflow-wrap: break-word; }
+/* Belege: Kommando an Claude bei Fehlern (Daniel, 12.10.2026) */
+.bf-kommando { grid-column: 1 / -1; margin: 4px 0 0; }
+.bf-kommando label { display: block; margin-bottom: 6px; font-size: var(--fs-xs); font-weight: 600; letter-spacing: .04em; color: var(--ink); }
+.bf-kommando div { display: flex; gap: 8px; align-items: flex-start; }
+.bf-kommando textarea { flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid var(--linie); border-radius: 8px; font: inherit; font-size: var(--fs-s); resize: vertical; }
+.bf-kommando textarea:focus { outline: 2px solid var(--ink); outline-offset: 1px; }
+.bf-kommando button { height: 38px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 8px; background: var(--ink); font: inherit; font-size: var(--fs-s); color: #fff; cursor: pointer; white-space: nowrap; }
+.bf-kommando--fertig { font-size: var(--fs-s); color: var(--grey-70); }
+.bf-kommando--fertig b { color: var(--ink); }
+.bf-bei { display: inline-block; padding: 8px 12px; border-radius: 8px; background: #f2f1ef; font-size: var(--fs-s); font-weight: 600; color: var(--ink); }
+@media (max-width: 600px) { .bf-kommando div { flex-direction: column; align-items: stretch; } }

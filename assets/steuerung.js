@@ -31,8 +31,8 @@
       db.from("projekte").select("id, name, marke, typ, status"),
       db.from("aufgaben").select("id, status, faellig_am, projekt_id, titel, marke").eq("status", "offen"),
       db.from("projekt_ereignisse").select("id, projekt_id, datum, art, titel").gte("datum", HEUTE.toISOString()),
-      db.from("belege_eingang").select("id, postfach, absender, absender_name, betreff, pdf_link, status, zuordnung, begruendung, titel, lieferant, belegdatum, betrag, kategorie, ust, pk_belegnr, fehler, hochgeladen_am")
-        .in("status", ["vorschlag", "fehler"]).order("belegdatum"),
+      db.from("belege_eingang").select("id, postfach, absender, absender_name, betreff, pdf_link, status, zuordnung, begruendung, titel, lieferant, belegdatum, betrag, kategorie, ust, pk_belegnr, fehler, hochgeladen_am, anweisung")
+        .in("status", ["vorschlag", "fehler", "anweisung"]).order("belegdatum"),
       db.from("geburtstage_privat").select("vorname, nachname, tag, monat, gratuliert_jahr").eq("aktiv", true).eq("tag", new Date().getDate()).eq("monat", new Date().getMonth() + 1),
       db.from("termine").select("id, start, ende, ganztags, betreff, ort, teilnehmer, extern, postfach, projekt_id, vorbereitung, vorbereitung_notiz, abgesagt, verschoben_von, verschoben_am").eq("im_kalender", true)
         .gte("ende", new Date().toISOString()).lte("start", new Date(+HEUTE + 15 * 864e5).toISOString()).order("start")
@@ -87,8 +87,17 @@
       '<div class="bf-betrag">' + euro(b.betrag) + "</div>" +
       '<div class="bf-zu"><span class="bf-tag bf-tag--' + esc(b.zuordnung || "unklar") + '">' + esc(ZUORDNUNG[b.zuordnung] || "unklar") + "</span>" +
         (b.begruendung ? '<span class="bf-grund">' + esc(b.begruendung) + "</span>" : "") +
-        (b.status === "fehler" ? '<span class="bf-fehler">Fehler: ' + esc(b.fehler || "") + "</span>" : "") + "</div>" +
-      '<div class="bf-knoepfe"><button type="button" class="st4-ja" data-bf="hoch">Hochladen</button><button type="button" data-bf="privat">Privat</button><button type="button" data-bf="nein">Nicht hochladen</button></div></li>';
+        (b.status === "fehler" ? '<span class="bf-fehler">Fehler: ' + esc(fehlerKlartext(b.fehler)) + "</span>" : "") + "</div>" +
+      (b.status === "anweisung" ? '<div class="bf-knoepfe"><span class="bf-bei">Bei Claude</span></div>'
+        : '<div class="bf-knoepfe"><button type="button" class="st4-ja" data-bf="hoch">' + (b.status === "fehler" ? "Nochmal hochladen" : "Hochladen") + '</button><button type="button" data-bf="privat">Privat</button><button type="button" data-bf="nein">Nicht hochladen</button></div>') +
+      // Fehler: Kommando an Claude (Daniel, 12.10.2026) – die stündliche Prüfung setzt es um
+      (b.status === "fehler" ? '<form class="bf-kommando"><label>Was soll passieren? Kommando an Claude</label><div><textarea rows="2" placeholder="z. B. Steuer auf 19 % EU-Dienstleistung setzen und neu hochladen"></textarea><button type="submit" class="st4-ja">An Claude geben</button></div></form>' : "") +
+      (b.status === "anweisung" ? '<p class="bf-kommando bf-kommando--fertig"><b>Dein Kommando:</b> ' + esc(b.anweisung || "") + "</p>" : "") + "</li>";
+  }
+  // Papierkram-Fehler lesbar machen: aus „Anlegen 422: {…"message":"…"}“ wird die Meldung selbst
+  function fehlerKlartext(f) {
+    f = String(f || ""); var m = f.match(/"message"\s*:\s*"([^"]+)"/);
+    return m ? m[1] + (/^Anlegen/.test(f) ? " (beim Anlegen in Papierkram)" : "") : f;
   }
   function belegBlock() {
     if (!D.belege || !D.belege.length) return "";
@@ -106,6 +115,19 @@
         db.from("belege_eingang").update(upd).eq("id", id).then(function (r) {
           if (r.error) { li.classList.remove("laedt"); alert(r.error.message); return; }
           D.belege = D.belege.filter(function (x) { return x.id !== id; }); li.remove(); if (!D.belege.length) zeichnen();
+        });
+      };
+    });
+    wurzel.querySelectorAll(".bf-zeile form.bf-kommando").forEach(function (f) {
+      f.onsubmit = function (ev) {
+        ev.preventDefault();
+        var li = f.closest(".bf-zeile"), id = +li.getAttribute("data-b"), t = f.querySelector("textarea").value.trim();
+        if (!t) { f.querySelector("textarea").focus(); return; }
+        li.classList.add("laedt");
+        db.from("belege_eingang").update({ status: "anweisung", anweisung: t, anweisung_am: new Date().toISOString() }).eq("id", id).then(function (r) {
+          li.classList.remove("laedt");
+          if (r.error) { alert("Nicht gespeichert: " + r.error.message); return; }
+          D.belege.forEach(function (x) { if (x.id === id) { x.status = "anweisung"; x.anweisung = t; } }); zeichnen();
         });
       };
     });
