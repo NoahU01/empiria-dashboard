@@ -32,7 +32,7 @@
       db.from("repo_stand").select("thema, datum, titel").gte("datum", new Date(Date.now() - 14 * 864e5).toISOString()).order("datum", { ascending: false }),
       db.from("vorlagen").select("id, titel, projekt_id, marke, entschieden_am, art").eq("status", "entschieden"),
       db.from("vorlagen").select("id, art, thema, marke, titel, kern, punkte, vorschlag, link, knopf_ja, entscheidung, angelegt_am, rang, einsatz, minuten, ergebnis, danach, strang").in("art", ["umsetzung", "schritt"]).eq("status", "offen").order("rang"),
-      db.from("aufgaben").select("id, titel, status, projekt_id").eq("art", "gate")
+      db.from("aufgaben").select("id, titel, status, projekt_id").in("art", ["gate", "projektgate"])
     ]).then(function (r) {
       D.gates = r[12].data || [];
       D.repo = r[9].data || []; D.auftraege = (r[10].data || []).filter(function (v) { return v.art !== "umsetzung" && v.art !== "schritt"; }); D.umsetzung = r[11].data || [];

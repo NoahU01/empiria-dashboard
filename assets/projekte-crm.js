@@ -116,7 +116,7 @@
       db.from("projekt_beteiligte").select("id, seite, rolle, name, kontakte(id, vorname, nachname, position)").eq("projekt_id", id),
       db.from("projekt_ereignisse").select("id, datum, art, titel, quelle, format, ort, teilnehmer, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("datum", { ascending: false }),
       db.from("projekt_punkte").select("id, ereignis_id, art, text, angelegt_am, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am", { ascending: false }),
-      db.from("aufgaben").select("id, paket_id, strang_id, reihenfolge, art, titel, beschreibung, prompt, status, spalte, faellig_am, erledigt_am, ereignis_id, weg, vorgaenger, warten_auf, hinweis, zeitblock_vorschlag, mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, unterlagen, person:kontakt_id(id, vorname, nachname), organisationen(id, name), zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
+      db.from("aufgaben").select("id, paket_id, strang_id, reihenfolge, art, projektgate_id, titel, beschreibung, prompt, status, spalte, faellig_am, erledigt_am, ereignis_id, weg, vorgaenger, warten_auf, hinweis, zeitblock_vorschlag, mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, unterlagen, person:kontakt_id(id, vorname, nachname), organisationen(id, name), zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
       ,db.from("projekt_pakete").select("id, nr, titel, ziel, stand, status").eq("projekt_id", id).order("nr")
       ,db.from("projekt_straenge").select("id, titel, reihenfolge, eltern_id, erklaerung, verantwortlich, verantwortlich_kontakte").eq("projekt_id", id).order("reihenfolge")
     ]).then(function (r) {
@@ -250,7 +250,7 @@
       var SPALTEN = [["backlog", "Backlog"], ["todo", "To-do"], ["arbeit", "In Arbeit"], ["pruefung", "Review / Prüfung"], ["erledigt", "Erledigt"]];
       aufInhalt = '<div class="pr-kanban">' + SPALTEN.map(function (sp) {
         var karten = auf.filter(function (a) {
-          if (a.art === "gate") return false;
+          if (a.art === "gate" || a.art === "projektgate") return false;
           if (sp[0] === "erledigt") return a.status === "erledigt" && (!a.erledigt_am || new Date(a.erledigt_am) >= vor14);
           return a.status === "offen" && (a.spalte || "todo") === sp[0];
         }).sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });

@@ -2081,3 +2081,34 @@ a.zg-a:hover { background: #faf9f7; } a.zg-a:hover b { text-decoration: underlin
 .pl-wer-vorschlag button:hover { background: #f6f5f3; }
 .pl-wer-vorschlag small { color: var(--grey-50); }
 .pl-wer-vorschlag .pl-tr-frei { color: var(--grey-50); font-size: var(--fs-xs); border-top: 1px solid #f0eeeb; }
+
+/* Projekt-Gates (Daniel, 13.10.2026): Ergebnisstufen über alle Stränge – Band oben, Trenner in jeder Strangliste, Linie im Plan */
+.pl-pg-band { margin-bottom: 26px; }
+.pl-pg-band-titel { margin: 0 0 4px; padding-bottom: 6px; border-bottom: 1px solid var(--ink); font-size: var(--fs-s); font-weight: 600; }
+.pl-pg-band-titel small { margin-left: 8px; font-weight: 400; color: var(--grey-50); }
+.pl-pgate { box-shadow: inset 3px 0 0 var(--ink), inset 0 1px 0 var(--ink), inset 0 -1px 0 var(--ink); }
+.pl-pgate .pl-gate-kicker { color: var(--ink); }
+.pl-pg-trenner { display: flex; align-items: baseline; gap: 10px; margin: 10px 0 6px; padding: 0 0 5px; border-bottom: 2px solid var(--ink); font-size: var(--fs-xs); list-style: none; }
+.pl-pg-trenner--fertig { border-color: #cfcbc5; color: var(--grey-50); }
+.pl-pg-kicker { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--grey-50); }
+.pl-pg-name { font-weight: 600; }
+.pl-pg-datum { margin-left: auto; color: var(--grey-70); }
+.pl-neu--strang button + button { margin-left: 20px; }
+.pl-s-kompakt .pl-pg-band { display: none; }
+.pl-spur-pg { align-items: stretch; gap: 0; }
+.pl-seg { display: flex; align-items: center; gap: 38px; padding: 0 30px; box-sizing: content-box; }
+.pl-seg:first-child { padding-left: 0; }
+.pl-pg-linie { flex: none; width: 3px; margin: -16px 0; background: var(--ink); }
+.pl-pg-linie--fertig { background: #cfcbc5; }
+.pl-pg-kopfzeile { background: none !important; box-shadow: none !important; }
+.pl-pg-kopfzeile .pl-bahn-spur { padding-top: 0; padding-bottom: 0; min-height: 52px; }
+.pl-pg-linie--kopf { position: relative; margin: 0; }
+.pl-pg-etikett { position: absolute; top: 0; left: 50%; transform: translateX(-50%); display: grid; gap: 2px; width: max-content; max-width: 220px; padding: 6px 10px; border-radius: 6px; background: var(--ink); color: #fff; font-size: var(--fs-xs); font-weight: 600; line-height: 1.3; text-align: center; }
+.pl-pg-etikett small { font-size: 10px; font-weight: 500; letter-spacing: .06em; opacity: .75; }
+.pl-pg-linie--fertig .pl-pg-etikett { background: #cfcbc5; color: var(--ink); }
+.pl-gruppe .pl-bahn--teil { grid-template-columns: 114px auto; }
+@media (max-width: 600px) { .pl-gruppe .pl-bahn--teil { grid-template-columns: 1fr; margin-left: 0; } }
+/* Bahnköpfe etwas breiter, damit Teilprojekt-Namen passen; Teilprojekt-Bahnen gleichen den Einzug aus (Gate-Linien bleiben senkrecht) */
+.pl-bahn { grid-template-columns: 156px auto; }
+.pl-gruppe .pl-bahn--teil { grid-template-columns: 136px auto; }
+@media (max-width: 600px) { .pl-bahn, .pl-gruppe .pl-bahn--teil { grid-template-columns: 1fr; } }

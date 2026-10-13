@@ -11,14 +11,30 @@
   function idListe(v) { return (v || []).map(Number); }
 
   function ordnen(straenge, auf) {
-    var je = {};
+    var je = {}, stufe = pgStufe(auf);
     straenge.forEach(function (s) { je[s.id] = []; });
-    auf.forEach(function (a) { if (a.strang_id && je[a.strang_id]) je[a.strang_id].push(a); });
+    auf.forEach(function (a) { if (a.strang_id && je[a.strang_id] && a.art !== "projektgate") je[a.strang_id].push(a); });
     Object.keys(je).forEach(function (k) {
-      je[k].sort(function (a, b) { return (a.reihenfolge == null ? 999 : a.reihenfolge) - (b.reihenfolge == null ? 999 : b.reihenfolge) || a.id - b.id; });
+      je[k].sort(function (a, b) { return stufe(a) - stufe(b) || (a.reihenfolge == null ? 999 : a.reihenfolge) - (b.reihenfolge == null ? 999 : b.reihenfolge) || a.id - b.id; });
     });
     return je;
   }
+  // Projekt-Gates (Daniel, 13.10.2026): Ergebnisstufen über alle Stränge und Teilprojekte – wie im Meilensteinplan der SV Akademie.
+  // aufgaben.art = 'projektgate' (ohne Strang); jede Aufgabe gehört über projektgate_id zu dem Gate, vor dem sie fertig sein muss.
+  function pgListe(auf) {
+    return auf.filter(function (a) { return a.art === "projektgate"; })
+      .sort(function (a, b) { return String(a.faellig_am || "9999").localeCompare(String(b.faellig_am || "9999")) || (a.reihenfolge || 0) - (b.reihenfolge || 0) || a.id - b.id; });
+  }
+  function pgStufe(auf) {   // Aufgabe → Index ihres Projekt-Gates; ohne Gate ganz hinten
+    var pg = pgListe(auf), idx = {}; pg.forEach(function (g, i) { idx[g.id] = i; });
+    return function (a) { return a.projektgate_id != null && idx[a.projektgate_id] != null ? idx[a.projektgate_id] : pg.length; };
+  }
+  function datumJahr(d) { return new Date(String(d).slice(0, 10) + "T12:00:00").toLocaleDateString("de-DE", { day: "numeric", month: "numeric", year: "numeric" }); }
+  function pgTrenner(g) {
+    return '<li class="pl-pg-trenner' + (g.status === "erledigt" ? " pl-pg-trenner--fertig" : "") + '" data-pg="' + g.id + '"><span class="pl-pg-kicker">Projekt-Gate</span><span class="pl-pg-name">' + esc(g.titel) + "</span>" +
+      (g.faellig_am ? '<span class="pl-pg-datum">' + datumJahr(g.faellig_am) + "</span>" : "") + "</li>";
+  }
+  function pgFehlend(g, auf) { return auf.filter(function (a) { return a.projektgate_id === g.id && a.art !== "projektgate" && a.status !== "erledigt"; }); }
   function nachReihe(a, b) { return (a.reihenfolge || 0) - (b.reihenfolge || 0) || a.id - b.id; }
   // Neue Stränge/Teilprojekte immer ans Ende – nie eine doppelte Nummer, damit die Reihenfolge in Liste und Plan fest bleibt
   function naechste(l) { return l.reduce(function (m, s) { return Math.max(m, s.reihenfolge || 0); }, 0) + 1; }
@@ -67,7 +83,7 @@
   // alle = Aufgaben des Projekts + Abhängigkeiten aus anderen Projekten (nur für Zustand und „Es fehlt noch“)
   function liste(straenge, auf, h, alle) {
     alle = alle || auf;
-    var je = ordnen(straenge, auf), ohne = auf.filter(function (a) { return !a.strang_id && a.status === "offen"; });
+    var je = ordnen(straenge, auf), ohne = auf.filter(function (a) { return !a.strang_id && a.status === "offen" && a.art !== "projektgate"; });
     var html = "", einer = straenge.length === 1 && !straenge[0].eltern_id, fertig = [];   // ein einziger Strang ohne Teilprojekte: keine Überschrift
     // Oben nur Offenes. Erreichte Gates rutschen mit ihren Aufgaben nach unten in „Erledigt“, ebenso einzelne erledigte Aufgaben
     // (Daniel, 10.10.2026). Abschnitt = Aufgaben seit dem letzten Gate bis einschließlich Gate.
@@ -87,7 +103,13 @@
       });
       abs.forEach(function (x) { if (x.status === "erledigt") lose.push(x); else offen.push(x); });
       if (gruppen.length || lose.length) fertig.push({ s: s, titel: teil ? teil.titel + " › " + s.titel : s.titel, gruppen: gruppen, lose: lose });
-      return '<ol class="pl-liste" data-pl-liste="' + s.id + '">' + offen.map(function (a) { return zeile(a, alle, h); }).join("") + "</ol>";
+      var pg = pgListe(auf), stufe = pgStufe(auf), zeilen = "", gi = 0;
+      offen.forEach(function (a) {
+        while (gi < pg.length && stufe(a) > gi) zeilen += pgTrenner(pg[gi++]);
+        zeilen += zeile(a, alle, h);
+      });
+      if (offen.length) while (gi < pg.length) zeilen += pgTrenner(pg[gi++]);   // leerer Strang: keine Trenner
+      return '<ol class="pl-liste" data-pl-liste="' + s.id + '">' + zeilen + "</ol>";
     }
     oben(straenge).forEach(function (s) {
       var k = kinder(straenge, s.id);
@@ -98,7 +120,10 @@
             '<p class="pl-neu"><button type="button" data-pl-aufgabe="' + c.id + '">+ Aufgabe</button><button type="button" data-pl-gate="' + c.id + '">+ Gate</button></p></section>';
         }).join("") + "</section>";
     });
-    html += '<p class="pl-neu pl-neu--strang"><button type="button" data-pl-strang>+ Strang</button></p>';
+    html += '<p class="pl-neu pl-neu--strang"><button type="button" data-pl-strang>+ Strang</button><button type="button" data-pl-pgate>+ Projekt-Gate</button></p>';
+    var pgs = pgListe(auf);
+    if (pgs.length) html = '<section class="pl-pg-band"><h4 class="pl-pg-band-titel">Projekt-Gates <small>gelten für alle Stränge und Teilprojekte</small></h4><ol class="pl-liste">' +
+      pgs.map(function (g) { return zeile(g, alle, h, true, true, true); }).join("") + "</ol></section>" + html;
     if (ohne.length) html += '<section class="pl-strang"><h4 class="pl-strang-titel pl-strang-titel--ohne">Noch keinem Strang zugeordnet</h4><ol class="pl-liste">' +
       ohne.map(function (a) { return zeile(a, alle, h, true, true, true); }).join("") + "</ol></section>";
     if (fertig.length) {
@@ -122,14 +147,16 @@
   function heuteIso() { var d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
   function zeile(a, auf, h, erst, letzt, ohneStrang) {
     var z = zustand(a, auf);
-    if (a.art === "gate") {
-      var f = fehlend(a, auf);
+    if (a.art === "gate" || a.art === "projektgate") {
+      var pgw = a.art === "projektgate", f = pgw ? pgFehlend(a, auf) : fehlend(a, auf);
+      if (pgw && z !== "fertig") z = f.length ? "spaeter" : "machbar";
       var stand = z === "fertig" ? "Erreicht" + (a.erledigt_am ? " am " + new Date(a.erledigt_am).toLocaleDateString("de-DE", { day: "numeric", month: "numeric" }) : "")
+        : pgw ? (f.length ? "Es fehlen noch " + f.length + (f.length === 1 ? " Aufgabe" : " Aufgaben") : "Alle Aufgaben davor erledigt – Gate kann erreicht werden")
         : f.length ? "Es fehlt noch: " + f.map(function (x) { return x.titel; }).join(" · ") : "Alles erledigt – Gate kann erreicht werden";
-      return '<li class="pl-z pl-gate pl-z--' + z + '" data-a="' + a.id + '" data-art="gate">' + pfeile(a, erst, letzt, ohneStrang) +
+            return '<li class="pl-z pl-gate' + (pgw ? " pl-pgate" : "") + ' pl-z--' + z + '" data-a="' + a.id + '" data-art="' + a.art + '">' + pfeile(a, erst, letzt, ohneStrang) +
         '<button type="button" class="st-haken' + (z === "fertig" ? " an" : "") + '" aria-label="' + (z === "fertig" ? "Wieder öffnen" : "Als erreicht abhaken") + '"></button>' +
         // Gate mit Termin (Daniel, 11.10.2026): Datum direkt hier setzen oder ändern
-        '<div class="pl-inhalt"><span class="pl-gate-kopf"><span class="pl-gate-kicker">Gate</span>' +
+        '<div class="pl-inhalt"><span class="pl-gate-kopf"><span class="pl-gate-kicker">' + (pgw ? "Projekt-Gate" : "Gate") + "</span>" +
           (z === "fertig" ? (a.faellig_am ? '<span class="pl-gate-ziel">geplant ' + datumKurz(a.faellig_am) + "</span>" : "")
             : '<label class="pl-gate-ziel' + (a.faellig_am && a.faellig_am < heuteIso() ? " pl-gate-ziel--ueber" : "") + '">Termin <input type="date" data-gate-datum="' + a.id + '" value="' + esc(a.faellig_am || "") + '"></label>') +
         '</span><b class="pl-titel">' + esc(a.titel) + "</b>" +
@@ -146,16 +173,26 @@
   /* ---------- Plan (visuell) ---------- */
   function bild(straenge, auf, alle) {
     alle = alle || auf;
-    var je = ordnen(straenge, auf);
+    var je = ordnen(straenge, auf), pg = pgListe(auf), stufe = pgStufe(auf);
+    // Kopfzeile mit den Projekt-Gates über allen Bahnen
+    var kopf = !pg.length ? "" : '<div class="pl-bahn pl-pg-kopfzeile"><div class="pl-bahn-kopf"></div><div class="pl-bahn-spur pl-spur-pg">' + pg.concat([null]).map(function (g, gi) {
+      return '<div class="pl-seg" data-seg="' + gi + '"></div>' + (g ? '<div class="pl-pg-linie pl-pg-linie--kopf' + (g.status === "erledigt" ? " pl-pg-linie--fertig" : "") + '"><span class="pl-pg-etikett"><small>Projekt-Gate' + (g.faellig_am ? " · " + datumJahr(g.faellig_am) : "") + "</small>" + esc(g.titel) + "</span></div>" : "");
+    }).join("") + "</div></div>";
     return '<p class="pl-legende"><span class="pl-leg-linie"></span>Abfolge<span class="pl-leg-linie pl-leg-linie--gestr"></span>wartet auf anderen Strang</p>' +
-      '<div class="pl-plan" data-pl-plan><div class="pl-plan-innen"><svg class="pl-svg" data-pl-svg aria-hidden="true"></svg>' +
+      '<div class="pl-plan" data-pl-plan><div class="pl-plan-innen"><svg class="pl-svg" data-pl-svg aria-hidden="true"></svg>' + kopf +
       oben(straenge).map(function (s, i) {
         var k = kinder(straenge, s.id), farbe = " pl-bahn--" + (i % 3);
+        function karte(a) {
+          var z = zustand(a, alle);
+          if (a.art === "gate") return '<div class="pl-knoten pl-k-gate pl-z--' + z + '" data-k="' + a.id + '"><span class="pl-gate-kicker">Gate' + (a.faellig_am ? " · " + datumKurz(a.faellig_am) : "") + '</span><b>' + esc(a.titel) + "</b></div>";
+          return '<div class="pl-knoten pl-karte pl-z--' + z + '" data-k="' + a.id + '"><b>' + esc(a.titel) + "</b></div>";
+        }
         function spur(x) {
-          return '<div class="pl-bahn-spur">' + je[x.id].map(function (a) {
-            var z = zustand(a, alle);
-            if (a.art === "gate") return '<div class="pl-knoten pl-k-gate pl-z--' + z + '" data-k="' + a.id + '"><span class="pl-gate-kicker">Gate' + (a.faellig_am ? " · " + datumKurz(a.faellig_am) : "") + '</span><b>' + esc(a.titel) + "</b></div>";
-            return '<div class="pl-knoten pl-karte pl-z--' + z + '" data-k="' + a.id + '"><b>' + esc(a.titel) + "</b></div>";
+          if (!pg.length) return '<div class="pl-bahn-spur">' + je[x.id].map(karte).join("") + "</div>";
+          // mit Projekt-Gates: je Abschnitt ein Feld, dazwischen die senkrechte Gate-Linie – gleich breit in allen Bahnen
+          return '<div class="pl-bahn-spur pl-spur-pg">' + pg.concat([null]).map(function (g, gi) {
+            return '<div class="pl-seg" data-seg="' + gi + '">' + je[x.id].filter(function (a) { return stufe(a) === gi; }).map(karte).join("") + "</div>" +
+              (g ? '<div class="pl-pg-linie' + (g.status === "erledigt" ? " pl-pg-linie--fertig" : "") + '"></div>' : "");
           }).join("") + "</div>";
         }
         if (!k.length) return '<div class="pl-bahn' + farbe + '"><div class="pl-bahn-kopf"><b>' + esc(s.titel) + "</b></div>" + spur(s) + "</div>";
@@ -168,6 +205,10 @@
   function linien(wurzel, straenge, auf) {
     var plan = wurzel.querySelector("[data-pl-plan]"); if (!plan) return;
     var innen = plan.querySelector(".pl-plan-innen"), svg = plan.querySelector("[data-pl-svg]"), je = ordnen(straenge, auf);
+    var segs = innen.querySelectorAll(".pl-seg"), breit = {};
+    Array.prototype.forEach.call(segs, function (s) { s.style.minWidth = ""; });
+    Array.prototype.forEach.call(segs, function (s) { var k = s.getAttribute("data-seg"); breit[k] = Math.max(breit[k] || 0, s.scrollWidth); });
+    Array.prototype.forEach.call(segs, function (s) { s.style.minWidth = breit[s.getAttribute("data-seg")] + "px"; });
     var box = innen.getBoundingClientRect();
     svg.setAttribute("width", innen.scrollWidth); svg.setAttribute("height", innen.scrollHeight);
     function pos(id) { var el = innen.querySelector('[data-k="' + id + '"]'); if (!el) return null; var r = el.getBoundingClientRect(); return { l: r.left - box.left, r: r.right - box.left, m: r.top - box.top + r.height / 2, t: r.top - box.top, b: r.bottom - box.top }; }
@@ -252,6 +293,18 @@
           .then(function (r) { b.disabled = false; if (r.error) { alert("Nicht gespeichert: " + r.error.message); return; } neu(); });
       };
     });
+    // + Projekt-Gate: Ergebnisstufe über alle Stränge; Aufgaben ordnest du zu, indem du sie über den Trenner ziehst
+    var pb = wurzel.querySelector("[data-pl-pgate]");
+    if (pb) pb.onclick = function () {
+      var titel = prompt("Name des Projekt-Gates (gilt für alle Stränge und Teilprojekte), z. B. „Ende 2026 · Big Bang“:");
+      if (!titel || !titel.trim()) return;
+      var d = prompt("Termin (TT.MM.JJJJ) – leer lassen, wenn noch offen:", ""); if (d === null) return;
+      var m = d.trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/), iso = m ? m[3] + "-" + ("0" + m[2]).slice(-2) + "-" + ("0" + m[1]).slice(-2) : null;
+      if (d.trim() && !iso) { alert("Datum nicht erkannt – bitte als TT.MM.JJJJ eingeben."); return; }
+      pb.disabled = true;
+      db.from("aufgaben").insert({ titel: titel.trim(), art: "projektgate", status: "offen", spalte: "backlog", projekt_id: projektId(), faellig_am: iso, vorgaenger: [], bereich: "Projekt", zustaendig_name: "Daniel", verantwortlich: "Daniel" })
+        .then(function (r) { pb.disabled = false; if (r.error) { alert("Nicht gespeichert: " + r.error.message); return; } neu(); });
+    };
     // + Teilprojekt: Unterstrang im Hauptstrang
     wurzel.querySelectorAll("[data-pl-teil]").forEach(function (b) {
       b.onclick = function () {
@@ -437,7 +490,32 @@
       ol.classList.add("laedt");
       var p = speichern(db, +ol.getAttribute("data-pl-liste"), idsVon(ol), auf);
       if (alt) p = p.then(function () { return speichern(db, +alt.getAttribute("data-pl-liste"), idsVon(alt), auf); });
+      p = p.then(function () { return pgZuordnen([ol].concat(alt ? [alt] : [])); });
       p.then(neu).catch(function (er) { ol.classList.remove("laedt"); alert("Nicht gespeichert: " + er.message); });
+    }
+    // Projekt-Gate je Aufgabe aus der Liste ablesen: eine Aufgabe gehört zum nächsten Trenner unter ihr, ohne Trenner zu keinem.
+    // Danach braucht jedes Projekt-Gate genau seine Aufgaben (vorgaenger) – so greifen auch die „Kann jetzt starten“-Hinweise.
+    function pgZuordnen(listen) {
+      if (!pgListe(auf).length) return Promise.resolve();
+      var neuPg = {}, upd = [];
+      listen.forEach(function (ol) {
+        var warten = [];
+        Array.prototype.forEach.call(ol.querySelectorAll(":scope > li"), function (li) {
+          if (li.hasAttribute("data-pg")) { var g = +li.getAttribute("data-pg"); warten.forEach(function (id) { neuPg[id] = g; }); warten = []; }
+          else if (li.hasAttribute("data-a")) warten.push(+li.getAttribute("data-a"));
+        });
+        warten.forEach(function (id) { neuPg[id] = null; });
+      });
+      Object.keys(neuPg).forEach(function (id) {
+        var a = auf.filter(function (x) { return x.id === +id; })[0];
+        if (a && (a.projektgate_id || null) !== neuPg[id]) { a.projektgate_id = neuPg[id]; upd.push(db.from("aufgaben").update({ projektgate_id: neuPg[id] }).eq("id", +id)); }
+      });
+      return Promise.all(upd).then(function () {
+        return Promise.all(pgListe(auf).map(function (g) {
+          var v = auf.filter(function (a) { return a.projektgate_id === g.id && a.art !== "projektgate"; }).map(function (a) { return a.id; });
+          return db.from("aufgaben").update({ vorgaenger: v }).eq("id", g.id);
+        }));
+      });
     }
     // Handy/Tablet (Daniel, 13.10.2026): Zeile lange gedrückt halten, dann mit dem Finger verschieben – keine Pfeile.
     // Nur Touch-Ereignisse; am großen Rechner mit Maus bleibt das Ziehen an den sechs Punkten unverändert.
