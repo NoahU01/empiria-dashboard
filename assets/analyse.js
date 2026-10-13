@@ -359,9 +359,9 @@
       BR.html("strategie", "einsatz", "Was ansteht – nach deinem Einsatz", nachEinsatz(), "auf");
     else if (ANSICHT === "3") mitte = MARKEN.filter(function (m) { return mf(m); }).map(function (m) {
       return BR.html("strategie", "marke-" + m, m, jeMarke(m), "auf"); }).join("");
-    // Ansicht 1: erst Strategie, dann Strategieumsetzung – beide offen, Sparring zu (Daniel, 11.10.2026)
-    else mitte = BR.html("strategie", "strategie", "Strategie", strategie(), "auf") +
-      BR.html("strategie", "oekosystem", "Strategieumsetzung", oekosystem(), "auf");
+    // Ansicht 1: erst Strategie, dann Strategieumsetzung – beide starten zugeklappt, Entscheidungen offen (Daniel, 13.10.2026)
+    else mitte = BR.html("strategie", "strategie", "Strategie", strategie(), "zu") +
+      BR.html("strategie", "oekosystem", "Strategieumsetzung", oekosystem(), "zu");
     wurzel.innerHTML = '<div class="kg-bereiche' + (ANSICHT === "3" ? " kg-bereiche--marken" : "") + '">' +
       BR.html("strategie", "status", "Entscheidungen", signale() + geburtstage(), "auf") + mitte +
       BR.html("strategie", "sparring", "Sparring starten", sparring(), "zu") + "</div>";
