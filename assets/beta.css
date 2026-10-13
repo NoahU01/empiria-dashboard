@@ -2141,3 +2141,14 @@ nav.kt-tabs a.kt-tab-leise[aria-current="page"] { background: #fff; box-shadow: 
 .kt-xmas-wahl button[data-g="xl"][aria-pressed="true"], .kt-xmas-wahl button[data-g="gross"][aria-pressed="true"], .kt-xmas-wahl button[data-g="klein"][aria-pressed="true"] { background: var(--hl, #fff400); font-weight: 600; }
 .kt-xmas-wahl button[data-g="keines"][aria-pressed="true"] { background: #e8e6e3; }
 .kt-xmas tr.kt-xmas-ja td:nth-child(1), .kt-xmas tr.kt-xmas-ja td:nth-child(2) { font-weight: 600; color: var(--ink); }
+
+/* Xmas: Spalte E-Mail ja/nein (Daniel, 13.10.2026) – ja gelb, nein grau wie beim Geschenk */
+.kt-xmas th:nth-child(3), .kt-xmas td:nth-child(3) { width: 1%; white-space: nowrap; padding-right: 18px; }
+.kt-xmas-mail button[data-m="true"][aria-pressed="true"] { background: var(--hl, #fff400); font-weight: 600; }
+.kt-xmas-mail button[data-m="false"][aria-pressed="true"] { background: #e8e6e3; }
+@media (max-width: 600px) {
+  .kt-xmas tr { grid-template-columns: auto minmax(0, 1fr); row-gap: 6px; }
+  .kt-xmas td:nth-child(1), .kt-xmas td:nth-child(2) { grid-column: 1 / 3; }
+  .kt-xmas td:nth-child(3) { grid-column: 1; grid-row: 3; padding-right: 0; }
+  .kt-xmas td:nth-child(4) { grid-column: 2; grid-row: 3; justify-self: start; }
+}

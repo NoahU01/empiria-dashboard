@@ -87,7 +87,7 @@
     wurzel.innerHTML = '<div class="kb-laedt"><span></span><span></span><span></span></div>';
     return Promise.all([
       db.from("kontakte").select("id, kontakt_nr, vorname, nachname, position, entscheidungsebene, prioritaet, beziehungsstatus, kontaktart, " +
-        "rhythmus_tage, letzter_kontakt, naechster_kontakt, kontaktstopp, klaeren, weihnachtsgeschenk, organisationen(id, name, gruppe, klaeren), kontakt_marken(marke, bestaetigt)").order("nachname"),
+        "rhythmus_tage, letzter_kontakt, naechster_kontakt, kontaktstopp, klaeren, weihnachtsgeschenk, weihnachtsmail, organisationen(id, name, gruppe, klaeren), kontakt_marken(marke, bestaetigt)").order("nachname"),
       db.from("vorschlaege").select("id, kontakt_id, feld, wert, beleg, quelle, sicherheit").eq("status", "offen").order("sicherheit"),
       db.from("aufgaben").select(AUFGABEN_FELDER).eq("status", "offen").order("angelegt_am")
     ]).then(function (r) {
@@ -153,14 +153,29 @@
       if (!fa !== !fb) return fa ? -1 : 1;   // ohne Firma ans Ende
       return fa.localeCompare(fb, "de") || (a.nachname || "").localeCompare(b.nachname || "", "de") || (a.vorname || "").localeCompare(b.vorname || "", "de");
     });
-    return '<table class="kt3-tab kt-xmas"><thead><tr><th>Firma</th><th>Person</th><th>Geschenk</th></tr></thead><tbody>' + l.map(function (k) {
+    return '<table class="kt3-tab kt-xmas"><thead><tr><th>Firma</th><th>Person</th><th>E-Mail</th><th>Geschenk</th></tr></thead><tbody>' + l.map(function (k) {
       return "<tr" + (geschenk(k.weihnachtsgeschenk) ? ' class="kt-xmas-ja"' : "") + "><td>" + esc(k.organisationen ? k.organisationen.name : "–") + "</td><td>" + esc([k.nachname, k.vorname].filter(Boolean).join(", ")) + "</td>" +
+        '<td><span class="kt-xmas-wahl kt-xmas-mail" role="group" data-xmas-mail="' + k.id + '">' + [[true, "ja"], [false, "nein"]].map(function (x) {
+          return '<button type="button" data-m="' + x[0] + '" aria-pressed="' + (k.weihnachtsmail !== false ? x[0] : !x[0]) + '">' + x[1] + "</button>"; }).join("") + "</span></td>" +
         '<td><span class="kt-xmas-wahl" role="group" data-xmas="' + k.id + '">' + XMAS.map(function (x) {
           return '<button type="button" data-g="' + x[0] + '" aria-pressed="' + (k.weihnachtsgeschenk === x[0]) + '">' + x[1] + "</button>"; }).join("") +
         (k.weihnachtsgeschenk ? "" : '<small class="kt-xmas-offen">offen</small>') + "</span></td></tr>";
     }).join("") + "</tbody></table>";
   }
   function xmasVerdrahten() {
+    // E-Mail ja/nein – vorbelegt mit ja; Daniel nimmt raus, wer keine Weihnachtsmail bekommen soll
+    wurzel.querySelectorAll("[data-xmas-mail] [data-m]").forEach(function (b) {
+      b.onclick = function () {
+        var box = b.parentNode, id = +box.getAttribute("data-xmas-mail"), wert = b.getAttribute("data-m") === "true", k = alle.filter(function (x) { return x.id === id; })[0];
+        box.classList.add("laedt");
+        db.from("kontakte").update({ weihnachtsmail: wert }).eq("id", id).then(function (r) {
+          box.classList.remove("laedt");
+          if (r.error) { alert("Nicht gespeichert: " + r.error.message); return; }
+          if (k) k.weihnachtsmail = wert;
+          box.querySelectorAll("[data-m]").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+        });
+      };
+    });
     wurzel.querySelectorAll("[data-xmas] [data-g]").forEach(function (b) {
       b.onclick = function () {
         var box = b.parentNode, id = +box.getAttribute("data-xmas"), wert = b.getAttribute("data-g"), k = alle.filter(function (x) { return x.id === id; })[0];
