@@ -24,6 +24,18 @@
   function naechste(l) { return l.reduce(function (m, s) { return Math.max(m, s.reihenfolge || 0); }, 0) + 1; }
   // Strang/Teilprojekt zugeklappt? Je Strang im Browser gemerkt (Daniel, 13.10.2026) – bleibt auch nach dem Neuladen
   function istZu(id) { try { return localStorage.getItem("pl-zu-" + id) === "1"; } catch (x) { return false; } }
+  // Teilprojekt: kurze Erklärung und Verantwortliche (mehrere möglich) – Daniel, 13.10.2026
+  function teilInfo(c) {
+    var v = (c.verantwortlich || []).filter(Boolean), leer = !c.erklaerung && !v.length;
+    return '<div class="pl-teil-info">' +
+      (c.erklaerung ? '<p class="pl-teil-erkl">' + esc(c.erklaerung) + "</p>" : "") +
+      (v.length ? '<p class="pl-teil-wer">Verantwortlich: ' + v.map(esc).join(", ") + "</p>" : "") +
+      '<p class="pl-teil-bearb-zeile"><button type="button" class="pl-teil-bearb" data-teil-bearb>' + (leer ? "Erklärung und Verantwortliche ergänzen" : "Bearbeiten") + "</button></p>" +
+      '<form class="ad-form pl-teil-form" data-teil-form="' + c.id + '" hidden>' +
+      '<label>Erklärung<textarea name="erklaerung" rows="2">' + esc(c.erklaerung || "") + "</textarea></label>" +
+      '<label>Verantwortlich <small>mehrere Namen mit Komma trennen</small><input name="verantwortlich" value="' + esc(v.join(", ")) + '"></label>' +
+      '<p class="ad-form-knoepfe"><button type="submit" class="ad-form-ok">Speichern</button><button type="button" data-ad-abbrechen-teil>Abbrechen</button></p></form></div>';
+  }
   function oben(straenge) { return straenge.filter(function (s) { return !s.eltern_id; }).sort(nachReihe); }
   function kinder(straenge, id) { return straenge.filter(function (s) { return s.eltern_id === id; }).sort(nachReihe); }
   function zustand(a, auf) {
@@ -68,7 +80,7 @@
       html += '<section class="pl-strang' + (!einer && istZu(s.id) ? " pl-zu" : "") + '" data-strang="' + s.id + '">' + (einer ? "" : '<h4 class="pl-strang-titel"><span class="pl-griff pl-s-griff" draggable="true" data-s-griff title="Ziehen zum Umsortieren" aria-hidden="true"></span><span class="pl-s-name">' + esc(s.titel) + "</span>" + '<button type="button" class="pl-klapp" data-pl-klapp aria-label="Auf- und zuklappen" aria-expanded="' + !istZu(s.id) + '"><span class="tl-dreieck" aria-hidden="true"></span></button>' + "</h4>") + abschnitt(s) +
         '<p class="pl-neu"><button type="button" data-pl-aufgabe="' + s.id + '">+ Aufgabe</button><button type="button" data-pl-gate="' + s.id + '">+ Gate</button><button type="button" data-pl-teil="' + s.id + '">+ Teilprojekt</button></p>' +
         k.map(function (c) {
-          return '<section class="pl-teil' + (istZu(c.id) ? " pl-zu" : "") + '" data-strang="' + c.id + '"><h5 class="pl-strang-titel pl-teil-titel"><span class="pl-griff pl-s-griff" draggable="true" data-s-griff title="Ziehen zum Umsortieren" aria-hidden="true"></span><span class="pl-teil-kicker">Teilprojekt</span><span class="pl-s-name">' + esc(c.titel) + "</span>" + '<button type="button" class="pl-klapp" data-pl-klapp aria-label="Auf- und zuklappen" aria-expanded="' + !istZu(c.id) + '"><span class="tl-dreieck" aria-hidden="true"></span></button>' + "</h5>" + abschnitt(c, s) +
+          return '<section class="pl-teil' + (istZu(c.id) ? " pl-zu" : "") + '" data-strang="' + c.id + '"><h5 class="pl-strang-titel pl-teil-titel"><span class="pl-griff pl-s-griff" draggable="true" data-s-griff title="Ziehen zum Umsortieren" aria-hidden="true"></span><span class="pl-teil-kicker">Teilprojekt</span><span class="pl-s-name">' + esc(c.titel) + "</span>" + '<button type="button" class="pl-klapp" data-pl-klapp aria-label="Auf- und zuklappen" aria-expanded="' + !istZu(c.id) + '"><span class="tl-dreieck" aria-hidden="true"></span></button>' + "</h5>" + teilInfo(c) + abschnitt(c, s) +
             '<p class="pl-neu"><button type="button" data-pl-aufgabe="' + c.id + '">+ Aufgabe</button><button type="button" data-pl-gate="' + c.id + '">+ Gate</button></p></section>';
         }).join("") + "</section>";
     });
@@ -245,6 +257,24 @@
       db.from("projekt_straenge").insert({ projekt_id: projektId(), titel: titel.trim(), reihenfolge: naechste(oben(straenge)) })
         .then(function (r) { if (r.error) { sb.disabled = false; alert("Nicht gespeichert: " + r.error.message); return; } neu(); });
     };
+    // Teilprojekt: Erklärung und Verantwortliche bearbeiten
+    wurzel.querySelectorAll("[data-teil-bearb], [data-ad-abbrechen-teil]").forEach(function (b) {
+      b.onclick = function () {
+        var info = b.closest(".pl-teil-info"), f = info.querySelector("[data-teil-form]"), auf = b.hasAttribute("data-teil-bearb");
+        f.hidden = !auf;
+        info.querySelectorAll(".pl-teil-erkl, .pl-teil-wer, .pl-teil-bearb-zeile").forEach(function (x) { x.hidden = auf; });
+        if (auf) f.erklaerung.focus(); else f.reset();
+      };
+    });
+    wurzel.querySelectorAll("[data-teil-form]").forEach(function (f) {
+      f.onsubmit = function (e) {
+        e.preventDefault();
+        var namen = f.verantwortlich.value.split(/[,;\n]/).map(function (x) { return x.trim(); }).filter(Boolean);
+        f.classList.add("laedt");
+        db.from("projekt_straenge").update({ erklaerung: f.erklaerung.value.trim() || null, verantwortlich: namen.length ? namen : null }).eq("id", +f.getAttribute("data-teil-form"))
+          .then(function (r) { f.classList.remove("laedt"); if (r.error) { alert("Nicht gespeichert: " + r.error.message); return; } neu(); });
+      };
+    });
     // Strang/Teilprojekt auf- und zuklappen
     wurzel.querySelectorAll("[data-pl-klapp]").forEach(function (b) {
       b.onclick = function (e) {
