@@ -2064,3 +2064,20 @@ a.zg-a:hover { background: #faf9f7; } a.zg-a:hover b { text-decoration: underlin
 .pl-zu > .pl-teil-info .pl-teil-bearb-zeile, .pl-zu > .pl-teil-info .pl-teil-form { display: none; }
 .pl-s-kompakt .pl-teil-info { display: none; }
 .ad-form[hidden] { display: none; }   /* sonst überschreibt display:grid das hidden-Attribut */
+
+/* Verantwortliche aus dem CRM (Daniel, 13.10.2026) */
+.pl-teil-wer a { color: inherit; text-decoration: underline; text-decoration-color: var(--linie); text-underline-offset: 3px; }
+.pl-ohne-crm { font-size: 10px; color: var(--grey-50); }
+.pl-wer-feld { position: relative; display: grid; gap: 6px; }
+.pl-wer-label { font-size: var(--fs-xs); font-weight: 600; color: var(--grey-70); }
+.pl-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.pl-chips:empty { display: none; }
+.pl-chip { display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 4px 0 12px; border-radius: 999px; background: #f2f1ef; font-size: var(--fs-xs); font-weight: 500; }
+.pl-chip--frei { background: none; box-shadow: inset 0 0 0 1px var(--linie); }
+.pl-chip button { width: 24px; height: 24px; border: 0; border-radius: 50%; background: none; font-size: 15px; line-height: 1; color: var(--grey-50); cursor: pointer; }
+.pl-chip button:hover { color: var(--ink); background: #e6e3df; }
+.pl-wer-vorschlag { position: absolute; z-index: 5; top: 100%; left: 0; right: 0; max-width: 620px; margin: 4px 0 0; padding: 6px 0; list-style: none; border-radius: 10px; background: #fff; box-shadow: 0 0 0 1px #e6e3df, 0 10px 28px rgba(0,0,0,.12); }
+.pl-wer-vorschlag button { display: block; width: 100%; padding: 9px 14px; border: 0; background: none; text-align: left; font: inherit; font-size: var(--fs-s); color: var(--ink); cursor: pointer; }
+.pl-wer-vorschlag button:hover { background: #f6f5f3; }
+.pl-wer-vorschlag small { color: var(--grey-50); }
+.pl-wer-vorschlag .pl-tr-frei { color: var(--grey-50); font-size: var(--fs-xs); border-top: 1px solid #f0eeeb; }

@@ -25,17 +25,31 @@
   // Strang/Teilprojekt zugeklappt? Je Strang im Browser gemerkt (Daniel, 13.10.2026) – bleibt auch nach dem Neuladen
   function istZu(id) { try { return localStorage.getItem("pl-zu-" + id) === "1"; } catch (x) { return false; } }
   // Teilprojekt: kurze Erklärung und Verantwortliche (mehrere möglich) – Daniel, 13.10.2026
+  // Verantwortliche kommen aus dem CRM (verantwortlich_kontakte = kontakte.id); freie Namen nur als Ausnahme (verantwortlich) – Daniel, 13.10.2026
+  function chip(k, frei, text) {
+    return '<span class="pl-chip' + (frei ? " pl-chip--frei" : "") + '"' + (frei ? ' data-frei="' + esc(text) + '"' : ' data-k="' + k + '"') + '><span data-kontakt-name="' + (frei ? "" : k) + '">' + esc(text) + '</span><button type="button" data-chip-weg aria-label="Entfernen">×</button></span>';
+  }
   function teilInfo(c) {
-    var v = (c.verantwortlich || []).filter(Boolean), leer = !c.erklaerung && !v.length;
+    var ids = (c.verantwortlich_kontakte || []).filter(Boolean), frei = (c.verantwortlich || []).filter(Boolean), leer = !c.erklaerung && !ids.length && !frei.length;
+    var namen = ids.map(function (k) { return '<a href="/strategie/kontakte.html#k=' + k + '" data-kontakt-name="' + k + '">…</a>'; })
+      .concat(frei.map(function (n) { return /^daniel( str[öo]e?bel)?$/i.test(n) ? esc(n) : esc(n) + ' <small class="pl-ohne-crm">nicht im CRM</small>'; }));
     return '<div class="pl-teil-info">' +
       (c.erklaerung ? '<p class="pl-teil-erkl">' + esc(c.erklaerung) + "</p>" : "") +
-      (v.length ? '<p class="pl-teil-wer">Verantwortlich: ' + v.map(esc).join(", ") + "</p>" : "") +
+      (namen.length ? '<p class="pl-teil-wer">Verantwortlich: ' + namen.join(", ") + "</p>" : "") +
       '<p class="pl-teil-bearb-zeile"><button type="button" class="pl-teil-bearb" data-teil-bearb>' + (leer ? "Erklärung und Verantwortliche ergänzen" : "Bearbeiten") + "</button></p>" +
       '<form class="ad-form pl-teil-form" data-teil-form="' + c.id + '" hidden>' +
       '<label>Erklärung<textarea name="erklaerung" rows="2">' + esc(c.erklaerung || "") + "</textarea></label>" +
-      '<label>Verantwortlich <small>mehrere Namen mit Komma trennen</small><input name="verantwortlich" value="' + esc(v.join(", ")) + '"></label>' +
+      '<div class="pl-wer-feld"><span class="pl-wer-label">Verantwortlich</span><div class="pl-chips">' +
+        ids.map(function (k) { return chip(k, false, "…"); }).join("") + frei.map(function (n) { return chip(null, true, n); }).join("") + "</div>" +
+        '<input class="pl-wer-suche" placeholder="Person aus dem CRM suchen …" autocomplete="off"><ul class="pl-wer-vorschlag" hidden></ul></div>' +
       '<p class="ad-form-knoepfe"><button type="submit" class="ad-form-ok">Speichern</button><button type="button" data-ad-abbrechen-teil>Abbrechen</button></p></form></div>';
   }
+  // CRM-Kontakte einmal je Seite laden (für Namen und Suche)
+  function kontakteLaden(db) {
+    if (!window.__plKontakte) window.__plKontakte = db.from("kontakte").select("id, vorname, nachname, organisationen(name)").order("nachname").then(function (r) { return r.data || []; });
+    return window.__plKontakte;
+  }
+  function kName(k) { return [k.vorname, k.nachname].filter(Boolean).join(" "); }
   function oben(straenge) { return straenge.filter(function (s) { return !s.eltern_id; }).sort(nachReihe); }
   function kinder(straenge, id) { return straenge.filter(function (s) { return s.eltern_id === id; }).sort(nachReihe); }
   function zustand(a, auf) {
@@ -263,15 +277,47 @@
         var info = b.closest(".pl-teil-info"), f = info.querySelector("[data-teil-form]"), auf = b.hasAttribute("data-teil-bearb");
         f.hidden = !auf;
         info.querySelectorAll(".pl-teil-erkl, .pl-teil-wer, .pl-teil-bearb-zeile").forEach(function (x) { x.hidden = auf; });
-        if (auf) f.erklaerung.focus(); else f.reset();
+        if (auf) f.erklaerung.focus(); else neu();   // verwirft auch geänderte Personen
       };
     });
+    // Namen der CRM-Verantwortlichen nachtragen
+    if (wurzel.querySelector("[data-kontakt-name]:not([data-kontakt-name=''])")) kontakteLaden(db).then(function (l) {
+      var m = {}; l.forEach(function (k) { m[k.id] = kName(k); });
+      wurzel.querySelectorAll("[data-kontakt-name]").forEach(function (el) { var id = el.getAttribute("data-kontakt-name"); if (id && m[id]) el.textContent = m[id]; else if (id) el.textContent = "(Kontakt gelöscht)"; });
+    });
     wurzel.querySelectorAll("[data-teil-form]").forEach(function (f) {
+      var suche = f.querySelector(".pl-wer-suche"), vl = f.querySelector(".pl-wer-vorschlag"), chips = f.querySelector(".pl-chips"), treffer = [];
+      function hinzu(x) {
+        if (x.k && chips.querySelector('[data-k="' + x.k + '"]')) return;
+        if (x.frei && Array.prototype.some.call(chips.querySelectorAll("[data-frei]"), function (c) { return c.getAttribute("data-frei").toLowerCase() === x.frei.toLowerCase(); })) return;
+        chips.insertAdjacentHTML("beforeend", x.k ? chip(x.k, false, x.text) : chip(null, true, x.frei));
+        suche.value = ""; vl.hidden = true; suche.focus();
+      }
+      function zeigen() {
+        var q = suche.value.trim().toLowerCase();
+        kontakteLaden(db).then(function (l) {
+          treffer = [];
+          if (!q || "daniel ströbel".indexOf(q) > -1 || "daniel stroebel".indexOf(q) > -1) treffer.push({ frei: "Daniel", text: "Daniel Ströbel (du)" });
+          if (q) l.filter(function (k) { return (kName(k) + " " + (k.organisationen ? k.organisationen.name : "")).toLowerCase().indexOf(q) > -1; }).slice(0, 8)
+            .forEach(function (k) { treffer.push({ k: k.id, text: kName(k), org: k.organisationen ? k.organisationen.name : "" }); });
+          if (q.length > 1) treffer.push({ frei: suche.value.trim(), text: "„" + suche.value.trim() + "“ ohne CRM-Eintrag hinzufügen", ausnahme: true });
+          vl.innerHTML = treffer.map(function (x, i) { return '<li><button type="button" data-tr="' + i + '"' + (x.ausnahme ? ' class="pl-tr-frei"' : "") + ">" + esc(x.text) + (x.org ? " <small>" + esc(x.org) + "</small>" : "") + "</button></li>"; }).join("");
+          vl.hidden = !treffer.length;
+        });
+      }
+      suche.addEventListener("input", zeigen);
+      suche.addEventListener("focus", zeigen);
+      suche.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); if (treffer[0] && suche.value.trim()) hinzu(treffer[0]); } if (e.key === "Escape") vl.hidden = true; });
+      vl.addEventListener("mousedown", function (e) { e.preventDefault(); });   // Fokus bleibt im Suchfeld
+      vl.addEventListener("click", function (e) { var b = e.target.closest("[data-tr]"); if (b) hinzu(treffer[+b.getAttribute("data-tr")]); });
+      suche.addEventListener("blur", function () { setTimeout(function () { vl.hidden = true; }, 150); });
+      chips.addEventListener("click", function (e) { var b = e.target.closest("[data-chip-weg]"); if (b) b.parentNode.remove(); });
       f.onsubmit = function (e) {
         e.preventDefault();
-        var namen = f.verantwortlich.value.split(/[,;\n]/).map(function (x) { return x.trim(); }).filter(Boolean);
+        var ids = Array.prototype.map.call(chips.querySelectorAll("[data-k]"), function (c) { return +c.getAttribute("data-k"); });
+        var frei = Array.prototype.map.call(chips.querySelectorAll("[data-frei]"), function (c) { return c.getAttribute("data-frei"); });
         f.classList.add("laedt");
-        db.from("projekt_straenge").update({ erklaerung: f.erklaerung.value.trim() || null, verantwortlich: namen.length ? namen : null }).eq("id", +f.getAttribute("data-teil-form"))
+        db.from("projekt_straenge").update({ erklaerung: f.erklaerung.value.trim() || null, verantwortlich_kontakte: ids.length ? ids : null, verantwortlich: frei.length ? frei : null }).eq("id", +f.getAttribute("data-teil-form"))
           .then(function (r) { f.classList.remove("laedt"); if (r.error) { alert("Nicht gespeichert: " + r.error.message); return; } neu(); });
       };
     });
