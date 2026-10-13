@@ -144,8 +144,8 @@
     if (t === "xmas") xmasVerdrahten();
   }
 
-  /* ---------- Xmas (Daniel, 13.10.2026): Weihnachtsgeschenk je Person – groß, klein oder keines. Die Weihnachtsmail bekommen alle. ---------- */
-  var XMAS = [["gross", "groß"], ["klein", "klein"], ["keines", "keines"]];
+  /* ---------- Xmas (Daniel, 13.10.2026): Weihnachtsgeschenk je Person – XL, groß, klein oder keines. Die Weihnachtsmail bekommen alle. ---------- */
+  var XMAS = [["xl", "XL"], ["gross", "groß"], ["klein", "klein"], ["keines", "keines"]];
   function xmasHtml() {
     var l = alle.slice().sort(function (a, b) {
       var fa = a.organisationen ? a.organisationen.name : "", fb = b.organisationen ? b.organisationen.name : "";
