@@ -6,7 +6,9 @@
   var db = window.empiriaDb, platz = document.querySelector("[data-mz-plan]");
   if (!db || !platz) return;
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
-  var STUFEN = [["position", "Themenspeicher", "Deine Sicht, gesichtet und einem Themenfeld zugeordnet"], ["entwurf", "Entwürfe", "Warten auf deine Freigabe"], ["freigegeben", "Freigegeben", "Werden eingeplant"], ["geplant", "Eingeplant", "Erscheinen automatisch"], ["veroeffentlicht", "Veröffentlicht", "Die letzten Beiträge"]];
+  var STUFEN = [["position", "Themenspeicher", "Deine Sicht, gesichtet und einem Themenfeld zugeordnet"], ["entwurf", "Entwürfe", "Warten auf deine Freigabe"], ["freigegeben", "Freigegeben", "Werden eingeplant"], ["geplant", "Eingeplant", "Erscheinen automatisch"], ["veroeffentlicht", "Veröffentlicht", "Die letzten Beiträge"],
+    // Branchen-Radar (Daniel, 13.10.2026): nicht auf der Steuerung, sondern hier – Aufhänger für Beiträge und Gespräche
+    ["radar", "Branchen-Radar", "Aufhänger aus der Branche – Material für Beiträge und Gespräche, keine Aufgabe"]];
   db.auth.getSession().then(function (s) {
     if (!s.data.session) { platz.innerHTML = '<p class="mz-klein">Themenspeicher und Redaktionsplan erscheinen nach der <a href="/strategie/kontakte.html?zurueck=' + encodeURIComponent(location.pathname) + '">Anmeldung</a>.</p>'; return; }
     db.from("beitraege").select("id, feld, art, kernaussage, status, geplant_am, linkedin_url").eq("marke", "empiria").neq("status", "verworfen").order("geplant_am", { ascending: true }).then(function (r) {
