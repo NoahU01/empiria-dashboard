@@ -146,6 +146,7 @@
 
   /* ---------- Xmas (Daniel, 13.10.2026): Weihnachtsgeschenk je Person – XL, groß, klein oder keines. Die Weihnachtsmail bekommen alle. ---------- */
   var XMAS = [["xl", "XL"], ["gross", "groß"], ["klein", "klein"], ["keines", "keines"]];
+  function geschenk(w) { return w === "xl" || w === "gross" || w === "klein"; }   // bekommt ein Geschenk → Zeile fett
   function xmasHtml() {
     var l = alle.slice().sort(function (a, b) {
       var fa = a.organisationen ? a.organisationen.name : "", fb = b.organisationen ? b.organisationen.name : "";
@@ -153,7 +154,7 @@
       return fa.localeCompare(fb, "de") || (a.nachname || "").localeCompare(b.nachname || "", "de") || (a.vorname || "").localeCompare(b.vorname || "", "de");
     });
     return '<table class="kt3-tab kt-xmas"><thead><tr><th>Firma</th><th>Person</th><th>Geschenk</th></tr></thead><tbody>' + l.map(function (k) {
-      return "<tr><td>" + esc(k.organisationen ? k.organisationen.name : "–") + "</td><td>" + esc([k.nachname, k.vorname].filter(Boolean).join(", ")) + "</td>" +
+      return "<tr" + (geschenk(k.weihnachtsgeschenk) ? ' class="kt-xmas-ja"' : "") + "><td>" + esc(k.organisationen ? k.organisationen.name : "–") + "</td><td>" + esc([k.nachname, k.vorname].filter(Boolean).join(", ")) + "</td>" +
         '<td><span class="kt-xmas-wahl" role="group" data-xmas="' + k.id + '">' + XMAS.map(function (x) {
           return '<button type="button" data-g="' + x[0] + '" aria-pressed="' + (k.weihnachtsgeschenk === x[0]) + '">' + x[1] + "</button>"; }).join("") +
         (k.weihnachtsgeschenk ? "" : '<small class="kt-xmas-offen">offen</small>') + "</span></td></tr>";
@@ -169,6 +170,7 @@
           if (r.error) { alert("Nicht gespeichert: " + r.error.message); return; }
           if (k) k.weihnachtsgeschenk = wert;
           box.querySelectorAll("[data-g]").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+          box.closest("tr").classList.toggle("kt-xmas-ja", geschenk(wert));
           var o = box.querySelector(".kt-xmas-offen"); if (o) o.remove();
         });
       };

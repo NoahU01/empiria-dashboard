@@ -2140,3 +2140,4 @@ nav.kt-tabs a.kt-tab-leise[aria-current="page"] { background: #fff; box-shadow: 
 .kt-xmas-wahl button[aria-pressed="true"] { box-shadow: none; color: var(--ink); }
 .kt-xmas-wahl button[data-g="xl"][aria-pressed="true"], .kt-xmas-wahl button[data-g="gross"][aria-pressed="true"], .kt-xmas-wahl button[data-g="klein"][aria-pressed="true"] { background: var(--hl, #fff400); font-weight: 600; }
 .kt-xmas-wahl button[data-g="keines"][aria-pressed="true"] { background: #e8e6e3; }
+.kt-xmas tr.kt-xmas-ja td:nth-child(1), .kt-xmas tr.kt-xmas-ja td:nth-child(2) { font-weight: 600; color: var(--ink); }
