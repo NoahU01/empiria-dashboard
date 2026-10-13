@@ -2135,3 +2135,8 @@ nav.kt-tabs a.kt-tab-leise[aria-current="page"] { background: #fff; box-shadow: 
   .kt-xmas td:nth-child(3) { grid-column: 2; grid-row: 1 / 3; width: auto; }
   .kt-xmas-wahl button { padding: 0 9px; }
 }
+/* Xmas: gewähltes Geschenk gelb, „keines“ grau (Daniel, 13.10.2026). Leiste weiß mit Rand – kein Gelb auf Hellgrau */
+.kt-xmas-wahl { background: #fff; box-shadow: inset 0 0 0 1px #e4e1dd; }
+.kt-xmas-wahl button[aria-pressed="true"] { box-shadow: none; color: var(--ink); }
+.kt-xmas-wahl button[data-g="xl"][aria-pressed="true"], .kt-xmas-wahl button[data-g="gross"][aria-pressed="true"], .kt-xmas-wahl button[data-g="klein"][aria-pressed="true"] { background: var(--hl, #fff400); font-weight: 600; }
+.kt-xmas-wahl button[data-g="keines"][aria-pressed="true"] { background: #e8e6e3; }
