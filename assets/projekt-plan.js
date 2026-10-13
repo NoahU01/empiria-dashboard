@@ -20,6 +20,8 @@
     return je;
   }
   function nachReihe(a, b) { return (a.reihenfolge || 0) - (b.reihenfolge || 0) || a.id - b.id; }
+  // Neue Stränge/Teilprojekte immer ans Ende – nie eine doppelte Nummer, damit die Reihenfolge in Liste und Plan fest bleibt
+  function naechste(l) { return l.reduce(function (m, s) { return Math.max(m, s.reihenfolge || 0); }, 0) + 1; }
   function oben(straenge) { return straenge.filter(function (s) { return !s.eltern_id; }).sort(nachReihe); }
   function kinder(straenge, id) { return straenge.filter(function (s) { return s.eltern_id === id; }).sort(nachReihe); }
   function zustand(a, auf) {
@@ -228,7 +230,7 @@
         var sid = +b.getAttribute("data-pl-teil"), titel = prompt("Name des Teilprojekts:");
         if (!titel || !titel.trim()) return;
         b.disabled = true;
-        db.from("projekt_straenge").insert({ projekt_id: projektId(), titel: titel.trim(), eltern_id: sid, reihenfolge: kinder(straenge, sid).length + 1 })
+        db.from("projekt_straenge").insert({ projekt_id: projektId(), titel: titel.trim(), eltern_id: sid, reihenfolge: naechste(kinder(straenge, sid)) })
           .then(function (r) { b.disabled = false; if (r.error) { alert("Nicht gespeichert: " + r.error.message); return; } neu(); });
       };
     });
@@ -238,7 +240,7 @@
       var titel = prompt(oben(straenge).length === 1 ? "Name des neuen Strangs? (Der bisherige heißt „" + oben(straenge)[0].titel + "“ – du kannst ihn danach umbenennen.)" : "Name des neuen Strangs:");
       if (!titel || !titel.trim()) return;
       sb.disabled = true;
-      db.from("projekt_straenge").insert({ projekt_id: projektId(), titel: titel.trim(), reihenfolge: oben(straenge).length + 1 })
+      db.from("projekt_straenge").insert({ projekt_id: projektId(), titel: titel.trim(), reihenfolge: naechste(oben(straenge)) })
         .then(function (r) { if (r.error) { sb.disabled = false; alert("Nicht gespeichert: " + r.error.message); return; } neu(); });
     };
     // Strang umbenennen: Klick auf die Überschrift
