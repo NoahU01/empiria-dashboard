@@ -87,7 +87,7 @@
     wurzel.innerHTML = '<div class="kb-laedt"><span></span><span></span><span></span></div>';
     return Promise.all([
       db.from("kontakte").select("id, kontakt_nr, vorname, nachname, position, entscheidungsebene, prioritaet, beziehungsstatus, kontaktart, " +
-        "rhythmus_tage, letzter_kontakt, naechster_kontakt, kontaktstopp, klaeren, organisationen(id, name, gruppe, klaeren), kontakt_marken(marke, bestaetigt)").order("nachname"),
+        "rhythmus_tage, letzter_kontakt, naechster_kontakt, kontaktstopp, klaeren, weihnachtsgeschenk, organisationen(id, name, gruppe, klaeren), kontakt_marken(marke, bestaetigt)").order("nachname"),
       db.from("vorschlaege").select("id, kontakt_id, feld, wert, beleg, quelle, sicherheit").eq("status", "offen").order("sicherheit"),
       db.from("aufgaben").select(AUFGABEN_FELDER).eq("status", "offen").order("angelegt_am")
     ]).then(function (r) {
@@ -110,12 +110,12 @@
   window.addEventListener("hashchange", function () { if (alle.length) { route(); window.scrollTo(0, 0); } });
 
   /* ---------- Übersicht ---------- */
-  var TABS = [["personen", "Personen"], ["firmen", "Firmen"], ["faellig", "Wieder dran"], ["todo", "To-dos"], ["marken", "Marken"], ["klaeren", "Klärfälle"], ["vorschlaege", "Vorschläge"]];
+  var TABS = [["personen", "Personen"], ["firmen", "Firmen"], ["faellig", "Wieder dran"], ["todo", "To-dos"], ["marken", "Marken"], ["klaeren", "Klärfälle"], ["vorschlaege", "Vorschläge"], ["xmas", "Xmas"]];
   function tabsHtml() {
     return '<nav class="kt-tabs" aria-label="Ansicht">' + TABS.filter(function (t) {
       return !(t[0] === "vorschlaege" && !vorschlaege.length) && !(t[0] === "todo" && !aufgaben.length);
     }).map(function (t) {
-      return '<a href="#' + t[0] + '" aria-current="' + (zustand.tab === t[0] ? "page" : "false") + '">' + t[1] + "</a>";
+      return '<a href="#' + t[0] + '"' + (t[0] === "xmas" ? ' class="kt-tab-leise"' : "") + ' aria-current="' + (zustand.tab === t[0] ? "page" : "false") + '">' + t[1] + "</a>";
     }).join("") + "</nav>";
   }
   function suchfeld(platzhalter) {
@@ -133,6 +133,7 @@
     if (t === "todo") html += todoHtml();
     if (t === "marken") html += suchfeld("Name oder Firma") + markenHtml();
     if (t === "vorschlaege") html += vorschlaegeHtml();
+    if (t === "xmas") html += xmasHtml();
     wurzel.innerHTML = html;
     var s = wurzel.querySelector("[data-suche]");
     if (s) s.oninput = function () { zustand.suche = s.value; var pos = s.selectionStart; uebersicht(); var n = wurzel.querySelector("[data-suche]"); n.focus(); n.setSelectionRange(pos, pos); };
@@ -140,6 +141,38 @@
     if (t === "todo") todoVerdrahten();
     if (t === "marken") markenVerdrahten();
     if (t === "vorschlaege") vorschlaegeVerdrahten();
+    if (t === "xmas") xmasVerdrahten();
+  }
+
+  /* ---------- Xmas (Daniel, 13.10.2026): Weihnachtsgeschenk je Person – groß, klein oder keines. Die Weihnachtsmail bekommen alle. ---------- */
+  var XMAS = [["gross", "groß"], ["klein", "klein"], ["keines", "keines"]];
+  function xmasHtml() {
+    var l = alle.slice().sort(function (a, b) {
+      var fa = a.organisationen ? a.organisationen.name : "", fb = b.organisationen ? b.organisationen.name : "";
+      if (!fa !== !fb) return fa ? -1 : 1;   // ohne Firma ans Ende
+      return fa.localeCompare(fb, "de") || (a.nachname || "").localeCompare(b.nachname || "", "de") || (a.vorname || "").localeCompare(b.vorname || "", "de");
+    });
+    return '<table class="kt3-tab kt-xmas"><thead><tr><th>Firma</th><th>Person</th><th>Geschenk</th></tr></thead><tbody>' + l.map(function (k) {
+      return "<tr><td>" + esc(k.organisationen ? k.organisationen.name : "–") + "</td><td>" + esc([k.nachname, k.vorname].filter(Boolean).join(", ")) + "</td>" +
+        '<td><span class="kt-xmas-wahl" role="group" data-xmas="' + k.id + '">' + XMAS.map(function (x) {
+          return '<button type="button" data-g="' + x[0] + '" aria-pressed="' + (k.weihnachtsgeschenk === x[0]) + '">' + x[1] + "</button>"; }).join("") +
+        (k.weihnachtsgeschenk ? "" : '<small class="kt-xmas-offen">offen</small>') + "</span></td></tr>";
+    }).join("") + "</tbody></table>";
+  }
+  function xmasVerdrahten() {
+    wurzel.querySelectorAll("[data-xmas] [data-g]").forEach(function (b) {
+      b.onclick = function () {
+        var box = b.parentNode, id = +box.getAttribute("data-xmas"), wert = b.getAttribute("data-g"), k = alle.filter(function (x) { return x.id === id; })[0];
+        box.classList.add("laedt");
+        db.from("kontakte").update({ weihnachtsgeschenk: wert }).eq("id", id).then(function (r) {
+          box.classList.remove("laedt");
+          if (r.error) { alert("Nicht gespeichert: " + r.error.message); return; }
+          if (k) k.weihnachtsgeschenk = wert;
+          box.querySelectorAll("[data-g]").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+          var o = box.querySelector(".kt-xmas-offen"); if (o) o.remove();
+        });
+      };
+    });
   }
 
   function personenTabelle(liste) {

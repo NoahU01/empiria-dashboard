@@ -2112,3 +2112,26 @@ a.zg-a:hover { background: #faf9f7; } a.zg-a:hover b { text-decoration: underlin
 .pl-bahn { grid-template-columns: 156px auto; }
 .pl-gruppe .pl-bahn--teil { grid-template-columns: 136px auto; }
 @media (max-width: 600px) { .pl-bahn, .pl-gruppe .pl-bahn--teil { grid-template-columns: 1fr; } }
+
+/* Kontakte › Xmas (Daniel, 13.10.2026): Reiter zurückhaltend, Tabelle Firma · Person · Geschenk */
+nav.kt-tabs a.kt-tab-leise { background: #fff; box-shadow: inset 0 0 0 1px #cfcbc5; color: var(--grey-70); }
+nav.kt-tabs a.kt-tab-leise[aria-current="page"] { background: #fff; box-shadow: inset 0 0 0 1.5px var(--ink); color: var(--ink); }
+.kt-xmas td { vertical-align: middle; }
+.kt-xmas th:last-child, .kt-xmas td:last-child { width: 1%; white-space: nowrap; }
+.kt-xmas-wahl { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border-radius: 999px; background: #f2f1ef; }
+.kt-xmas-wahl.laedt { opacity: .5; pointer-events: none; }
+.kt-xmas-wahl button { height: 28px; padding: 0 12px; border: 0; border-radius: 999px; background: none; font-size: var(--fs-xs); font-weight: 500; color: var(--grey-70); cursor: pointer; }
+.kt-xmas-wahl button[aria-pressed="true"] { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+.kt-xmas-offen { margin: 0 8px 0 6px; font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--fehler); }
+.kt-xmas { table-layout: auto; }
+.kt-xmas td, .kt-xmas th { word-break: normal; overflow-wrap: normal; hyphens: manual; }
+@media (max-width: 600px) {
+  .kt-xmas, .kt-xmas tbody { display: block; }
+  .kt-xmas thead { display: none; }
+  .kt-xmas tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid #ece9e5; }
+  .kt-xmas td { display: block; padding: 0; border: 0; }
+  .kt-xmas td:nth-child(1) { grid-column: 1; font-size: var(--fs-xs); color: var(--grey-50); }
+  .kt-xmas td:nth-child(2) { grid-column: 1; }
+  .kt-xmas td:nth-child(3) { grid-column: 2; grid-row: 1 / 3; width: auto; }
+  .kt-xmas-wahl button { padding: 0 9px; }
+}
