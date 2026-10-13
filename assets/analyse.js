@@ -32,8 +32,10 @@
       db.from("repo_stand").select("thema, datum, titel").gte("datum", new Date(Date.now() - 14 * 864e5).toISOString()).order("datum", { ascending: false }),
       db.from("vorlagen").select("id, titel, projekt_id, marke, entschieden_am, art").eq("status", "entschieden"),
       db.from("vorlagen").select("id, art, thema, marke, titel, kern, punkte, vorschlag, link, knopf_ja, entscheidung, angelegt_am, rang, einsatz, minuten, ergebnis, danach, strang").in("art", ["umsetzung", "schritt"]).eq("status", "offen").order("rang"),
-      db.from("aufgaben").select("id, titel, status, projekt_id").in("art", ["gate", "projektgate"])
+      db.from("aufgaben").select("id, titel, status, projekt_id").in("art", ["gate", "projektgate"]),
+      db.from("linkedin_kommentare").select("id, autor, status").in("status", ["neu", "vorschlag", "fehler"]).gte("kommentar_zeit", new Date(Date.now() - 14 * 864e5).toISOString())
     ]).then(function (r) {
+      D.kommentare = r[13].data || [];
       D.gates = r[12].data || [];
       D.repo = r[9].data || []; D.auftraege = (r[10].data || []).filter(function (v) { return v.art !== "umsetzung" && v.art !== "schritt"; }); D.umsetzung = r[11].data || [];
       D.geburtstage = r[5].data || []; D.strategie = r[6].data || []; D.projekteAlle = r[7].data || []; D.kampagnen = r[8].data || [];
@@ -77,8 +79,17 @@
       var inner = '<span class="lg-zahl">' + x.n + '</span><span class="lg-was"><b>' + x.t + "</b>" + (x.k ? "<small>" + esc(x.k) + "</small>" : "") + '</span><span class="lg-pfeil" aria-hidden="true">→</span>';
       return x.ms ? '<button type="button" class="lg-z lg-z--leise" data-ms>' + inner + "</button>" : '<a class="lg-z' + (x.jetzt ? " lg-z--jetzt" : "") + '" href="' + x.l + '">' + inner + "</a>";
     }
-    return '<div class="lg">' + aktiv.map(zeile).join("") + (mf("empiria") ? linkedin() : "") + "</div>" +
+    return '<div class="lg">' + aktiv.map(zeile).join("") + (mf("empiria") ? kommentare() : "") + "</div>" +
       (ruhig.length ? '<p class="lg-ruhig">Nichts offen: ' + ruhig.map(function (x) { return esc(x.leer); }).join(" · ") + "</p>" : "");
+  }
+
+  // LinkedIn-Kommentare (Daniel, 13.10.2026: statt der Impressionen) – Antwortvorschläge auf eigener Seite freigeben
+  function kommentare() {
+    var k = D.kommentare || [], fertig = k.filter(function (x) { return x.status !== "neu"; });
+    if (!k.length) return '<a class="lg-z lg-z--info" href="/strategie/linkedin-antworten.html"><span class="lg-zahl">✓</span><span class="lg-was"><b>Keine LinkedIn-Kommentare offen</b><small>Neue Kommentare erscheinen hier, mit Antwortvorschlag</small></span><span class="lg-pfeil" aria-hidden="true">→</span></a>';
+    var namen = k.map(function (x) { return x.autor; }).filter(function (v, i, a) { return a.indexOf(v) === i; }).slice(0, 3).join(", ");
+    return '<a class="lg-z lg-z--jetzt" href="/strategie/linkedin-antworten.html"><span class="lg-zahl">' + k.length + '</span><span class="lg-was"><b>' + (k.length === 1 ? "LinkedIn-Kommentar wartet auf deine Antwort" : "LinkedIn-Kommentare warten auf deine Antwort") + "</b><small>" +
+      esc(namen) + (fertig.length ? " · Vorschlag liegt bereit" : " · Vorschlag wird geschrieben") + '</small></span><span class="lg-pfeil" aria-hidden="true">→</span></a>';
   }
 
   // LinkedIn: wöchentlich vom Mac gelesen (linkedin_abgleich.py) – Reichweite der letzten 28 Tage, Klick zur LinkedIn-Analyse

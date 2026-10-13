@@ -1,0 +1,42 @@
+/* LinkedIn-Antworten (Daniel, 13.10.2026) – fürs iPhone gebaut, als App auf dem Home-Bildschirm nutzbar. */
+body.la { background: #fff; color: var(--ink); font-family: var(--font-sans); -webkit-text-size-adjust: 100%; }
+.la-main { max-width: 640px; margin: 0 auto; padding: max(18px, env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom)); }
+.la-zurueck { display: inline-block; margin-bottom: 18px; font-size: .85rem; color: var(--grey-50); text-decoration: none; }
+.la-kopf h1 { margin: 0; font: 700 clamp(1.9rem, 7vw, 2.4rem)/1.1 var(--font-serif); }
+.la-unter { margin: 10px 0 26px; font-size: .92rem; line-height: 1.5; color: var(--grey-70); }
+.la-leise { color: var(--grey-50); font-size: .92rem; }
+
+.la-karte { border: 1px solid #e6e3df; border-radius: 18px; padding: 18px 16px 16px; margin-bottom: 16px; background: #fff; }
+.la-post { margin: 0 0 12px; font-size: .78rem; line-height: 1.4; color: var(--grey-50); display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+.la-wer { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin: 0 0 6px; }
+.la-wer b { font-size: 1rem; }
+.la-wer span { font-size: .8rem; color: var(--grey-50); white-space: nowrap; }
+.la-kommentar { margin: 0 0 16px; font-size: .98rem; line-height: 1.5; white-space: pre-wrap; }
+.la-kommentar a, .la-wer a { color: var(--grey-50); font-size: .8rem; text-decoration: none; }
+
+.la-label { display: block; margin: 0 0 6px; font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-70); }
+.la-antwort { display: block; width: 100%; box-sizing: border-box; min-height: 96px; padding: 12px 14px; border: 1.5px solid var(--ink); border-radius: 12px;
+  font: 1rem/1.5 var(--font-sans); color: var(--ink); background: #fff; resize: vertical; }   /* 16px: iOS zoomt beim Tippen nicht */
+.la-antwort:focus { outline: none; box-shadow: 0 0 0 3px var(--hl); }
+.la-warum { margin: 8px 0 0; font-size: .82rem; line-height: 1.45; color: var(--grey-70); }
+
+.la-knoepfe { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 14px; }
+.la-knopf { appearance: none; border: 0; border-radius: 999px; padding: 14px 18px; font: 600 1rem var(--font-sans); cursor: pointer; min-height: 48px; }
+.la-knopf--senden { background: var(--ink); color: #fff; }
+.la-knopf--weg { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px #d8d5d1; }
+.la-knopf:disabled { opacity: .45; }
+.la-folge { margin: 2px 0 0; font-size: .76rem; color: var(--grey-50); text-align: center; }
+
+.la-zustand { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; font-size: .82rem; font-weight: 600; }
+.la-zustand--warten { background: #f3f1ee; color: var(--grey-70); }
+.la-zustand--ok { background: var(--ink); color: #fff; }
+.la-zustand--fehler { background: var(--hl); color: var(--ink); }
+.la-fehler { margin: 8px 0 0; font-size: .85rem; line-height: 1.45; }
+
+.la-erledigt { margin-top: 34px; }
+.la-erledigt summary { cursor: pointer; font-size: .9rem; color: var(--grey-70); list-style: none; }
+.la-erledigt summary::-webkit-details-marker { display: none; }
+.la-erledigt summary::before { content: "+ "; }
+.la-erledigt[open] summary::before { content: "– "; }
+.la-erledigt .la-karte { opacity: .8; }
+.la-leer { padding: 28px 18px; border-radius: 18px; background: #f3f1ee; font-size: .95rem; line-height: 1.5; color: var(--grey-70); }
