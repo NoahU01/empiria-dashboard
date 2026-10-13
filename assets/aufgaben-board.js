@@ -37,6 +37,8 @@
     });
   }
 
+  // Operative Aufgaben stehen seit 13.10.2026 im Projekt „Operative Aufgaben“ – der Knopf „Operativ“ zeigt dieses Projekt
+  function opId() { var p = projekte.filter(function (x) { return x.name === "Operative Aufgaben"; })[0]; return p ? p.id : -1; }
   function projektVon(a) { return projekte.filter(function (p) { return p.id === a.projekt_id; })[0]; }
   // Aus Analyse „Rückmeldungen eingegangen“ (#rueckmeldungen): nur Aufgaben zeigen, auf die eine Antwort gekommen ist
   var nurRueck = location.hash === "#rueckmeldungen";
@@ -44,7 +46,7 @@
   function sichtbar(a) {
     if (nurRueck) return rueck(a);
     if (!wahl.length) return true;
-    if (!a.projekt_id) return wahl.indexOf("op") > -1;
+    if (!a.projekt_id || a.projekt_id === opId()) return wahl.indexOf("op") > -1;
     var p = projektVon(a);
     return wahl.indexOf(a.projekt_id) > -1 || (!!p && wahl.indexOf("m:" + (p.marke || "empiria")) > -1);
   }
@@ -58,14 +60,14 @@
     var marken = MARKEN.filter(function (m) { return wahl.indexOf("m:" + m) > -1; });
     // Ist oben etwas gewählt (Operativ oder Marke), stehen unten nur die passenden Projekte – Operativ hat keine, die Zeile entfällt dann.
     var oben = marken.length || wahl.indexOf("op") > -1;
-    var l = projekte.filter(function (p) { return p.status !== "abgeschlossen" && (!oben || marken.indexOf(p.marke || "empiria") > -1 || wahl.indexOf(p.id) > -1); });
+    var l = projekte.filter(function (p) { return p.status !== "abgeschlossen" && p.id !== opId() && (!oben || marken.indexOf(p.marke || "empiria") > -1 || wahl.indexOf(p.id) > -1); });
     var h = '<div class="ab-filter"><div class="ab-filter-zeile ab-filter-haupt">' + knopf("alle", "Alle", !wahl.length) + knopf("op", "Operativ", wahl.indexOf("op") > -1) +
       MARKEN.map(function (m) { return knopf("m:" + m, m, wahl.indexOf("m:" + m) > -1); }).join("") + umschalter() + "</div>" +
       '<div class="ab-filter-zeile ab-filter-projekte' + (l.length ? "" : " ab-filter-ohne") + '">' + l.map(function (p) {
         return knopf(p.id, p.name, wahl.indexOf(p.id) > -1).replace("<button", mitAufgaben[p.id] ? "<button" : '<button class="ab-leer"');
       }).join("") + "</div>" +
       // unsichtbare Messzeile mit allen Projekten: hält auf großen Bildschirmen den Abstand zum Board fest, egal was oben gewählt ist
-      '<div class="ab-filter-zeile ab-filter-projekte ab-filter-mass" aria-hidden="true">' + projekte.filter(function (p) { return p.status !== "abgeschlossen"; }).map(function (p) {
+      '<div class="ab-filter-zeile ab-filter-projekte ab-filter-mass" aria-hidden="true">' + projekte.filter(function (p) { return p.status !== "abgeschlossen" && p.id !== opId(); }).map(function (p) {
         return '<button type="button" tabindex="-1">' + esc(p.name) + "</button>";
       }).join("") + "</div>";
     if (nurRueck) h = '<div class="ab-filter"><div class="ab-filter-zeile ab-filter-haupt"><button type="button" class="ab-rueck" aria-pressed="true" data-rueck-aus>Neue Rückmeldungen (' + aufgaben.filter(rueck).length + ') <span aria-hidden="true">×</span></button>' +
