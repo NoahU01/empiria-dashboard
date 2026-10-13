@@ -153,7 +153,7 @@
       if (!fa !== !fb) return fa ? -1 : 1;   // ohne Firma ans Ende
       return fa.localeCompare(fb, "de") || (a.nachname || "").localeCompare(b.nachname || "", "de") || (a.vorname || "").localeCompare(b.vorname || "", "de");
     });
-    return '<table class="kt3-tab kt-xmas"><thead><tr><th>Firma</th><th>Person</th><th>E-Mail</th><th>Geschenk</th></tr></thead><tbody>' + l.map(function (k) {
+    return '<table class="kt3-tab kt-xmas"><thead><tr><th>Firma</th><th>Person</th><th>E-Mail</th><th>Geschenk</th></tr></thead><tbody>' + summeZeile() + l.map(function (k) {
       return "<tr" + (geschenk(k.weihnachtsgeschenk) ? ' class="kt-xmas-ja"' : "") + "><td>" + esc(k.organisationen ? k.organisationen.name : "–") + "</td><td>" + esc([k.nachname, k.vorname].filter(Boolean).join(", ")) + "</td>" +
         '<td><span class="kt-xmas-wahl kt-xmas-mail" role="group" data-xmas-mail="' + k.id + '">' + [[true, "ja"], [false, "nein"]].map(function (x) {
           return '<button type="button" data-m="' + x[0] + '" aria-pressed="' + (k.weihnachtsmail !== false ? x[0] : !x[0]) + '">' + x[1] + "</button>"; }).join("") + "</span></td>" +
@@ -162,7 +162,22 @@
         (k.weihnachtsgeschenk ? "" : '<small class="kt-xmas-offen">offen</small>') + "</span></td></tr>";
     }).join("") + "</tbody></table>";
   }
+  // Summe je Geschenkgröße (Daniel, 13.10.2026) – Zahlen stehen genau über XL, groß und klein
+  function summeZeile() {
+    var n = {}; alle.forEach(function (k) { n[k.weihnachtsgeschenk] = (n[k.weihnachtsgeschenk] || 0) + 1; });
+    return '<tr class="kt-xmas-summe" data-xmas-summe><td></td><td></td><td></td><td><span class="kt-xmas-wahl kt-xmas-zahlen">' + XMAS.map(function (x) {
+      return '<span data-n="' + x[0] + '">' + (x[0] === "keines" ? "" : (n[x[0]] || 0)) + "</span>"; }).join("") + "</span></td></tr>";
+  }
+  // Zahlen exakt über die Knöpfe setzen: Breiten aus der ersten Zeile übernehmen
+  function summeAusrichten() {
+    var knoepfe = wurzel.querySelectorAll("[data-xmas] [data-g]"), zahlen = wurzel.querySelectorAll("[data-xmas-summe] [data-n]");
+    Array.prototype.forEach.call(zahlen, function (z, i) { if (knoepfe[i]) { z.style.width = knoepfe[i].offsetWidth + "px"; z.style.padding = "0"; } });
+    var box = wurzel.querySelector(".kt-xmas-zahlen");
+    if (box && knoepfe[0] && zahlen[0]) { box.style.marginLeft = "0px"; box.style.marginLeft = (knoepfe[0].getBoundingClientRect().left - zahlen[0].getBoundingClientRect().left) + "px"; }
+  }
   function xmasVerdrahten() {
+    summeAusrichten();
+    if (!window.__xmasResize) { window.__xmasResize = 1; window.addEventListener("resize", function () { if (wurzel.querySelector("[data-xmas-summe]")) summeAusrichten(); }); }
     // E-Mail ja/nein – vorbelegt mit ja; Daniel nimmt raus, wer keine Weihnachtsmail bekommen soll
     wurzel.querySelectorAll("[data-xmas-mail] [data-m]").forEach(function (b) {
       b.onclick = function () {
@@ -186,6 +201,7 @@
           if (k) k.weihnachtsgeschenk = wert;
           box.querySelectorAll("[data-g]").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
           box.closest("tr").classList.toggle("kt-xmas-ja", geschenk(wert));
+          var s = wurzel.querySelector("[data-xmas-summe]"); if (s) { s.outerHTML = summeZeile(); summeAusrichten(); }
           var o = box.querySelector(".kt-xmas-offen"); if (o) o.remove();
         });
       };
