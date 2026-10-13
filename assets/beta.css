@@ -2010,3 +2010,16 @@ a.zg-a:hover { background: #faf9f7; } a.zg-a:hover b { text-decoration: underlin
 .kt3-t--kopf { margin-bottom: 0; font-weight: 600; }
 .tr-bearb summary { cursor: pointer; font-size: var(--fs-xs); color: var(--grey-50); }
 .tr-bearb label { margin-top: 6px; }
+
+/* Teilprojekte = Unterstränge im Hauptstrang (Daniel, 13.10.2026) */
+.pl-teil { margin: 18px 0 0 22px; padding-left: 16px; border-left: 2px solid var(--linie); }
+.pl-teil-titel { display: flex; align-items: baseline; gap: 10px; margin: 0 0 4px; padding-bottom: 6px; border-bottom: 1px solid var(--linie); font-size: var(--fs-s); font-weight: 600; }
+.pl-teil-kicker { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--grey-50); }
+.pl-teil .pl-liste:empty { min-height: 38px; margin-top: 6px; border: 1px dashed var(--linie); border-radius: 6px; }
+.pl-strang > .pl-liste:empty { min-height: 6px; }
+.pl-gruppe { display: grid; gap: 4px; padding: 0 0 6px; border-radius: 12px; }
+.pl-gruppe-kopf { margin: 0; padding: 14px 18px 4px; font-size: var(--fs-s); font-weight: 700; }
+.pl-gruppe .pl-bahn { background: none; box-shadow: none; }
+.pl-bahn--teil { margin-left: 18px; border-left: 2px solid rgba(0,0,0,.12); border-radius: 0; }
+.pl-bahn--teil .pl-bahn-kopf { display: grid; gap: 2px; align-content: center; }
+@media (max-width: 600px) { .pl-teil { margin-left: 8px; padding-left: 12px; } .pl-bahn--teil { margin-left: 10px; } }

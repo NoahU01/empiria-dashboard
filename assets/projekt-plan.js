@@ -19,6 +19,9 @@
     });
     return je;
   }
+  function nachReihe(a, b) { return (a.reihenfolge || 0) - (b.reihenfolge || 0) || a.id - b.id; }
+  function oben(straenge) { return straenge.filter(function (s) { return !s.eltern_id; }).sort(nachReihe); }
+  function kinder(straenge, id) { return straenge.filter(function (s) { return s.eltern_id === id; }).sort(nachReihe); }
   function zustand(a, auf) {
     if (a.status === "erledigt") return "fertig";
     var v = idListe(a.vorgaenger);
@@ -35,27 +38,35 @@
   function liste(straenge, auf, h, alle) {
     alle = alle || auf;
     var je = ordnen(straenge, auf), ohne = auf.filter(function (a) { return !a.strang_id && a.status === "offen"; });
-    var html = "", einer = straenge.length === 1, fertig = [];
+    var html = "", einer = straenge.length === 1 && !straenge[0].eltern_id, fertig = [];   // ein einziger Strang ohne Teilprojekte: keine Überschrift
     // Oben nur Offenes. Erreichte Gates rutschen mit ihren Aufgaben nach unten in „Erledigt“, ebenso einzelne erledigte Aufgaben
     // (Daniel, 10.10.2026). Abschnitt = Aufgaben seit dem letzten Gate bis einschließlich Gate.
-    straenge.slice().sort(function (a, b) { return a.reihenfolge - b.reihenfolge; }).forEach(function (s) {
-      var offen = [], gruppen = [], lose = [], abschnitt = [];
+    // Teilprojekte (Daniel, 13.10.2026): Unterstränge im Hauptstrang – projekt_straenge.eltern_id zeigt auf den Hauptstrang
+    function abschnitt(s, teil) {
+      var offen = [], gruppen = [], lose = [], abs = [];
       je[s.id].forEach(function (a) {
-        if (a.art !== "gate") { abschnitt.push(a); return; }
+        if (a.art !== "gate") { abs.push(a); return; }
         if (a.status === "erledigt") {
-          gruppen.push({ gate: a, l: abschnitt.filter(function (x) { return x.status === "erledigt"; }) });
-          offen = offen.concat(abschnitt.filter(function (x) { return x.status !== "erledigt"; }));
+          gruppen.push({ gate: a, l: abs.filter(function (x) { return x.status === "erledigt"; }) });
+          offen = offen.concat(abs.filter(function (x) { return x.status !== "erledigt"; }));
         } else {
-          abschnitt.forEach(function (x) { if (x.status === "erledigt") lose.push(x); else offen.push(x); });
+          abs.forEach(function (x) { if (x.status === "erledigt") lose.push(x); else offen.push(x); });
           offen.push(a);
         }
-        abschnitt = [];
+        abs = [];
       });
-      abschnitt.forEach(function (x) { if (x.status === "erledigt") lose.push(x); else offen.push(x); });
-      if (gruppen.length || lose.length) fertig.push({ s: s, gruppen: gruppen, lose: lose });
-      html += '<section class="pl-strang" data-strang="' + s.id + '">' + (einer ? "" : '<h4 class="pl-strang-titel">' + esc(s.titel) + "</h4>") + '<ol class="pl-liste" data-pl-liste="' + s.id + '">' +
-        offen.map(function (a) { return zeile(a, alle, h); }).join("") + "</ol>" +
-        '<p class="pl-neu"><button type="button" data-pl-aufgabe="' + s.id + '">+ Aufgabe</button><button type="button" data-pl-gate="' + s.id + '">+ Gate</button></p></section>';
+      abs.forEach(function (x) { if (x.status === "erledigt") lose.push(x); else offen.push(x); });
+      if (gruppen.length || lose.length) fertig.push({ s: s, titel: teil ? teil.titel + " › " + s.titel : s.titel, gruppen: gruppen, lose: lose });
+      return '<ol class="pl-liste" data-pl-liste="' + s.id + '">' + offen.map(function (a) { return zeile(a, alle, h); }).join("") + "</ol>";
+    }
+    oben(straenge).forEach(function (s) {
+      var k = kinder(straenge, s.id);
+      html += '<section class="pl-strang" data-strang="' + s.id + '">' + (einer ? "" : '<h4 class="pl-strang-titel">' + esc(s.titel) + "</h4>") + abschnitt(s) +
+        '<p class="pl-neu"><button type="button" data-pl-aufgabe="' + s.id + '">+ Aufgabe</button><button type="button" data-pl-gate="' + s.id + '">+ Gate</button><button type="button" data-pl-teil="' + s.id + '">+ Teilprojekt</button></p>' +
+        k.map(function (c) {
+          return '<section class="pl-teil" data-strang="' + c.id + '"><h5 class="pl-strang-titel pl-teil-titel"><span class="pl-teil-kicker">Teilprojekt</span>' + esc(c.titel) + "</h5>" + abschnitt(c, s) +
+            '<p class="pl-neu"><button type="button" data-pl-aufgabe="' + c.id + '">+ Aufgabe</button><button type="button" data-pl-gate="' + c.id + '">+ Gate</button></p></section>';
+        }).join("") + "</section>";
     });
     html += '<p class="pl-neu pl-neu--strang"><button type="button" data-pl-strang>+ Strang</button></p>';
     if (ohne.length) html += '<section class="pl-strang"><h4 class="pl-strang-titel pl-strang-titel--ohne">Noch keinem Strang zugeordnet</h4><ol class="pl-liste">' +
@@ -64,7 +75,7 @@
       var zu = true; try { zu = localStorage.getItem("pl-fertig-" + (auf[0] && auf[0].projekt_id)) !== "auf"; } catch (x) {}
       html += '<section class="pl-fertig"><button type="button" class="pl-fertig-kopf" data-pl-fertig aria-expanded="' + !zu + '">Erledigt<span class="kb-k-pfeil" aria-hidden="true"></span></button>' +
         '<div class="pl-fertig-inhalt"' + (zu ? " hidden" : "") + ">" + fertig.map(function (f) {
-          return (einer ? "" : '<h4 class="pl-fertig-strang">' + esc(f.s.titel) + "</h4>") +
+          return (einer ? "" : '<h4 class="pl-fertig-strang">' + esc(f.titel) + "</h4>") +
             f.gruppen.slice().reverse().map(function (g) {
               return '<ol class="pl-liste pl-liste--fertig">' + zeile(g.gate, alle, h, true, true, true) + g.l.map(function (a) { return zeile(a, alle, h, true, true, true); }).join("") + "</ol>";
             }).join("") +
@@ -108,13 +119,20 @@
     var je = ordnen(straenge, auf);
     return '<p class="pl-legende"><span class="pl-leg-linie"></span>Abfolge<span class="pl-leg-linie pl-leg-linie--gestr"></span>wartet auf anderen Strang</p>' +
       '<div class="pl-plan" data-pl-plan><div class="pl-plan-innen"><svg class="pl-svg" data-pl-svg aria-hidden="true"></svg>' +
-      straenge.slice().sort(function (a, b) { return a.reihenfolge - b.reihenfolge; }).map(function (s, i) {
-        return '<div class="pl-bahn pl-bahn--' + (i % 3) + '"><div class="pl-bahn-kopf"><b>' + esc(s.titel) + '</b></div><div class="pl-bahn-spur">' +
-          je[s.id].map(function (a) {
+      oben(straenge).map(function (s, i) {
+        var k = kinder(straenge, s.id), farbe = " pl-bahn--" + (i % 3);
+        function spur(x) {
+          return '<div class="pl-bahn-spur">' + je[x.id].map(function (a) {
             var z = zustand(a, alle);
             if (a.art === "gate") return '<div class="pl-knoten pl-k-gate pl-z--' + z + '" data-k="' + a.id + '"><span class="pl-gate-kicker">Gate' + (a.faellig_am ? " · " + datumKurz(a.faellig_am) : "") + '</span><b>' + esc(a.titel) + "</b></div>";
             return '<div class="pl-knoten pl-karte pl-z--' + z + '" data-k="' + a.id + '"><b>' + esc(a.titel) + "</b></div>";
-          }).join("") + "</div></div>";
+          }).join("") + "</div>";
+        }
+        if (!k.length) return '<div class="pl-bahn' + farbe + '"><div class="pl-bahn-kopf"><b>' + esc(s.titel) + "</b></div>" + spur(s) + "</div>";
+        // Hauptstrang mit Teilprojekten: Kopfzeile, eigene Aufgaben (falls vorhanden), dann je Teilprojekt eine Bahn
+        return '<div class="pl-gruppe' + farbe + '"><p class="pl-gruppe-kopf">' + esc(s.titel) + "</p>" +
+          (je[s.id].length ? '<div class="pl-bahn pl-bahn--teil"><div class="pl-bahn-kopf"><b>Übergreifend</b></div>' + spur(s) + "</div>" : "") +
+          k.map(function (c) { return '<div class="pl-bahn pl-bahn--teil"><div class="pl-bahn-kopf"><span class="pl-teil-kicker">Teilprojekt</span><b>' + esc(c.titel) + "</b></div>" + spur(c) + "</div>"; }).join("") + "</div>";
       }).join("") + "</div></div>";
   }
   function linien(wurzel, straenge, auf) {
@@ -204,13 +222,23 @@
           .then(function (r) { b.disabled = false; if (r.error) { alert("Nicht gespeichert: " + r.error.message); return; } neu(); });
       };
     });
+    // + Teilprojekt: Unterstrang im Hauptstrang
+    wurzel.querySelectorAll("[data-pl-teil]").forEach(function (b) {
+      b.onclick = function () {
+        var sid = +b.getAttribute("data-pl-teil"), titel = prompt("Name des Teilprojekts:");
+        if (!titel || !titel.trim()) return;
+        b.disabled = true;
+        db.from("projekt_straenge").insert({ projekt_id: projektId(), titel: titel.trim(), eltern_id: sid, reihenfolge: kinder(straenge, sid).length + 1 })
+          .then(function (r) { b.disabled = false; if (r.error) { alert("Nicht gespeichert: " + r.error.message); return; } neu(); });
+      };
+    });
     // + Strang
     var sb = wurzel.querySelector("[data-pl-strang]");
     if (sb) sb.onclick = function () {
-      var titel = prompt(straenge.length === 1 ? "Name des neuen Strangs? (Der bisherige heißt „" + straenge[0].titel + "“ – du kannst ihn danach umbenennen.)" : "Name des neuen Strangs:");
+      var titel = prompt(oben(straenge).length === 1 ? "Name des neuen Strangs? (Der bisherige heißt „" + oben(straenge)[0].titel + "“ – du kannst ihn danach umbenennen.)" : "Name des neuen Strangs:");
       if (!titel || !titel.trim()) return;
       sb.disabled = true;
-      db.from("projekt_straenge").insert({ projekt_id: projektId(), titel: titel.trim(), reihenfolge: straenge.length + 1 })
+      db.from("projekt_straenge").insert({ projekt_id: projektId(), titel: titel.trim(), reihenfolge: oben(straenge).length + 1 })
         .then(function (r) { if (r.error) { sb.disabled = false; alert("Nicht gespeichert: " + r.error.message); return; } neu(); });
     };
     // Strang umbenennen: Klick auf die Überschrift
