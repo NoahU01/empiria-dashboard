@@ -39,6 +39,7 @@
 
   // Operative Aufgaben stehen seit 13.10.2026 im Projekt „Operative Aufgaben“ – der Knopf „Operativ“ zeigt dieses Projekt
   function opId() { var p = projekte.filter(function (x) { return x.name === "Operative Aufgaben"; })[0]; return p ? p.id : -1; }
+  document.addEventListener("aufgabe-geaendert", function () { laden(); });   // Aufgabe bearbeitet (aufgaben-details.js)
   function projektVon(a) { return projekte.filter(function (p) { return p.id === a.projekt_id; })[0]; }
   // Aus Analyse „Rückmeldungen eingegangen“ (#rueckmeldungen): nur Aufgaben zeigen, auf die eine Antwort gekommen ist
   var nurRueck = location.hash === "#rueckmeldungen";

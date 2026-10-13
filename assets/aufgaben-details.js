@@ -17,8 +17,35 @@
     var li = punkte.map(function (x) { return "<li>" + esc(x) + "</li>"; }).concat(links);
     // Fertiger Prompt zum Kopieren (aufgaben.prompt) – Daniel, 10.10.2026
     var pr = a.prompt ? '<div class="ad-prompt"><p class="ad-prompt-kopf"><span>Prompt</span><button type="button" data-prompt-kopieren>Kopieren</button></p><pre>' + esc(a.prompt) + "</pre></div>" : "";
-    return (li.length ? '<ul class="ad-punkte">' + li.join("") + "</ul>" : "") + pr;
+    // Bearbeiten (Daniel, 13.10.2026): Titel, Termin und Details selbst ändern – jede Aufgabe lässt sich dafür aufklappen
+    var f = '<p class="ad-bearb-zeile"><button type="button" class="ad-bearb" data-ad-bearb>Bearbeiten</button></p>' +
+      '<form class="ad-form" data-ad-form="' + a.id + '" hidden>' +
+      '<label>Titel<input name="titel" value="' + esc(a.titel) + '" required></label>' +
+      '<label>Termin<input type="date" name="faellig_am" value="' + esc(String(a.faellig_am || "").slice(0, 10)) + '"></label>' +
+      '<label>Details <small>eine Zeile = ein Punkt</small><textarea name="beschreibung" rows="5">' + esc(a.beschreibung || "") + "</textarea></label>" +
+      '<p class="ad-form-knoepfe"><button type="submit" class="ad-form-ok">Speichern</button><button type="button" data-ad-abbrechen>Abbrechen</button></p></form>';
+    return (li.length ? '<ul class="ad-punkte">' + li.join("") + "</ul>" : "") + pr + f;
   }
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-ad-bearb], [data-ad-abbrechen]"); if (!b) return;
+    var box = b.closest(".pr-auf-details") || b.parentNode.parentNode, form = box.querySelector("[data-ad-form]"), zeile = box.querySelector(".ad-bearb-zeile");
+    var auf = b.hasAttribute("data-ad-bearb");
+    form.hidden = !auf; zeile.hidden = auf;
+    var pk = box.querySelector(".ad-punkte"); if (pk) pk.hidden = auf;   // Punkte stehen beim Bearbeiten im Feld – nicht doppelt zeigen
+    if (auf) form.querySelector("[name=titel]").focus(); else form.reset();
+  });
+  document.addEventListener("submit", function (e) {
+    var form = e.target.closest && e.target.closest("[data-ad-form]"); if (!form) return;
+    e.preventDefault();
+    var titel = form.titel.value.trim(); if (!titel) return;
+    var felder = { titel: titel, faellig_am: form.faellig_am.value || null, beschreibung: form.beschreibung.value.replace(/\s+$/, "") || null };
+    form.classList.add("laedt");
+    window.empiriaDb.from("aufgaben").update(felder).eq("id", +form.getAttribute("data-ad-form")).then(function (r) {
+      form.classList.remove("laedt");
+      if (r.error) { alert("Nicht gespeichert: " + r.error.message); return; }
+      document.dispatchEvent(new CustomEvent("aufgabe-geaendert", { detail: { id: +form.getAttribute("data-ad-form") } }));
+    });
+  });
 
   function lage(a, alle) {
     if (a.status !== "offen") return "";

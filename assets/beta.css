@@ -2033,3 +2033,16 @@ a.zg-a:hover { background: #faf9f7; } a.zg-a:hover b { text-decoration: underlin
 .pl-s-kompakt [data-strang] > .pl-liste, .pl-s-kompakt [data-strang] > .pl-neu, .pl-s-kompakt .pl-neu--strang, .pl-s-kompakt .pl-fertig, .pl-s-kompakt--oben .pl-teil { display: none; }
 .pl-s-kompakt .pl-strang + .pl-strang { margin-top: 10px; }
 .pl-s-kompakt .pl-teil { margin-top: 8px; }
+
+/* Aufgabe bearbeiten (Daniel, 13.10.2026) */
+.ad-bearb-zeile { margin: 6px 0 0 !important; }
+.ad-bearb, .ad-form-knoepfe button[data-ad-abbrechen] { border: 0; background: none; padding: 2px 0; font-size: var(--fs-xs); font-weight: 500; color: var(--grey-50); cursor: pointer; }
+.ad-bearb:hover, .ad-form-knoepfe button[data-ad-abbrechen]:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.ad-form { display: grid; gap: 12px; max-width: 620px; margin-top: 8px; }
+.ad-form.laedt { opacity: .5; pointer-events: none; }
+.ad-form label { display: grid; gap: 4px; font-size: var(--fs-xs); font-weight: 600; color: var(--grey-70); }
+.ad-form label small { font-weight: 400; color: var(--grey-50); }
+.ad-form input, .ad-form textarea { width: 100%; box-sizing: border-box; padding: 9px 11px; border: 1px solid #e4e1dd; border-radius: 8px; font: inherit; font-size: var(--fs-s); font-weight: 400; color: var(--ink); background: #fff; }
+.ad-form input[type=date] { max-width: 200px; }
+.ad-form-knoepfe { display: flex; align-items: center; gap: 18px; margin: 0 !important; }
+.ad-form-ok { height: 34px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--ink); color: #fff; font-size: var(--fs-xs); font-weight: 600; cursor: pointer; }

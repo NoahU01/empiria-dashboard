@@ -140,6 +140,8 @@
   /* Ohne bekannte Uhrzeit (00:00) wird keine angezeigt */
   function zeit(d, vor) { var t = new Date(d); return t.getHours() || t.getMinutes() ? vor + t.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) : ""; }
   var STAND = {};
+  // Aufgabe bearbeitet (aufgaben-details.js): Projekt neu laden
+  document.addEventListener("aufgabe-geaendert", function () { var m = location.hash.match(/p=(\d+)/); if (m) projekt(+m[1]); });
   function detailEreignis(id) {
     var ziel = wurzel.querySelector('[data-ev-detail="' + id + '"]') || wurzel.querySelector('[data-ev-detail=""]');
     var e = STAND.ere.filter(function (x) { return x.id === id; })[0];
