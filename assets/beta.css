@@ -2023,3 +2023,13 @@ a.zg-a:hover { background: #faf9f7; } a.zg-a:hover b { text-decoration: underlin
 .pl-bahn--teil { margin-left: 18px; border-left: 2px solid rgba(0,0,0,.12); border-radius: 0; }
 .pl-bahn--teil .pl-bahn-kopf { display: grid; gap: 2px; align-content: center; }
 @media (max-width: 600px) { .pl-teil { margin-left: 8px; padding-left: 12px; } .pl-bahn--teil { margin-left: 10px; } }
+
+/* Stränge verschieben (Daniel, 13.10.2026): Griff vor der Überschrift wie bei den Aufgaben */
+.pl-strang-titel { display: flex; align-items: center; gap: 8px; }
+.pl-teil-titel { align-items: baseline; }
+.pl-s-griff { flex: none; margin-top: 0; }
+.pl-teil-titel .pl-s-griff { align-self: center; }
+@media (hover: none) { [data-strang] > .pl-strang-titel { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; } }
+.pl-s-kompakt [data-strang] > .pl-liste, .pl-s-kompakt [data-strang] > .pl-neu, .pl-s-kompakt .pl-neu--strang, .pl-s-kompakt .pl-fertig, .pl-s-kompakt--oben .pl-teil { display: none; }
+.pl-s-kompakt .pl-strang + .pl-strang { margin-top: 10px; }
+.pl-s-kompakt .pl-teil { margin-top: 8px; }

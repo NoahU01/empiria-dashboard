@@ -63,10 +63,10 @@
     }
     oben(straenge).forEach(function (s) {
       var k = kinder(straenge, s.id);
-      html += '<section class="pl-strang" data-strang="' + s.id + '">' + (einer ? "" : '<h4 class="pl-strang-titel">' + esc(s.titel) + "</h4>") + abschnitt(s) +
+      html += '<section class="pl-strang" data-strang="' + s.id + '">' + (einer ? "" : '<h4 class="pl-strang-titel"><span class="pl-griff pl-s-griff" draggable="true" data-s-griff title="Ziehen zum Umsortieren" aria-hidden="true"></span><span class="pl-s-name">' + esc(s.titel) + "</span></h4>") + abschnitt(s) +
         '<p class="pl-neu"><button type="button" data-pl-aufgabe="' + s.id + '">+ Aufgabe</button><button type="button" data-pl-gate="' + s.id + '">+ Gate</button><button type="button" data-pl-teil="' + s.id + '">+ Teilprojekt</button></p>' +
         k.map(function (c) {
-          return '<section class="pl-teil" data-strang="' + c.id + '"><h5 class="pl-strang-titel pl-teil-titel"><span class="pl-teil-kicker">Teilprojekt</span>' + esc(c.titel) + "</h5>" + abschnitt(c, s) +
+          return '<section class="pl-teil" data-strang="' + c.id + '"><h5 class="pl-strang-titel pl-teil-titel"><span class="pl-griff pl-s-griff" draggable="true" data-s-griff title="Ziehen zum Umsortieren" aria-hidden="true"></span><span class="pl-teil-kicker">Teilprojekt</span><span class="pl-s-name">' + esc(c.titel) + "</span></h5>" + abschnitt(c, s) +
             '<p class="pl-neu"><button type="button" data-pl-aufgabe="' + c.id + '">+ Aufgabe</button><button type="button" data-pl-gate="' + c.id + '">+ Gate</button></p></section>';
         }).join("") + "</section>";
     });
@@ -247,16 +247,86 @@
     wurzel.querySelectorAll(".pl-strang-titel").forEach(function (t) {
       var sek = t.closest("[data-strang]"); if (!sek) return;
       t.title = "Klicken zum Umbenennen";
-      t.onclick = function () {
+      t.onclick = function (e) {
+        if (e.target.closest("[data-s-griff]") || t.__nachZug) return;
         var sid = +sek.getAttribute("data-strang"), alt = (straenge.filter(function (s) { return s.id === sid; })[0] || {}).titel, n = prompt("Strang umbenennen:", alt);
         if (!n || !n.trim() || n.trim() === alt) return;
         db.from("projekt_straenge").update({ titel: n.trim() }).eq("id", sid).then(function (r) { if (r.error) alert(r.error.message); else neu(); });
       };
     });
     function projektId() { var m = location.hash.match(/p=(\d+)/); return m ? +m[1] : null; }
+    // Stränge und Teilprojekte verschieben (Daniel, 13.10.2026): Überschrift am Griff ziehen (Rechner) oder lange drücken (Handy).
+    // Verschoben wird nur innerhalb derselben Ebene: Hauptstränge untereinander, Teilprojekte innerhalb ihres Hauptstrangs.
+    function geschwister(sek) {
+      var sel = sek.classList.contains("pl-teil") ? ".pl-teil" : ".pl-strang[data-strang]";
+      return Array.prototype.filter.call(sek.parentNode.children, function (x) { return x.matches(sel); });
+    }
+    function strangSchieben(sek, y) {
+      var l = geschwister(sek), andere = l.filter(function (x) { return x !== sek; });
+      var ziel = andere.filter(function (x) { var r = x.getBoundingClientRect(); return y < r.top + r.height / 2; })[0];
+      if (ziel) { if (ziel !== sek.nextElementSibling) sek.parentNode.insertBefore(sek, ziel); }
+      else { var letzt = andere[andere.length - 1]; if (letzt && letzt.nextElementSibling !== sek) sek.parentNode.insertBefore(sek, letzt.nextElementSibling); }
+    }
+    function strangSpeichern(sek, vorher) {
+      var ids = geschwister(sek).map(function (x) { return +x.getAttribute("data-strang"); });
+      if (ids.join() === vorher) return;
+      sek.parentNode.classList.add("laedt");
+      Promise.all(ids.map(function (id, i) { return db.from("projekt_straenge").update({ reihenfolge: i + 1 }).eq("id", id); }))
+        .then(function (r) { var f = r.filter(function (x) { return x.error; })[0]; if (f) throw f.error; neu(); })
+        .catch(function (er) { sek.parentNode.classList.remove("laedt"); alert("Nicht gespeichert: " + er.message); });
+    }
+    // Beim Ziehen eines Strangs nur die Überschriften zeigen – sonst sind die Wege (vor allem am Handy) zu lang
+    function kompakt(sek, an, y) {
+      wurzel.classList.toggle("pl-s-kompakt", an);
+      wurzel.classList.toggle("pl-s-kompakt--oben", an && !sek.classList.contains("pl-teil"));
+      if (an && y != null) window.scrollBy(0, sek.getBoundingClientRect().top - (y - 12));
+    }
+    var sZug = null;
+    wurzel.querySelectorAll("[data-s-griff]").forEach(function (g) {
+      var sek = g.closest("[data-strang]");
+      g.addEventListener("dragstart", function (e) {
+        e.stopPropagation(); sZug = { sek: sek, vorher: geschwister(sek).map(function (x) { return x.getAttribute("data-strang"); }).join() };
+        sek.classList.add("pl-zieht"); e.dataTransfer.effectAllowed = "move"; try { e.dataTransfer.setData("text/plain", "strang"); } catch (x) {}
+        setTimeout(function () { kompakt(sek, true, e.clientY); }, 0);
+      });
+      g.addEventListener("dragend", function () { if (!sZug) return; var z = sZug; sZug = null; z.sek.classList.remove("pl-zieht"); kompakt(z.sek, false); strangSpeichern(z.sek, z.vorher); });
+    });
+    if (!wurzel.__sDrag) {   // einmal je Wurzel – verdrahten() läuft bei jedem Neuzeichnen
+      wurzel.__sDrag = 1;
+      wurzel.addEventListener("dragover", function (e) { if (!wurzel.__sZug) return; e.preventDefault(); strangSchieben(wurzel.__sZug.sek, e.clientY); });
+    }
+    Object.defineProperty(wurzel, "__sZug", { configurable: true, get: function () { return sZug; } });
+    // Handy: Überschrift lange drücken, dann ziehen
+    wurzel.querySelectorAll("[data-strang] > .pl-strang-titel").forEach(function (h) {
+      var sek = h.parentNode, st = null;
+      function ende() {
+        if (!st) return; clearTimeout(st.uhr);
+        document.removeEventListener("touchmove", bewegen, { passive: false });
+        document.removeEventListener("touchend", los); document.removeEventListener("touchcancel", los);
+        sek.classList.remove("pl-hebt"); if (st.an) kompakt(sek, false); st = null;
+      }
+      function bewegen(e) {
+        if (!st) return; var f = e.touches[0];
+        if (!st.an) { if (Math.abs(f.clientY - st.y0) > 8 || Math.abs(f.clientX - st.x0) > 8) ende(); return; }
+        e.preventDefault(); strangSchieben(sek, f.clientY);
+        if (f.clientY < 70) window.scrollBy(0, -12); else if (f.clientY > window.innerHeight - 70) window.scrollBy(0, 12);
+      }
+      function los(e) {
+        if (!st) return; var war = st; ende();
+        if (war.an) { if (e.cancelable) e.preventDefault(); h.__nachZug = true; setTimeout(function () { h.__nachZug = false; }, 400); strangSpeichern(sek, war.vorher); }
+      }
+      h.addEventListener("touchstart", function (e) {
+        if (e.touches.length > 1) return; ende();
+        var f = e.touches[0];
+        st = { x0: f.clientX, y0: f.clientY, an: false, vorher: geschwister(sek).map(function (x) { return x.getAttribute("data-strang"); }).join() };
+        st.uhr = setTimeout(function () { if (!st) return; st.an = true; sek.classList.add("pl-hebt"); kompakt(sek, true, st.y0); if (navigator.vibrate) try { navigator.vibrate(12); } catch (x) {} }, 450);
+        document.addEventListener("touchmove", bewegen, { passive: false });
+        document.addEventListener("touchend", los); document.addEventListener("touchcancel", los);
+      }, { passive: true });
+    });
     // Ziehen am Griff – auch in einen anderen Strang
     var gezogen = null;
-    wurzel.querySelectorAll(".pl-griff[draggable]").forEach(function (g) {
+    wurzel.querySelectorAll(".pl-griff[draggable]:not([data-s-griff])").forEach(function (g) {
       g.addEventListener("dragstart", function (e) { gezogen = g.closest("li"); gezogen.classList.add("pl-zieht"); e.dataTransfer.effectAllowed = "move"; try { e.dataTransfer.setData("text/plain", gezogen.getAttribute("data-a")); } catch (x) {} });
       g.addEventListener("dragend", function () { if (gezogen) gezogen.classList.remove("pl-zieht"); });
     });
