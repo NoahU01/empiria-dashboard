@@ -2046,3 +2046,9 @@ a.zg-a:hover { background: #faf9f7; } a.zg-a:hover b { text-decoration: underlin
 .ad-form input[type=date] { max-width: 200px; }
 .ad-form-knoepfe { display: flex; align-items: center; gap: 18px; margin: 0 !important; }
 .ad-form-ok { height: 34px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--ink); color: #fff; font-size: var(--fs-xs); font-weight: 600; cursor: pointer; }
+
+/* Strang und Teilprojekt zuklappen (Daniel, 13.10.2026) – Dreieck rechts wie bei „Überfällig“ */
+.pl-klapp { position: relative; flex: none; width: 30px; height: 22px; margin-left: auto; padding: 0; border: 0; background: none; cursor: pointer; }
+.pl-klapp .tl-dreieck { top: 3px; right: 9px; transform: rotate(-135deg); top: 8px; }
+.pl-zu > .pl-strang-titel .pl-klapp .tl-dreieck { transform: rotate(45deg); top: 3px; }
+.pl-zu > .pl-liste, .pl-zu > .pl-neu, .pl-zu > .pl-teil { display: none; }

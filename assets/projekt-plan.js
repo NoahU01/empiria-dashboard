@@ -22,6 +22,8 @@
   function nachReihe(a, b) { return (a.reihenfolge || 0) - (b.reihenfolge || 0) || a.id - b.id; }
   // Neue Stränge/Teilprojekte immer ans Ende – nie eine doppelte Nummer, damit die Reihenfolge in Liste und Plan fest bleibt
   function naechste(l) { return l.reduce(function (m, s) { return Math.max(m, s.reihenfolge || 0); }, 0) + 1; }
+  // Strang/Teilprojekt zugeklappt? Je Strang im Browser gemerkt (Daniel, 13.10.2026) – bleibt auch nach dem Neuladen
+  function istZu(id) { try { return localStorage.getItem("pl-zu-" + id) === "1"; } catch (x) { return false; } }
   function oben(straenge) { return straenge.filter(function (s) { return !s.eltern_id; }).sort(nachReihe); }
   function kinder(straenge, id) { return straenge.filter(function (s) { return s.eltern_id === id; }).sort(nachReihe); }
   function zustand(a, auf) {
@@ -63,10 +65,10 @@
     }
     oben(straenge).forEach(function (s) {
       var k = kinder(straenge, s.id);
-      html += '<section class="pl-strang" data-strang="' + s.id + '">' + (einer ? "" : '<h4 class="pl-strang-titel"><span class="pl-griff pl-s-griff" draggable="true" data-s-griff title="Ziehen zum Umsortieren" aria-hidden="true"></span><span class="pl-s-name">' + esc(s.titel) + "</span></h4>") + abschnitt(s) +
+      html += '<section class="pl-strang' + (!einer && istZu(s.id) ? " pl-zu" : "") + '" data-strang="' + s.id + '">' + (einer ? "" : '<h4 class="pl-strang-titel"><span class="pl-griff pl-s-griff" draggable="true" data-s-griff title="Ziehen zum Umsortieren" aria-hidden="true"></span><span class="pl-s-name">' + esc(s.titel) + "</span>" + '<button type="button" class="pl-klapp" data-pl-klapp aria-label="Auf- und zuklappen" aria-expanded="' + !istZu(s.id) + '"><span class="tl-dreieck" aria-hidden="true"></span></button>' + "</h4>") + abschnitt(s) +
         '<p class="pl-neu"><button type="button" data-pl-aufgabe="' + s.id + '">+ Aufgabe</button><button type="button" data-pl-gate="' + s.id + '">+ Gate</button><button type="button" data-pl-teil="' + s.id + '">+ Teilprojekt</button></p>' +
         k.map(function (c) {
-          return '<section class="pl-teil" data-strang="' + c.id + '"><h5 class="pl-strang-titel pl-teil-titel"><span class="pl-griff pl-s-griff" draggable="true" data-s-griff title="Ziehen zum Umsortieren" aria-hidden="true"></span><span class="pl-teil-kicker">Teilprojekt</span><span class="pl-s-name">' + esc(c.titel) + "</span></h5>" + abschnitt(c, s) +
+          return '<section class="pl-teil' + (istZu(c.id) ? " pl-zu" : "") + '" data-strang="' + c.id + '"><h5 class="pl-strang-titel pl-teil-titel"><span class="pl-griff pl-s-griff" draggable="true" data-s-griff title="Ziehen zum Umsortieren" aria-hidden="true"></span><span class="pl-teil-kicker">Teilprojekt</span><span class="pl-s-name">' + esc(c.titel) + "</span>" + '<button type="button" class="pl-klapp" data-pl-klapp aria-label="Auf- und zuklappen" aria-expanded="' + !istZu(c.id) + '"><span class="tl-dreieck" aria-hidden="true"></span></button>' + "</h5>" + abschnitt(c, s) +
             '<p class="pl-neu"><button type="button" data-pl-aufgabe="' + c.id + '">+ Aufgabe</button><button type="button" data-pl-gate="' + c.id + '">+ Gate</button></p></section>';
         }).join("") + "</section>";
     });
@@ -243,12 +245,21 @@
       db.from("projekt_straenge").insert({ projekt_id: projektId(), titel: titel.trim(), reihenfolge: naechste(oben(straenge)) })
         .then(function (r) { if (r.error) { sb.disabled = false; alert("Nicht gespeichert: " + r.error.message); return; } neu(); });
     };
+    // Strang/Teilprojekt auf- und zuklappen
+    wurzel.querySelectorAll("[data-pl-klapp]").forEach(function (b) {
+      b.onclick = function (e) {
+        e.stopPropagation();
+        var sek = b.closest("[data-strang]"), zu = !sek.classList.contains("pl-zu");
+        sek.classList.toggle("pl-zu", zu); b.setAttribute("aria-expanded", String(!zu));
+        try { if (zu) localStorage.setItem("pl-zu-" + sek.getAttribute("data-strang"), "1"); else localStorage.removeItem("pl-zu-" + sek.getAttribute("data-strang")); } catch (x) {}
+      };
+    });
     // Strang umbenennen: Klick auf die Überschrift
     wurzel.querySelectorAll(".pl-strang-titel").forEach(function (t) {
       var sek = t.closest("[data-strang]"); if (!sek) return;
       t.title = "Klicken zum Umbenennen";
       t.onclick = function (e) {
-        if (e.target.closest("[data-s-griff]") || t.__nachZug) return;
+        if (e.target.closest("[data-s-griff], [data-pl-klapp]") || t.__nachZug) return;
         var sid = +sek.getAttribute("data-strang"), alt = (straenge.filter(function (s) { return s.id === sid; })[0] || {}).titel, n = prompt("Strang umbenennen:", alt);
         if (!n || !n.trim() || n.trim() === alt) return;
         db.from("projekt_straenge").update({ titel: n.trim() }).eq("id", sid).then(function (r) { if (r.error) alert(r.error.message); else neu(); });
