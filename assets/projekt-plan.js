@@ -239,14 +239,76 @@
       });
       ol.addEventListener("drop", function (e) {
         if (!gezogen) return; e.preventDefault();
-        var alt = null;
-        wurzel.querySelectorAll("[data-pl-liste]").forEach(function (x) { if (x !== ol && x.contains(gezogen) === false && +x.getAttribute("data-pl-liste") === (auf.filter(function (a) { return a.id === +gezogen.getAttribute("data-a"); })[0] || {}).strang_id) alt = x; });
         var g = gezogen; gezogen = null; g.classList.remove("pl-zieht");
-        ol.classList.add("laedt");
-        var p = speichern(db, +ol.getAttribute("data-pl-liste"), idsVon(ol), auf);
-        if (alt) p = p.then(function () { return speichern(db, +alt.getAttribute("data-pl-liste"), idsVon(alt), auf); });
-        p.then(neu).catch(function (er) { ol.classList.remove("laedt"); alert("Nicht gespeichert: " + er.message); });
+        ablegen(ol, g);
       });
+    });
+    // Neue Reihenfolge speichern – Ziel-Strang und, falls die Zeile aus einem anderen kam, auch den alten
+    function ablegen(ol, g) {
+      var alt = null, sidVorher = (auf.filter(function (a) { return a.id === +g.getAttribute("data-a"); })[0] || {}).strang_id;
+      wurzel.querySelectorAll("[data-pl-liste]").forEach(function (x) { if (x !== ol && x.contains(g) === false && +x.getAttribute("data-pl-liste") === sidVorher) alt = x; });
+      ol.classList.add("laedt");
+      var p = speichern(db, +ol.getAttribute("data-pl-liste"), idsVon(ol), auf);
+      if (alt) p = p.then(function () { return speichern(db, +alt.getAttribute("data-pl-liste"), idsVon(alt), auf); });
+      p.then(neu).catch(function (er) { ol.classList.remove("laedt"); alert("Nicht gespeichert: " + er.message); });
+    }
+    // Handy/Tablet (Daniel, 13.10.2026): Zeile lange gedrückt halten, dann mit dem Finger verschieben – keine Pfeile.
+    // Nur Touch-Ereignisse; am großen Rechner mit Maus bleibt das Ziehen an den sechs Punkten unverändert.
+    var tz = null;
+    function tzEnde() {
+      if (!tz) return;
+      clearTimeout(tz.uhr);
+      document.removeEventListener("touchmove", tzBewegen, { passive: false });
+      document.removeEventListener("touchend", tzLos); document.removeEventListener("touchcancel", tzLos);
+      if (tz.li) tz.li.classList.remove("pl-hebt");
+      tz = null;
+    }
+    function tzZiel(x, y) {
+      var el = document.elementFromPoint(x, y), ol = el && el.closest ? el.closest("[data-pl-liste]") : null;
+      return ol && wurzel.contains(ol) ? ol : null;
+    }
+    function tzBewegen(e) {
+      if (!tz) return;
+      var f = e.touches[0];
+      if (!tz.an) {   // vor dem Anheben: Bewegung heißt Scrollen – abbrechen
+        if (Math.abs(f.clientY - tz.y0) > 8 || Math.abs(f.clientX - tz.x0) > 8) tzEnde();
+        return;
+      }
+      e.preventDefault();
+      var ol = tzZiel(f.clientX, f.clientY);
+      if (ol) {
+        var unter = Array.prototype.filter.call(ol.querySelectorAll(":scope > li"), function (li) { return li !== tz.li; })
+          .filter(function (li) { var r = li.getBoundingClientRect(); return f.clientY < r.top + r.height / 2; })[0];
+        if (unter) { if (unter !== tz.li.nextSibling) ol.insertBefore(tz.li, unter); } else if (ol.lastElementChild !== tz.li) ol.appendChild(tz.li);
+        tz.ol = ol;
+      }
+      // am Bildschirmrand mitscrollen
+      if (f.clientY < 70) window.scrollBy(0, -12); else if (f.clientY > window.innerHeight - 70) window.scrollBy(0, 12);
+    }
+    function tzLos(e) {
+      if (!tz) return;
+      var war = tz;
+      if (war.an) { if (e.cancelable) e.preventDefault(); war.li.__nachZug = true; setTimeout(function () { war.li.__nachZug = false; }, 400); war.li.classList.remove("pl-hebt"); var ol = war.ol || war.start; tzEnde(); if (war.li.parentNode !== war.start || idsVon(war.start).join() !== war.vorher) ablegen(ol, war.li); return; }
+      tzEnde();
+    }
+    wurzel.querySelectorAll("[data-pl-liste] > li").forEach(function (li) {
+      if (!li.querySelector(".pl-griff[draggable]")) return;
+      li.addEventListener("touchstart", function (e) {
+        if (e.touches.length > 1 || e.target.closest("input, select, textarea, a, label")) return;
+        tzEnde();
+        var f = e.touches[0], ol = li.parentNode;
+        tz = { li: li, start: ol, ol: ol, x0: f.clientX, y0: f.clientY, an: false, vorher: idsVon(ol).join() };
+        tz.uhr = setTimeout(function () {
+          if (!tz) return;
+          tz.an = true; li.classList.add("pl-hebt");
+          if (navigator.vibrate) try { navigator.vibrate(12); } catch (x) {}
+        }, 450);
+        document.addEventListener("touchmove", tzBewegen, { passive: false });
+        document.addEventListener("touchend", tzLos); document.addEventListener("touchcancel", tzLos);
+      }, { passive: true });
+      // nach dem Anheben keinen Klick auslösen (Titel klappt sonst auf)
+      li.addEventListener("click", function (e) { if (li.__nachZug) { e.preventDefault(); e.stopPropagation(); li.__nachZug = false; } }, true);
+      li.addEventListener("contextmenu", function (e) { if (tz && tz.li === li) e.preventDefault(); });
     });
     // Plan: Linien zeichnen, bei Größenänderung neu
     if (wurzel.querySelector("[data-pl-plan]")) {

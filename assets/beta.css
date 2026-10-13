@@ -1467,6 +1467,9 @@ body.kt3-detail .pr-seite, body.kt3-detail .pr-projektseite { margin-top: 32px; 
 .pl-z { grid-template-columns: 14px 26px minmax(0, 1fr); }
 .pl-pfeile, .pl-z > .pl-st, .pl-z > .pl-raute { display: none; }
 @media (hover: none) { .pl-griff { display: block; } .pl-z { grid-template-columns: 14px 26px minmax(0, 1fr); } }
+/* Handy: Zeile lange drücken und verschieben (Daniel, 13.10.2026) – kein Text-Markieren, angehobene Zeile deutlich */
+@media (hover: none) { [data-pl-liste] > .pl-z { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; } }
+.pl-hebt { position: relative; z-index: 2; background: #fff; box-shadow: 0 6px 20px rgba(0,0,0,.16); border-radius: 6px; }
 .pl-gate { margin: 6px 0; padding: 12px 0; background: #f3f2f0; box-shadow: inset 0 1px 0 var(--ink), inset 0 -1px 0 var(--ink); }
 .pl-gate .pl-gate-kicker { color: var(--grey-50); }
 .pl-gate.pl-z--fertig { background: none; box-shadow: inset 0 1px 0 var(--linie), inset 0 -1px 0 var(--linie); }
