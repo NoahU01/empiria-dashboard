@@ -6,8 +6,45 @@
   if (!ziel) return;
   var esc = function (s) { return String(s || "").replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
   var ANTRIEB = { E: "Elektro", PHEV: "Plug-in-Hybrid" };
+  var euro = function (n) { return Math.round(n).toLocaleString("de-DE") + "\u00a0€"; };
+  var fak = function (n) { return n == null ? "–" : n.toFixed(2).replace(".", ","); };
+  // Budget: bis 250 € netto im Rahmen, bis 300 € zweite Stufe, darüber außerhalb
+  function budget(r) {
+    if (r <= 250) return '<span class="lf-budget lf-budget--1">bis 250 €</span>';
+    if (r <= 300) return '<span class="lf-budget lf-budget--2">bis 300 €</span>';
+    return '<span class="lf-budget lf-budget--3">über 300 €</span>';
+  }
+  var DEZ = { ja: ["ja", "Bis 20.12. lieferbar"], knapp: ["knapp", "Lieferung knapp"], nein: ["nein", "Nicht bis 20.12."] };
+  function angebot(a) {
+    var dz = DEZ[a.dezember] || DEZ.nein;
+    return '<div class="lf-angebot">' +
+      '<p class="lf-rate"><b>' + euro(a.rate_netto) + "</b> netto im Monat · " + a.laufzeit + " Monate " + budget(a.rate_netto) + "</p>" +
+      '<p class="lf-zeile">Leasingfaktor ' + fak(a.leasingfaktor) + (a.gesamtkostenfaktor ? " · mit Überführung " + fak(a.gesamtkostenfaktor) : "") + " · Liste " + euro(a.blp_brutto) + "</p>" +
+      '<p class="lf-zeile lf-dez lf-dez--' + dz[0] + '">' + dz[1] + ": " + esc(a.lieferung) + "</p>" +
+      '<p class="lf-zeile lf-version">' + esc(a.version_ausstattung) + (a.pflicht_erfuellt && a.pflicht_erfuellt !== "ja" ? " · Pflichtausstattung " + esc(a.pflicht_erfuellt) : "") + "</p>" +
+      '<a class="lf-link" href="' + esc(a.url) + '" target="_blank" rel="noopener">' + esc(a.anbieter) + " ↗</a></div>";
+  }
+  function deal(x) {
+    return '<article class="lf-deal">' +
+      '<p class="lf-deal-kopf">' + esc(x.marke) + (x.in_liste ? "" : " · nicht auf unserer Liste") + "</p>" +
+      "<h3>" + esc(x.modell) + "</h3>" +
+      '<p class="lf-deal-rate"><b>' + euro(x.rate_netto) + "</b> netto im Monat · " + x.laufzeit + " Monate</p>" +
+      '<p class="lf-deal-faktor">Faktor <b>' + fak(x.leasingfaktor) + "</b> · mit Überführung " + fak(x.gesamtkostenfaktor) + " · Liste " + euro(x.blp_brutto) + "</p>" +
+      "<dl><div><dt>Lieferung</dt><dd>" + esc(x.lieferung) + "</dd></div>" +
+      "<div><dt>Warum so günstig</dt><dd>" + esc(x.warum_so_gut) + (x.beleg_url ? ' <a href="' + esc(x.beleg_url) + '" target="_blank" rel="noopener">Beleg ↗</a>' : "") + "</dd></div>" +
+      "<div><dt>Haken</dt><dd>" + esc(x.haken) + "</dd></div>" +
+      (x.hinweis ? "<div><dt>Hinweis</dt><dd>" + esc(x.hinweis) + "</dd></div>" : "") + "</dl>" +
+      '<a class="lf-link" href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.anbieter) + " ↗</a></article>";
+  }
 
-  fetch("/assets/leasing-fahrzeug.json?v=202610142030").then(function (r) { return r.json(); }).then(function (d) {
+  fetch("/assets/leasing-fahrzeug.json?v=202610142300").then(function (r) { return r.json(); }).then(function (d) {
+    var dealsZiel = document.querySelector("[data-lf-deals]");
+    if (dealsZiel && d.deals) {
+      var mk = d.markt || {};
+      dealsZiel.innerHTML = '<p class="lf-unter">Marktniveau im Gewerbeleasing heute: Elektro Faktor ' + fak(mk.ev_median) + ", Plug-in-Hybrid " + fak(mk.phev_median) +
+        " (Median, Stichprobe von rund 180 Angeboten auf leasingmarkt.de, Stand " + esc(d.stand) + "). Hier steht nur, was klar darunter liegt. Einen Ausreißer um 0,3 wie früher gibt es im Suchprofil gerade nicht.</p>" +
+        '<div class="lf-deals">' + d.deals.map(deal).join("") + "</div>";
+    }
     var html = "", gruppe = null, offen = false, quellen = [];
     d.modelle.forEach(function (m) {
       if (m.gruppe !== gruppe) {
@@ -32,7 +69,12 @@
       }
       html += '<div class="lf-text"><h3><small>' + esc(m.marke) + "</small>" + esc(m.modell) + "</h3>" +
         '<span class="lf-antrieb' + (m.antrieb === "E" ? " lf-antrieb--e" : "") + '">' + esc(ANTRIEB[m.antrieb] || m.antrieb) + "</span></div>" +
-        (m.notiz ? '<p class="lf-notiz">' + esc(m.notiz) + "</p>" : "") + "</article>";
+        (m.notiz ? '<p class="lf-notiz">' + esc(m.notiz) + "</p>" : "") +
+        (m.eckdaten && (m.eckdaten.reichweite_km || m.eckdaten.kofferraum_l) ? '<p class="lf-notiz">' +
+          [m.eckdaten.reichweite_km ? m.eckdaten.reichweite_km + " km " + (m.antrieb === "PHEV" ? "elektrisch" : "WLTP") : "", m.eckdaten.kofferraum_l ? m.eckdaten.kofferraum_l + " l Kofferraum" : ""].filter(Boolean).join(" · ") + "</p>" : "") +
+        (m.angebot ? angebot(m.angebot) : '<div class="lf-angebot lf-angebot--leer"><p class="lf-zeile">' + esc(m.bewertung || "Noch kein Angebot gesucht") + "</p></div>") +
+        (m.angebot_dez ? '<details class="lf-alt"><summary>Bis 20.12. lieferbar: ' + euro(m.angebot_dez.rate_netto) + " · Faktor " + fak(m.angebot_dez.gesamtkostenfaktor || m.angebot_dez.leasingfaktor) + "</summary>" + angebot(m.angebot_dez) + "</details>" : "") +
+        "</article>";
     });
     if (offen) html += "</div>";
     ziel.innerHTML = html;

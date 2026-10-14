@@ -21,7 +21,7 @@
 @media (max-width: 1100px) { .lf-raster { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) { .lf-raster { grid-template-columns: minmax(0, 1fr); gap: var(--s6); } }
 
-.lf-karte { display: flex; flex-direction: column; min-width: 0; }
+.lf-karte { display: flex; flex-direction: column; min-width: 0; overflow-wrap: anywhere; }
 /* Fotos haben 4:3 bis 2:1 – ganz zeigen (nie anschneiden), Rest des Rahmens mit derselben Aufnahme unscharf füllen */
 .lf-bild { position: relative; display: block; width: 100%; padding: 0; border: 0; border-radius: 14px; overflow: hidden; background: var(--linie-leicht); aspect-ratio: 16 / 10; cursor: zoom-in; isolation: isolate; }
 .lf-bild::before { content: ""; position: absolute; inset: -24px; z-index: -1; background: var(--lf-hg) center / cover no-repeat; filter: blur(18px) brightness(.92); }
@@ -47,6 +47,47 @@
 .lf-gross-leiste { display: flex; align-items: center; justify-content: space-between; gap: var(--s4); padding: var(--s3) var(--s4); color: var(--white); font-size: var(--fs-s); }
 .lf-gross-leiste button { padding: 6px 14px; border: 1px solid rgba(255, 255, 255, .4); border-radius: 999px; background: transparent; color: var(--white); cursor: pointer; }
 .lf-gross-leiste button:hover { border-color: var(--white); }
+
+/* Angebot je Modell */
+.lf-angebot { margin-top: var(--s3); padding-top: var(--s3); border-top: 1px solid var(--linie); }
+.lf-angebot p { margin: 0; }
+.lf-rate { font-size: var(--fs-m); color: var(--ink); display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.lf-rate b { font-size: var(--fs-xl); font-weight: 700; }
+.lf-zeile { margin-top: 4px !important; font-size: var(--fs-s); color: var(--grey-70); overflow-wrap: anywhere; }
+.lf-version { color: var(--grey-50); }
+.lf-dez::before { display: inline-block; width: 1.1em; font-weight: 600; }
+.lf-dez--ja::before { content: "✓"; color: var(--ink); }
+.lf-dez--knapp::before { content: "~"; }
+.lf-dez--nein::before { content: "✕"; color: var(--grey-50); }
+.lf-dez--ja { color: var(--ink); }
+.lf-budget { padding: 2px 9px; border-radius: 999px; font-size: var(--fs-xs); font-weight: 500; white-space: nowrap; }
+.lf-budget--1 { background: var(--hl); color: var(--ink); }
+.lf-budget--2 { border: 1px solid var(--ink); color: var(--ink); }
+.lf-budget--3 { border: 1px solid var(--linie); color: var(--grey-50); }
+.lf-link { display: inline-block; margin-top: var(--s2); font-size: var(--fs-s); font-weight: 500; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--grey-50); }
+.lf-link:hover { text-decoration-color: var(--ink); }
+.lf-angebot--leer .lf-zeile { color: var(--grey-50); }
+.lf-alt { margin-top: var(--s2); font-size: var(--fs-s); color: var(--grey-70); }
+.lf-alt summary { cursor: pointer; }
+.lf-alt .lf-angebot { border-top: 0; padding-top: 0; margin-top: var(--s2); }
+
+/* Außergewöhnlich gut – Fläche schwarz, Zahl gelb */
+.lf-deals { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s5); }
+@media (max-width: 760px) { .lf-deals { grid-template-columns: minmax(0, 1fr); } }
+.lf-deal { padding: var(--s5); border-radius: 18px; background: var(--ink); color: var(--white); }
+.lf-deal-kopf { margin: 0; font-size: var(--fs-xs); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.6); }
+.lf-deal h3 { margin: 4px 0 var(--s3); font-family: var(--font-sans); font-size: var(--fs-l); font-weight: 500; color: var(--white); }
+.lf-deal-rate { margin: 0; font-size: var(--fs-m); }
+.lf-deal-rate b { font-size: var(--fs-xxl); font-weight: 700; color: var(--hl); }
+.lf-deal-faktor { margin: 4px 0 0; font-size: var(--fs-s); color: rgba(255,255,255,.75); }
+.lf-deal-faktor b { color: var(--white); }
+.lf-deal dl { margin: var(--s4) 0 0; }
+.lf-deal dl div { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: var(--s3); padding: var(--s2) 0; border-top: 1px solid rgba(255,255,255,.15); }
+.lf-deal dt { font-size: var(--fs-s); color: rgba(255,255,255,.6); }
+.lf-deal dd { margin: 0; font-size: var(--fs-s); overflow-wrap: anywhere; }
+.lf-deal dd a { color: var(--white); }
+.lf-deal .lf-link { color: var(--white); text-decoration-color: rgba(255,255,255,.5); }
+@media (max-width: 480px) { .lf-deal dl div { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
 
 /* Aussortierte Modelle – zum Nachlesen, klein unter den Karten */
 .lf-raus { margin: var(--s7) 0 0; max-width: 80ch; font-size: var(--fs-s); color: var(--grey-50); }
