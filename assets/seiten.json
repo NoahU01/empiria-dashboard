@@ -161,7 +161,16 @@
    "kurz": "Sieben Vorgänge in drei Gruppen",
    "pos": 14,
    "im_diagramm": true
+  },
+  {
+   "datei": "linkedin-antworten.html",
+   "titel": "LinkedIn-Antworten",
+   "gruppe": "ohne Menü",
+   "eltern": null,
+   "kurz": "",
+   "im_diagramm": false,
+   "pos": 999
   }
  ],
- "stand": "11.10.2026, 19:53 Uhr"
+ "stand": "14.10.2026, 06:30 Uhr"
 }
