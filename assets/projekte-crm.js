@@ -119,7 +119,9 @@
       db.from("aufgaben").select("id, paket_id, strang_id, reihenfolge, art, projektgate_id, titel, beschreibung, prompt, status, spalte, faellig_am, erledigt_am, ereignis_id, weg, vorgaenger, warten_auf, hinweis, zeitblock_vorschlag, mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, unterlagen, person:kontakt_id(id, vorname, nachname), organisationen(id, name), zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
       ,db.from("projekt_pakete").select("id, nr, titel, ziel, stand, status").eq("projekt_id", id).order("nr")
       ,db.from("projekt_straenge").select("id, titel, reihenfolge, eltern_id, erklaerung, verantwortlich, verantwortlich_kontakte").eq("projekt_id", id).order("reihenfolge")
+      ,db.from("projekt_verlauf").select("id, datum, art, titel, inhalt").eq("projekt_id", id).order("datum", { ascending: false })
     ]).then(function (r) {
+      VERLAUF = (r[7] && r[7].data) || [];
       STRAENGE = (r[6] && r[6].data) || [];
       if (r[0].error) { wurzel.innerHTML = '<p class="kb-leer">Fehler: ' + esc(r[0].error.message) + "</p>"; return; }
       var auf = r[4].data || [];
@@ -139,7 +141,7 @@
   function teiln(e) { return (e.teilnehmer || []).length ? "mit " + e.teilnehmer.join(", ") : (e.kontakte ? "mit " + name(e.kontakte) : ""); }
   /* Ohne bekannte Uhrzeit (00:00) wird keine angezeigt */
   function zeit(d, vor) { var t = new Date(d); return t.getHours() || t.getMinutes() ? vor + t.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) : ""; }
-  var STAND = {};
+  var STAND = {}, VERLAUF = [];
   // Aufgabe bearbeitet (aufgaben-details.js): Projekt neu laden
   document.addEventListener("aufgabe-geaendert", function () { var m = location.hash.match(/p=(\d+)/); if (m) projekt(+m[1]); });
   function detailEreignis(id) {
@@ -315,6 +317,7 @@
           (b.rolle ? '<span class="pr-themen"> · ' + esc(b.rolle) + "</span>" : "") + "</li>"; }).join("") + "</ul>" : '<p class="kt3-leise">–</p>';
     }
     h += '<section class="kt3-box kt3-breit pr-team"><h3>Projektteam</h3><div class="pr-bet-zeile"><div class="pr-bet-spalte"><h4>Beteiligte beim Kunden</h4>' + seite("Kunde") + '</div><div class="pr-bet-spalte"><h4>Team empiria</h4>' + seite("empiria") + seite("Partner").replace('<p class="kt3-leise">–</p>', "") + "</div></div></section>";
+    h += archivKasten();
     wurzel.innerHTML = h + "</div>";
     if (lookWert() === "sva") module(p);
     verdrahten(p);
@@ -327,16 +330,41 @@
     var s = p.statusbericht, b = s && s.bloecke ? s.bloecke : [];
     return '<section class="kt3-box kt3-breit pr-status"><h3>Status</h3>' + (b.length
       ? (s.stand ? '<p class="pr-status-stand">Stand ' + new Date(s.stand + "T12:00:00").toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) + "</p>" : "") +
-        b.map(function (x) { return '<div class="pr-status-block"><h4>' + esc(x.titel) + "</h4><ul>" + (x.punkte || []).map(function (y) { return "<li>" + esc(y) + "</li>"; }).join("") + "</ul></div>"; }).join("")
+        bloeckeHtml(b)
       : '<p><span class="pr-offen">Noch kein Status.</span></p>') + "</section>";
   }
+  // Projektablauf und Archiv (Daniel, 14.10.2026): nichts wird weggeworfen – alte Status, erledigte Aufgaben, erreichte Gates, Reportings.
+  // Quelle: projekt_verlauf (Einträge entstehen automatisch per Datenbank-Trigger; Reportings legt Claude auf Anforderung an).
+  var VERLAUF_ART = { status: "Status", aufgabe: "Erledigt", gate: "Gate erreicht", projektgate: "Projekt-Gate erreicht", reporting: "Projektreporting", notiz: "Notiz" };
+  function bloeckeHtml(b) {
+    return (b || []).map(function (x) { return '<div class="pr-status-block"><h4>' + esc(x.titel) + "</h4><ul>" + (x.punkte || []).map(function (y) { return "<li>" + esc(y) + "</li>"; }).join("") + "</ul></div>"; }).join("");
+  }
+  function archivKasten() {
+    var monate = {}, folge = [];
+    VERLAUF.forEach(function (v) {
+      var d = new Date(v.datum), k = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+      if (!monate[k]) { monate[k] = []; folge.push(k); } monate[k].push(v);
+    });
+    var inhalt = !VERLAUF.length ? '<p class="kt3-leise">Noch nichts dokumentiert. Erledigte Aufgaben, erreichte Gates und frühere Status landen hier automatisch.</p>' :
+      folge.map(function (k) {
+        var titel = new Date(k + "-15T12:00:00").toLocaleDateString("de-DE", { month: "long", year: "numeric" });
+        return '<div class="pr-archiv-monat"><h4>' + titel + '</h4><ul class="pr-archiv-liste">' + monate[k].map(function (v) {
+          var mehr = v.inhalt && v.inhalt.bloecke && v.inhalt.bloecke.length;
+          return '<li class="pr-archiv-z pr-archiv-z--' + esc(v.art) + '"><span class="pr-archiv-datum">' + new Date(v.datum).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) + "</span>" +
+            '<span class="pr-archiv-art">' + esc(VERLAUF_ART[v.art] || v.art) + "</span>" +
+            (mehr ? '<button type="button" class="pr-archiv-titel" data-archiv-auf aria-expanded="false"><span>' + esc(v.titel) + '</span><span class="tl-dreieck" aria-hidden="true"></span></button><div class="pr-archiv-mehr" hidden>' + bloeckeHtml(v.inhalt.bloecke) + "</div>"
+              : '<span class="pr-archiv-titel">' + esc(v.titel) + "</span>") + "</li>";
+        }).join("") + "</ul></div>";
+      }).join("");
+    return '<section class="kt3-box kt3-breit pr-archiv"><h3>Projektablauf und Archiv</h3>' + inhalt + "</section>";
+  }
   // Reihenfolge der Kästen (Daniel, 14.10.2026): Status · Aufgaben · Timeline · Stoßrichtung · Projektziel · Projektteam
-  var KASTEN_FOLGE = [".pr-status", ".pr-aufgaben", ".pr-pakete", ".pr-tl-frei", ".pr-kurs", ".pr-ziel", ".pr-team"];
+  var KASTEN_FOLGE = [".pr-status", ".pr-aufgaben", ".pr-pakete", ".pr-tl-frei", ".pr-kurs", ".pr-ziel", ".pr-team", ".pr-archiv"];
   function kaestenOrdnen() {
     var r = wurzel.querySelector(".kt3-raster"); if (!r) return;
     KASTEN_FOLGE.forEach(function (s) { var el = r.querySelector(":scope > " + s); if (el) r.appendChild(el); });
   }
-  var MODUL_OFFEN = { status: false, kurs: false, pak: false, auf: true, tl: false, ziel: false, team: false };
+  var MODUL_OFFEN = { status: false, kurs: false, pak: false, auf: false, tl: false, ziel: false, team: false, archiv: false };   // Daniel, 14.10.2026: beim Start alles zu
   // Grundeinstellung (Daniel, 08.10.2026): beim Öffnen eines Projekts ist alles zugeklappt, nur die Aufgaben sind offen.
   // Was man während des Besuchs auf-/zuklappt, gilt bis zum Verlassen des Projekts – beim nächsten Öffnen wieder die Grundeinstellung.
   var KLAPP = { id: null, z: {} };
@@ -385,7 +413,7 @@
     if (lookWert() === "sva") return;
     kaestenOrdnen();
     var gemerkt = klappLesen(p.id);
-    [[".pr-status", "status"], [".pr-kurs", "kurs"], [".pr-pakete", "pak"], [".pr-aufgaben", "auf"], [".pr-tl-frei", "tl"], [".pr-team", "team"]].forEach(function (x) {
+    [[".pr-status", "status"], [".pr-kurs", "kurs"], [".pr-pakete", "pak"], [".pr-aufgaben", "auf"], [".pr-tl-frei", "tl"], [".pr-team", "team"], [".pr-archiv", "archiv"]].forEach(function (x) {
       var sek = wurzel.querySelector(x[0]); if (!sek) return;
       var kopf = sek.querySelector(":scope > .pr-tl-kopf") || sek.querySelector(":scope > h3"); if (!kopf) return;
       var h = kopf.tagName === "H3" ? kopf : kopf.querySelector("h3");
@@ -400,6 +428,9 @@
 
   function verdrahten(p) {
     klappbar(p);
+    wurzel.querySelectorAll("[data-archiv-auf]").forEach(function (b) {
+      b.onclick = function () { var m = b.nextElementSibling; m.hidden = !m.hidden; b.setAttribute("aria-expanded", String(!m.hidden)); };
+    });
     if (STRAENGE.length && window.ProjektPlan) ProjektPlan.verdrahten(wurzel, db, STRAENGE, STAND.auf, function () { projekt(p.id); });
     wurzel.querySelectorAll("[data-pz-feld]").forEach(function (gr) {
       var feld = gr.getAttribute("data-pz-feld");

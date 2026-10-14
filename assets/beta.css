@@ -2170,3 +2170,17 @@ nav.kt-tabs a.kt-tab-leise[aria-current="page"] { background: #fff; box-shadow: 
 .pr-status-block h4 { margin: 0 0 6px; font-size: var(--fs-s); font-weight: 600; }
 .pr-status-block ul { margin: 0; padding-left: 1.1em; }
 .pr-status-block li { margin: 0 0 6px; font-size: var(--fs-m); font-weight: 300; line-height: 1.55; color: var(--ink-2); }
+
+/* Projekt › Projektablauf und Archiv (Daniel, 14.10.2026) */
+.pr-archiv-monat + .pr-archiv-monat { margin-top: 18px; }
+.pr-archiv-monat > h4 { margin: 0 0 4px; padding-bottom: 6px; border-bottom: 1px solid #e4e1dd; font-size: var(--fs-s); font-weight: 600; color: var(--grey-70); }
+.pr-archiv-liste { list-style: none; margin: 0; padding: 0; }
+.pr-archiv-z { display: grid; grid-template-columns: 92px 150px minmax(0, 1fr); gap: 0 12px; align-items: baseline; padding: 7px 0; border-bottom: 1px solid #f2f1ef; font-size: var(--fs-s); }
+.pr-archiv-datum { color: var(--grey-50); font-variant-numeric: tabular-nums; }
+.pr-archiv-art { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--grey-50); }
+.pr-archiv-z--status .pr-archiv-art, .pr-archiv-z--reporting .pr-archiv-art, .pr-archiv-z--gate .pr-archiv-art, .pr-archiv-z--projektgate .pr-archiv-art { color: var(--ink); }
+button.pr-archiv-titel { position: relative; padding: 0 28px 0 0; border: 0; background: none; text-align: left; font: inherit; color: var(--ink); cursor: pointer; }
+button.pr-archiv-titel .tl-dreieck { top: 4px; }
+button.pr-archiv-titel[aria-expanded="true"] .tl-dreieck { transform: rotate(-135deg); top: 8px; }
+.pr-archiv-mehr { grid-column: 3; margin-top: 10px; }
+@media (max-width: 600px) { .pr-archiv-z { grid-template-columns: 80px minmax(0, 1fr); } .pr-archiv-art { grid-column: 2; } .pr-archiv-titel, .pr-archiv-mehr { grid-column: 1 / 3; } }
