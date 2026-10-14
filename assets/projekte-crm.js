@@ -209,6 +209,7 @@
     h += '<div class="pz-einstellung">' + wahlZeile("prioritaet", "Priorität", PRIO, p.prioritaet) + wahlZeile("status", "Status", STATI, p.status) + "</div>";
     h += projektseite(p.projektseite);
     h += '<div class="kt3-raster">';
+    h += statusKasten(p);
     // Links: Stoßrichtung (Gesamtblick über alle Termine) – rechts: Aufgaben
     var punkte = (p.ueberlegungen || "").split("\n").map(function (x) { return x.trim(); }).filter(Boolean);
     h += '<section class="kt3-box kt3-breit pr-kurs pr-kurs-breit"><h3>Stoßrichtung</h3>' + (punkte.length ? '<ul data-ueb-text>' + punkte.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"
@@ -321,7 +322,21 @@
 
   /* Darstellung „SV Akademie“: aufklappbare Module 01–05 wie auf der Seite Projekt SV Akademie.
      Die fertig gezeichneten Kästen werden in die Module umgehängt (Knöpfe behalten ihre Funktion). */
-  var MODUL_OFFEN = { kurs: false, pak: false, auf: true, tl: false, ziel: false, team: false };
+  // Status (Daniel, 14.10.2026): kurzer Lagebericht mit Datum – projekte.statusbericht {stand, bloecke: [{titel, punkte}]}
+  function statusKasten(p) {
+    var s = p.statusbericht, b = s && s.bloecke ? s.bloecke : [];
+    return '<section class="kt3-box kt3-breit pr-status"><h3>Status</h3>' + (b.length
+      ? (s.stand ? '<p class="pr-status-stand">Stand ' + new Date(s.stand + "T12:00:00").toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) + "</p>" : "") +
+        b.map(function (x) { return '<div class="pr-status-block"><h4>' + esc(x.titel) + "</h4><ul>" + (x.punkte || []).map(function (y) { return "<li>" + esc(y) + "</li>"; }).join("") + "</ul></div>"; }).join("")
+      : '<p><span class="pr-offen">Noch kein Status.</span></p>') + "</section>";
+  }
+  // Reihenfolge der Kästen (Daniel, 14.10.2026): Status · Aufgaben · Timeline · Stoßrichtung · Projektziel · Projektteam
+  var KASTEN_FOLGE = [".pr-status", ".pr-aufgaben", ".pr-pakete", ".pr-tl-frei", ".pr-kurs", ".pr-ziel", ".pr-team"];
+  function kaestenOrdnen() {
+    var r = wurzel.querySelector(".kt3-raster"); if (!r) return;
+    KASTEN_FOLGE.forEach(function (s) { var el = r.querySelector(":scope > " + s); if (el) r.appendChild(el); });
+  }
+  var MODUL_OFFEN = { status: false, kurs: false, pak: false, auf: true, tl: false, ziel: false, team: false };
   // Grundeinstellung (Daniel, 08.10.2026): beim Öffnen eines Projekts ist alles zugeklappt, nur die Aufgaben sind offen.
   // Was man während des Besuchs auf-/zuklappt, gilt bis zum Verlassen des Projekts – beim nächsten Öffnen wieder die Grundeinstellung.
   var KLAPP = { id: null, z: {} };
@@ -347,11 +362,13 @@
     function ohneTitel(el, sel) { if (el) { var t = el.querySelector(sel); if (t) t.remove(); } return el; }
     var kurs = ohneTitel(r.querySelector(".pr-kurs"), ":scope > h3"), auf = ohneTitel(r.querySelector(".pr-aufgaben"), ".pr-tl-kopf > h3"),
         tl = ohneTitel(r.querySelector(".pr-tl-frei"), ".pr-tl-kopf > h3"), ziel = r.querySelector(".pr-ziel"), team = r.querySelector(".pr-bet-zeile");
-    modul("kurs", "Stoßrichtung", "Wohin wir das Projekt steuern.", [kurs]);
+    var st = ohneTitel(r.querySelector(".pr-status"), ":scope > h3");
+    modul("status", "Status", p.statusbericht && p.statusbericht.stand ? "Stand " + new Date(p.statusbericht.stand + "T12:00:00").toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) : "Noch kein Status.", [st]);
+    modul("auf", "Aufgaben", "Was als Nächstes ansteht.", [auf]);
     var pak = ohneTitel(r.querySelector(".pr-pakete"), ".pr-tl-kopf");
     if (pak) modul("pak", "Arbeitspakete", "Themen des Projekts mit Stand und offenen Aufträgen.", [pak]);
-    modul("auf", "Aufgaben", "Was als Nächstes ansteht.", [auf]);
     modul("tl", "Timeline", "Termine mit Protokoll, Entscheidungen und Aufgaben.", [tl]);
+    modul("kurs", "Stoßrichtung", "Wohin wir das Projekt steuern.", [kurs]);
     var det = ziel && ziel.querySelector(".pr-ziel-det");
     if (det) { det.hidden = false; if (!det.children.length) det.innerHTML = '<p class="pr-ziel-voll">' + esc(p.ziel || "") + "</p>"; modul("ziel", "Projektziel", p.ziel || "", [det]); }
     else {
@@ -366,8 +383,9 @@
 
   function klappbar(p) {
     if (lookWert() === "sva") return;
+    kaestenOrdnen();
     var gemerkt = klappLesen(p.id);
-    [[".pr-kurs", "kurs"], [".pr-pakete", "pak"], [".pr-aufgaben", "auf"], [".pr-tl-frei", "tl"], [".pr-team", "team"]].forEach(function (x) {
+    [[".pr-status", "status"], [".pr-kurs", "kurs"], [".pr-pakete", "pak"], [".pr-aufgaben", "auf"], [".pr-tl-frei", "tl"], [".pr-team", "team"]].forEach(function (x) {
       var sek = wurzel.querySelector(x[0]); if (!sek) return;
       var kopf = sek.querySelector(":scope > .pr-tl-kopf") || sek.querySelector(":scope > h3"); if (!kopf) return;
       var h = kopf.tagName === "H3" ? kopf : kopf.querySelector("h3");
