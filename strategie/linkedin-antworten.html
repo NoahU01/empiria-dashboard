@@ -14,19 +14,37 @@
 <meta name="description" content="Kommentare auf Daniels LinkedIn-Postings: Antwortvorschlag prüfen und freigeben.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="/styles.css">
-<link rel="stylesheet" href="/assets/linkedin-antworten.css?v=202610132330">
+<link rel="stylesheet" href="/assets/linkedin-antworten.css?v=202610141000">
 </head>
 <body class="la">
 <main class="la-main">
   <header class="la-kopf">
     <a class="la-zurueck" href="/strategie/analyse.html">&larr; Strategie</a>
     <h1>LinkedIn-<span class="hl">Antworten</span></h1>
-    <p class="la-unter">Kommentare der letzten zwei Wochen auf deine Postings. Vorschlag lesen, bei Bedarf ändern, freigeben – der Mac trägt die Antwort über Buffer ein.</p>
+    <p class="la-unter">Kommentieren bei deinen Leads und Antworten auf Kommentare unter deinen Postings – jeweils mit Vorschlag von mir.</p>
   </header>
-  <section data-la aria-live="polite"><p class="la-leise">Lädt …</p></section>
+  <section class="la-teil" data-kv aria-live="polite">
+    <h2 class="la-h2">Bei deinen Leads kommentieren</h2>
+    <a class="la-knopf la-knopf--senden la-knopf--link" href="https://www.linkedin.com/sales/home?alertGroup=LEAD&amp;listId=7355992671544385537" target="_blank" rel="noopener">Meine Lead-Liste öffnen</a>
+    <p class="la-folge">Beitrag im Sales Navigator öffnen, in der Lesezeichenleiste auf „An Claude“ klicken – der Vorschlag erscheint hier.</p>
+    <div data-kv-liste></div>
+    <details class="la-erledigt la-einrichten"><summary>Knopf „An Claude“ einrichten (einmalig, am Mac in Chrome)</summary>
+      <ol class="la-schritte">
+        <li>In Chrome die Lesezeichenleiste einblenden: <b>⌘ ⇧ B</b>.</li>
+        <li>Diesen Knopf mit der Maus in die Lesezeichenleiste ziehen: <a class="la-bm" data-bm href="#">An Claude</a></li>
+        <li>Im Sales Navigator einen Beitrag öffnen (Pop-up rechts) und in der Leiste auf <b>An Claude</b> klicken.</li>
+      </ol>
+      <p class="la-warum">Der Knopf liest nur den Beitrag, den du gerade offen hast – oder den Text, den du markiert hast – und schickt ihn an diese Seite. Er schreibt nichts in LinkedIn.</p>
+    </details>
+  </section>
+  <section class="la-teil">
+    <h2 class="la-h2">Antworten auf deine Postings</h2>
+    <div data-la aria-live="polite"><p class="la-leise">Lädt …</p></div>
+  </section>
 </main>
 <script src="/assets/vendor/supabase.js?v=202610082218"></script>
 <script src="/assets/db.js?v=202610082218"></script>
-<script src="/assets/linkedin-antworten.js?v=202610132330"></script>
+<script src="/assets/linkedin-antworten.js?v=202610141000"></script>
+<script src="/assets/linkedin-kommentieren.js?v=202610141000"></script>
 </body>
 </html>
