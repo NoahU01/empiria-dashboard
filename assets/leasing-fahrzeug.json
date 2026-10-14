@@ -1,0 +1,1225 @@
+{
+ "modelle": [
+  {
+   "id": "vw-id3",
+   "gruppe": "Deutsche Marken",
+   "marke": "VW",
+   "modell": "ID.3",
+   "antrieb": "E",
+   "notiz": "Kompakt – euer bisheriges Modell",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Volkswagen_ID.3_%282023%29_IMG_7973.jpg/330px-Volkswagen_ID.3_%282023%29_IMG_7973.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Volkswagen_ID.3_%282023%29_IMG_7973.jpg/960px-Volkswagen_ID.3_%282023%29_IMG_7973.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Volkswagen_ID.3_%282023%29_IMG_7973.jpg/1920px-Volkswagen_ID.3_%282023%29_IMG_7973.jpg",
+     "titel": "File:Volkswagen ID.3 (2023) IMG 7973.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Volkswagen_ID.3_(2023)_IMG_7973.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Volkswagen_ID.3_%282023%29_Automesse_Ludwigsburg_2023_1X7A0002.jpg/330px-Volkswagen_ID.3_%282023%29_Automesse_Ludwigsburg_2023_1X7A0002.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Volkswagen_ID.3_%282023%29_Automesse_Ludwigsburg_2023_1X7A0002.jpg/960px-Volkswagen_ID.3_%282023%29_Automesse_Ludwigsburg_2023_1X7A0002.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Volkswagen_ID.3_%282023%29_Automesse_Ludwigsburg_2023_1X7A0002.jpg/1920px-Volkswagen_ID.3_%282023%29_Automesse_Ludwigsburg_2023_1X7A0002.jpg",
+     "titel": "File:Volkswagen ID.3 (2023) Automesse Ludwigsburg 2023 1X7A0002.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Volkswagen_ID.3_(2023)_Automesse_Ludwigsburg_2023_1X7A0002.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Volkswagen_ID.3_GTX_Rasant_Automobilmesse_Metzingen_2024_IMG_2215.jpg/330px-Volkswagen_ID.3_GTX_Rasant_Automobilmesse_Metzingen_2024_IMG_2215.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Volkswagen_ID.3_GTX_Rasant_Automobilmesse_Metzingen_2024_IMG_2215.jpg/960px-Volkswagen_ID.3_GTX_Rasant_Automobilmesse_Metzingen_2024_IMG_2215.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Volkswagen_ID.3_GTX_Rasant_Automobilmesse_Metzingen_2024_IMG_2215.jpg/1920px-Volkswagen_ID.3_GTX_Rasant_Automobilmesse_Metzingen_2024_IMG_2215.jpg",
+     "titel": "File:Volkswagen ID.3 GTX Rasant Automobilmesse Metzingen 2024 IMG 2215.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Volkswagen_ID.3_GTX_Rasant_Automobilmesse_Metzingen_2024_IMG_2215.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    }
+   ]
+  },
+  {
+   "id": "vw-golf-ehybrid",
+   "gruppe": "Deutsche Marken",
+   "marke": "VW",
+   "modell": "Golf eHybrid",
+   "antrieb": "PHEV",
+   "notiz": "Kompakt",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Volkswagen_Golf_VIII_Facelift_IMG_0375.jpg/330px-Volkswagen_Golf_VIII_Facelift_IMG_0375.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Volkswagen_Golf_VIII_Facelift_IMG_0375.jpg/960px-Volkswagen_Golf_VIII_Facelift_IMG_0375.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Volkswagen_Golf_VIII_Facelift_IMG_0375.jpg/1920px-Volkswagen_Golf_VIII_Facelift_IMG_0375.jpg",
+     "titel": "File:Volkswagen Golf VIII Facelift IMG 0375.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Volkswagen_Golf_VIII_Facelift_IMG_0375.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Volkswagen_Golf_VIII_Facelift_IMG_9440.jpg/330px-Volkswagen_Golf_VIII_Facelift_IMG_9440.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Volkswagen_Golf_VIII_Facelift_IMG_9440.jpg/960px-Volkswagen_Golf_VIII_Facelift_IMG_9440.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Volkswagen_Golf_VIII_Facelift_IMG_9440.jpg/1920px-Volkswagen_Golf_VIII_Facelift_IMG_9440.jpg",
+     "titel": "File:Volkswagen Golf VIII Facelift IMG 9440.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Volkswagen_Golf_VIII_Facelift_IMG_9440.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Volkswagen_Golf_VIII_phase_2_%28int%C3%A9rieur%29.jpg/330px-Volkswagen_Golf_VIII_phase_2_%28int%C3%A9rieur%29.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Volkswagen_Golf_VIII_phase_2_%28int%C3%A9rieur%29.jpg/960px-Volkswagen_Golf_VIII_phase_2_%28int%C3%A9rieur%29.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Volkswagen_Golf_VIII_phase_2_%28int%C3%A9rieur%29.jpg/1920px-Volkswagen_Golf_VIII_phase_2_%28int%C3%A9rieur%29.jpg",
+     "titel": "File:Volkswagen Golf VIII phase 2 (intérieur).jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Volkswagen_Golf_VIII_phase_2_(int%C3%A9rieur).jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Y.Leclercq"
+    }
+   ]
+  },
+  {
+   "id": "audi-a3-tfsie",
+   "gruppe": "Deutsche Marken",
+   "marke": "Audi",
+   "modell": "A3 Sportback TFSI e",
+   "antrieb": "PHEV",
+   "notiz": "Kompakt",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Audi_A3_Sportback_%288Y%2C_Facelift%29_%E2%80%93_f_03102025.jpg/330px-Audi_A3_Sportback_%288Y%2C_Facelift%29_%E2%80%93_f_03102025.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Audi_A3_Sportback_%288Y%2C_Facelift%29_%E2%80%93_f_03102025.jpg/960px-Audi_A3_Sportback_%288Y%2C_Facelift%29_%E2%80%93_f_03102025.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Audi_A3_Sportback_%288Y%2C_Facelift%29_%E2%80%93_f_03102025.jpg/1920px-Audi_A3_Sportback_%288Y%2C_Facelift%29_%E2%80%93_f_03102025.jpg",
+     "titel": "File:Audi A3 Sportback (8Y, Facelift) – f 03102025.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Audi_A3_Sportback_(8Y,_Facelift)_%E2%80%93_f_03102025.jpg",
+     "lizenz": "CC BY-SA 3.0 de",
+     "urheber": "© M 93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Audi_A3_Sportback_%288Y%2C_Facelift%29_%E2%80%93_h_03102025.jpg/330px-Audi_A3_Sportback_%288Y%2C_Facelift%29_%E2%80%93_h_03102025.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Audi_A3_Sportback_%288Y%2C_Facelift%29_%E2%80%93_h_03102025.jpg/960px-Audi_A3_Sportback_%288Y%2C_Facelift%29_%E2%80%93_h_03102025.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Audi_A3_Sportback_%288Y%2C_Facelift%29_%E2%80%93_h_03102025.jpg/1920px-Audi_A3_Sportback_%288Y%2C_Facelift%29_%E2%80%93_h_03102025.jpg",
+     "titel": "File:Audi A3 Sportback (8Y, Facelift) – h 03102025.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Audi_A3_Sportback_(8Y,_Facelift)_%E2%80%93_h_03102025.jpg",
+     "lizenz": "CC BY-SA 3.0 de",
+     "urheber": "© M 93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Audi_A3_Sportback_S_line_%288Y%2C_Facelift%29_%E2%80%93_f_09022025.jpg/330px-Audi_A3_Sportback_S_line_%288Y%2C_Facelift%29_%E2%80%93_f_09022025.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Audi_A3_Sportback_S_line_%288Y%2C_Facelift%29_%E2%80%93_f_09022025.jpg/960px-Audi_A3_Sportback_S_line_%288Y%2C_Facelift%29_%E2%80%93_f_09022025.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Audi_A3_Sportback_S_line_%288Y%2C_Facelift%29_%E2%80%93_f_09022025.jpg/1920px-Audi_A3_Sportback_S_line_%288Y%2C_Facelift%29_%E2%80%93_f_09022025.jpg",
+     "titel": "File:Audi A3 Sportback S line (8Y, Facelift) – f 09022025.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Audi_A3_Sportback_S_line_(8Y,_Facelift)_%E2%80%93_f_09022025.jpg",
+     "lizenz": "CC BY-SA 3.0 de",
+     "urheber": "© M 93"
+    }
+   ]
+  },
+  {
+   "id": "bmw-ix1",
+   "gruppe": "Deutsche Marken",
+   "marke": "BMW",
+   "modell": "iX1",
+   "antrieb": "E",
+   "notiz": "Etwas höher, kleines SUV",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/BMW_iX1_xDrive30_%28U11%29_%E2%80%93_f_05052024.jpg/330px-BMW_iX1_xDrive30_%28U11%29_%E2%80%93_f_05052024.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/BMW_iX1_xDrive30_%28U11%29_%E2%80%93_f_05052024.jpg/960px-BMW_iX1_xDrive30_%28U11%29_%E2%80%93_f_05052024.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/BMW_iX1_xDrive30_%28U11%29_%E2%80%93_f_05052024.jpg/1920px-BMW_iX1_xDrive30_%28U11%29_%E2%80%93_f_05052024.jpg",
+     "titel": "File:BMW iX1 xDrive30 (U11) – f 05052024.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:BMW_iX1_xDrive30_(U11)_%E2%80%93_f_05052024.jpg",
+     "lizenz": "CC BY-SA 3.0 de",
+     "urheber": "© M 93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/BMW_iX1_xDrive30_%28U11%29_%E2%80%93_h_05052024.jpg/330px-BMW_iX1_xDrive30_%28U11%29_%E2%80%93_h_05052024.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/BMW_iX1_xDrive30_%28U11%29_%E2%80%93_h_05052024.jpg/960px-BMW_iX1_xDrive30_%28U11%29_%E2%80%93_h_05052024.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/BMW_iX1_xDrive30_%28U11%29_%E2%80%93_h_05052024.jpg/1920px-BMW_iX1_xDrive30_%28U11%29_%E2%80%93_h_05052024.jpg",
+     "titel": "File:BMW iX1 xDrive30 (U11) – h 05052024.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:BMW_iX1_xDrive30_(U11)_%E2%80%93_h_05052024.jpg",
+     "lizenz": "CC BY-SA 3.0 de",
+     "urheber": "© M 93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/BMW_U11_BEV_iX1_xDrive30_M_Sport_Sensatec_Mocha_%283%29.jpg/330px-BMW_U11_BEV_iX1_xDrive30_M_Sport_Sensatec_Mocha_%283%29.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/BMW_U11_BEV_iX1_xDrive30_M_Sport_Sensatec_Mocha_%283%29.jpg/960px-BMW_U11_BEV_iX1_xDrive30_M_Sport_Sensatec_Mocha_%283%29.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/BMW_U11_BEV_iX1_xDrive30_M_Sport_Sensatec_Mocha_%283%29.jpg/1920px-BMW_U11_BEV_iX1_xDrive30_M_Sport_Sensatec_Mocha_%283%29.jpg",
+     "titel": "File:BMW U11 BEV iX1 xDrive30 M Sport Sensatec Mocha (3).jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:BMW_U11_BEV_iX1_xDrive30_M_Sport_Sensatec_Mocha_(3).jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Damian B Oh"
+    }
+   ]
+  },
+  {
+   "id": "bmw-225e",
+   "gruppe": "Deutsche Marken",
+   "marke": "BMW",
+   "modell": "225e Active Tourer",
+   "antrieb": "PHEV",
+   "notiz": "Etwas höher, Van-Form",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/BMW_U06_IMG_6802.jpg/330px-BMW_U06_IMG_6802.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/BMW_U06_IMG_6802.jpg/960px-BMW_U06_IMG_6802.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/BMW_U06_IMG_6802.jpg/1920px-BMW_U06_IMG_6802.jpg",
+     "titel": "File:BMW U06 IMG 6802.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:BMW_U06_IMG_6802.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/BMW_U06_PHEV_1X7A7102.jpg/330px-BMW_U06_PHEV_1X7A7102.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/BMW_U06_PHEV_1X7A7102.jpg/960px-BMW_U06_PHEV_1X7A7102.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/BMW_U06_PHEV_1X7A7102.jpg/1920px-BMW_U06_PHEV_1X7A7102.jpg",
+     "titel": "File:BMW U06 PHEV 1X7A7102.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:BMW_U06_PHEV_1X7A7102.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/BMW_U06_1X7A6007.jpg/330px-BMW_U06_1X7A6007.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/BMW_U06_1X7A6007.jpg/960px-BMW_U06_1X7A6007.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/BMW_U06_1X7A6007.jpg/1920px-BMW_U06_1X7A6007.jpg",
+     "titel": "File:BMW U06 1X7A6007.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:BMW_U06_1X7A6007.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    }
+   ]
+  },
+  {
+   "id": "mb-a250e",
+   "gruppe": "Deutsche Marken",
+   "marke": "Mercedes-Benz",
+   "modell": "A 250 e",
+   "antrieb": "PHEV",
+   "notiz": "Kompakt",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Mercedes-Benz_W177_%282022%29_DSC_8808.jpg/330px-Mercedes-Benz_W177_%282022%29_DSC_8808.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Mercedes-Benz_W177_%282022%29_DSC_8808.jpg/960px-Mercedes-Benz_W177_%282022%29_DSC_8808.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Mercedes-Benz_W177_%282022%29_DSC_8808.jpg/1920px-Mercedes-Benz_W177_%282022%29_DSC_8808.jpg",
+     "titel": "File:Mercedes-Benz W177 (2022) DSC 8808.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Mercedes-Benz_W177_(2022)_DSC_8808.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Mercedes-Benz_W177_%282022%29_1X7A6988.jpg/330px-Mercedes-Benz_W177_%282022%29_1X7A6988.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Mercedes-Benz_W177_%282022%29_1X7A6988.jpg/960px-Mercedes-Benz_W177_%282022%29_1X7A6988.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Mercedes-Benz_W177_%282022%29_1X7A6988.jpg/1920px-Mercedes-Benz_W177_%282022%29_1X7A6988.jpg",
+     "titel": "File:Mercedes-Benz W177 (2022) 1X7A6988.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Mercedes-Benz_W177_(2022)_1X7A6988.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Mercedes-Benz_W177_%282022%29_1X7A6957.jpg/330px-Mercedes-Benz_W177_%282022%29_1X7A6957.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Mercedes-Benz_W177_%282022%29_1X7A6957.jpg/960px-Mercedes-Benz_W177_%282022%29_1X7A6957.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Mercedes-Benz_W177_%282022%29_1X7A6957.jpg/1920px-Mercedes-Benz_W177_%282022%29_1X7A6957.jpg",
+     "titel": "File:Mercedes-Benz W177 (2022) 1X7A6957.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Mercedes-Benz_W177_(2022)_1X7A6957.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    }
+   ]
+  },
+  {
+   "id": "mb-eqa",
+   "gruppe": "Deutsche Marken",
+   "marke": "Mercedes-Benz",
+   "modell": "EQA",
+   "antrieb": "E",
+   "notiz": "Etwas höher, kleines SUV",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Mercedes-Benz_EQA_250_AMG_Line_%28H_243%2C_Facelift%29_%E2%80%93_f_08022026.jpg/330px-Mercedes-Benz_EQA_250_AMG_Line_%28H_243%2C_Facelift%29_%E2%80%93_f_08022026.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Mercedes-Benz_EQA_250_AMG_Line_%28H_243%2C_Facelift%29_%E2%80%93_f_08022026.jpg/960px-Mercedes-Benz_EQA_250_AMG_Line_%28H_243%2C_Facelift%29_%E2%80%93_f_08022026.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Mercedes-Benz_EQA_250_AMG_Line_%28H_243%2C_Facelift%29_%E2%80%93_f_08022026.jpg/1920px-Mercedes-Benz_EQA_250_AMG_Line_%28H_243%2C_Facelift%29_%E2%80%93_f_08022026.jpg",
+     "titel": "File:Mercedes-Benz EQA 250 AMG Line (H 243, Facelift) – f 08022026.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Mercedes-Benz_EQA_250_AMG_Line_(H_243,_Facelift)_%E2%80%93_f_08022026.jpg",
+     "lizenz": "CC BY-SA 3.0 de",
+     "urheber": "© M 93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Mercedes-Benz_EQA_250_AMG_Line_%28H_243%2C_Facelift%29_%E2%80%93_h_08022026.jpg/330px-Mercedes-Benz_EQA_250_AMG_Line_%28H_243%2C_Facelift%29_%E2%80%93_h_08022026.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Mercedes-Benz_EQA_250_AMG_Line_%28H_243%2C_Facelift%29_%E2%80%93_h_08022026.jpg/960px-Mercedes-Benz_EQA_250_AMG_Line_%28H_243%2C_Facelift%29_%E2%80%93_h_08022026.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Mercedes-Benz_EQA_250_AMG_Line_%28H_243%2C_Facelift%29_%E2%80%93_h_08022026.jpg/1920px-Mercedes-Benz_EQA_250_AMG_Line_%28H_243%2C_Facelift%29_%E2%80%93_h_08022026.jpg",
+     "titel": "File:Mercedes-Benz EQA 250 AMG Line (H 243, Facelift) – h 08022026.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Mercedes-Benz_EQA_250_AMG_Line_(H_243,_Facelift)_%E2%80%93_h_08022026.jpg",
+     "lizenz": "CC BY-SA 3.0 de",
+     "urheber": "© M 93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Mercedes-Benz_EQA_300_4MATIC_AMG_Line_%28H_243%2C_Facelift%29_%E2%80%93_f_05052026.jpg/330px-Mercedes-Benz_EQA_300_4MATIC_AMG_Line_%28H_243%2C_Facelift%29_%E2%80%93_f_05052026.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Mercedes-Benz_EQA_300_4MATIC_AMG_Line_%28H_243%2C_Facelift%29_%E2%80%93_f_05052026.jpg/960px-Mercedes-Benz_EQA_300_4MATIC_AMG_Line_%28H_243%2C_Facelift%29_%E2%80%93_f_05052026.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Mercedes-Benz_EQA_300_4MATIC_AMG_Line_%28H_243%2C_Facelift%29_%E2%80%93_f_05052026.jpg/1920px-Mercedes-Benz_EQA_300_4MATIC_AMG_Line_%28H_243%2C_Facelift%29_%E2%80%93_f_05052026.jpg",
+     "titel": "File:Mercedes-Benz EQA 300 4MATIC AMG Line (H 243, Facelift) – f 05052026.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Mercedes-Benz_EQA_300_4MATIC_AMG_Line_(H_243,_Facelift)_%E2%80%93_f_05052026.jpg",
+     "lizenz": "CC BY-SA 3.0 de",
+     "urheber": "© M 93"
+    }
+   ]
+  },
+  {
+   "id": "smart-1",
+   "gruppe": "Deutsche Marken",
+   "marke": "smart",
+   "modell": "#1",
+   "antrieb": "E",
+   "notiz": "Etwas höher, kurz, kleiner Kofferraum",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Smart_Hashtag_1_IMG_7328.jpg/330px-Smart_Hashtag_1_IMG_7328.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Smart_Hashtag_1_IMG_7328.jpg/960px-Smart_Hashtag_1_IMG_7328.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Smart_Hashtag_1_IMG_7328.jpg/1920px-Smart_Hashtag_1_IMG_7328.jpg",
+     "titel": "File:Smart Hashtag 1 IMG 7328.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Smart_Hashtag_1_IMG_7328.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Smart_%E2%99%AF1_Premium_%E2%80%93_h_12022023.jpg/330px-Smart_%E2%99%AF1_Premium_%E2%80%93_h_12022023.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Smart_%E2%99%AF1_Premium_%E2%80%93_h_12022023.jpg/960px-Smart_%E2%99%AF1_Premium_%E2%80%93_h_12022023.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Smart_%E2%99%AF1_Premium_%E2%80%93_h_12022023.jpg/1920px-Smart_%E2%99%AF1_Premium_%E2%80%93_h_12022023.jpg",
+     "titel": "File:Smart ♯1 Premium – h 12022023.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Smart_%E2%99%AF1_Premium_%E2%80%93_h_12022023.jpg",
+     "lizenz": "CC BY-SA 3.0 de",
+     "urheber": "© M 93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Smart_1_Brabus_005.jpg/330px-Smart_1_Brabus_005.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Smart_1_Brabus_005.jpg/960px-Smart_1_Brabus_005.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Smart_1_Brabus_005.jpg/1920px-Smart_1_Brabus_005.jpg",
+     "titel": "File:Smart 1 Brabus 005.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Smart_1_Brabus_005.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "JustAnotherCarDesigner"
+    }
+   ]
+  },
+  {
+   "id": "skoda-elroq",
+   "gruppe": "Europäische Marken",
+   "marke": "Škoda",
+   "modell": "Elroq",
+   "antrieb": "E",
+   "notiz": "Etwas höher, großer Kofferraum",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/%C5%A0koda_Elroq_DSC_2716.jpg/330px-%C5%A0koda_Elroq_DSC_2716.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/%C5%A0koda_Elroq_DSC_2716.jpg/960px-%C5%A0koda_Elroq_DSC_2716.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/%C5%A0koda_Elroq_DSC_2716.jpg/1920px-%C5%A0koda_Elroq_DSC_2716.jpg",
+     "titel": "File:Škoda Elroq DSC 2716.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:%C5%A0koda_Elroq_DSC_2716.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/%C5%A0koda_Elroq_DSC_9257.jpg/330px-%C5%A0koda_Elroq_DSC_9257.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/%C5%A0koda_Elroq_DSC_9257.jpg/960px-%C5%A0koda_Elroq_DSC_9257.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/%C5%A0koda_Elroq_DSC_9257.jpg/1920px-%C5%A0koda_Elroq_DSC_9257.jpg",
+     "titel": "File:Škoda Elroq DSC 9257.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:%C5%A0koda_Elroq_DSC_9257.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/%C5%A0koda_Elroq_Auto_Zuerich_2024_DSC_6917.jpg/330px-%C5%A0koda_Elroq_Auto_Zuerich_2024_DSC_6917.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/%C5%A0koda_Elroq_Auto_Zuerich_2024_DSC_6917.jpg/960px-%C5%A0koda_Elroq_Auto_Zuerich_2024_DSC_6917.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/%C5%A0koda_Elroq_Auto_Zuerich_2024_DSC_6917.jpg/1920px-%C5%A0koda_Elroq_Auto_Zuerich_2024_DSC_6917.jpg",
+     "titel": "File:Škoda Elroq Auto Zuerich 2024 DSC 6917.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:%C5%A0koda_Elroq_Auto_Zuerich_2024_DSC_6917.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    }
+   ]
+  },
+  {
+   "id": "cupra-born",
+   "gruppe": "Europäische Marken",
+   "marke": "Cupra",
+   "modell": "Born",
+   "antrieb": "E",
+   "notiz": "Kompakt, Technik wie der ID.3",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Cupra_Born_VZ_%28Facelift%29_%E2%80%93_f_27082026.jpg/330px-Cupra_Born_VZ_%28Facelift%29_%E2%80%93_f_27082026.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Cupra_Born_VZ_%28Facelift%29_%E2%80%93_f_27082026.jpg/960px-Cupra_Born_VZ_%28Facelift%29_%E2%80%93_f_27082026.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Cupra_Born_VZ_%28Facelift%29_%E2%80%93_f_27082026.jpg/1920px-Cupra_Born_VZ_%28Facelift%29_%E2%80%93_f_27082026.jpg",
+     "titel": "File:Cupra Born VZ (Facelift) – f 27082026.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Cupra_Born_VZ_(Facelift)_%E2%80%93_f_27082026.jpg",
+     "lizenz": "CC BY-SA 3.0 de",
+     "urheber": "© M 93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Cupra_Born_VZ_%28Facelift%29_%E2%80%93_h_27082026.jpg/330px-Cupra_Born_VZ_%28Facelift%29_%E2%80%93_h_27082026.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Cupra_Born_VZ_%28Facelift%29_%E2%80%93_h_27082026.jpg/960px-Cupra_Born_VZ_%28Facelift%29_%E2%80%93_h_27082026.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Cupra_Born_VZ_%28Facelift%29_%E2%80%93_h_27082026.jpg/1920px-Cupra_Born_VZ_%28Facelift%29_%E2%80%93_h_27082026.jpg",
+     "titel": "File:Cupra Born VZ (Facelift) – h 27082026.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Cupra_Born_VZ_(Facelift)_%E2%80%93_h_27082026.jpg",
+     "lizenz": "CC BY-SA 3.0 de",
+     "urheber": "© M 93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/2026_Cupra_Born_Leonberg_2026_IMG_8751.jpg/330px-2026_Cupra_Born_Leonberg_2026_IMG_8751.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/2026_Cupra_Born_Leonberg_2026_IMG_8751.jpg/960px-2026_Cupra_Born_Leonberg_2026_IMG_8751.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/2026_Cupra_Born_Leonberg_2026_IMG_8751.jpg/1920px-2026_Cupra_Born_Leonberg_2026_IMG_8751.jpg",
+     "titel": "File:2026 Cupra Born Leonberg 2026 IMG 8751.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2026_Cupra_Born_Leonberg_2026_IMG_8751.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    }
+   ]
+  },
+  {
+   "id": "cupra-leon-ehybrid",
+   "gruppe": "Europäische Marken",
+   "marke": "Cupra",
+   "modell": "Leon e-Hybrid",
+   "antrieb": "PHEV",
+   "notiz": "Kompakt, auch als Kombi",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Cupra_Leon_Mk4_Facelift_DSC_8487.jpg/330px-Cupra_Leon_Mk4_Facelift_DSC_8487.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Cupra_Leon_Mk4_Facelift_DSC_8487.jpg/960px-Cupra_Leon_Mk4_Facelift_DSC_8487.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Cupra_Leon_Mk4_Facelift_DSC_8487.jpg/1920px-Cupra_Leon_Mk4_Facelift_DSC_8487.jpg",
+     "titel": "File:Cupra Leon Mk4 Facelift DSC 8487.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Cupra_Leon_Mk4_Facelift_DSC_8487.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Cupra_Leon_Mk4_Facelift_DSC_8489.jpg/330px-Cupra_Leon_Mk4_Facelift_DSC_8489.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Cupra_Leon_Mk4_Facelift_DSC_8489.jpg/960px-Cupra_Leon_Mk4_Facelift_DSC_8489.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Cupra_Leon_Mk4_Facelift_DSC_8489.jpg/1920px-Cupra_Leon_Mk4_Facelift_DSC_8489.jpg",
+     "titel": "File:Cupra Leon Mk4 Facelift DSC 8489.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Cupra_Leon_Mk4_Facelift_DSC_8489.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Cupra_Leon_Sportstourer_VZ_2.0_TSI_4Drive_%28Facelift%29_%E2%80%93_f_19072025.jpg/330px-Cupra_Leon_Sportstourer_VZ_2.0_TSI_4Drive_%28Facelift%29_%E2%80%93_f_19072025.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Cupra_Leon_Sportstourer_VZ_2.0_TSI_4Drive_%28Facelift%29_%E2%80%93_f_19072025.jpg/960px-Cupra_Leon_Sportstourer_VZ_2.0_TSI_4Drive_%28Facelift%29_%E2%80%93_f_19072025.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Cupra_Leon_Sportstourer_VZ_2.0_TSI_4Drive_%28Facelift%29_%E2%80%93_f_19072025.jpg/1920px-Cupra_Leon_Sportstourer_VZ_2.0_TSI_4Drive_%28Facelift%29_%E2%80%93_f_19072025.jpg",
+     "titel": "File:Cupra Leon Sportstourer VZ 2.0 TSI 4Drive (Facelift) – f 19072025.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Cupra_Leon_Sportstourer_VZ_2.0_TSI_4Drive_(Facelift)_%E2%80%93_f_19072025.jpg",
+     "lizenz": "CC BY-SA 3.0 de",
+     "urheber": "© M 93"
+    }
+   ]
+  },
+  {
+   "id": "peugeot-e308",
+   "gruppe": "Europäische Marken",
+   "marke": "Peugeot",
+   "modell": "e-308",
+   "antrieb": "E",
+   "notiz": "Kompakt, auch als Kombi",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/2025_Peugeot_e-308_Auto_Zuerich_2025_DSC_3384.jpg/330px-2025_Peugeot_e-308_Auto_Zuerich_2025_DSC_3384.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/2025_Peugeot_e-308_Auto_Zuerich_2025_DSC_3384.jpg/960px-2025_Peugeot_e-308_Auto_Zuerich_2025_DSC_3384.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/2025_Peugeot_e-308_Auto_Zuerich_2025_DSC_3384.jpg/1920px-2025_Peugeot_e-308_Auto_Zuerich_2025_DSC_3384.jpg",
+     "titel": "File:2025 Peugeot e-308 Auto Zuerich 2025 DSC 3384.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2025_Peugeot_e-308_Auto_Zuerich_2025_DSC_3384.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/2025_Peugeot_e-308_Auto_Zuerich_2025_DSC_3385.jpg/330px-2025_Peugeot_e-308_Auto_Zuerich_2025_DSC_3385.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/2025_Peugeot_e-308_Auto_Zuerich_2025_DSC_3385.jpg/960px-2025_Peugeot_e-308_Auto_Zuerich_2025_DSC_3385.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/2025_Peugeot_e-308_Auto_Zuerich_2025_DSC_3385.jpg/1920px-2025_Peugeot_e-308_Auto_Zuerich_2025_DSC_3385.jpg",
+     "titel": "File:2025 Peugeot e-308 Auto Zuerich 2025 DSC 3385.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2025_Peugeot_e-308_Auto_Zuerich_2025_DSC_3385.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/2025_Peugeot_e-308_Auto_Zuerich_2025_DSC_3454.jpg/330px-2025_Peugeot_e-308_Auto_Zuerich_2025_DSC_3454.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/2025_Peugeot_e-308_Auto_Zuerich_2025_DSC_3454.jpg/960px-2025_Peugeot_e-308_Auto_Zuerich_2025_DSC_3454.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/2025_Peugeot_e-308_Auto_Zuerich_2025_DSC_3454.jpg/1920px-2025_Peugeot_e-308_Auto_Zuerich_2025_DSC_3454.jpg",
+     "titel": "File:2025 Peugeot e-308 Auto Zuerich 2025 DSC 3454.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2025_Peugeot_e-308_Auto_Zuerich_2025_DSC_3454.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    }
+   ]
+  },
+  {
+   "id": "peugeot-e2008",
+   "gruppe": "Europäische Marken",
+   "marke": "Peugeot",
+   "modell": "e-2008",
+   "antrieb": "E",
+   "notiz": "Etwas höher, etwas kleiner als Golf",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Peugeot_e-2008_Facelift_Autofr%C3%BChling_Ulm_IMG_9302.jpg/330px-Peugeot_e-2008_Facelift_Autofr%C3%BChling_Ulm_IMG_9302.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Peugeot_e-2008_Facelift_Autofr%C3%BChling_Ulm_IMG_9302.jpg/960px-Peugeot_e-2008_Facelift_Autofr%C3%BChling_Ulm_IMG_9302.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Peugeot_e-2008_Facelift_Autofr%C3%BChling_Ulm_IMG_9302.jpg/1920px-Peugeot_e-2008_Facelift_Autofr%C3%BChling_Ulm_IMG_9302.jpg",
+     "titel": "File:Peugeot e-2008 Facelift Autofrühling Ulm IMG 9302.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Peugeot_e-2008_Facelift_Autofr%C3%BChling_Ulm_IMG_9302.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Peugeot_e-2008_Facelift_Autofr%C3%BChling_Ulm_IMG_9288.jpg/330px-Peugeot_e-2008_Facelift_Autofr%C3%BChling_Ulm_IMG_9288.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Peugeot_e-2008_Facelift_Autofr%C3%BChling_Ulm_IMG_9288.jpg/960px-Peugeot_e-2008_Facelift_Autofr%C3%BChling_Ulm_IMG_9288.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Peugeot_e-2008_Facelift_Autofr%C3%BChling_Ulm_IMG_9288.jpg/1920px-Peugeot_e-2008_Facelift_Autofr%C3%BChling_Ulm_IMG_9288.jpg",
+     "titel": "File:Peugeot e-2008 Facelift Autofrühling Ulm IMG 9288.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Peugeot_e-2008_Facelift_Autofr%C3%BChling_Ulm_IMG_9288.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Peugeot%2C_Auto_2024%2C_Zurich_%28PANA0758%29.jpg/330px-Peugeot%2C_Auto_2024%2C_Zurich_%28PANA0758%29.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Peugeot%2C_Auto_2024%2C_Zurich_%28PANA0758%29.jpg/960px-Peugeot%2C_Auto_2024%2C_Zurich_%28PANA0758%29.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Peugeot%2C_Auto_2024%2C_Zurich_%28PANA0758%29.jpg/1920px-Peugeot%2C_Auto_2024%2C_Zurich_%28PANA0758%29.jpg",
+     "titel": "File:Peugeot, Auto 2024, Zurich (PANA0758).jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Peugeot,_Auto_2024,_Zurich_(PANA0758).jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Matti Blume"
+    }
+   ]
+  },
+  {
+   "id": "citroen-ec4",
+   "gruppe": "Europäische Marken",
+   "marke": "Citroën",
+   "modell": "ë-C4",
+   "antrieb": "E",
+   "notiz": "Etwas höher, weich abgestimmt",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/2025_Citro%C3%ABn_C4_DSC_9296.jpg/330px-2025_Citro%C3%ABn_C4_DSC_9296.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/2025_Citro%C3%ABn_C4_DSC_9296.jpg/960px-2025_Citro%C3%ABn_C4_DSC_9296.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/2025_Citro%C3%ABn_C4_DSC_9296.jpg/1920px-2025_Citro%C3%ABn_C4_DSC_9296.jpg",
+     "titel": "File:2025 Citroën C4 DSC 9296.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2025_Citro%C3%ABn_C4_DSC_9296.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/2025_Citro%C3%ABn_C4_DSC_9297.jpg/330px-2025_Citro%C3%ABn_C4_DSC_9297.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/2025_Citro%C3%ABn_C4_DSC_9297.jpg/960px-2025_Citro%C3%ABn_C4_DSC_9297.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/2025_Citro%C3%ABn_C4_DSC_9297.jpg/1920px-2025_Citro%C3%ABn_C4_DSC_9297.jpg",
+     "titel": "File:2025 Citroën C4 DSC 9297.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2025_Citro%C3%ABn_C4_DSC_9297.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Citroen_e-C4%2C_Auto_2025%2C_Zurich_%2820251029-P1074554%29.jpg/330px-Citroen_e-C4%2C_Auto_2025%2C_Zurich_%2820251029-P1074554%29.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Citroen_e-C4%2C_Auto_2025%2C_Zurich_%2820251029-P1074554%29.jpg/960px-Citroen_e-C4%2C_Auto_2025%2C_Zurich_%2820251029-P1074554%29.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Citroen_e-C4%2C_Auto_2025%2C_Zurich_%2820251029-P1074554%29.jpg/1920px-Citroen_e-C4%2C_Auto_2025%2C_Zurich_%2820251029-P1074554%29.jpg",
+     "titel": "File:Citroen e-C4, Auto 2025, Zurich (20251029-P1074554).jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Citroen_e-C4,_Auto_2025,_Zurich_(20251029-P1074554).jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Matti Blume"
+    }
+   ]
+  },
+  {
+   "id": "ds-n4",
+   "gruppe": "Europäische Marken",
+   "marke": "DS",
+   "modell": "N°4",
+   "antrieb": "E",
+   "notiz": "Kompakt, gehobene Ausstattung",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/DS_N%C2%B04_Auto_Zuerich_2025_DSC_3290_%28cropped%29.jpg/330px-DS_N%C2%B04_Auto_Zuerich_2025_DSC_3290_%28cropped%29.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/DS_N%C2%B04_Auto_Zuerich_2025_DSC_3290_%28cropped%29.jpg/960px-DS_N%C2%B04_Auto_Zuerich_2025_DSC_3290_%28cropped%29.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/DS_N%C2%B04_Auto_Zuerich_2025_DSC_3290_%28cropped%29.jpg/1920px-DS_N%C2%B04_Auto_Zuerich_2025_DSC_3290_%28cropped%29.jpg",
+     "titel": "File:DS N°4 Auto Zuerich 2025 DSC 3290 (cropped).jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:DS_N%C2%B04_Auto_Zuerich_2025_DSC_3290_(cropped).jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/DS_N%C2%B04_Auto_Zuerich_2025_DSC_3291_%28cropped%29.jpg/330px-DS_N%C2%B04_Auto_Zuerich_2025_DSC_3291_%28cropped%29.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/DS_N%C2%B04_Auto_Zuerich_2025_DSC_3291_%28cropped%29.jpg/960px-DS_N%C2%B04_Auto_Zuerich_2025_DSC_3291_%28cropped%29.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/DS_N%C2%B04_Auto_Zuerich_2025_DSC_3291_%28cropped%29.jpg/1920px-DS_N%C2%B04_Auto_Zuerich_2025_DSC_3291_%28cropped%29.jpg",
+     "titel": "File:DS N°4 Auto Zuerich 2025 DSC 3291 (cropped).jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:DS_N%C2%B04_Auto_Zuerich_2025_DSC_3291_(cropped).jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/DS_N%C2%B04_Etoile_Hybrid_%2726_%281%29.jpg/330px-DS_N%C2%B04_Etoile_Hybrid_%2726_%281%29.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/DS_N%C2%B04_Etoile_Hybrid_%2726_%281%29.jpg/960px-DS_N%C2%B04_Etoile_Hybrid_%2726_%281%29.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/DS_N%C2%B04_Etoile_Hybrid_%2726_%281%29.jpg/1920px-DS_N%C2%B04_Etoile_Hybrid_%2726_%281%29.jpg",
+     "titel": "File:DS N°4 Etoile Hybrid '26 (1).jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:DS_N%C2%B04_Etoile_Hybrid_%2726_(1).jpg",
+     "lizenz": "CC0",
+     "urheber": "Oq10pass"
+    }
+   ]
+  },
+  {
+   "id": "renault-megane",
+   "gruppe": "Europäische Marken",
+   "marke": "Renault",
+   "modell": "Mégane E-Tech",
+   "antrieb": "E",
+   "notiz": "Kompakt, etwas höher",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Renault_Megane_E-Tech_1X7A6016.jpg/330px-Renault_Megane_E-Tech_1X7A6016.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Renault_Megane_E-Tech_1X7A6016.jpg/960px-Renault_Megane_E-Tech_1X7A6016.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Renault_Megane_E-Tech_1X7A6016.jpg/1920px-Renault_Megane_E-Tech_1X7A6016.jpg",
+     "titel": "File:Renault Megane E-Tech 1X7A6016.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Renault_Megane_E-Tech_1X7A6016.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Renault_Megane_E-Tech_1X7A6197.jpg/330px-Renault_Megane_E-Tech_1X7A6197.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Renault_Megane_E-Tech_1X7A6197.jpg/960px-Renault_Megane_E-Tech_1X7A6197.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Renault_Megane_E-Tech_1X7A6197.jpg/1920px-Renault_Megane_E-Tech_1X7A6197.jpg",
+     "titel": "File:Renault Megane E-Tech 1X7A6197.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Renault_Megane_E-Tech_1X7A6197.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Renault_cockpit%2C_IAA_2021%2C_Munich_%28IAA10393%29.jpg/330px-Renault_cockpit%2C_IAA_2021%2C_Munich_%28IAA10393%29.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Renault_cockpit%2C_IAA_2021%2C_Munich_%28IAA10393%29.jpg/960px-Renault_cockpit%2C_IAA_2021%2C_Munich_%28IAA10393%29.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Renault_cockpit%2C_IAA_2021%2C_Munich_%28IAA10393%29.jpg/1920px-Renault_cockpit%2C_IAA_2021%2C_Munich_%28IAA10393%29.jpg",
+     "titel": "File:Renault cockpit, IAA 2021, Munich (IAA10393).jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Renault_cockpit,_IAA_2021,_Munich_(IAA10393).jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Matti Blume"
+    }
+   ]
+  },
+  {
+   "id": "renault-4",
+   "gruppe": "Europäische Marken",
+   "marke": "Renault",
+   "modell": "4 E-Tech",
+   "antrieb": "E",
+   "notiz": "Kürzer, hoch, großer Kofferraum",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Renault_4_E-Tech_IAA_2025_DSC_2048.jpg/330px-Renault_4_E-Tech_IAA_2025_DSC_2048.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Renault_4_E-Tech_IAA_2025_DSC_2048.jpg/960px-Renault_4_E-Tech_IAA_2025_DSC_2048.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Renault_4_E-Tech_IAA_2025_DSC_2048.jpg/1920px-Renault_4_E-Tech_IAA_2025_DSC_2048.jpg",
+     "titel": "File:Renault 4 E-Tech IAA 2025 DSC 2048.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Renault_4_E-Tech_IAA_2025_DSC_2048.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Renault_4_E-Tech_Electric_DSC_2690.jpg/330px-Renault_4_E-Tech_Electric_DSC_2690.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Renault_4_E-Tech_Electric_DSC_2690.jpg/960px-Renault_4_E-Tech_Electric_DSC_2690.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Renault_4_E-Tech_Electric_DSC_2690.jpg/1920px-Renault_4_E-Tech_Electric_DSC_2690.jpg",
+     "titel": "File:Renault 4 E-Tech Electric DSC 2690.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Renault_4_E-Tech_Electric_DSC_2690.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Renault_4_E-Tech_Electric_-_06.jpg/330px-Renault_4_E-Tech_Electric_-_06.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Renault_4_E-Tech_Electric_-_06.jpg/960px-Renault_4_E-Tech_Electric_-_06.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Renault_4_E-Tech_Electric_-_06.jpg/1920px-Renault_4_E-Tech_Electric_-_06.jpg",
+     "titel": "File:Renault 4 E-Tech Electric - 06.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Renault_4_E-Tech_Electric_-_06.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Y.Leclercq"
+    }
+   ]
+  },
+  {
+   "id": "renault-scenic",
+   "gruppe": "Europäische Marken",
+   "marke": "Renault",
+   "modell": "Scenic E-Tech",
+   "antrieb": "E",
+   "notiz": "Größer, viel Platz",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Renault_Sc%C3%A9nic_E-Tech_Electric_220_Long_Range_Techno_%E2%80%93_f_30062024.jpg/330px-Renault_Sc%C3%A9nic_E-Tech_Electric_220_Long_Range_Techno_%E2%80%93_f_30062024.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Renault_Sc%C3%A9nic_E-Tech_Electric_220_Long_Range_Techno_%E2%80%93_f_30062024.jpg/960px-Renault_Sc%C3%A9nic_E-Tech_Electric_220_Long_Range_Techno_%E2%80%93_f_30062024.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Renault_Sc%C3%A9nic_E-Tech_Electric_220_Long_Range_Techno_%E2%80%93_f_30062024.jpg/1920px-Renault_Sc%C3%A9nic_E-Tech_Electric_220_Long_Range_Techno_%E2%80%93_f_30062024.jpg",
+     "titel": "File:Renault Scénic E-Tech Electric 220 Long Range Techno – f 30062024.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Renault_Sc%C3%A9nic_E-Tech_Electric_220_Long_Range_Techno_%E2%80%93_f_30062024.jpg",
+     "lizenz": "CC BY-SA 3.0 de",
+     "urheber": "© M 93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Renault_Sc%C3%A9nic_E-Tech_Electric_220_Long_Range_Techno_%E2%80%93_h_30062024.jpg/330px-Renault_Sc%C3%A9nic_E-Tech_Electric_220_Long_Range_Techno_%E2%80%93_h_30062024.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Renault_Sc%C3%A9nic_E-Tech_Electric_220_Long_Range_Techno_%E2%80%93_h_30062024.jpg/960px-Renault_Sc%C3%A9nic_E-Tech_Electric_220_Long_Range_Techno_%E2%80%93_h_30062024.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Renault_Sc%C3%A9nic_E-Tech_Electric_220_Long_Range_Techno_%E2%80%93_h_30062024.jpg/1920px-Renault_Sc%C3%A9nic_E-Tech_Electric_220_Long_Range_Techno_%E2%80%93_h_30062024.jpg",
+     "titel": "File:Renault Scénic E-Tech Electric 220 Long Range Techno – h 30062024.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Renault_Sc%C3%A9nic_E-Tech_Electric_220_Long_Range_Techno_%E2%80%93_h_30062024.jpg",
+     "lizenz": "CC BY-SA 3.0 de",
+     "urheber": "© M 93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Renault_Sc%C3%A9nic_E-Tech_IAA_2023_1X7A0323.jpg/330px-Renault_Sc%C3%A9nic_E-Tech_IAA_2023_1X7A0323.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Renault_Sc%C3%A9nic_E-Tech_IAA_2023_1X7A0323.jpg/960px-Renault_Sc%C3%A9nic_E-Tech_IAA_2023_1X7A0323.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Renault_Sc%C3%A9nic_E-Tech_IAA_2023_1X7A0323.jpg/1920px-Renault_Sc%C3%A9nic_E-Tech_IAA_2023_1X7A0323.jpg",
+     "titel": "File:Renault Scénic E-Tech IAA 2023 1X7A0323.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Renault_Sc%C3%A9nic_E-Tech_IAA_2023_1X7A0323.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    }
+   ]
+  },
+  {
+   "id": "fiat-600e",
+   "gruppe": "Europäische Marken",
+   "marke": "Fiat",
+   "modell": "600e",
+   "antrieb": "E",
+   "notiz": "Kleiner als Golf, etwas höher",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Fiat_600e_1X7A1764.jpg/330px-Fiat_600e_1X7A1764.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Fiat_600e_1X7A1764.jpg/960px-Fiat_600e_1X7A1764.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Fiat_600e_1X7A1764.jpg/1920px-Fiat_600e_1X7A1764.jpg",
+     "titel": "File:Fiat 600e 1X7A1764.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Fiat_600e_1X7A1764.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Fiat_600e_1X7A1770.jpg/330px-Fiat_600e_1X7A1770.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Fiat_600e_1X7A1770.jpg/960px-Fiat_600e_1X7A1770.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Fiat_600e_1X7A1770.jpg/1920px-Fiat_600e_1X7A1770.jpg",
+     "titel": "File:Fiat 600e 1X7A1770.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Fiat_600e_1X7A1770.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Fiat_600e_IMG_9951.jpg/330px-Fiat_600e_IMG_9951.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Fiat_600e_IMG_9951.jpg/960px-Fiat_600e_IMG_9951.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Fiat_600e_IMG_9951.jpg/1920px-Fiat_600e_IMG_9951.jpg",
+     "titel": "File:Fiat 600e IMG 9951.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Fiat_600e_IMG_9951.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    }
+   ]
+  },
+  {
+   "id": "volvo-ex30",
+   "gruppe": "Europäische Marken",
+   "marke": "Volvo",
+   "modell": "EX30",
+   "antrieb": "E",
+   "notiz": "Kleiner als Golf, kleiner Kofferraum",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Volvo_EX30_IMG_8567.jpg/330px-Volvo_EX30_IMG_8567.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Volvo_EX30_IMG_8567.jpg/960px-Volvo_EX30_IMG_8567.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Volvo_EX30_IMG_8567.jpg/1920px-Volvo_EX30_IMG_8567.jpg",
+     "titel": "File:Volvo EX30 IMG 8567.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Volvo_EX30_IMG_8567.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Volvo_EX30_Auto_Zuerich_2023_1X7A0954.jpg/330px-Volvo_EX30_Auto_Zuerich_2023_1X7A0954.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Volvo_EX30_Auto_Zuerich_2023_1X7A0954.jpg/960px-Volvo_EX30_Auto_Zuerich_2023_1X7A0954.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Volvo_EX30_Auto_Zuerich_2023_1X7A0954.jpg/1920px-Volvo_EX30_Auto_Zuerich_2023_1X7A0954.jpg",
+     "titel": "File:Volvo EX30 Auto Zuerich 2023 1X7A0954.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Volvo_EX30_Auto_Zuerich_2023_1X7A0954.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Volvo_EX30_Ultra_SEA_Mist_%283%29.jpg/330px-Volvo_EX30_Ultra_SEA_Mist_%283%29.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Volvo_EX30_Ultra_SEA_Mist_%283%29.jpg/960px-Volvo_EX30_Ultra_SEA_Mist_%283%29.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Volvo_EX30_Ultra_SEA_Mist_%283%29.jpg/1920px-Volvo_EX30_Ultra_SEA_Mist_%283%29.jpg",
+     "titel": "File:Volvo EX30 Ultra SEA Mist (3).jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Volvo_EX30_Ultra_SEA_Mist_(3).jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Damian B Oh"
+    }
+   ]
+  },
+  {
+   "id": "mini-aceman",
+   "gruppe": "Europäische Marken",
+   "marke": "Mini",
+   "modell": "Aceman",
+   "antrieb": "E",
+   "notiz": "Kleiner als Golf",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Mini_Aceman_JCW_Trim_DSC_7951_%28cropped%29.jpg/330px-Mini_Aceman_JCW_Trim_DSC_7951_%28cropped%29.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Mini_Aceman_JCW_Trim_DSC_7951_%28cropped%29.jpg/960px-Mini_Aceman_JCW_Trim_DSC_7951_%28cropped%29.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Mini_Aceman_JCW_Trim_DSC_7951_%28cropped%29.jpg/1920px-Mini_Aceman_JCW_Trim_DSC_7951_%28cropped%29.jpg",
+     "titel": "File:Mini Aceman JCW Trim DSC 7951 (cropped).jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Mini_Aceman_JCW_Trim_DSC_7951_(cropped).jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Mini_Aceman_JCW_Trim_DSC_7953_%28cropped%29.jpg/330px-Mini_Aceman_JCW_Trim_DSC_7953_%28cropped%29.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Mini_Aceman_JCW_Trim_DSC_7953_%28cropped%29.jpg/960px-Mini_Aceman_JCW_Trim_DSC_7953_%28cropped%29.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Mini_Aceman_JCW_Trim_DSC_7953_%28cropped%29.jpg/1920px-Mini_Aceman_JCW_Trim_DSC_7953_%28cropped%29.jpg",
+     "titel": "File:Mini Aceman JCW Trim DSC 7953 (cropped).jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Mini_Aceman_JCW_Trim_DSC_7953_(cropped).jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Mini_J05_Aceman_Favoured_Vescin_Beige_%282%29.jpg/330px-Mini_J05_Aceman_Favoured_Vescin_Beige_%282%29.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Mini_J05_Aceman_Favoured_Vescin_Beige_%282%29.jpg/960px-Mini_J05_Aceman_Favoured_Vescin_Beige_%282%29.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Mini_J05_Aceman_Favoured_Vescin_Beige_%282%29.jpg/1920px-Mini_J05_Aceman_Favoured_Vescin_Beige_%282%29.jpg",
+     "titel": "File:Mini J05 Aceman Favoured Vescin Beige (2).jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Mini_J05_Aceman_Favoured_Vescin_Beige_(2).jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Damian B Oh"
+    }
+   ]
+  },
+  {
+   "id": "kia-ev3",
+   "gruppe": "Korea und Japan",
+   "marke": "Kia",
+   "modell": "EV3",
+   "antrieb": "E",
+   "notiz": "Etwas höher",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Kia_EV3_GT-Line_Automesse_Ludwigsburg_2025_DSC_2635.jpg/330px-Kia_EV3_GT-Line_Automesse_Ludwigsburg_2025_DSC_2635.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Kia_EV3_GT-Line_Automesse_Ludwigsburg_2025_DSC_2635.jpg/960px-Kia_EV3_GT-Line_Automesse_Ludwigsburg_2025_DSC_2635.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Kia_EV3_GT-Line_Automesse_Ludwigsburg_2025_DSC_2635.jpg/1920px-Kia_EV3_GT-Line_Automesse_Ludwigsburg_2025_DSC_2635.jpg",
+     "titel": "File:Kia EV3 GT-Line Automesse Ludwigsburg 2025 DSC 2635.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Kia_EV3_GT-Line_Automesse_Ludwigsburg_2025_DSC_2635.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Kia_EV3_GT-Line_Automesse_Ludwigsburg_2024_IMG_1353.jpg/330px-Kia_EV3_GT-Line_Automesse_Ludwigsburg_2024_IMG_1353.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Kia_EV3_GT-Line_Automesse_Ludwigsburg_2024_IMG_1353.jpg/960px-Kia_EV3_GT-Line_Automesse_Ludwigsburg_2024_IMG_1353.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Kia_EV3_GT-Line_Automesse_Ludwigsburg_2024_IMG_1353.jpg/1920px-Kia_EV3_GT-Line_Automesse_Ludwigsburg_2024_IMG_1353.jpg",
+     "titel": "File:Kia EV3 GT-Line Automesse Ludwigsburg 2024 IMG 1353.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Kia_EV3_GT-Line_Automesse_Ludwigsburg_2024_IMG_1353.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/2024_Kia_EV3_SV_%283%29.jpg/330px-2024_Kia_EV3_SV_%283%29.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/2024_Kia_EV3_SV_%283%29.jpg/960px-2024_Kia_EV3_SV_%283%29.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/0/0a/2024_Kia_EV3_SV_%283%29.jpg",
+     "titel": "File:2024 Kia EV3 SV (3).jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2024_Kia_EV3_SV_(3).jpg",
+     "lizenz": "CC BY 4.0",
+     "urheber": "Avante2025"
+    }
+   ]
+  },
+  {
+   "id": "kia-ev4",
+   "gruppe": "Korea und Japan",
+   "marke": "Kia",
+   "modell": "EV4",
+   "antrieb": "E",
+   "notiz": "Kompakt",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Kia_EV4_GT-Line_Automesse_Ludwigsburg_2025_DSC_2534.jpg/330px-Kia_EV4_GT-Line_Automesse_Ludwigsburg_2025_DSC_2534.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Kia_EV4_GT-Line_Automesse_Ludwigsburg_2025_DSC_2534.jpg/960px-Kia_EV4_GT-Line_Automesse_Ludwigsburg_2025_DSC_2534.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Kia_EV4_GT-Line_Automesse_Ludwigsburg_2025_DSC_2534.jpg/1920px-Kia_EV4_GT-Line_Automesse_Ludwigsburg_2025_DSC_2534.jpg",
+     "titel": "File:Kia EV4 GT-Line Automesse Ludwigsburg 2025 DSC 2534.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Kia_EV4_GT-Line_Automesse_Ludwigsburg_2025_DSC_2534.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Kia_EV4_hatchback_IMG_7095.jpg/330px-Kia_EV4_hatchback_IMG_7095.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Kia_EV4_hatchback_IMG_7095.jpg/960px-Kia_EV4_hatchback_IMG_7095.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Kia_EV4_hatchback_IMG_7095.jpg/1920px-Kia_EV4_hatchback_IMG_7095.jpg",
+     "titel": "File:Kia EV4 hatchback IMG 7095.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Kia_EV4_hatchback_IMG_7095.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Kia_EV4_GT-Line_Automesse_Ludwigsburg_2025_DSC_2543.jpg/330px-Kia_EV4_GT-Line_Automesse_Ludwigsburg_2025_DSC_2543.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Kia_EV4_GT-Line_Automesse_Ludwigsburg_2025_DSC_2543.jpg/960px-Kia_EV4_GT-Line_Automesse_Ludwigsburg_2025_DSC_2543.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Kia_EV4_GT-Line_Automesse_Ludwigsburg_2025_DSC_2543.jpg/1920px-Kia_EV4_GT-Line_Automesse_Ludwigsburg_2025_DSC_2543.jpg",
+     "titel": "File:Kia EV4 GT-Line Automesse Ludwigsburg 2025 DSC 2543.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Kia_EV4_GT-Line_Automesse_Ludwigsburg_2025_DSC_2543.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    }
+   ]
+  },
+  {
+   "id": "kia-niro-ev",
+   "gruppe": "Korea und Japan",
+   "marke": "Kia",
+   "modell": "Niro EV",
+   "antrieb": "E",
+   "notiz": "Etwas höher, großer Kofferraum",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/2022_Kia_Niro_Hybrid_Front_%281%29.jpg/330px-2022_Kia_Niro_Hybrid_Front_%281%29.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/2022_Kia_Niro_Hybrid_Front_%281%29.jpg/960px-2022_Kia_Niro_Hybrid_Front_%281%29.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/2022_Kia_Niro_Hybrid_Front_%281%29.jpg/1920px-2022_Kia_Niro_Hybrid_Front_%281%29.jpg",
+     "titel": "File:2022 Kia Niro Hybrid Front (1).jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2022_Kia_Niro_Hybrid_Front_(1).jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Vauxford"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/2022_Kia_Niro_Hybrid_Rear.jpg/330px-2022_Kia_Niro_Hybrid_Rear.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/2022_Kia_Niro_Hybrid_Rear.jpg/960px-2022_Kia_Niro_Hybrid_Rear.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/2022_Kia_Niro_Hybrid_Rear.jpg/1920px-2022_Kia_Niro_Hybrid_Rear.jpg",
+     "titel": "File:2022 Kia Niro Hybrid Rear.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2022_Kia_Niro_Hybrid_Rear.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Vauxford"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/2022_Kia_Niro_Hybrid_Interior_%281%29.jpg/330px-2022_Kia_Niro_Hybrid_Interior_%281%29.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/2022_Kia_Niro_Hybrid_Interior_%281%29.jpg/960px-2022_Kia_Niro_Hybrid_Interior_%281%29.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/2022_Kia_Niro_Hybrid_Interior_%281%29.jpg/1920px-2022_Kia_Niro_Hybrid_Interior_%281%29.jpg",
+     "titel": "File:2022 Kia Niro Hybrid Interior (1).jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2022_Kia_Niro_Hybrid_Interior_(1).jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Vauxford"
+    }
+   ]
+  },
+  {
+   "id": "hyundai-kona",
+   "gruppe": "Korea und Japan",
+   "marke": "Hyundai",
+   "modell": "Kona Elektro",
+   "antrieb": "E",
+   "notiz": "Etwas höher",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/23_Hyundai_Kona_Electric_%28SX2%29_1.jpg/330px-23_Hyundai_Kona_Electric_%28SX2%29_1.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/23_Hyundai_Kona_Electric_%28SX2%29_1.jpg/960px-23_Hyundai_Kona_Electric_%28SX2%29_1.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/23_Hyundai_Kona_Electric_%28SX2%29_1.jpg/1920px-23_Hyundai_Kona_Electric_%28SX2%29_1.jpg",
+     "titel": "File:23 Hyundai Kona Electric (SX2) 1.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:23_Hyundai_Kona_Electric_(SX2)_1.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Benespit"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/23_Hyundai_Kona_Electric_%28SX2%29_2.jpg/330px-23_Hyundai_Kona_Electric_%28SX2%29_2.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/23_Hyundai_Kona_Electric_%28SX2%29_2.jpg/960px-23_Hyundai_Kona_Electric_%28SX2%29_2.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/23_Hyundai_Kona_Electric_%28SX2%29_2.jpg/1920px-23_Hyundai_Kona_Electric_%28SX2%29_2.jpg",
+     "titel": "File:23 Hyundai Kona Electric (SX2) 2.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:23_Hyundai_Kona_Electric_(SX2)_2.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Benespit"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Hyundai_Kona_Electric_SX2_EV_Light_Gray_%281%29.jpg/330px-Hyundai_Kona_Electric_SX2_EV_Light_Gray_%281%29.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Hyundai_Kona_Electric_SX2_EV_Light_Gray_%281%29.jpg/960px-Hyundai_Kona_Electric_SX2_EV_Light_Gray_%281%29.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Hyundai_Kona_Electric_SX2_EV_Light_Gray_%281%29.jpg/1920px-Hyundai_Kona_Electric_SX2_EV_Light_Gray_%281%29.jpg",
+     "titel": "File:Hyundai Kona Electric SX2 EV Light Gray (1).jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Hyundai_Kona_Electric_SX2_EV_Light_Gray_(1).jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Damian B Oh"
+    }
+   ]
+  },
+  {
+   "id": "nissan-leaf",
+   "gruppe": "Korea und Japan",
+   "marke": "Nissan",
+   "modell": "Leaf",
+   "antrieb": "E",
+   "notiz": "Etwas höher, neue Generation",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Nissan_Leaf_%28ZE2%29_IMG_6889.jpg/330px-Nissan_Leaf_%28ZE2%29_IMG_6889.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Nissan_Leaf_%28ZE2%29_IMG_6889.jpg/960px-Nissan_Leaf_%28ZE2%29_IMG_6889.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Nissan_Leaf_%28ZE2%29_IMG_6889.jpg/1920px-Nissan_Leaf_%28ZE2%29_IMG_6889.jpg",
+     "titel": "File:Nissan Leaf (ZE2) IMG 6889.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Nissan_Leaf_(ZE2)_IMG_6889.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Nissan_Leaf_%28ZE2%29_Auto_Zuerich_2025_DSC_3282.jpg/330px-Nissan_Leaf_%28ZE2%29_Auto_Zuerich_2025_DSC_3282.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Nissan_Leaf_%28ZE2%29_Auto_Zuerich_2025_DSC_3282.jpg/960px-Nissan_Leaf_%28ZE2%29_Auto_Zuerich_2025_DSC_3282.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Nissan_Leaf_%28ZE2%29_Auto_Zuerich_2025_DSC_3282.jpg/1920px-Nissan_Leaf_%28ZE2%29_Auto_Zuerich_2025_DSC_3282.jpg",
+     "titel": "File:Nissan Leaf (ZE2) Auto Zuerich 2025 DSC 3282.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Nissan_Leaf_(ZE2)_Auto_Zuerich_2025_DSC_3282.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Nissan_Leaf_%28ZE2%29_autoMOBIL_T%C3%BCbingen_2025_DSC_2752.jpg/330px-Nissan_Leaf_%28ZE2%29_autoMOBIL_T%C3%BCbingen_2025_DSC_2752.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Nissan_Leaf_%28ZE2%29_autoMOBIL_T%C3%BCbingen_2025_DSC_2752.jpg/960px-Nissan_Leaf_%28ZE2%29_autoMOBIL_T%C3%BCbingen_2025_DSC_2752.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Nissan_Leaf_%28ZE2%29_autoMOBIL_T%C3%BCbingen_2025_DSC_2752.jpg/1920px-Nissan_Leaf_%28ZE2%29_autoMOBIL_T%C3%BCbingen_2025_DSC_2752.jpg",
+     "titel": "File:Nissan Leaf (ZE2) autoMOBIL Tübingen 2025 DSC 2752.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Nissan_Leaf_(ZE2)_autoMOBIL_T%C3%BCbingen_2025_DSC_2752.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    }
+   ]
+  },
+  {
+   "id": "toyota-chr-plus",
+   "gruppe": "Korea und Japan",
+   "marke": "Toyota",
+   "modell": "C-HR+",
+   "antrieb": "E",
+   "notiz": "Etwas höher, neu",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Toyota_C-HR%2B_Auto_Zuerich_2025_DSC_3056_%28cropped%29.jpg/330px-Toyota_C-HR%2B_Auto_Zuerich_2025_DSC_3056_%28cropped%29.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Toyota_C-HR%2B_Auto_Zuerich_2025_DSC_3056_%28cropped%29.jpg/960px-Toyota_C-HR%2B_Auto_Zuerich_2025_DSC_3056_%28cropped%29.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Toyota_C-HR%2B_Auto_Zuerich_2025_DSC_3056_%28cropped%29.jpg/1920px-Toyota_C-HR%2B_Auto_Zuerich_2025_DSC_3056_%28cropped%29.jpg",
+     "titel": "File:Toyota C-HR+ Auto Zuerich 2025 DSC 3056 (cropped).jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Toyota_C-HR%2B_Auto_Zuerich_2025_DSC_3056_(cropped).jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Toyota_C-HR%2B_Auto_Zuerich_2025_DSC_3053.jpg/330px-Toyota_C-HR%2B_Auto_Zuerich_2025_DSC_3053.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Toyota_C-HR%2B_Auto_Zuerich_2025_DSC_3053.jpg/960px-Toyota_C-HR%2B_Auto_Zuerich_2025_DSC_3053.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Toyota_C-HR%2B_Auto_Zuerich_2025_DSC_3053.jpg/1920px-Toyota_C-HR%2B_Auto_Zuerich_2025_DSC_3053.jpg",
+     "titel": "File:Toyota C-HR+ Auto Zuerich 2025 DSC 3053.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Toyota_C-HR%2B_Auto_Zuerich_2025_DSC_3053.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Toyota_C-HR%2B_Auto_Zuerich_2025_DSC_3408.jpg/330px-Toyota_C-HR%2B_Auto_Zuerich_2025_DSC_3408.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Toyota_C-HR%2B_Auto_Zuerich_2025_DSC_3408.jpg/960px-Toyota_C-HR%2B_Auto_Zuerich_2025_DSC_3408.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Toyota_C-HR%2B_Auto_Zuerich_2025_DSC_3408.jpg/1920px-Toyota_C-HR%2B_Auto_Zuerich_2025_DSC_3408.jpg",
+     "titel": "File:Toyota C-HR+ Auto Zuerich 2025 DSC 3408.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Toyota_C-HR%2B_Auto_Zuerich_2025_DSC_3408.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    }
+   ]
+  },
+  {
+   "id": "honda-eny1",
+   "gruppe": "Korea und Japan",
+   "marke": "Honda",
+   "modell": "e:Ny1",
+   "antrieb": "E",
+   "notiz": "Etwas höher",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Honda_e-Ny1_1X7A0867.jpg/330px-Honda_e-Ny1_1X7A0867.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Honda_e-Ny1_1X7A0867.jpg/960px-Honda_e-Ny1_1X7A0867.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Honda_e-Ny1_1X7A0867.jpg/1920px-Honda_e-Ny1_1X7A0867.jpg",
+     "titel": "File:Honda e-Ny1 1X7A0867.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Honda_e-Ny1_1X7A0867.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Honda_e-Ny1_Auto_Zuerich_2023_1X7A1071.jpg/330px-Honda_e-Ny1_Auto_Zuerich_2023_1X7A1071.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Honda_e-Ny1_Auto_Zuerich_2023_1X7A1071.jpg/960px-Honda_e-Ny1_Auto_Zuerich_2023_1X7A1071.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Honda_e-Ny1_Auto_Zuerich_2023_1X7A1071.jpg/1920px-Honda_e-Ny1_Auto_Zuerich_2023_1X7A1071.jpg",
+     "titel": "File:Honda e-Ny1 Auto Zuerich 2023 1X7A1071.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Honda_e-Ny1_Auto_Zuerich_2023_1X7A1071.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Honda_e-Ny1_Auto_Zuerich_2023_1X7A1158.jpg/330px-Honda_e-Ny1_Auto_Zuerich_2023_1X7A1158.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Honda_e-Ny1_Auto_Zuerich_2023_1X7A1158.jpg/960px-Honda_e-Ny1_Auto_Zuerich_2023_1X7A1158.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Honda_e-Ny1_Auto_Zuerich_2023_1X7A1158.jpg/1920px-Honda_e-Ny1_Auto_Zuerich_2023_1X7A1158.jpg",
+     "titel": "File:Honda e-Ny1 Auto Zuerich 2023 1X7A1158.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Honda_e-Ny1_Auto_Zuerich_2023_1X7A1158.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    }
+   ]
+  },
+  {
+   "id": "byd-dolphin",
+   "gruppe": "China",
+   "marke": "BYD",
+   "modell": "Dolphin",
+   "antrieb": "E",
+   "notiz": "Kompakt",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BYD_Dolphin_IAA_2023_1X7A0634.jpg/330px-BYD_Dolphin_IAA_2023_1X7A0634.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BYD_Dolphin_IAA_2023_1X7A0634.jpg/960px-BYD_Dolphin_IAA_2023_1X7A0634.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BYD_Dolphin_IAA_2023_1X7A0634.jpg/1920px-BYD_Dolphin_IAA_2023_1X7A0634.jpg",
+     "titel": "File:BYD Dolphin IAA 2023 1X7A0634.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:BYD_Dolphin_IAA_2023_1X7A0634.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/BYD_Dolphin_%28Global_version%29_IMG_9507.jpg/330px-BYD_Dolphin_%28Global_version%29_IMG_9507.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/BYD_Dolphin_%28Global_version%29_IMG_9507.jpg/960px-BYD_Dolphin_%28Global_version%29_IMG_9507.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/BYD_Dolphin_%28Global_version%29_IMG_9507.jpg/1920px-BYD_Dolphin_%28Global_version%29_IMG_9507.jpg",
+     "titel": "File:BYD Dolphin (Global version) IMG 9507.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:BYD_Dolphin_(Global_version)_IMG_9507.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/2024-08_BYD_Dolphin_rear-side.jpg/330px-2024-08_BYD_Dolphin_rear-side.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/2024-08_BYD_Dolphin_rear-side.jpg/960px-2024-08_BYD_Dolphin_rear-side.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/2024-08_BYD_Dolphin_rear-side.jpg/1920px-2024-08_BYD_Dolphin_rear-side.jpg",
+     "titel": "File:2024-08 BYD Dolphin rear-side.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2024-08_BYD_Dolphin_rear-side.jpg",
+     "lizenz": "CC0",
+     "urheber": "Wikisympathisant"
+    }
+   ]
+  },
+  {
+   "id": "byd-atto2",
+   "gruppe": "China",
+   "marke": "BYD",
+   "modell": "Atto 2",
+   "antrieb": "E",
+   "notiz": "Etwas höher, kleiner als Golf",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/BYD_Atto_2_IAA_2025_DSC_2247.jpg/330px-BYD_Atto_2_IAA_2025_DSC_2247.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/BYD_Atto_2_IAA_2025_DSC_2247.jpg/960px-BYD_Atto_2_IAA_2025_DSC_2247.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/BYD_Atto_2_IAA_2025_DSC_2247.jpg/1920px-BYD_Atto_2_IAA_2025_DSC_2247.jpg",
+     "titel": "File:BYD Atto 2 IAA 2025 DSC 2247.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:BYD_Atto_2_IAA_2025_DSC_2247.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/BYD_Atto_2_IAA_2025_DSC_2130.jpg/330px-BYD_Atto_2_IAA_2025_DSC_2130.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/BYD_Atto_2_IAA_2025_DSC_2130.jpg/960px-BYD_Atto_2_IAA_2025_DSC_2130.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/BYD_Atto_2_IAA_2025_DSC_2130.jpg/1920px-BYD_Atto_2_IAA_2025_DSC_2130.jpg",
+     "titel": "File:BYD Atto 2 IAA 2025 DSC 2130.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:BYD_Atto_2_IAA_2025_DSC_2130.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/BYD_Atto_2_DSC_8763.jpg/330px-BYD_Atto_2_DSC_8763.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/BYD_Atto_2_DSC_8763.jpg/960px-BYD_Atto_2_DSC_8763.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/BYD_Atto_2_DSC_8763.jpg/1920px-BYD_Atto_2_DSC_8763.jpg",
+     "titel": "File:BYD Atto 2 DSC 8763.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:BYD_Atto_2_DSC_8763.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    }
+   ]
+  },
+  {
+   "id": "byd-atto3",
+   "gruppe": "China",
+   "marke": "BYD",
+   "modell": "Atto 3",
+   "antrieb": "E",
+   "notiz": "Etwas höher",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/BYD_Atto_3_Evo_IMG_6380.jpg/330px-BYD_Atto_3_Evo_IMG_6380.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/BYD_Atto_3_Evo_IMG_6380.jpg/960px-BYD_Atto_3_Evo_IMG_6380.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/BYD_Atto_3_Evo_IMG_6380.jpg/1920px-BYD_Atto_3_Evo_IMG_6380.jpg",
+     "titel": "File:BYD Atto 3 Evo IMG 6380.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:BYD_Atto_3_Evo_IMG_6380.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/BYD_Atto_3_Evo_IMG_7455.jpg/330px-BYD_Atto_3_Evo_IMG_7455.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/BYD_Atto_3_Evo_IMG_7455.jpg/960px-BYD_Atto_3_Evo_IMG_7455.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/BYD_Atto_3_Evo_IMG_7455.jpg/1920px-BYD_Atto_3_Evo_IMG_7455.jpg",
+     "titel": "File:BYD Atto 3 Evo IMG 7455.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:BYD_Atto_3_Evo_IMG_7455.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/BYD_Atto_3_Evo_IMG_6383.jpg/330px-BYD_Atto_3_Evo_IMG_6383.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/BYD_Atto_3_Evo_IMG_6383.jpg/960px-BYD_Atto_3_Evo_IMG_6383.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/BYD_Atto_3_Evo_IMG_6383.jpg/1920px-BYD_Atto_3_Evo_IMG_6383.jpg",
+     "titel": "File:BYD Atto 3 Evo IMG 6383.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:BYD_Atto_3_Evo_IMG_6383.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    }
+   ]
+  },
+  {
+   "id": "leapmotor-b10",
+   "gruppe": "China",
+   "marke": "Leapmotor",
+   "modell": "B10",
+   "antrieb": "E",
+   "notiz": "Etwas höher, über Stellantis-Händler",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Leapmotor_B10_Design_Pro_Max_%E2%80%93_f_25012026.jpg/330px-Leapmotor_B10_Design_Pro_Max_%E2%80%93_f_25012026.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Leapmotor_B10_Design_Pro_Max_%E2%80%93_f_25012026.jpg/960px-Leapmotor_B10_Design_Pro_Max_%E2%80%93_f_25012026.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Leapmotor_B10_Design_Pro_Max_%E2%80%93_f_25012026.jpg/1920px-Leapmotor_B10_Design_Pro_Max_%E2%80%93_f_25012026.jpg",
+     "titel": "File:Leapmotor B10 Design Pro Max – f 25012026.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Leapmotor_B10_Design_Pro_Max_%E2%80%93_f_25012026.jpg",
+     "lizenz": "CC BY-SA 3.0 de",
+     "urheber": "© M 93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Leapmotor_B10_IAA_2025_DSC_2069.jpg/330px-Leapmotor_B10_IAA_2025_DSC_2069.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Leapmotor_B10_IAA_2025_DSC_2069.jpg/960px-Leapmotor_B10_IAA_2025_DSC_2069.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Leapmotor_B10_IAA_2025_DSC_2069.jpg/1920px-Leapmotor_B10_IAA_2025_DSC_2069.jpg",
+     "titel": "File:Leapmotor B10 IAA 2025 DSC 2069.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Leapmotor_B10_IAA_2025_DSC_2069.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Leapmotor_B10_IAA_2025_DSC_1854.jpg/330px-Leapmotor_B10_IAA_2025_DSC_1854.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Leapmotor_B10_IAA_2025_DSC_1854.jpg/960px-Leapmotor_B10_IAA_2025_DSC_1854.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Leapmotor_B10_IAA_2025_DSC_1854.jpg/1920px-Leapmotor_B10_IAA_2025_DSC_1854.jpg",
+     "titel": "File:Leapmotor B10 IAA 2025 DSC 1854.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Leapmotor_B10_IAA_2025_DSC_1854.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    }
+   ]
+  },
+  {
+   "id": "lynkco-02",
+   "gruppe": "China",
+   "marke": "Lynk & Co",
+   "modell": "02",
+   "antrieb": "E",
+   "notiz": "Etwas höher, neu",
+   "bilder": [
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/2025_Lynk_%26_Co_02_IAA_2025_DSC_2309.jpg/330px-2025_Lynk_%26_Co_02_IAA_2025_DSC_2309.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/2025_Lynk_%26_Co_02_IAA_2025_DSC_2309.jpg/960px-2025_Lynk_%26_Co_02_IAA_2025_DSC_2309.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/2025_Lynk_%26_Co_02_IAA_2025_DSC_2309.jpg/1920px-2025_Lynk_%26_Co_02_IAA_2025_DSC_2309.jpg",
+     "titel": "File:2025 Lynk & Co 02 IAA 2025 DSC 2309.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2025_Lynk_%26_Co_02_IAA_2025_DSC_2309.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/2025_Lynk_%26_Co_02_IAA_2025_DSC_2313.jpg/330px-2025_Lynk_%26_Co_02_IAA_2025_DSC_2313.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/2025_Lynk_%26_Co_02_IAA_2025_DSC_2313.jpg/960px-2025_Lynk_%26_Co_02_IAA_2025_DSC_2313.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/2025_Lynk_%26_Co_02_IAA_2025_DSC_2313.jpg/1920px-2025_Lynk_%26_Co_02_IAA_2025_DSC_2313.jpg",
+     "titel": "File:2025 Lynk & Co 02 IAA 2025 DSC 2313.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2025_Lynk_%26_Co_02_IAA_2025_DSC_2313.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    },
+    {
+     "klein": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/2025_Lynk_%26_Co_02_Heico_Sportiv_Auto_Zuerich_2025_DSC_3692.jpg/330px-2025_Lynk_%26_Co_02_Heico_Sportiv_Auto_Zuerich_2025_DSC_3692.jpg",
+     "gross": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/2025_Lynk_%26_Co_02_Heico_Sportiv_Auto_Zuerich_2025_DSC_3692.jpg/960px-2025_Lynk_%26_Co_02_Heico_Sportiv_Auto_Zuerich_2025_DSC_3692.jpg",
+     "voll": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/2025_Lynk_%26_Co_02_Heico_Sportiv_Auto_Zuerich_2025_DSC_3692.jpg/1920px-2025_Lynk_%26_Co_02_Heico_Sportiv_Auto_Zuerich_2025_DSC_3692.jpg",
+     "titel": "File:2025 Lynk & Co 02 Heico Sportiv Auto Zuerich 2025 DSC 3692.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2025_Lynk_%26_Co_02_Heico_Sportiv_Auto_Zuerich_2025_DSC_3692.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander Migl"
+    }
+   ]
+  }
+ ]
+}

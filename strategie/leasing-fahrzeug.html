@@ -11,11 +11,12 @@
 <meta name="theme-color" content="#ffffff">
 <link rel="apple-touch-icon" href="/assets/app-icon-180.png">
 <title>Leasing Fahrzeug &ndash; empiria</title>
-<meta name="description" content="Logik, um das passende Zweitfahrzeug zum Leasen zu finden.">
+<meta name="description" content="Suchprofil und Modelle für das Zweitfahrzeug im Leasing.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="/styles.css">
 <link rel="stylesheet" href="/assets/dashboard-nav.css?v=202610082218">
 <link rel="stylesheet" href="/assets/beta.css?v=202610141005">
+<link rel="stylesheet" href="/assets/leasing-fahrzeug.css?v=202610141900">
 </head>
 <body>
 
@@ -62,11 +63,27 @@
   <section class="db"><div class="container">
     <div class="db-kopf">
       <div>
-        <p class="kicker">Zweitfahrzeug</p>
+        <p class="kicker">Zweitfahrzeug &middot; Ersatz f&uuml;r den ID.3</p>
         <h1 class="h-serif">Leasing Fahrzeug.</h1>
       </div>
     </div>
-    <p style="color:var(--grey-70);max-width:60ch">Hier entsteht die Logik, mit der wir das passende Zweitfahrzeug finden.</p>
+
+    <dl class="lf-profil" aria-label="Suchprofil">
+      <div><dt>Wof&uuml;r</dt><dd>Firmenwagen der empiria GmbH, ab Rückgabe des ID.3 um den 20.12.2026</dd></div>
+      <div><dt>Gr&ouml;&szlig;e</dt><dd>Wie Golf oder ID.3, gern etwas h&ouml;her, h&ouml;chstens Golf-Kombi; kein Stufen- oder Flie&szlig;heck</dd></div>
+      <div><dt>Antrieb</dt><dd>Elektro ab 400 km WLTP (0,25&nbsp;%) oder Plug-in-Hybrid ab 80 km elektrisch (0,5&nbsp;%)</dd></div>
+      <div><dt>Listenpreis</dt><dd>Bis rund 50.000&nbsp;&euro; mit Ausstattung</dd></div>
+      <div><dt>Leasingrate</dt><dd>Netto bis 250&nbsp;&euro;, zweite Stufe bis 300&nbsp;&euro;; ohne Sonderzahlung, 36 bis 48 Monate</dd></div>
+      <div><dt>Nutzung</dt><dd>7.500 km im Jahr, meist Kurzstrecke, selten 150 km einfach; Laden zu Hause</dd></div>
+      <div><dt>Innenraum</dt><dd>Vier T&uuml;ren, Kofferraum f&uuml;r den Wocheneinkauf, gut geschnitten, R&uuml;ckbank umklappbar</dd></div>
+      <div><dt>Pflicht</dt><dd>Apple CarPlay, R&uuml;ckfahrkamera, Sitzheizung, gutes Licht, ordentliches Display</dd></div>
+    </dl>
+
+    <h2 class="lf-h2">Modelle zum Ansehen</h2>
+    <p class="lf-unter">Erst nach Optik aussortieren, dann rechnen. Opel und MG sind schon raus. Auf die kleinen Bilder tippen f&uuml;r weitere Ansichten, aufs gro&szlig;e Bild f&uuml;r die Gro&szlig;ansicht.</p>
+    <div data-lf-modelle><div class="kb-laedt"><span></span><span></span></div></div>
+
+    <div class="lf-nachweis" data-lf-nachweis></div>
   </div></section>
 </main>
 
@@ -80,6 +97,7 @@
 <script src="/script.js"></script>
 <script src="/assets/vendor/supabase.js?v=202610082218"></script>
 <script src="/assets/db.js?v=202610082218"></script>
+<script src="/assets/leasing-fahrzeug.js?v=202610141900"></script>
 <script src="/assets/dashboard-nav.js?v=202610082218"></script>
 <script src="/assets/anstoss.js?v=202610082218"></script>
 </body>

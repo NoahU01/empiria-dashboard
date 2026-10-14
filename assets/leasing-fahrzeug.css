@@ -1,0 +1,56 @@
+/* Leasing Fahrzeug – Suchprofil und Modelle zum Ansehen (Zweitfahrzeug, Ersatz für den ID.3) */
+
+/* Suchprofil: Bezeichnung · Wert, zwei Spalten ab Tablet */
+.lf-profil { margin-top: var(--s6); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--s6); }
+.lf-profil div { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: var(--s4); padding: var(--s3) 0; border-top: 1px solid var(--linie); }
+.lf-profil dt { font-size: var(--fs-s); font-weight: 500; color: var(--grey-50); }
+.lf-profil dd { margin: 0; font-size: var(--fs-m); color: var(--ink); }
+@media (max-width: 760px) {
+  .lf-profil { grid-template-columns: minmax(0, 1fr); }
+  .lf-profil div { grid-template-columns: 7.5rem minmax(0, 1fr); gap: var(--s3); }
+}
+
+/* Abschnitte */
+.lf-h2 { margin: var(--s8) 0 var(--s2); font-family: var(--font-serif); font-size: var(--fs-xl); font-weight: 600; }
+.lf-unter { margin: 0 0 var(--s5); max-width: 62ch; font-size: var(--fs-s); color: var(--grey-70); }
+.lf-gruppe { margin: var(--s7) 0 var(--s4); font-size: var(--fs-xs); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--grey-50); }
+.lf-gruppe:first-of-type { margin-top: var(--s5); }
+
+/* Modellkarten: großes Bild, darunter drei Ansichten zum Umschalten */
+.lf-raster { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s6) var(--s5); }
+@media (max-width: 1100px) { .lf-raster { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .lf-raster { grid-template-columns: minmax(0, 1fr); gap: var(--s6); } }
+
+.lf-karte { display: flex; flex-direction: column; min-width: 0; }
+/* Fotos haben 4:3 bis 2:1 – ganz zeigen (nie anschneiden), Rest des Rahmens mit derselben Aufnahme unscharf füllen */
+.lf-bild { position: relative; display: block; width: 100%; padding: 0; border: 0; border-radius: 14px; overflow: hidden; background: var(--linie-leicht); aspect-ratio: 16 / 10; cursor: zoom-in; isolation: isolate; }
+.lf-bild::before { content: ""; position: absolute; inset: -24px; z-index: -1; background: var(--lf-hg) center / cover no-repeat; filter: blur(18px) brightness(.92); }
+.lf-bild img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.lf-ansichten { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s2); margin-top: var(--s2); }
+.lf-ansichten button { padding: 0; border: 2px solid transparent; border-radius: 8px; overflow: hidden; background: var(--linie-leicht); aspect-ratio: 3 / 2; cursor: pointer; opacity: .7; transition: opacity .15s ease, border-color .15s ease; }
+.lf-ansichten button:hover { opacity: 1; }
+.lf-ansichten button[aria-pressed="true"] { border-color: var(--ink); opacity: 1; }
+.lf-ansichten img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.lf-text { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s3); margin-top: var(--s3); }
+.lf-text h3 { margin: 0; font-family: var(--font-sans); font-size: var(--fs-l); font-weight: 500; line-height: 1.3; }
+.lf-text h3 small { display: block; font-size: var(--fs-xs); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-50); }
+.lf-antrieb { flex: none; padding: 3px 10px; border: 1px solid var(--linie); border-radius: 999px; font-size: var(--fs-xs); font-weight: 500; color: var(--grey-70); white-space: nowrap; }
+.lf-antrieb--e { background: var(--ink); border-color: var(--ink); color: var(--white); }
+.lf-notiz { margin: var(--s1) 0 0; font-size: var(--fs-s); color: var(--grey-70); }
+.lf-leer { display: grid; place-items: center; aspect-ratio: 3 / 2; border-radius: 14px; background: var(--linie-leicht); font-size: var(--fs-s); color: var(--grey-50); text-align: center; padding: var(--s4); }
+
+/* Großansicht */
+.lf-gross { width: min(1400px, 96vw); max-height: 94vh; padding: 0; border: 0; border-radius: 14px; background: var(--black); overflow: hidden; }
+.lf-gross::backdrop { background: rgba(0, 0, 0, .82); }
+.lf-gross img { display: block; width: 100%; max-height: 86vh; object-fit: contain; }
+.lf-gross-leiste { display: flex; align-items: center; justify-content: space-between; gap: var(--s4); padding: var(--s3) var(--s4); color: var(--white); font-size: var(--fs-s); }
+.lf-gross-leiste button { padding: 6px 14px; border: 1px solid rgba(255, 255, 255, .4); border-radius: 999px; background: transparent; color: var(--white); cursor: pointer; }
+.lf-gross-leiste button:hover { border-color: var(--white); }
+
+/* Bildnachweis (freie Lizenzen verlangen Urheber und Lizenz) */
+.lf-nachweis { margin-top: var(--s8); padding-top: var(--s4); border-top: 1px solid var(--linie); font-size: var(--fs-xs); color: var(--grey-50); }
+.lf-nachweis summary { cursor: pointer; font-weight: 500; }
+.lf-nachweis ul { margin: var(--s3) 0 0; padding-left: 1.1em; columns: 2 22rem; column-gap: var(--s6); }
+.lf-nachweis li { margin-bottom: 4px; break-inside: avoid; }
+.lf-nachweis a { color: inherit; }
