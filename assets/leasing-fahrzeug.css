@@ -48,6 +48,10 @@
 .lf-gross-leiste button { padding: 6px 14px; border: 1px solid rgba(255, 255, 255, .4); border-radius: 999px; background: transparent; color: var(--white); cursor: pointer; }
 .lf-gross-leiste button:hover { border-color: var(--white); }
 
+/* Aussortierte Modelle – zum Nachlesen, klein unter den Karten */
+.lf-raus { margin: var(--s7) 0 0; max-width: 80ch; font-size: var(--fs-s); color: var(--grey-50); }
+.lf-raus b { font-weight: 500; color: var(--grey-70); }
+
 /* Bildnachweis (freie Lizenzen verlangen Urheber und Lizenz) */
 .lf-nachweis { margin-top: var(--s8); padding-top: var(--s4); border-top: 1px solid var(--linie); font-size: var(--fs-xs); color: var(--grey-50); }
 .lf-nachweis summary { cursor: pointer; font-weight: 500; }

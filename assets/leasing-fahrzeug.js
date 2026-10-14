@@ -7,7 +7,7 @@
   var esc = function (s) { return String(s || "").replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
   var ANTRIEB = { E: "Elektro", PHEV: "Plug-in-Hybrid" };
 
-  fetch("/assets/leasing-fahrzeug.json?v=202610141900").then(function (r) { return r.json(); }).then(function (d) {
+  fetch("/assets/leasing-fahrzeug.json?v=202610142030").then(function (r) { return r.json(); }).then(function (d) {
     var html = "", gruppe = null, offen = false, quellen = [];
     d.modelle.forEach(function (m) {
       if (m.gruppe !== gruppe) {
