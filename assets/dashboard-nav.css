@@ -73,7 +73,12 @@ a.sn-link:hover, a.sn-link[aria-current="page"] { background: var(--grey-bg); co
 .sn-kinder a.sn-link { padding: 7px 8px; }
 .sn-kinder .sn-tag { flex-basis: 28px; height: 28px; font-size: var(--fs-xs); background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink); }
 .sn-zurueck { display: none; }
-@media (min-width: 901px) { .sn-panel { overflow: visible; max-height: none; } }
+/* Großer Bildschirm: Liste scrollt, wenn sie höher ist als das Fenster (iPad mini quer, Daniel 15.10.2026);
+   die zweite Ebene hängt deshalb fest am Fenster (position: fixed, per Skript neben die Zeile gesetzt) und wird nicht abgeschnitten. */
+@media (min-width: 901px) {
+  .sn-panel { max-height: calc(100vh - 100px); max-height: calc(100dvh - 100px); }
+  .sn-kinder { position: fixed; max-height: calc(100vh - 16px); max-height: calc(100dvh - 16px); overflow-y: auto; z-index: 81; }
+}
 
 @media (max-width: 900px) {
   .sn-kinder { position: static; width: auto; padding: 0; border: 0; box-shadow: none; }

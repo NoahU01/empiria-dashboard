@@ -30,16 +30,24 @@
   var panel = document.getElementById("snPanel");
   if (!panel) return;
   var schmal = window.matchMedia("(max-width: 900px)");
+  var maus = window.matchMedia("(hover: hover) and (pointer: fine)");   // Öffnen per Darüberfahren nur mit echter Maus – auf dem iPad schloss der Tipp sonst sofort wieder
   var paare = [];
 
   function zu() {
     paare.forEach(function (p) { p.kinder.classList.remove("is-open"); p.sub.classList.remove("is-open"); p.b.setAttribute("aria-expanded", "false"); });
     panel.classList.remove("zeigt-kinder");
   }
+  // Zweite Ebene fest am Fenster neben die Zeile setzen – bleibt sichtbar, auch wenn die Liste scrollt
+  function setzen(p) {
+    var z = p.sub.getBoundingClientRect(), r = panel.getBoundingClientRect(), h = p.kinder.offsetHeight;
+    p.kinder.style.left = Math.round(r.right + 8) + "px";
+    p.kinder.style.top = Math.round(Math.max(8, Math.min(z.top - 11, window.innerHeight - h - 8))) + "px";
+  }
+  panel.addEventListener("scroll", function () { paare.forEach(function (p) { if (p.kinder.classList.contains("is-open") && !schmal.matches) setzen(p); }); });
   function auf(p) {
     zu();
-    if (!schmal.matches) p.kinder.style.top = Math.max(0, p.sub.offsetTop - 11) + "px";
     p.kinder.classList.add("is-open"); p.sub.classList.add("is-open"); p.b.setAttribute("aria-expanded", "true");
+    if (!schmal.matches) setzen(p);
     if (schmal.matches) { panel.classList.add("zeigt-kinder"); panel.scrollTop = 0; }
   }
 
@@ -63,12 +71,12 @@
     });
     // Desktop: mit der Maus über die Zeile öffnen, kurz verzögert schließen
     [p.sub, kinder].forEach(function (el) {
-      el.addEventListener("mouseenter", function () { if (schmal.matches) return; clearTimeout(p.t); if (!kinder.classList.contains("is-open")) auf(p); });
-      el.addEventListener("mouseleave", function () { if (schmal.matches) return; p.t = setTimeout(function () { if (kinder.classList.contains("is-open")) zu(); }, 250); });
+      el.addEventListener("mouseenter", function () { if (schmal.matches || !maus.matches) return; clearTimeout(p.t); if (!kinder.classList.contains("is-open")) auf(p); });
+      el.addEventListener("mouseleave", function () { if (schmal.matches || !maus.matches) return; p.t = setTimeout(function () { if (kinder.classList.contains("is-open")) zu(); }, 250); });
     });
   });
   panel.querySelectorAll(":scope > a.sn-link").forEach(function (a) {
-    a.addEventListener("mouseenter", function () { if (!schmal.matches) zu(); });
+    a.addEventListener("mouseenter", function () { if (!schmal.matches && maus.matches) zu(); });
   });
   // Menü geschlossen → zweite Ebene auch zu
   var dd = document.querySelector("[data-sn-dd]");
