@@ -163,6 +163,15 @@
    "im_diagramm": true
   },
   {
+   "datei": "leasing-fahrzeug.html",
+   "titel": "Leasing Fahrzeug",
+   "gruppe": "Noch zuzuordnen",
+   "eltern": null,
+   "kurz": "Logik für das passende Zweitfahrzeug",
+   "pos": 15,
+   "im_diagramm": false
+  },
+  {
    "datei": "linkedin-antworten.html",
    "titel": "LinkedIn-Antworten",
    "gruppe": "ohne Menü",
@@ -172,5 +181,5 @@
    "pos": 999
   }
  ],
- "stand": "14.10.2026, 07:09 Uhr"
+ "stand": "15.10.2026, 06:30 Uhr"
 }
