@@ -75,7 +75,7 @@
   function deal(x, i) {
     var r = rechne(x, x.antrieb, x.verbrauch);
     return '<article class="lf-deal" id="lf-deal-' + i + '">' +
-      '<p class="lf-deal-kopf">' + esc(x.marke) + (x.in_liste ? "" : " · nicht auf unserer Liste") + "</p>" +
+      '<p class="lf-deal-kopf">' + esc(x.marke) + " · " + esc(x.antrieb_text || ANTRIEB[x.antrieb]) + (x.in_liste ? "" : " · nicht auf unserer Liste") + "</p>" +
       "<h3>" + esc(x.modell) + "</h3>" +
       '<p class="lf-deal-rate"><b>' + euro(r.privat) + "</b> im Monat privat</p>" +
       '<p class="lf-deal-faktor">Leasing ' + euro(x.rate_netto) + " netto · Faktor <b>" + fak(x.leasingfaktor) + "</b> · Versteuerung " + pz(satz(x.antrieb)) + " · " + x.laufzeit + "\u00a0Monate · Liste " + euro(x.blp_brutto) + "</p>" +
@@ -87,7 +87,7 @@
       '<a class="lf-link" href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.anbieter) + " ↗</a></article>";
   }
 
-  fetch("/assets/leasing-fahrzeug.json?v=202610151200").then(function (r) { return r.json(); }).then(function (d) {
+  fetch("/assets/leasing-fahrzeug.json?v=202610151600").then(function (r) { return r.json(); }).then(function (d) {
     A = d.annahmen || {};
     var vergleich = document.querySelector("[data-lf-vergleich]");
     if (vergleich) {
@@ -121,7 +121,7 @@
     if (dealsZiel && d.deals) {
       var mk = d.markt || {};
       dealsZiel.innerHTML = '<p class="lf-unter">Marktniveau im Gewerbeleasing heute: Elektro Faktor ' + fak(mk.ev_median) + ", Plug-in-Hybrid " + fak(mk.phev_median) +
-        " (Median, Stichprobe von rund 180 Angeboten auf leasingmarkt.de, Stand " + esc(d.stand) + "). Hier steht nur, was klar darunter liegt. Einen Ausreißer um 0,3 wie früher gibt es im Suchprofil gerade nicht.</p>" +
+        " (Median, Stichprobe von rund 180 Angeboten auf leasingmarkt.de, Stand " + esc(d.stand) + "). Hier steht nur, was klar darunter liegt. Bei Elektro und Plug-in-Hybrid gibt es im Suchprofil gerade keinen Ausreißer um 0,3, bei Benzinern schon. Wegen der 1-%-Versteuerung kosten sie privat aber nicht weniger als die günstigen Elektroautos.</p>" +
         '<div class="lf-deals">' + d.deals.map(function (x, i) { return deal(x, i); }).join("") + "</div>";
     }
     var html = "", gruppe = null, offen = false, quellen = [];
