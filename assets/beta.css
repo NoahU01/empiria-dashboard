@@ -2184,3 +2184,6 @@ button.pr-archiv-titel .tl-dreieck { top: 4px; }
 button.pr-archiv-titel[aria-expanded="true"] .tl-dreieck { transform: rotate(-135deg); top: 8px; }
 .pr-archiv-mehr { grid-column: 3; margin-top: 10px; }
 @media (max-width: 600px) { .pr-archiv-z { grid-template-columns: 80px minmax(0, 1fr); } .pr-archiv-art { grid-column: 2; } .pr-archiv-titel, .pr-archiv-mehr { grid-column: 1 / 3; } }
+
+/* Aufgaben › Liste: Marke vorne in der Zeile (Daniel, 15.10.2026) */
+.al-marke { font-weight: 600; color: var(--ink); }
