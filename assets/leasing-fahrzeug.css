@@ -51,8 +51,42 @@
 /* Angebot je Modell */
 .lf-angebot { margin-top: var(--s3); padding-top: var(--s3); border-top: 1px solid var(--linie); }
 .lf-angebot p { margin: 0; }
-.lf-rate { font-size: var(--fs-m); color: var(--ink); display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
-.lf-rate b { font-size: var(--fs-xl); font-weight: 700; }
+/* Auf den ersten Blick: was das Auto privat kostet; darunter Leasing, Faktor, Versteuerung */
+.lf-privat { font-size: var(--fs-m); color: var(--ink); }
+.lf-privat b { font-size: var(--fs-xxl); font-weight: 700; letter-spacing: -.01em; }
+.lf-privat small { font-size: var(--fs-xs); color: var(--grey-50); }
+.lf-rate { margin-top: 2px !important; font-size: var(--fs-s); color: var(--ink); display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+
+/* Kalkulation zum Aufklappen */
+.lf-kalk { margin-top: var(--s3); font-size: var(--fs-s); }
+.lf-kalk summary { cursor: pointer; font-weight: 500; color: var(--ink); }
+.lf-kalk table { width: 100%; margin-top: var(--s2); border-collapse: collapse; }
+.lf-kalk td { padding: 5px 0; vertical-align: top; border-top: 1px solid var(--linie-leicht); color: var(--grey-70); }
+.lf-kalk td:last-child { text-align: right; white-space: nowrap; padding-left: var(--s3); color: var(--ink); }
+.lf-kalk td small { display: block; font-size: var(--fs-xs); color: var(--grey-50); }
+.lf-kalk-kopf th { padding: var(--s3) 0 4px; text-align: left; font-size: var(--fs-xs); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-50); }
+.lf-kalk-summe td { font-weight: 600; color: var(--ink); border-top: 1px solid var(--ink); }
+.lf-deal .lf-kalk summary { color: var(--white); }
+.lf-deal .lf-kalk td { color: rgba(255,255,255,.75); border-top-color: rgba(255,255,255,.12); }
+.lf-deal .lf-kalk td:last-child, .lf-deal .lf-kalk-summe td { color: var(--white); }
+.lf-deal .lf-kalk-summe td { border-top-color: rgba(255,255,255,.6); }
+.lf-deal .lf-kalk td small, .lf-deal .lf-kalk-kopf th { color: rgba(255,255,255,.55); }
+
+/* Vergleich: Rangliste nach Privatkosten */
+.lf-vgl { width: 100%; border-collapse: collapse; font-size: var(--fs-m); }
+.lf-vgl th { padding: 0 var(--s3) var(--s2) 0; text-align: left; font-size: var(--fs-xs); font-weight: 500; color: var(--grey-50); border-bottom: 1px solid var(--ink); white-space: nowrap; }
+.lf-vgl td { padding: 9px var(--s3) 9px 0; border-bottom: 1px solid var(--linie); color: var(--grey-70); white-space: nowrap; }
+.lf-vgl td:first-child { white-space: normal; color: var(--ink); }
+.lf-vgl td:first-child a { color: inherit; text-decoration: none; }
+.lf-vgl td:first-child a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.lf-vgl td small { margin-left: 4px; font-size: var(--fs-xs); color: var(--grey-50); }
+.lf-vgl td b { font-weight: 700; color: var(--ink); }
+.lf-vgl tbody tr:first-child td b { background: var(--hl); padding: 1px 6px; border-radius: 4px; }
+@media (max-width: 640px) { .lf-vgl-mehr { display: none; } .lf-vgl { font-size: var(--fs-s); } }
+.lf-annahmen { margin-top: var(--s4); font-size: var(--fs-s); color: var(--grey-70); }
+.lf-annahmen summary { cursor: pointer; font-weight: 500; color: var(--ink); }
+.lf-annahmen ul { margin: var(--s2) 0 0; padding-left: 1.1em; max-width: 80ch; }
+.lf-annahmen li { margin-bottom: 4px; }
 .lf-zeile { margin-top: 4px !important; font-size: var(--fs-s); color: var(--grey-70); overflow-wrap: anywhere; }
 .lf-version { color: var(--grey-50); }
 .lf-dez::before { display: inline-block; width: 1.1em; font-weight: 600; }

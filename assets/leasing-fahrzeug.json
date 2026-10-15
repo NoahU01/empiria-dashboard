@@ -52,7 +52,12 @@
     "lieferung": "Lager, sofort",
     "version_ausstattung": "ID.3 Neo Style 58 kWh, HUD, Matrix (IQ.Light), ACC; 486 km",
     "pflicht_erfuellt": "ja",
-    "dezember": "ja"
+    "dezember": "ja",
+    "ueberfuehrung_netto": 1050.42,
+    "km_jahr": 10000
+   },
+   "verbrauch": {
+    "kwh_100": 14.1
    }
   },
   {
@@ -107,8 +112,11 @@
     "lieferung": "Lager, sofort",
     "version_ausstattung": "Golf Style 1.5 eHybrid DSG „Premium-Deal“; 142 km elektrisch",
     "pflicht_erfuellt": "ja",
-    "dezember": "ja"
-   }
+    "dezember": "ja",
+    "ueberfuehrung_netto": 945.38,
+    "km_jahr": 10000
+   },
+   "verbrauch": {}
   },
   {
    "id": "audi-a3-tfsie",
@@ -162,8 +170,11 @@
     "lieferung": "Lager, sofort",
     "version_ausstattung": "A3 Sportback TFSI e; 140 km elektrisch",
     "pflicht_erfuellt": "teilweise (CarPlay nicht genannt)",
-    "dezember": "ja"
-   }
+    "dezember": "ja",
+    "ueberfuehrung_netto": 1275.63,
+    "km_jahr": 10000
+   },
+   "verbrauch": {}
   },
   {
    "id": "bmw-ix1",
@@ -217,7 +228,12 @@
     "lieferung": "Bestellung, vsl. 12/2026",
     "version_ausstattung": "iX1 eDrive20 xLine, Bestellaktion; 503 km",
     "pflicht_erfuellt": "ja",
-    "dezember": "knapp"
+    "dezember": "knapp",
+    "ueberfuehrung_netto": 1048.74,
+    "km_jahr": 10000
+   },
+   "verbrauch": {
+    "kwh_100": 14.3
    }
   },
   {
@@ -260,7 +276,8 @@
     "reichweite_km": 82,
     "kofferraum_l": 310
    },
-   "bewertung": "Kein Gewerbeangebot gefunden."
+   "bewertung": "Kein Gewerbeangebot gefunden.",
+   "verbrauch": {}
   },
   {
    "id": "smart-1",
@@ -314,7 +331,13 @@
     "lieferung": "02/2027",
     "version_ausstattung": "#1 Premium MY27, Head-up, Panoramadach",
     "pflicht_erfuellt": "ja",
-    "dezember": "nein"
+    "dezember": "nein",
+    "ueberfuehrung_netto": 831.93,
+    "km_jahr": 10000
+   },
+   "verbrauch": {
+    "kwh_100": 16.8,
+    "real_kwh_100": 19.2
    }
   },
   {
@@ -369,7 +392,9 @@
     "lieferung": "vsl. 01/2027",
     "version_ausstattung": "Elroq 85 Selection, Neuwagen",
     "pflicht_erfuellt": "unklar",
-    "dezember": "nein"
+    "dezember": "nein",
+    "ueberfuehrung_netto": 0,
+    "km_jahr": 10000
    },
    "angebot_dez": {
     "anbieter": "VW Zentrum Leverkusen (null-leasing.com)",
@@ -382,7 +407,13 @@
     "lieferung": "sofort",
     "version_ausstattung": "Elroq 85 Selection, Tageszulassung 1.009 km, Matrix-LED, Wärmepumpe, ACC",
     "pflicht_erfuellt": "ja",
-    "dezember": "ja"
+    "dezember": "ja",
+    "ueberfuehrung_netto": 1268.91,
+    "km_jahr": 10000
+   },
+   "verbrauch": {
+    "kwh_100": 15.4,
+    "real_kwh_100": 18.2
    }
   },
   {
@@ -437,7 +468,12 @@
     "lieferung": "ca. 4 Monate ab Bestellung",
     "version_ausstattung": "Born 58 kWh Basis, frei konfigurierbar (Extras mit Aufpreis)",
     "pflicht_erfuellt": "teilweise",
-    "dezember": "nein"
+    "dezember": "nein",
+    "ueberfuehrung_netto": 1252.1,
+    "km_jahr": 10000
+   },
+   "verbrauch": {
+    "kwh_100": 14.2
    }
   },
   {
@@ -492,8 +528,11 @@
     "lieferung": "Lager, sofort",
     "version_ausstattung": "Leon Sportstourer VZ Black Edition e-Hybrid 272 PS; 121 km elektrisch",
     "pflicht_erfuellt": "ja",
-    "dezember": "ja"
-   }
+    "dezember": "ja",
+    "ueberfuehrung_netto": 1252.1,
+    "km_jahr": 10000
+   },
+   "verbrauch": {}
   },
   {
    "id": "peugeot-e308",
@@ -547,7 +586,13 @@
     "lieferung": "sofort",
     "version_ausstattung": "e-308 SW Style 54 kWh",
     "pflicht_erfuellt": "teilweise (Rückfahrkamera, Sitzheizung fehlen)",
-    "dezember": "ja"
+    "dezember": "ja",
+    "ueberfuehrung_netto": 840.34,
+    "km_jahr": 10000
+   },
+   "verbrauch": {
+    "kwh_100": 15.1,
+    "real_kwh_100": 16.3
    }
   },
   {
@@ -602,7 +647,9 @@
     "lieferung": "01/2027",
     "version_ausstattung": "e-2008 Business: Rückfahrkamera, Sitzheizung, CarPlay, Wärmepumpe; Gewerbeaktion bis 31.10.2026",
     "pflicht_erfuellt": "ja",
-    "dezember": "nein"
+    "dezember": "nein",
+    "ueberfuehrung_netto": 1243.69,
+    "km_jahr": 10000
    },
    "angebot_dez": {
     "anbieter": "Autohaus Tabor Kehl (leasingmarkt.de)",
@@ -615,7 +662,13 @@
     "lieferung": "sofort",
     "version_ausstattung": "e-2008 Allure, Tageszulassung",
     "pflicht_erfuellt": "teilweise (Rückfahrkamera, Sitzheizung nicht gelistet)",
-    "dezember": "ja"
+    "dezember": "ja",
+    "ueberfuehrung_netto": 1084.03,
+    "km_jahr": 10000
+   },
+   "verbrauch": {
+    "kwh_100": 15.3,
+    "real_kwh_100": 17.9
    }
   },
   {
@@ -670,7 +723,13 @@
     "lieferung": "ca. 16 Wochen",
     "version_ausstattung": "Techno 220 Comfort Range",
     "pflicht_erfuellt": "unklar",
-    "dezember": "nein"
+    "dezember": "nein",
+    "ueberfuehrung_netto": 1090.0,
+    "km_jahr": 10000
+   },
+   "verbrauch": {
+    "kwh_100": 16.5,
+    "real_kwh_100": 19.2
    }
   },
   {
@@ -725,7 +784,13 @@
     "lieferung": "sofort",
     "version_ausstattung": "P5 Long Range Black Edition Plus, Winterpaket",
     "pflicht_erfuellt": "ja",
-    "dezember": "ja"
+    "dezember": "ja",
+    "ueberfuehrung_netto": 1176.47,
+    "km_jahr": 10000
+   },
+   "verbrauch": {
+    "kwh_100": 17.0,
+    "real_kwh_100": 19.5
    }
   },
   {
@@ -768,7 +833,8 @@
     "reichweite_km": 394,
     "kofferraum_l": 300
    },
-   "bewertung": "Kein passendes Angebot: Aceman SE nur auf Händleranfrage; Aceman E verfehlt 400 km."
+   "bewertung": "Kein passendes Angebot: Aceman SE nur auf Händleranfrage; Aceman E verfehlt 400 km.",
+   "verbrauch": {}
   },
   {
    "id": "honda-eny1",
@@ -810,7 +876,8 @@
     "reichweite_km": 412,
     "kofferraum_l": 361
    },
-   "bewertung": "Ausgelaufen – kein aktuelles Angebot."
+   "bewertung": "Ausgelaufen – kein aktuelles Angebot.",
+   "verbrauch": {}
   },
   {
    "id": "byd-atto3",
@@ -864,7 +931,12 @@
     "lieferung": "Lager, sofort",
     "version_ausstattung": "Evo Design 74,8 kWh, 360°-Kamera, Sitzheizung/-belüftung, CarPlay",
     "pflicht_erfuellt": "ja",
-    "dezember": "ja"
+    "dezember": "ja",
+    "ueberfuehrung_netto": 1084.03,
+    "km_jahr": 10000
+   },
+   "verbrauch": {
+    "kwh_100": 16.4
    }
   },
   {
@@ -919,7 +991,12 @@
     "lieferung": "Bestellfahrzeug, Lieferzeit offen",
     "version_ausstattung": "Design Pro Max 67 kWh; plus Schlusszahlung 879,83 € netto",
     "pflicht_erfuellt": "ja",
-    "dezember": "nein"
+    "dezember": "nein",
+    "ueberfuehrung_netto": 999.41,
+    "km_jahr": 10000
+   },
+   "verbrauch": {
+    "kwh_100": 17.3
    }
   },
   {
@@ -974,7 +1051,12 @@
     "lieferung": "Lager, sofort",
     "version_ausstattung": "02 More, 360°-Kamera, Harman Kardon, Panoramadach",
     "pflicht_erfuellt": "ja",
-    "dezember": "ja"
+    "dezember": "ja",
+    "ueberfuehrung_netto": 1218.49,
+    "km_jahr": 10000
+   },
+   "verbrauch": {
+    "kwh_100": 17.1
    }
   }
  ],
@@ -1014,7 +1096,13 @@
    "gueltig_bis": "Aktion bis 31.12.2026",
    "haken": "Größer als Golf Variant (4,66 m), Lieferung erst 04/2027",
    "beleg_url": "https://www.hyundai.com/de/de/beratung-kauf/gewerbekunden/uebersicht/gewerbeleasing.html",
-   "hinweis": "Seitentitel zeigt eine andere Standardrate; die 220,88 € gelten für Gewerbe, 48 Monate, 10.000 km."
+   "hinweis": "Seitentitel zeigt eine andere Standardrate; die 220,88 € gelten für Gewerbe, 48 Monate, 10.000 km.",
+   "antrieb": "E",
+   "kurzname": "IONIQ 5",
+   "dezember": "nein",
+   "verbrauch": {
+    "kwh_100": 15.6
+   }
   },
   {
    "marke": "Cupra",
@@ -1036,8 +1124,28 @@
    "gesamtkostenfaktor": 0.64,
    "warum_so_gut": "Einschätzung: Der Händler baut Lagerfahrzeuge ab.",
    "gueltig_bis": "solange Vorrat",
-   "haken": "Listenpreis 56.770 € (über 50.000 €), nur 36 Monate"
+   "haken": "Listenpreis 56.770 € (über 50.000 €), nur 36 Monate",
+   "antrieb": "PHEV",
+   "kurzname": "Leon Sportstourer e-Hybrid",
+   "dezember": "ja",
+   "verbrauch": {}
   }
  ],
- "stand": "14.10.2026"
+ "stand": "14.10.2026",
+ "annahmen": {
+  "km_jahr": 10000,
+  "monate": 36,
+  "strom_kwh": 0.3,
+  "benzin_brutto": 2.151,
+  "diesel_brutto": 2.247,
+  "kraftstoff_datum": "14.10.2026 (ADAC)",
+  "verbrenner_l_100": 7,
+  "phev_anteil_elektrisch": 0.8,
+  "e_aufschlag": 1.18,
+  "anteil_privat_firmenkosten": 0.5,
+  "steuersatz": 0.35,
+  "phev_kwh_100": 17,
+  "verbrauch_quelle": "https://www.adac.de/rund-ums-fahrzeug/elektromobilitaet/elektroauto/stromverbrauch-elektroautos-adac-test/",
+  "kraftstoff_quelle": "https://www.adac.de/news/aktueller-spritpreis/"
+ }
 }
