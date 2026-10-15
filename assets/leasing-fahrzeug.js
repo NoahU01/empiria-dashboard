@@ -124,13 +124,11 @@
         " (Median, Stichprobe von rund 180 Angeboten auf leasingmarkt.de, Stand " + esc(d.stand) + "). Hier steht nur, was klar darunter liegt. Bei Elektro und Plug-in-Hybrid gibt es im Suchprofil gerade keinen Ausreißer um 0,3, bei Benzinern schon. Wegen der 1-%-Versteuerung kosten sie privat aber nicht weniger als die günstigen Elektroautos.</p>" +
         '<div class="lf-deals">' + d.deals.map(function (x, i) { return deal(x, i); }).join("") + "</div>";
     }
-    var html = "", gruppe = null, offen = false, quellen = [];
-    d.modelle.forEach(function (m) {
-      if (m.gruppe !== gruppe) {
-        if (offen) html += "</div>";
-        gruppe = m.gruppe; offen = true;
-        html += '<h3 class="lf-gruppe">' + esc(gruppe) + '</h3><div class="lf-raster">';
-      }
+    // Karten nach Kosten aus privater Sicht aufsteigend (Daniel, 15.10.2026); Modelle ohne Angebot ans Ende
+    var privat = function (m) { return m.angebot ? rechne(m.angebot, m.antrieb, m.verbrauch).privat : Infinity; };
+    var sortiert = d.modelle.slice().sort(function (p, q) { return privat(p) - privat(q); });
+    var html = '<div class="lf-raster">', offen = true, quellen = [];
+    sortiert.forEach(function (m) {
       var b = m.bilder || [], name = m.marke + " " + m.modell;
       html += '<article class="lf-karte" id="lf-' + esc(m.id) + '" data-lf-karte>';
       if (b.length) {
