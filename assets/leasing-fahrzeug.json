@@ -1058,6 +1058,167 @@
    "verbrauch": {
     "kwh_100": 17.1
    }
+  },
+  {
+   "id": "hyundai-ioniq5",
+   "gruppe": "Korea und Japan",
+   "marke": "Hyundai",
+   "modell": "IONIQ 5",
+   "antrieb": "E",
+   "notiz": "Größer als Golf Variant (4,66 m), Lieferung erst 04/2027",
+   "bilder": [
+    {
+     "klein": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/2021_Hyundai_Ioniq_5_Premium_EV_-_54kWh_%28170PS%29_Electric_-_Silver_-_02-2025%2C_Front.jpg/330px-2021_Hyundai_Ioniq_5_Premium_EV_-_54kWh_%28170PS%29_Electric_-_Silver_-_02-2025%2C_Front.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "gross": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/2021_Hyundai_Ioniq_5_Premium_EV_-_54kWh_%28170PS%29_Electric_-_Silver_-_02-2025%2C_Front.jpg/960px-2021_Hyundai_Ioniq_5_Premium_EV_-_54kWh_%28170PS%29_Electric_-_Silver_-_02-2025%2C_Front.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "voll": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/2021_Hyundai_Ioniq_5_Premium_EV_-_54kWh_%28170PS%29_Electric_-_Silver_-_02-2025%2C_Front.jpg/1920px-2021_Hyundai_Ioniq_5_Premium_EV_-_54kWh_%28170PS%29_Electric_-_Silver_-_02-2025%2C_Front.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "titel": "File:2021 Hyundai Ioniq 5 Premium EV - 54kWh (170PS) Electric - Silver - 02-2025, Front.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2021_Hyundai_Ioniq_5_Premium_EV_-_54kWh_(170PS)_Electric_-_Silver_-_02-2025,_Front.jpg",
+     "lizenz": "CC0",
+     "urheber": "Harvey Bold"
+    },
+    {
+     "klein": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cf/2021_Hyundai_Ioniq_5_Premium_EV_-_54kWh_%28170PS%29_Electric_-_Silver_-_02-2025%2C_Rear.jpg/330px-2021_Hyundai_Ioniq_5_Premium_EV_-_54kWh_%28170PS%29_Electric_-_Silver_-_02-2025%2C_Rear.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "gross": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cf/2021_Hyundai_Ioniq_5_Premium_EV_-_54kWh_%28170PS%29_Electric_-_Silver_-_02-2025%2C_Rear.jpg/960px-2021_Hyundai_Ioniq_5_Premium_EV_-_54kWh_%28170PS%29_Electric_-_Silver_-_02-2025%2C_Rear.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "voll": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cf/2021_Hyundai_Ioniq_5_Premium_EV_-_54kWh_%28170PS%29_Electric_-_Silver_-_02-2025%2C_Rear.jpg/1920px-2021_Hyundai_Ioniq_5_Premium_EV_-_54kWh_%28170PS%29_Electric_-_Silver_-_02-2025%2C_Rear.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "titel": "File:2021 Hyundai Ioniq 5 Premium EV - 54kWh (170PS) Electric - Silver - 02-2025, Rear.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2021_Hyundai_Ioniq_5_Premium_EV_-_54kWh_(170PS)_Electric_-_Silver_-_02-2025,_Rear.jpg",
+     "lizenz": "CC0",
+     "urheber": "Harvey Bold"
+    },
+    {
+     "klein": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/98/2021_Hyundai_Ioniq_5_%28France%29_front_view.jpg/330px-2021_Hyundai_Ioniq_5_%28France%29_front_view.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "gross": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/98/2021_Hyundai_Ioniq_5_%28France%29_front_view.jpg/960px-2021_Hyundai_Ioniq_5_%28France%29_front_view.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "voll": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/98/2021_Hyundai_Ioniq_5_%28France%29_front_view.jpg/1920px-2021_Hyundai_Ioniq_5_%28France%29_front_view.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "titel": "File:2021 Hyundai Ioniq 5 (France) front view.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2021_Hyundai_Ioniq_5_(France)_front_view.jpg",
+     "lizenz": "CC0",
+     "urheber": "crash71100"
+    }
+   ],
+   "angebot": {
+    "anbieter": "ahg Horb (leasingmarkt.de)",
+    "url": "https://www.leasingmarkt.de/leasing/pkw/hyundai-ioniq_5/13279279",
+    "laufzeit": 48,
+    "rate_netto": 220.88,
+    "blp_brutto": 45750,
+    "leasingfaktor": 0.57,
+    "gesamtkostenfaktor": 0.64,
+    "lieferung": "04/2027 (Bestellung)",
+    "version_ausstattung": "Basis 170 PS, frei konfigurierbar; 36 Mon. 234,51 €",
+    "dezember": "nein",
+    "ueberfuehrung_netto": 1256.3,
+    "km_jahr": 10000
+   },
+   "verbrauch": {
+    "kwh_100": 15.6
+   },
+   "eckdaten": {
+    "reichweite_km": 440
+   }
+  },
+  {
+   "id": "peugeot-3008",
+   "gruppe": "Europäische Marken",
+   "marke": "Peugeot",
+   "modell": "3008 Hybrid (Benzin)",
+   "antrieb": "Benzin",
+   "notiz": "Fastback-SUV mit abfallendem Dach; Lieferung erst 02/2027; Sitzheizung vor Bestellung bestätigen lassen. Lagerwagen bis Dezember: Faktor 0,39, privat ca. 301 €.",
+   "bilder": [
+    {
+     "klein": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ed/Peugeot_e-3008_Automesse_Ludwigsburg_2024_IMG_1537.jpg/330px-Peugeot_e-3008_Automesse_Ludwigsburg_2024_IMG_1537.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "gross": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ed/Peugeot_e-3008_Automesse_Ludwigsburg_2024_IMG_1537.jpg/960px-Peugeot_e-3008_Automesse_Ludwigsburg_2024_IMG_1537.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "voll": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ed/Peugeot_e-3008_Automesse_Ludwigsburg_2024_IMG_1537.jpg/1920px-Peugeot_e-3008_Automesse_Ludwigsburg_2024_IMG_1537.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "titel": "File:Peugeot e-3008 Automesse Ludwigsburg 2024 IMG 1537.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Peugeot_e-3008_Automesse_Ludwigsburg_2024_IMG_1537.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Alexander-93"
+    },
+    {
+     "klein": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/12/2024_Peugeot_3008.jpg/330px-2024_Peugeot_3008.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "gross": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/12/2024_Peugeot_3008.jpg/960px-2024_Peugeot_3008.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "voll": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/12/2024_Peugeot_3008.jpg/1920px-2024_Peugeot_3008.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "titel": "File:2024 Peugeot 3008.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2024_Peugeot_3008.jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Oleg Yunakov"
+    },
+    {
+     "klein": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cc/Peugeot_3008_Hybrid_136_e-DSC6_%282024%29_%2854534567488%29.jpg/330px-Peugeot_3008_Hybrid_136_e-DSC6_%282024%29_%2854534567488%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "gross": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cc/Peugeot_3008_Hybrid_136_e-DSC6_%282024%29_%2854534567488%29.jpg/960px-Peugeot_3008_Hybrid_136_e-DSC6_%282024%29_%2854534567488%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "voll": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cc/Peugeot_3008_Hybrid_136_e-DSC6_%282024%29_%2854534567488%29.jpg/1920px-Peugeot_3008_Hybrid_136_e-DSC6_%282024%29_%2854534567488%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "titel": "File:Peugeot 3008 Hybrid 136 e-DSC6 (2024) (54534567488).jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Peugeot_3008_Hybrid_136_e-DSC6_(2024)_(54534567488).jpg",
+     "lizenz": "CC BY 2.0",
+     "urheber": "Charles from Port Chester, New York"
+    }
+   ],
+   "angebot": {
+    "anbieter": "Gromes, Wartenberg (leasingmarkt.de)",
+    "url": "https://www.leasingmarkt.de/leasing/pkw/peugeot-3008/13276385",
+    "laufzeit": 36,
+    "rate_netto": 114.83,
+    "blp_brutto": 42640,
+    "leasingfaktor": 0.32,
+    "gesamtkostenfaktor": 0.41,
+    "lieferung": "02/2027 (Bestellung)",
+    "dezember": "nein",
+    "ueberfuehrung_netto": 1134.45,
+    "km_jahr": 10000,
+    "version_ausstattung": "3008 Hybrid 145 Allure Plus"
+   },
+   "verbrauch": {}
+  },
+  {
+   "id": "ford-puma",
+   "gruppe": "Europäische Marken",
+   "marke": "Ford",
+   "modell": "Puma Hybrid (Benzin)",
+   "antrieb": "Benzin",
+   "notiz": "Eine Klasse kleiner als ein Golf.",
+   "bilder": [
+    {
+     "klein": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/90/2024_Ford_Puma_ST-Line_EcoBoost_-_999cc_1.0_%28125PS%29_Petrol_-_Cactus_Grey_-_08-2024%2C_Front.jpg/330px-2024_Ford_Puma_ST-Line_EcoBoost_-_999cc_1.0_%28125PS%29_Petrol_-_Cactus_Grey_-_08-2024%2C_Front.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "gross": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/90/2024_Ford_Puma_ST-Line_EcoBoost_-_999cc_1.0_%28125PS%29_Petrol_-_Cactus_Grey_-_08-2024%2C_Front.jpg/960px-2024_Ford_Puma_ST-Line_EcoBoost_-_999cc_1.0_%28125PS%29_Petrol_-_Cactus_Grey_-_08-2024%2C_Front.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "voll": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/90/2024_Ford_Puma_ST-Line_EcoBoost_-_999cc_1.0_%28125PS%29_Petrol_-_Cactus_Grey_-_08-2024%2C_Front.jpg/1920px-2024_Ford_Puma_ST-Line_EcoBoost_-_999cc_1.0_%28125PS%29_Petrol_-_Cactus_Grey_-_08-2024%2C_Front.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "titel": "File:2024 Ford Puma ST-Line EcoBoost - 999cc 1.0 (125PS) Petrol - Cactus Grey - 08-2024, Front.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2024_Ford_Puma_ST-Line_EcoBoost_-_999cc_1.0_(125PS)_Petrol_-_Cactus_Grey_-_08-2024,_Front.jpg",
+     "lizenz": "CC0",
+     "urheber": "Harvey Bold"
+    },
+    {
+     "klein": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/52/2025_Ford_Puma_in_Cactus_Grey%2C_front_left%2C_06-08-2025.jpg/330px-2025_Ford_Puma_in_Cactus_Grey%2C_front_left%2C_06-08-2025.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "gross": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/52/2025_Ford_Puma_in_Cactus_Grey%2C_front_left%2C_06-08-2025.jpg/960px-2025_Ford_Puma_in_Cactus_Grey%2C_front_left%2C_06-08-2025.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "voll": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/52/2025_Ford_Puma_in_Cactus_Grey%2C_front_left%2C_06-08-2025.jpg/1920px-2025_Ford_Puma_in_Cactus_Grey%2C_front_left%2C_06-08-2025.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "titel": "File:2025 Ford Puma in Cactus Grey, front left, 06-08-2025.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2025_Ford_Puma_in_Cactus_Grey,_front_left,_06-08-2025.jpg",
+     "lizenz": "CC0",
+     "urheber": "Cutlass"
+    },
+    {
+     "klein": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e0/2021_Ford_Puma_in_Solar_Silver%2C_rear_left%2C_06-08-2025.jpg/330px-2021_Ford_Puma_in_Solar_Silver%2C_rear_left%2C_06-08-2025.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "gross": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e0/2021_Ford_Puma_in_Solar_Silver%2C_rear_left%2C_06-08-2025.jpg/960px-2021_Ford_Puma_in_Solar_Silver%2C_rear_left%2C_06-08-2025.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "voll": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e0/2021_Ford_Puma_in_Solar_Silver%2C_rear_left%2C_06-08-2025.jpg/1920px-2021_Ford_Puma_in_Solar_Silver%2C_rear_left%2C_06-08-2025.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "titel": "File:2021 Ford Puma in Solar Silver, rear left, 06-08-2025.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2021_Ford_Puma_in_Solar_Silver,_rear_left,_06-08-2025.jpg",
+     "lizenz": "CC0",
+     "urheber": "Cutlass"
+    }
+   ],
+   "angebot": {
+    "anbieter": "Automobilforum Kaufbeuren (leasingmarkt.de)",
+    "url": "https://www.leasingmarkt.de/leasing/pkw/ford-puma/13123968",
+    "laufzeit": 36,
+    "rate_netto": 125.21,
+    "blp_brutto": 37250,
+    "leasingfaktor": 0.4,
+    "gesamtkostenfaktor": 0.51,
+    "lieferung": "12/2026, ohne festen Tag",
+    "dezember": "knapp",
+    "ueberfuehrung_netto": 1252.1,
+    "km_jahr": 10000,
+    "version_ausstattung": "Puma 1.0 EcoBoost Hybrid ST-Line"
+   },
+   "verbrauch": {}
   }
  ],
  "markt": {
@@ -1077,7 +1238,7 @@
   {
    "marke": "Hyundai",
    "modell": "IONIQ 5 63 kWh 2WD",
-   "in_liste": false,
+   "in_liste": true,
    "anbieter": "ahg Horb (leasingmarkt.de)",
    "url": "https://www.leasingmarkt.de/leasing/pkw/hyundai-ioniq_5/13279279",
    "kunde": "Gewerbe",
@@ -1136,7 +1297,7 @@
    "kurzname": "3008 Hybrid (Benzin)",
    "antrieb": "Benzin",
    "antrieb_text": "Benzin-Mildhybrid",
-   "in_liste": false,
+   "in_liste": true,
    "anbieter": "Gromes, Wartenberg (leasingmarkt.de)",
    "url": "https://www.leasingmarkt.de/leasing/pkw/peugeot-3008/13276385",
    "kunde": "Gewerbe",
@@ -1160,7 +1321,7 @@
    "kurzname": "Puma Hybrid (Benzin)",
    "antrieb": "Benzin",
    "antrieb_text": "Benzin-Mildhybrid",
-   "in_liste": false,
+   "in_liste": true,
    "anbieter": "Automobilforum Kaufbeuren (leasingmarkt.de)",
    "url": "https://www.leasingmarkt.de/leasing/pkw/ford-puma/13123968",
    "kunde": "Gewerbe",

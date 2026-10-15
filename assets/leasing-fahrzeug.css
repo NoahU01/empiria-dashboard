@@ -133,3 +133,5 @@
 .lf-nachweis ul { margin: var(--s3) 0 0; padding-left: 1.1em; columns: 2 22rem; column-gap: var(--s6); }
 .lf-nachweis li { margin-bottom: 4px; break-inside: avoid; }
 .lf-nachweis a { color: inherit; }
+
+.lf-km-hinweis { margin-top: 4px; font-size: var(--fs-xs); color: var(--grey-50); }

@@ -69,8 +69,10 @@
       '<p class="lf-rate">Leasing ' + euro(a.rate_netto) + " netto · Faktor " + fak(a.leasingfaktor) + " · Versteuerung\u00a0" + pz(satz(antrieb)) + "</p>" +
       '<p class="lf-zeile lf-dez lf-dez--' + dz[0] + '">' + dz[1] + ": " + esc(a.lieferung) + "</p>" +
       kalkulation(a, antrieb, r) +
-      '<p class="lf-zeile lf-version">' + esc(a.version_ausstattung) + " · " + a.laufzeit + "\u00a0Monate · Liste " + euro(a.blp_brutto) + (a.pflicht_erfuellt && a.pflicht_erfuellt !== "ja" ? " · Pflichtausstattung " + esc(a.pflicht_erfuellt) : "") + "</p>" +
-      '<a class="lf-link" href="' + esc(a.url) + '" target="_blank" rel="noopener">' + esc(a.anbieter) + " ↗</a></div>";
+      '<p class="lf-zeile lf-version">' + esc(a.version_ausstattung) + " · " + a.laufzeit + "\u00a0Monate · " + fz((a.km_jahr || 10000), 0) + "\u00a0km im Jahr · Liste " + euro(a.blp_brutto) + (a.pflicht_erfuellt && a.pflicht_erfuellt !== "ja" ? " · Pflichtausstattung " + esc(a.pflicht_erfuellt) : "") + "</p>" +
+      '<a class="lf-link" href="' + esc(a.url) + '" target="_blank" rel="noopener">' + esc(a.anbieter) + " ↗</a>" +
+      // leasingmarkt.de startet immer mit 5.000 km – per Link nicht vorwählbar (geprüft 15.10.2026)
+      (/leasingmarkt\.de/.test(a.url || "") ? '<p class="lf-zeile lf-km-hinweis">Auf der Seite oben 10.000\u00a0km/Jahr wählen – sie startet mit 5.000\u00a0km.</p>' : "") + "</div>";
   }
   function deal(x, i) {
     var r = rechne(x, x.antrieb, x.verbrauch);
@@ -87,7 +89,7 @@
       '<a class="lf-link" href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.anbieter) + " ↗</a></article>";
   }
 
-  fetch("/assets/leasing-fahrzeug.json?v=202610151600").then(function (r) { return r.json(); }).then(function (d) {
+  fetch("/assets/leasing-fahrzeug.json?v=202610151800").then(function (r) { return r.json(); }).then(function (d) {
     A = d.annahmen || {};
     var vergleich = document.querySelector("[data-lf-vergleich]");
     if (vergleich) {
