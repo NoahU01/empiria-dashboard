@@ -119,7 +119,7 @@
     var p = projektVon(a), ueber = a.status === "offen" && a.faellig_am && new Date(a.faellig_am) < new Date(new Date().toDateString());
     var herkunft = p ? p.name : a.organisationen ? a.organisationen.name : "Operativ";
     return '<div class="pr-kb-karte' + (a.status === "erledigt" ? " pr-kb-fertig" : "") + '" draggable="true" data-a="' + a.id + '">' +
-      '<p class="ab-herkunft">' + (p ? '<a href="/strategie/projekte.html#p=' + p.id + '">' + esc(herkunft) + "</a>" : esc(herkunft)) + "</p>" +
+      '<p class="ab-herkunft"><b class="al-marke">' + esc(markeVon(a)) + "</b> · " + (p ? '<a href="/strategie/projekte.html#p=' + p.id + '">' + esc(herkunft) + "</a>" : esc(herkunft)) + "</p>" +
       (det(a) ? '<button type="button" class="pr-auf-titel" data-auf-auf aria-expanded="false"><span>' + esc(a.titel) + '</span><span class="tl-dreieck" aria-hidden="true"></span></button>'
         : '<span class="pr-auf-titel">' + esc(a.titel) + "</span>") +
       '<p class="pr-kb-meta"><span class="pr-frist' + (a.faellig_am ? " mk mk--frist" : "") + (ueber ? " pr-ueber" : "") + '">' + (a.faellig_am ? kurz(a.faellig_am) : "ohne Termin") + '</span><span class="pr-wer">' + esc(wer(a) || "offen") + "</span></p>" +
