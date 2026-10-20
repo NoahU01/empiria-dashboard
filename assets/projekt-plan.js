@@ -7,6 +7,10 @@
    Plan: je Strang eine Bahn, Karten und Gates, Pfeile für die Abfolge, gestrichelt für Abhängigkeiten aus anderen Strängen. */
 (function () {
   "use strict";
+  // Begriffe (Daniel, 20.10.2026): dieselbe Ansicht trägt auch die Strategie je Marke –
+  // dort heißen die Ebenen Stoßrichtung › Strang › Handlungspaket, die Projekt-Gates sind die strategischen Meilensteine.
+  var W = { strang: "Strang", teil: "Teilprojekt", aufgabe: "Aufgabe", gate: "Gate", pgate: "Projekt-Gate", pgates: "Projekt-Gates",
+    pgBand: true, hauptInfo: false };
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
   function idListe(v) { return (v || []).map(Number); }
 
@@ -31,7 +35,7 @@
   }
   function datumJahr(d) { return new Date(String(d).slice(0, 10) + "T12:00:00").toLocaleDateString("de-DE", { day: "numeric", month: "numeric", year: "numeric" }); }
   function pgTrenner(g) {
-    return '<li class="pl-pg-trenner' + (g.status === "erledigt" ? " pl-pg-trenner--fertig" : "") + '" data-pg="' + g.id + '"><span class="pl-pg-kicker">Projekt-Gate</span><span class="pl-pg-name">' + esc(g.titel) + "</span>" +
+    return '<li class="pl-pg-trenner' + (g.status === "erledigt" ? " pl-pg-trenner--fertig" : "") + '" data-pg="' + g.id + '"><span class="pl-pg-kicker">' + W.pgate + '</span><span class="pl-pg-name">' + esc(g.titel) + "</span>" +
       (g.faellig_am ? '<span class="pl-pg-datum">' + datumJahr(g.faellig_am) + "</span>" : "") + "</li>";
   }
   function pgFehlend(g, auf) { return auf.filter(function (a) { return a.projektgate_id === g.id && a.art !== "projektgate" && a.status !== "erledigt"; }); }
@@ -114,15 +118,15 @@
     oben(straenge).forEach(function (s) {
       var k = kinder(straenge, s.id);
       html += '<section class="pl-strang' + (!einer && istZu(s.id) ? " pl-zu" : "") + '" data-strang="' + s.id + '">' + (einer ? "" : '<h4 class="pl-strang-titel"><span class="pl-griff pl-s-griff" draggable="true" data-s-griff title="Ziehen zum Umsortieren" aria-hidden="true"></span><span class="pl-s-name">' + esc(s.titel) + "</span>" + '<button type="button" class="pl-klapp" data-pl-klapp aria-label="Auf- und zuklappen" aria-expanded="' + !istZu(s.id) + '"><span class="tl-dreieck" aria-hidden="true"></span></button>' + "</h4>") + abschnitt(s) +
-        '<p class="pl-neu"><button type="button" data-pl-aufgabe="' + s.id + '">+ Aufgabe</button><button type="button" data-pl-gate="' + s.id + '">+ Gate</button><button type="button" data-pl-teil="' + s.id + '">+ Teilprojekt</button></p>' +
+        (W.hauptInfo && !einer ? teilInfo(s) : "") + '<p class="pl-neu"><button type="button" data-pl-aufgabe="' + s.id + '">+ ' + W.aufgabe + '</button><button type="button" data-pl-gate="' + s.id + '">+ ' + W.gate + '</button><button type="button" data-pl-teil="' + s.id + '">+ ' + W.teil + "</button></p>" +
         k.map(function (c) {
-          return '<section class="pl-teil' + (istZu(c.id) ? " pl-zu" : "") + '" data-strang="' + c.id + '"><h5 class="pl-strang-titel pl-teil-titel"><span class="pl-griff pl-s-griff" draggable="true" data-s-griff title="Ziehen zum Umsortieren" aria-hidden="true"></span><span class="pl-teil-kicker">Teilprojekt</span><span class="pl-s-name">' + esc(c.titel) + "</span>" + '<button type="button" class="pl-klapp" data-pl-klapp aria-label="Auf- und zuklappen" aria-expanded="' + !istZu(c.id) + '"><span class="tl-dreieck" aria-hidden="true"></span></button>' + "</h5>" + teilInfo(c) + abschnitt(c, s) +
-            '<p class="pl-neu"><button type="button" data-pl-aufgabe="' + c.id + '">+ Aufgabe</button><button type="button" data-pl-gate="' + c.id + '">+ Gate</button></p></section>';
+          return '<section class="pl-teil' + (istZu(c.id) ? " pl-zu" : "") + '" data-strang="' + c.id + '"><h5 class="pl-strang-titel pl-teil-titel"><span class="pl-griff pl-s-griff" draggable="true" data-s-griff title="Ziehen zum Umsortieren" aria-hidden="true"></span><span class="pl-teil-kicker">' + W.teil + '</span><span class="pl-s-name">' + esc(c.titel) + "</span>" + '<button type="button" class="pl-klapp" data-pl-klapp aria-label="Auf- und zuklappen" aria-expanded="' + !istZu(c.id) + '"><span class="tl-dreieck" aria-hidden="true"></span></button>' + "</h5>" + teilInfo(c) + abschnitt(c, s) +
+            '<p class="pl-neu"><button type="button" data-pl-aufgabe="' + c.id + '">+ ' + W.aufgabe + '</button><button type="button" data-pl-gate="' + c.id + '">+ ' + W.gate + "</button></p></section>";
         }).join("") + "</section>";
     });
-    html += '<p class="pl-neu pl-neu--strang"><button type="button" data-pl-strang>+ Strang</button><button type="button" data-pl-pgate>+ Projekt-Gate</button></p>';
+    html += '<p class="pl-neu pl-neu--strang"><button type="button" data-pl-strang>+ ' + W.strang + '</button><button type="button" data-pl-pgate>+ ' + W.pgate + "</button></p>";
     var pgs = pgListe(auf);
-    if (pgs.length) html = '<section class="pl-pg-band"><h4 class="pl-pg-band-titel">Projekt-Gates <small>gelten für alle Stränge und Teilprojekte</small></h4><ol class="pl-liste">' +
+    if (pgs.length && W.pgBand) html = '<section class="pl-pg-band"><h4 class="pl-pg-band-titel">' + W.pgates + ' <small>gelten für alle Stränge und Teilprojekte</small></h4><ol class="pl-liste">' +
       pgs.map(function (g) { return zeile(g, alle, h, true, true, true); }).join("") + "</ol></section>" + html;
     if (ohne.length) html += '<section class="pl-strang"><h4 class="pl-strang-titel pl-strang-titel--ohne">Noch keinem Strang zugeordnet</h4><ol class="pl-liste">' +
       ohne.map(function (a) { return zeile(a, alle, h, true, true, true); }).join("") + "</ol></section>";
@@ -151,12 +155,12 @@
       var pgw = a.art === "projektgate", f = pgw ? pgFehlend(a, auf) : fehlend(a, auf);
       if (pgw && z !== "fertig") z = f.length ? "spaeter" : "machbar";
       var stand = z === "fertig" ? "Erreicht" + (a.erledigt_am ? " am " + new Date(a.erledigt_am).toLocaleDateString("de-DE", { day: "numeric", month: "numeric" }) : "")
-        : pgw ? (f.length ? "Es fehlen noch " + f.length + (f.length === 1 ? " Aufgabe" : " Aufgaben") : "Alle Aufgaben davor erledigt – Gate kann erreicht werden")
+        : pgw ? (f.length ? "Es fehlen noch " + f.length + (f.length === 1 ? " " + W.aufgabe : " " + (W.aufgaben || W.aufgabe + "n")) : "Alle Aufgaben davor erledigt – Gate kann erreicht werden")
         : f.length ? "Es fehlt noch: " + f.map(function (x) { return x.titel; }).join(" · ") : "Alles erledigt – Gate kann erreicht werden";
             return '<li class="pl-z pl-gate' + (pgw ? " pl-pgate" : "") + ' pl-z--' + z + '" data-a="' + a.id + '" data-art="' + a.art + '">' + pfeile(a, erst, letzt, ohneStrang) +
         '<button type="button" class="st-haken' + (z === "fertig" ? " an" : "") + '" aria-label="' + (z === "fertig" ? "Wieder öffnen" : "Als erreicht abhaken") + '"></button>' +
         // Gate mit Termin (Daniel, 11.10.2026): Datum direkt hier setzen oder ändern
-        '<div class="pl-inhalt"><span class="pl-gate-kopf"><span class="pl-gate-kicker">' + (pgw ? "Projekt-Gate" : "Gate") + "</span>" +
+        '<div class="pl-inhalt"><span class="pl-gate-kopf"><span class="pl-gate-kicker">' + (pgw ? W.pgate : W.gate) + "</span>" +
           (z === "fertig" ? (a.faellig_am ? '<span class="pl-gate-ziel">geplant ' + datumKurz(a.faellig_am) + "</span>" : "")
             : '<label class="pl-gate-ziel' + (a.faellig_am && a.faellig_am < heuteIso() ? " pl-gate-ziel--ueber" : "") + '">Termin <input type="date" data-gate-datum="' + a.id + '" value="' + esc(a.faellig_am || "") + '"></label>') +
         '</span><b class="pl-titel">' + esc(a.titel) + "</b>" +
@@ -176,7 +180,7 @@
     var je = ordnen(straenge, auf), pg = pgListe(auf), stufe = pgStufe(auf);
     // Kopfzeile mit den Projekt-Gates über allen Bahnen
     var kopf = !pg.length ? "" : '<div class="pl-bahn pl-pg-kopfzeile"><div class="pl-bahn-kopf"></div><div class="pl-bahn-spur pl-spur-pg">' + pg.concat([null]).map(function (g, gi) {
-      return '<div class="pl-seg" data-seg="' + gi + '"></div>' + (g ? '<div class="pl-pg-linie pl-pg-linie--kopf' + (g.status === "erledigt" ? " pl-pg-linie--fertig" : "") + '"><span class="pl-pg-etikett"><small>Projekt-Gate' + (g.faellig_am ? " · " + datumJahr(g.faellig_am) : "") + "</small>" + esc(g.titel) + "</span></div>" : "");
+      return '<div class="pl-seg" data-seg="' + gi + '"></div>' + (g ? '<div class="pl-pg-linie pl-pg-linie--kopf' + (g.status === "erledigt" ? " pl-pg-linie--fertig" : "") + '"><span class="pl-pg-etikett"><small>' + W.pgate + (g.faellig_am ? " · " + datumJahr(g.faellig_am) : "") + "</small>" + esc(g.titel) + "</span></div>" : "");
     }).join("") + "</div></div>";
     return '<p class="pl-legende"><span class="pl-leg-linie"></span>Abfolge<span class="pl-leg-linie pl-leg-linie--gestr"></span>wartet auf anderen Strang</p>' +
       '<div class="pl-plan" data-pl-plan><div class="pl-plan-innen"><svg class="pl-svg" data-pl-svg aria-hidden="true"></svg>' + kopf +
@@ -184,7 +188,7 @@
         var k = kinder(straenge, s.id), farbe = " pl-bahn--" + (i % 3);
         function karte(a) {
           var z = zustand(a, alle);
-          if (a.art === "gate") return '<div class="pl-knoten pl-k-gate pl-z--' + z + '" data-k="' + a.id + '"><span class="pl-gate-kicker">Gate' + (a.faellig_am ? " · " + datumKurz(a.faellig_am) : "") + '</span><b>' + esc(a.titel) + "</b></div>";
+          if (a.art === "gate") return '<div class="pl-knoten pl-k-gate pl-z--' + z + '" data-k="' + a.id + '"><span class="pl-gate-kicker">' + W.gate + (a.faellig_am ? " · " + datumKurz(a.faellig_am) : "") + '</span><b>' + esc(a.titel) + "</b></div>";
           return '<div class="pl-knoten pl-karte pl-z--' + z + '" data-k="' + a.id + '"><b>' + esc(a.titel) + "</b></div>";
         }
         function spur(x) {
@@ -199,7 +203,7 @@
         // Hauptstrang mit Teilprojekten: Kopfzeile, eigene Aufgaben (falls vorhanden), dann je Teilprojekt eine Bahn
         return '<div class="pl-gruppe' + farbe + '"><p class="pl-gruppe-kopf">' + esc(s.titel) + "</p>" +
           (je[s.id].length ? '<div class="pl-bahn pl-bahn--teil"><div class="pl-bahn-kopf"><b>Übergreifend</b></div>' + spur(s) + "</div>" : "") +
-          k.map(function (c) { return '<div class="pl-bahn pl-bahn--teil"><div class="pl-bahn-kopf"><span class="pl-teil-kicker">Teilprojekt</span><b>' + esc(c.titel) + "</b></div>" + spur(c) + "</div>"; }).join("") + "</div>";
+          k.map(function (c) { return '<div class="pl-bahn pl-bahn--teil"><div class="pl-bahn-kopf"><span class="pl-teil-kicker">' + W.teil + '</span><b>' + esc(c.titel) + "</b></div>" + spur(c) + "</div>"; }).join("") + "</div>";
       }).join("") + "</div></div>";
   }
   function linien(wurzel, straenge, auf) {
@@ -284,7 +288,7 @@
     // + Aufgabe (Daniel, 12.10.2026): eigene Aufgabe ans Ende des Strangs – danach per Griff an die richtige Stelle ziehen
     wurzel.querySelectorAll("[data-pl-aufgabe]").forEach(function (b) {
       b.onclick = function () {
-        var sid = +b.getAttribute("data-pl-aufgabe"), titel = prompt("Neue Aufgabe:");
+        var sid = +b.getAttribute("data-pl-aufgabe"), titel = prompt("Neue" + (W.aufgabe === "Aufgabe" ? " " : "s ") + W.aufgabe + ":");
         if (!titel || !titel.trim()) return;
         var l = ordnen(straenge, auf)[sid] || [];
         b.disabled = true;
@@ -296,7 +300,7 @@
     // + Projekt-Gate: Ergebnisstufe über alle Stränge; Aufgaben ordnest du zu, indem du sie über den Trenner ziehst
     var pb = wurzel.querySelector("[data-pl-pgate]");
     if (pb) pb.onclick = function () {
-      var titel = prompt("Name des Projekt-Gates (gilt für alle Stränge und Teilprojekte), z. B. „Ende 2026 · Big Bang“:");
+      var titel = prompt(W.pgate === "Projekt-Gate" ? "Name des Projekt-Gates (gilt für alle Stränge und Teilprojekte), z. B. „Ende 2026 · Big Bang“:" : "Name des neuen " + W.pgate + "s:");
       if (!titel || !titel.trim()) return;
       var d = prompt("Termin (TT.MM.JJJJ) – leer lassen, wenn noch offen:", ""); if (d === null) return;
       var m = d.trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/), iso = m ? m[3] + "-" + ("0" + m[2]).slice(-2) + "-" + ("0" + m[1]).slice(-2) : null;
@@ -308,7 +312,7 @@
     // + Teilprojekt: Unterstrang im Hauptstrang
     wurzel.querySelectorAll("[data-pl-teil]").forEach(function (b) {
       b.onclick = function () {
-        var sid = +b.getAttribute("data-pl-teil"), titel = prompt("Name des Teilprojekts:");
+        var sid = +b.getAttribute("data-pl-teil"), titel = prompt(W.teil === "Teilprojekt" ? "Name des Teilprojekts:" : "Name des neuen " + W.teil + "s:");
         if (!titel || !titel.trim()) return;
         b.disabled = true;
         db.from("projekt_straenge").insert({ projekt_id: projektId(), titel: titel.trim(), eltern_id: sid, reihenfolge: naechste(kinder(straenge, sid)) })
@@ -318,7 +322,7 @@
     // + Strang
     var sb = wurzel.querySelector("[data-pl-strang]");
     if (sb) sb.onclick = function () {
-      var titel = prompt(oben(straenge).length === 1 ? "Name des neuen Strangs? (Der bisherige heißt „" + oben(straenge)[0].titel + "“ – du kannst ihn danach umbenennen.)" : "Name des neuen Strangs:");
+      var titel = W.strang !== "Strang" ? prompt("Name der neuen " + W.strang + ":") : prompt(oben(straenge).length === 1 ? "Name des neuen Strangs? (Der bisherige heißt „" + oben(straenge)[0].titel + "“ – du kannst ihn danach umbenennen.)" : "Name des neuen Strangs:");
       if (!titel || !titel.trim()) return;
       sb.disabled = true;
       db.from("projekt_straenge").insert({ projekt_id: projektId(), titel: titel.trim(), reihenfolge: naechste(oben(straenge)) })
@@ -394,7 +398,7 @@
         db.from("projekt_straenge").update({ titel: n.trim() }).eq("id", sid).then(function (r) { if (r.error) alert(r.error.message); else neu(); });
       };
     });
-    function projektId() { var m = location.hash.match(/p=(\d+)/); return m ? +m[1] : null; }
+    function projektId() { var el = wurzel.closest && wurzel.closest("[data-pl-projekt]") || wurzel.querySelector("[data-pl-projekt]"); if (el) return +el.getAttribute("data-pl-projekt"); var m = location.hash.match(/p=(\d+)/); return m ? +m[1] : null; }
     // Stränge und Teilprojekte verschieben (Daniel, 13.10.2026): Überschrift am Griff ziehen (Rechner) oder lange drücken (Handy).
     // Verschoben wird nur innerhalb derselben Ebene: Hauptstränge untereinander, Teilprojekte innerhalb ihres Hauptstrangs.
     function geschwister(sek) {
@@ -584,5 +588,6 @@
     }
   }
 
-  window.ProjektPlan = { liste: liste, bild: bild, verdrahten: verdrahten };
+  function begriffe(o) { Object.keys(o || {}).forEach(function (k) { W[k] = o[k]; }); }
+  window.ProjektPlan = { liste: liste, bild: bild, verdrahten: verdrahten, begriffe: begriffe };
 })();

@@ -26,11 +26,14 @@
     var vor14 = new Date(Date.now() - 14 * 864e5).toISOString();
     Promise.all([
       db.from("projekte").select("id, name, typ, marke, status").order("reihenfolge", { nullsFirst: false }).order("name"),
-      db.from("aufgaben").select("id, titel, beschreibung, prompt, status, spalte, faellig_am, marke, erledigt_am, projekt_id, weg, vorgaenger, warten_auf, hinweis, zustaendig_name, verantwortlich, kontakte:zustaendig_kontakt_id(vorname, nachname), organisationen(id, name), person:kontakt_id(id, vorname, nachname), ereignis:ereignis_id(id, titel, datum, projekt_id), mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, zeitblock_vorschlag, unterlagen")
+      db.from("aufgaben").select("id, art, titel, beschreibung, prompt, status, spalte, faellig_am, marke, erledigt_am, projekt_id, weg, vorgaenger, warten_auf, hinweis, zustaendig_name, verantwortlich, kontakte:zustaendig_kontakt_id(vorname, nachname), organisationen(id, name), person:kontakt_id(id, vorname, nachname), ereignis:ereignis_id(id, titel, datum, projekt_id), mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, zeitblock_vorschlag, unterlagen")
         .or("status.eq.offen,and(status.eq.erledigt,erledigt_am.gte." + vor14 + ")")
     ]).then(function (r) {
       if (r[1].error) { wurzel.innerHTML = '<p class="kb-leer">Fehler: ' + esc(r[1].error.message) + "</p>"; return; }
-      projekte = r[0].data || []; aufgaben = r[1].data || [];
+      projekte = r[0].data || [];
+      // Strategische Meilensteine sind keine Aufgaben – sie stehen nur im Bereich Strategie (Daniel, 20.10.2026)
+      var strat = projekte.filter(function (p) { return p.typ === "strategie"; }).map(function (p) { return p.id; });
+      aufgaben = (r[1].data || []).filter(function (a) { return !(a.art === "projektgate" && strat.indexOf(a.projekt_id) > -1); });
       var ids = projekte.map(function (p) { return p.id; });
       wahl = wahl.filter(function (w) { return w === "op" || ids.indexOf(w) > -1 || (typeof w === "string" && MARKEN.indexOf(w.slice(2)) > -1); });
       if (window.AufgabenDetails) AufgabenDetails.vorlagenAnhaengen(db, aufgaben).then(zeichnen); else zeichnen();
@@ -63,14 +66,14 @@
     var marken = MARKEN.filter(function (m) { return wahl.indexOf("m:" + m) > -1; });
     // Ist oben etwas gewählt (Operativ oder Marke), stehen unten nur die passenden Projekte – Operativ hat keine, die Zeile entfällt dann.
     var oben = marken.length || wahl.indexOf("op") > -1;
-    var l = projekte.filter(function (p) { return p.status !== "abgeschlossen" && p.id !== opId() && (!oben || marken.indexOf(p.marke || "empiria") > -1 || wahl.indexOf(p.id) > -1); });
+    var l = projekte.filter(function (p) { return p.status !== "abgeschlossen" && p.typ !== "strategie" && p.id !== opId() && (!oben || marken.indexOf(p.marke || "empiria") > -1 || wahl.indexOf(p.id) > -1); });
     var h = '<div class="ab-filter"><div class="ab-filter-zeile ab-filter-haupt">' + knopf("alle", "Alle", !wahl.length) + knopf("op", "Operativ", wahl.indexOf("op") > -1) +
       MARKEN.map(function (m) { return knopf("m:" + m, m, wahl.indexOf("m:" + m) > -1); }).join("") + umschalter() + "</div>" +
       '<div class="ab-filter-zeile ab-filter-projekte' + (l.length ? "" : " ab-filter-ohne") + '">' + l.map(function (p) {
         return knopf(p.id, p.name, wahl.indexOf(p.id) > -1).replace("<button", mitAufgaben[p.id] ? "<button" : '<button class="ab-leer"');
       }).join("") + "</div>" +
       // unsichtbare Messzeile mit allen Projekten: hält auf großen Bildschirmen den Abstand zum Board fest, egal was oben gewählt ist
-      '<div class="ab-filter-zeile ab-filter-projekte ab-filter-mass" aria-hidden="true">' + projekte.filter(function (p) { return p.status !== "abgeschlossen" && p.id !== opId(); }).map(function (p) {
+      '<div class="ab-filter-zeile ab-filter-projekte ab-filter-mass" aria-hidden="true">' + projekte.filter(function (p) { return p.status !== "abgeschlossen" && p.typ !== "strategie" && p.id !== opId(); }).map(function (p) {
         return '<button type="button" tabindex="-1">' + esc(p.name) + "</button>";
       }).join("") + "</div>";
     if (nurRueck) h = '<div class="ab-filter"><div class="ab-filter-zeile ab-filter-haupt"><button type="button" class="ab-rueck" aria-pressed="true" data-rueck-aus>Neue Rückmeldungen (' + aufgaben.filter(rueck).length + ') <span aria-hidden="true">×</span></button>' +

@@ -41,7 +41,7 @@
       D.geburtstage = r[5].data || []; D.strategie = r[6].data || []; D.projekteAlle = r[7].data || []; D.kampagnen = r[8].data || [];
       D.vorlagen = (r[0].data || []).filter(function (v) { return v.art !== "umsetzung" && v.art !== "schritt"; }); D.termine = (r[1].data || []).filter(function (t) { return !t.abgesagt; }); D.aufgaben = r[2].data || []; D.projekte = r[3].data || [];
       D.linkedin = r[4].data || [];
-      zeichnen(); mails();
+      stratLaden().then(function () { zeichnen(); mails(); });
     });
   });
 
@@ -223,7 +223,7 @@
   var PRIO = { hoch: 0, mittel: 1, niedrig: 2 };
   function daten(m) {
     var s = D.strategie.filter(function (x) { return x.marke === m; })[0] || {};
-    var proj = D.projekteAlle.filter(function (p) { return (p.marke || "empiria") === m && p.status !== "abgeschlossen"; })
+    var proj = D.projekteAlle.filter(function (p) { return (p.marke || "empiria") === m && p.status !== "abgeschlossen" && p.typ !== "strategie"; })
       .sort(function (a, b) { return (a.prioritaet ? PRIO[a.prioritaet] : 3) - (b.prioritaet ? PRIO[b.prioritaet] : 3) || a.name.localeCompare(b.name, "de"); });
     return { s: s, st: s.stossrichtungen || [], proj: proj, kamp: D.kampagnen.filter(function (k) { return (k.marke || "empiria") === m; }), leer: !s.vision && !s.geschaeftsmodell && !(s.stossrichtungen || []).length };
   }
@@ -268,12 +268,94 @@
         (weitere.length ? '<div class="sg-feld"><h5>Weitere Projekte</h5><ul class="sg-proj">' + weitere.map(function (p) { return "<li>" + projLink(p) + "<small>" + esc(p.typ === "intern" ? "intern" : "Kunde") + "</small></li>"; }).join("") + "</ul></div>" : "") +
       "</div></div></details>") + "</section>";
   }
+  /* ---------- Strategie als Plan (Daniel, 20.10.2026) ----------
+     Wie der Meilensteinplan der SV Akademie: Projekt vom Typ „strategie“ je Marke.
+     Hauptstränge = strategische Stoßrichtungen, Unterstränge = Stränge, Projekt-Gates = strategische Meilensteine,
+     Aufgaben = Handlungspakete. Visionen stehen in projekte.ziel_details (vision1, vision2). */
+  var STRAT = {};   // marke → { p, straenge, auf }
+  function stratLaden() {
+    var ps = (D.projekteAlle || []).filter(function (p) { return p.typ === "strategie" && p.status !== "abgeschlossen"; });
+    if (!ps.length) return Promise.resolve();
+    var ids = ps.map(function (p) { return p.id; });
+    return Promise.all([
+      db.from("projekte").select("id, name, marke, ziel, ziel_details").in("id", ids),
+      db.from("projekt_straenge").select("id, projekt_id, titel, reihenfolge, eltern_id, erklaerung, verantwortlich, verantwortlich_kontakte").in("projekt_id", ids).order("reihenfolge"),
+      db.from("aufgaben").select("id, projekt_id, strang_id, reihenfolge, art, projektgate_id, titel, beschreibung, status, spalte, faellig_am, erledigt_am, vorgaenger, warten_auf, hinweis, weg, zustaendig_name, mail_gesendet_am, antwort_am, antwort_von").in("projekt_id", ids)
+    ]).then(function (r) {
+      STRAT = {};
+      (r[0].data || []).forEach(function (p) {
+        STRAT[p.marke] = { p: p, straenge: (r[1].data || []).filter(function (s) { return s.projekt_id === p.id; }),
+          auf: (r[2].data || []).filter(function (a) { return a.projekt_id === p.id; }) };
+      });
+    });
+  }
+  var BEGRIFFE = { strang: "Stoßrichtung", teil: "Strang", aufgabe: "Handlungspaket", aufgaben: "Handlungspakete", gate: "Quality Gate",
+    pgate: "Meilenstein", pgates: "Strategische Meilensteine", pgBand: false, hauptInfo: true };
+  var STRAT_ANSICHT = "liste";
+  try { STRAT_ANSICHT = localStorage.getItem("strategie-plan-ansicht") || "liste"; } catch (x) {}
+  function datumLang(d) { return new Date(String(d).slice(0, 10) + "T12:00:00").toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }); }
+  function stratBlock(m) {
+    var S = STRAT[m]; if (!S || !window.ProjektPlan) return "";
+    var z = S.p.ziel_details || {}, v1 = z.vision1, v2 = z.vision2;
+    var ms = S.auf.filter(function (a) { return a.art === "projektgate"; })
+      .sort(function (a, b) { return String(a.faellig_am || "9999").localeCompare(String(b.faellig_am || "9999")) || (a.reihenfolge || 0) - (b.reihenfolge || 0); });
+    // Vision 1.0 wird mit dem Meilenstein erreicht, der „Vision 1.0“ im Namen trägt
+    var bis1 = ms.filter(function (g) { return /vision 1/i.test(g.titel); })[0];
+    function vision(v, k, wann) {
+      return v ? '<article class="sx-vision sx-vision--' + k + '"><p class="sx-k">' + esc(v.titel) + (wann ? "<span>" + esc(wann) + "</span>" : "") + "</p>" +
+        '<p class="sx-satz">' + esc(v.satz) + "</p>" + ((v.punkte || []).length ? '<ul class="sx-punkte">' + v.punkte.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "") + "</article>" : "";
+    }
+    function meilenstein(g, i) {
+      var fertig = g.status === "erledigt", name = String(g.titel).replace(/^Meilenstein\s*\d+\s*·\s*/i, "");
+      return '<li class="sx-m' + (fertig ? " sx-m--fertig" : "") + '"><span class="sx-m-kopf"><span class="sx-m-nr">' + (i + 1) + "</span>" +
+        '<span class="sx-m-datum">' + (fertig ? "✓ erreicht" : g.faellig_am ? datumLang(g.faellig_am) : "Termin offen") + "</span></span>" +
+        "<b>" + esc(name) + "</b>" + (g.beschreibung ? "<p>" + esc(g.beschreibung) + "</p>" : "") + "</li>";
+    }
+    ProjektPlan.begriffe(BEGRIFFE);
+    var plan = STRAT_ANSICHT === "plan" ? ProjektPlan.bild(S.straenge, S.auf, S.auf) : ProjektPlan.liste(S.straenge, S.auf, stratHilfen(S), S.auf);
+    return '<section class="sx" data-sx="' + esc(m) + '">' +
+      '<div class="sx-visionen">' + vision(v1, 1, bis1 && bis1.faellig_am ? "bis " + datumLang(bis1.faellig_am) : "") + vision(v2, 2, "danach") + "</div>" +
+      '<h4 class="sx-t">Strategische Meilensteine</h4><ol class="sx-ms">' + ms.map(meilenstein).join("") + "</ol>" +
+      '<div class="sx-t-zeile"><h4 class="sx-t">Stoßrichtungen und Stränge</h4><span class="pr-tl-wahl">' + [["liste", "Liste"], ["plan", "Plan"]].map(function (x) {
+        return '<button type="button" data-sx-ansicht="' + x[0] + '" aria-pressed="' + (STRAT_ANSICHT === x[0]) + '">' + x[1] + "</button>"; }).join("") + "</span></div>" +
+      '<div class="pl-rahmen sx-plan" data-pl-projekt="' + S.p.id + '">' + plan + "</div></section>";
+  }
+  function stratHilfen(S) {
+    function det(a) { if (a._det === undefined) a._det = window.AufgabenDetails ? AufgabenDetails.html(a) : ""; return a._det; }
+    var PHASE = { backlog: "Backlog", todo: "To-do", arbeit: "In Arbeit", pruefung: "Prüfung" };
+    return {
+      titel: function (a) { return det(a) ? '<button type="button" class="pr-auf-titel" data-auf-auf aria-expanded="false"><span>' + esc(a.titel) + '</span><span class="tl-dreieck" aria-hidden="true"></span></button>' : '<span class="pr-auf-titel">' + esc(a.titel) + "</span>"; },
+      details: function (a) { return det(a) ? '<div class="pr-auf-details" hidden>' + det(a) + "</div>" : ""; },
+      zusatz: function (a) { return window.AufgabenDetails ? AufgabenDetails.lage(a, S.auf) : ""; },
+      phase: function (a) { return PHASE[a.spalte || "todo"] || "To-do"; },
+      wer: function (a) { return a.zustaendig_name || ""; },
+      frist: function (a) { return a.faellig_am ? new Date(a.faellig_am).toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "short" }) : ""; }
+    };
+  }
+  function stratVerdrahten() {
+    wurzel.querySelectorAll("[data-sx]").forEach(function (box) {
+      var S = STRAT[box.getAttribute("data-sx")]; if (!S) return;
+      box.querySelectorAll("[data-sx-ansicht]").forEach(function (b) {
+        b.onclick = function () { STRAT_ANSICHT = b.getAttribute("data-sx-ansicht"); try { localStorage.setItem("strategie-plan-ansicht", STRAT_ANSICHT); } catch (x) {} zeichnen(); };
+      });
+      var rahmen = box.querySelector(".sx-plan");
+      ProjektPlan.verdrahten(rahmen, db, S.straenge, S.auf, function () { stratLaden().then(zeichnen); });
+      // aufgeklappte Handlungspakete
+      rahmen.querySelectorAll("[data-auf-auf]").forEach(function (b) {
+        b.onclick = function () { var d = b.closest(".pl-inhalt").querySelector(".pr-auf-details"); if (!d) return; d.hidden = !d.hidden; b.setAttribute("aria-expanded", String(!d.hidden)); };
+      });
+    });
+    // Plan-Linien neu zeichnen, sobald der Bereich aufgeklappt wird (zugeklappt hat er keine Maße)
+    wurzel.querySelectorAll(".br-bereich > h3 > .pr-klapp").forEach(function (b) {
+      b.addEventListener("click", function () { setTimeout(function () { if (window.__plNeu) window.__plNeu(); }, 30); });
+    });
+  }
   function strategie() {
     var marken = MARKEN.filter(function (m) { return mf(m); });
     // Noch ohne Vision: je Marke eine Zeile – Schwerpunkt-Projekte und der Weg zum Zielbild (Deep Dive)
-    var leer = marken.filter(function (m) { return daten(m).leer; }), voll = marken.filter(function (m) { return !daten(m).leer; });
+    var leer = marken.filter(function (m) { return !STRAT[m] && daten(m).leer; }), voll = marken.filter(function (m) { return STRAT[m] || !daten(m).leer; });
     var h = "";
-    if (voll.length) h += voll.map(function (m) { return zug(m); }).join("");
+    if (voll.length) h += voll.map(function (m) { return STRAT[m] ? '<section class="zg"><div class="zg-kopf"><h4 class="zg-marke">' + esc(m) + "</h4></div>" + stratBlock(m) + "</section>" : zug(m); }).join("");
     if (leer.length) h += '<ul class="sg-zeilen">' + leer.map(function (m) {
       var d = daten(m), schwer = d.proj.filter(function (p) { return p.prioritaet === "hoch"; });
       if (!schwer.length) schwer = d.proj.slice(0, 3);
@@ -305,7 +387,7 @@
       return '<li class="oe-c" title="' + esc(c.titel) + '"><span class="oe-wann">' + wannKurz(c.datum) + "</span><span>" + esc(kuerzen(c.titel, 95)) + "</span></li>"; }).join("") + "</ul></details>" : "";
   }
   function kurs() {
-    return MARKEN.filter(function (m) { return mf(m) && !daten(m).leer; }).map(function (m) { return zug(m); }).join("") || strategie();
+    return MARKEN.filter(function (m) { return mf(m) && (STRAT[m] || !daten(m).leer); }).map(function (m) { return STRAT[m] ? '<section class="zg"><div class="zg-kopf"><h4 class="zg-marke">' + esc(m) + "</h4></div>" + stratBlock(m) + "</section>" : zug(m); }).join("") || strategie();
   }
 
   /* ---------- Ansicht 3: Je Marke (Daniel, 11.10.2026) ----------
@@ -321,7 +403,7 @@
       .concat([["Außerhalb der Stränge", l.filter(function (v) { return titel.indexOf(v.strang) < 0; })]])
       .filter(function (g) { return g[1].length; });
     var themen = m === "empiria" ? ["empiria", "Dashboard", "Projekte"] : [m];
-    return (d.leer ? strategie() : zug(m, { marke: false })) +
+    return (STRAT[m] ? stratBlock(m) : d.leer ? strategie() : zug(m, { marke: false })) +
       '<div class="jm"><p class="oe-k">Was jetzt ansteht</p>' + (gruppen.length ? gruppen.map(function (g) {
         return '<div class="jm-g"><p class="jm-st">' + esc(g[0]) + '</p><ul class="oe-l">' + g[1].map(function (v) { return karte(v); }).join("") + "</ul></div>"; }).join("")
         : '<p class="oe-leer">Kein Vorschlag offen.</p>') + "</div>" +
@@ -377,7 +459,7 @@
       BR.html("strategie", "status", "Entscheidungen", signale() + geburtstage(), "auf") + mitte +
       BR.html("strategie", "sparring", "Sparring starten", sparring(), "zu") + "</div>";
     BR.verdrahten(wurzel, "strategie");
-    verdrahten(); oekosystemVerdrahten();
+    verdrahten(); oekosystemVerdrahten(); stratVerdrahten();
   }
 
   function verdrahten() {

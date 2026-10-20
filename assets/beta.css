@@ -2187,3 +2187,42 @@ button.pr-archiv-titel[aria-expanded="true"] .tl-dreieck { transform: rotate(-13
 
 /* Aufgaben › Liste: Marke vorne in der Zeile (Daniel, 15.10.2026) */
 .al-marke { font-weight: 600; color: var(--ink); }
+
+/* ---------- Strategie als Plan je Marke (Daniel, 20.10.2026) – Visionen, strategische Meilensteine, Stoßrichtungen ---------- */
+.sx { display: grid; gap: 14px; margin-top: 12px; }
+.sx-visionen { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 12px; }
+.sx-vision { padding: 18px 20px 20px; border-radius: 14px; background: #f5f4f2; }
+.sx-vision--1 { background: var(--hl); }
+.sx-k { display: flex; justify-content: space-between; gap: 12px; margin: 0 0 8px; font-size: var(--fs-xs); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink); }
+.sx-k span { font-weight: 500; letter-spacing: .02em; text-transform: none; }
+.sx-satz { margin: 0; font-family: var(--font-serif); font-size: 1.3rem; font-weight: 700; line-height: 1.25; letter-spacing: -.015em; color: var(--ink); }
+.sx-punkte { display: grid; gap: 4px; margin: 12px 0 0; padding: 0 0 0 18px; font-size: var(--fs-s); line-height: 1.4; color: var(--ink-2); }
+.sx-vision--2 .sx-punkte { color: var(--grey-70); }
+.sx-t { margin: 18px 0 0; font-size: var(--fs-xs); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink); }
+.sx-t-zeile { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 18px; }
+.sx-t-zeile .sx-t { margin: 0; }
+.sx-ms { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
+.sx-ms::before { content: ""; position: absolute; left: 14px; right: 14px; top: 14px; height: 2px; background: #e4e1dd; }
+.sx-m { position: relative; display: flex; flex-direction: column; gap: 6px; }
+.sx-m-kopf { display: flex; align-items: center; gap: 10px; }
+.sx-m-nr { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--ink); color: #fff; font-family: var(--font-poppins, inherit); font-size: var(--fs-s); font-weight: 700; box-shadow: 0 0 0 4px #fff; }
+.sx-m-datum { padding: 2px 8px; border-radius: 999px; background: #fff; font-size: var(--fs-xs); font-weight: 600; color: var(--ink); }
+.sx-m b { font-size: var(--fs-m, 1rem); font-weight: 600; line-height: 1.3; }
+.sx-m p { margin: 0; font-size: var(--fs-s); line-height: 1.4; color: var(--grey-70); }
+.sx-m--fertig .sx-m-nr { background: var(--hl); color: var(--ink); }
+.sx-plan { margin-top: 2px; }
+.sx-plan .pl-strang > .pl-teil-info { margin: 0 0 6px; }
+@media (max-width: 760px) {
+  .sx-visionen { grid-template-columns: minmax(0, 1fr); }
+  .sx-ms { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .sx-ms::before { left: 14px; right: auto; top: 14px; bottom: 14px; width: 2px; height: auto; }
+  .sx-m { padding-left: 0; }
+  .sx-m b, .sx-m p { padding-left: 40px; }
+}
+.sx-m-kopf { gap: 0; }
+.sx-m-datum { margin-left: 6px; padding: 2px 10px; }
+.sx-plan .pl-liste:empty { display: none; }
+.sx-plan .pl-strang > .pl-strang-titel .pl-s-name { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; line-height: 1.25; letter-spacing: -.01em; }
+.sx-plan .pl-strang { margin-bottom: 10px; }
+/* Strategie-Plan: solange noch keine Handlungspakete drin sind, braucht jeder Abschnitt Platz für das Meilenstein-Etikett */
+.sx-plan .pl-seg { min-width: 170px; }
