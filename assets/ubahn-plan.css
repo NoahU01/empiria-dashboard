@@ -1,0 +1,77 @@
+/* Linienplan „Weg zum Ergebnis“ – übernommen aus dem Repo sv (ziel-ubahn-20.css), Daniel, 23.10.2026
+   Eine Schrift (Poppins), zwei Größen (.84rem / .74rem), zwei Farben (#111 / Grau). Farbe nur für die Stoßrichtungen. */
+.ub-pop ul{margin:6px 0 0;padding-left:16px}
+.ub-pop li + li{margin-top:3px}
+.ub-rahmen{display:flex;align-items:flex-start;padding:6px 0 0}
+.ub-spalte{flex:none;width:200px;position:relative;border-right:1px solid #efece7}
+.ub-bahn{position:absolute;left:18px;right:10px;display:flex;align-items:center;gap:10px}
+.ub-linie{flex:none;min-width:32px;height:28px;padding:0 6px;border-radius:7px;color:#fff;font-weight:600;font-size:.74rem;display:flex;align-items:center;justify-content:center}
+.ub-bahn b{display:block;font-size:.84rem;font-weight:600;line-height:1.25}
+.ub-bahn small{display:block;font-size:.74rem;color:var(--grey-50,#8a8a8a);margin-top:1px}
+.ub-scroll{overflow-x:auto;flex:1;min-width:0;padding:0 0 4px;cursor:grab}
+.ub-scroll.ub-zieht{cursor:grabbing;user-select:none}
+.ub-flaeche{position:relative}
+.ub-svg{position:absolute;left:0;top:0}
+.ub-ausruf{font:600 9px/1 Poppins,sans-serif;fill:#fff}
+.ub-name{position:absolute;border:0;background:none;padding:0;font:inherit;font-size:.74rem;line-height:1.3;font-weight:500;color:#111;text-align:center;cursor:pointer;hyphens:auto}
+.ub-name--oben{transform:translateY(-100%)}
+.ub-name:hover{text-decoration:underline;text-underline-offset:3px}
+.ub-name--erreicht,.ub-name--offen,.ub-name--frei,.ub-name--wartet{color:var(--grey-50,#8a8a8a)}
+.ub-name--aktiv{font-weight:600}
+.ub-name--blass{color:#c9c5bf}
+.ub-treffer{position:absolute;width:32px;height:32px;border:0;background:none;padding:0;cursor:pointer;border-radius:50%}
+.ub-halt-name{position:absolute;transform:translateX(-50%);white-space:nowrap;text-align:center}
+.ub-halt-name b{display:block;font-size:.74rem;font-weight:600}
+.ub-halt-name small{display:block;font-size:.74rem;color:var(--grey-50,#8a8a8a)}
+.ub-halt-name--ende{transform:translateY(-50%);text-align:left;white-space:normal;width:130px}
+.ub-halt-name--ende b{font-size:.84rem}
+.ub-halt-name--start{transform:none;text-align:left}
+.ub-pop{position:absolute;z-index:20;width:300px;box-sizing:border-box;padding:14px 16px;background:#fff;border:1px solid #e8e5e0;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.08);font-size:.74rem;line-height:1.5;color:#111;cursor:default;text-align:left}
+.ub-pop p{margin:0}
+.ub-pop p + p{margin-top:6px}
+.ub-pop-titel{font-size:.84rem;font-weight:600}
+.ub-pop-meta{color:var(--grey-50,#8a8a8a)}
+.ub-monat{position:absolute;transform:translateX(-50%);white-space:nowrap;font-size:.72rem;color:#8a857d;pointer-events:none}
+.ub-bahn{font:inherit;color:inherit;text-align:left;background:none;border:0;padding:4px 0;border-radius:8px;cursor:pointer}
+.ub-bahn > span:nth-child(2){flex:1;min-width:0}
+.ub-bahn:hover b,.ub-bahn[aria-expanded="true"] b{text-decoration:underline;text-underline-offset:3px}
+.ub-spalte{z-index:3}
+.ub-pop--strang{left:186px;width:280px}
+.ub-strang-treffer{position:absolute;left:0;height:18px;padding:0;border:0;background:transparent;cursor:pointer}
+.ub-termin{position:absolute;display:flex;align-items:center;height:22px;padding:0 0 0 22px;border:0;background:none;font:500 .74rem/1 Poppins,sans-serif;color:#111;white-space:nowrap;cursor:pointer;z-index:2}
+.ub-termin:hover span,.ub-termin:focus-visible span{text-decoration:underline;text-underline-offset:3px}
+.ub-pop--termin{width:260px}
+.ub-pop--termin a{color:#111}
+
+.ub-zoom-trenner{width:1px;height:16px;background:#e0dcd5;margin:0 3px}
+.ub-zoom button{width:26px;height:26px;border-radius:50%;border:0;background:none;color:#111;font:500 .95rem/1 Poppins,sans-serif;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0 0 1px;transition:background .15s}
+.ub-zoom button:hover:not(:disabled){background:#f3f1ed}
+.ub-zoom button:disabled{opacity:.3;cursor:default}
+.ub-zoom output{min-width:38px;text-align:center}
+.ub-leg-knopf{transition:none!important;width:auto!important;border-radius:999px!important;padding:0 10px 1px!important;font:500 .74rem/1 Poppins,sans-serif!important}
+.ub-leg-knopf[aria-expanded="true"]{background:#111!important;color:#fff!important}
+.ub-pop--legende{position:absolute;top:calc(100% + 8px);right:0;width:auto;white-space:nowrap}
+.ub-leg{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-rows:repeat(3,auto);grid-auto-flow:column;gap:8px 22px;color:#555}
+.ub-leg li{display:flex;align-items:center;gap:8px}
+.ub-leg-ic{width:30px;display:inline-flex;justify-content:center;flex:none}
+.ub-kopf-wenn{margin:0;font-size:.95rem;line-height:1.6;color:#555;max-width:760px}
+.ub-route{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));position:relative;margin:6px 0 18px}
+.ub-route::before{content:"";position:absolute;left:calc(100%/12);right:calc(100%/12);top:63px;height:2px;background:#e0dcd5}
+.ub-route-halt{display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:0;padding:0 6px;cursor:pointer;font:inherit;color:#8a857d;position:relative}
+.ub-route-titel{height:44px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-align:center;font-size:.84rem;line-height:1.3;color:#8a857d;padding-top:10px;box-sizing:border-box}
+.ub-route-punkt{width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid #b8b2a8;margin:4px 0;box-sizing:content-box}
+.ub-route-halt.ist-erreicht .ub-route-punkt{background:#111;border-color:#111}
+.ub-route-halt.ist-ziel .ub-route-punkt{border-radius:6px;width:10px;height:16px;border-color:#111;margin:2px 0}
+.ub-route-datum{font-size:.74rem}
+.ub-route-halt:hover .ub-route-titel{color:#111}
+.ub-route-halt.ist-an .ub-route-titel{color:#111;font-weight:600}
+.ub-route-halt.ist-an .ub-route-punkt{width:13px;height:13px;background:#fff;border:4.5px solid #111;margin:0 0 1px}
+.ub-route-halt.ist-an .ub-route-datum{color:#111}
+.ub-halt-name--ende{width:124px}
+.ub-route-aktuell{margin-top:-4px;font-size:.66rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#111}
+.ub-zoom{position:relative;z-index:6;display:flex;align-items:center;gap:2px;background:#fff;border:1px solid #e0dcd5;border-radius:999px;padding:3px 5px;font:500 .72rem/1 Poppins,sans-serif;color:#111}
+/* Dashboard: Rahmen um den Plan in der Projektseite */
+.ub-dash{position:relative}
+.ub-dash-kopf{display:flex;justify-content:flex-end;margin:0 0 18px}
+.ub-dash [data-ub-stufen]{margin-bottom:36px}
+.ub-dash .ub-bahn{left:0}

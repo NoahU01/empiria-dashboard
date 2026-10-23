@@ -109,7 +109,74 @@
   }
 
   /* ---------- Projekt ---------- */
-  var STRAENGE = [], EXTERN = [];   // Planungsmodus: Stränge des Projekts (assets/projekt-plan.js)
+  var STRAENGE = [], EXTERN = [];
+  /* ---------- Linienplan: Daten aus projekt_straenge und aufgaben (Daniel, 23.10.2026) ----------
+     Stoßrichtungen = Stränge ohne Unterstränge (Reihenfolge wie im Projekt; Unterstränge eines Oberstrangs stehen an seiner Stelle).
+     Ergebnislevel = Projekt-Gates (aufgaben.art = 'projektgate'). Aufgaben ohne Projekt-Gate (z. B. Innovation, Projektmanagement)
+     kommen in das Level, vor dessen Datum sie fällig sind – ohne Datum in das erste offene Level. */
+  var UB_FARBEN = ["#C51F5D", "#8613A1", "#0B9FBD", "#B08D57", "#6b665f", "#3d7a5c", "#a05a2c"];
+  var UB_GERUEST = '<div class="ub-dash" data-ub-wurzel><div class="ub-dash-kopf"><div data-zoom-platz></div><div data-legende-quelle hidden><ul class="ub-leg"><li><span class="ub-leg-ic"><svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="8.75" fill="#fff" stroke="#111" stroke-width="4.5"/></svg></span>in Arbeit</li><li><span class="ub-leg-ic"><svg width="14" height="22" viewBox="0 0 14 22"><circle cx="7" cy="11" r="6" fill="#111"/></svg></span>erledigt</li><li><span class="ub-leg-ic"><svg width="20" height="22" viewBox="0 0 20 22"><circle cx="10" cy="11" r="8.5" fill="#fff" stroke="#a39e96" stroke-width="3"/></svg></span>kommt noch</li><li><span class="ub-leg-ic"><svg width="30" height="10"><line x1="4" y1="5" x2="26" y2="5" stroke="#111" stroke-width="8" stroke-linecap="round"/></svg></span>Strecke erledigt</li><li><span class="ub-leg-ic"><svg width="30" height="10"><line x1="4" y1="5" x2="26" y2="5" stroke="#dedad4" stroke-width="8" stroke-linecap="round"/></svg></span>Strecke offen</li><li><span class="ub-leg-ic"><svg width="30" height="10"><line x1="2" y1="5" x2="28" y2="5" stroke="#8a857d" stroke-width="2" stroke-dasharray="3 5"/></svg></span>Abh&auml;ngigkeit</li><li><span class="ub-leg-ic"><svg width="26" height="20"><line x1="3" y1="3" x2="3" y2="17" stroke="#111" stroke-width="4" stroke-linecap="round"/><line x1="3" y1="10" x2="24" y2="10" stroke="#111" stroke-width="4" stroke-linecap="round"/></svg></span>beginnt eigenst&auml;ndig</li><li><span class="ub-leg-ic"><svg width="16" height="24"><rect x="3" y="3" width="10" height="18" rx="5" fill="#fff" stroke="#111" stroke-width="3"/></svg></span>Ergebnislevel</li></ul></div></div>' +
+    '<div data-ub-stufen></div><div data-ub-plan></div></div>';
+  function ubKurz(t) {
+    if (/projektmanagement/i.test(t)) return "PM";
+    var w = t.replace(/&/g, " ").split(/\s+/).filter(Boolean), rom = { I: "1", II: "2", III: "3", IV: "4", V: "5" };
+    if (w.length > 1 && rom[w[w.length - 1]]) return w[0][0].toUpperCase() + rom[w[w.length - 1]];
+    if (w.length > 1) return (w[0][0] + w[1][0]).toUpperCase();
+    return w[0].slice(0, 2).toUpperCase();
+  }
+  function ubahnDaten(straenge, auf) {
+    var kinder = {}, oben = [];
+    straenge.forEach(function (s) { if (s.eltern_id) (kinder[s.eltern_id] = kinder[s.eltern_id] || []).push(s); else oben.push(s); });
+    function reihe(a, b) { return (a.reihenfolge || 0) - (b.reihenfolge || 0) || a.id - b.id; }
+    var blaetter = [];
+    oben.sort(reihe).forEach(function (s) { if (kinder[s.id]) kinder[s.id].sort(reihe).forEach(function (k) { blaetter.push(k); }); else blaetter.push(s); });
+    var gates = auf.filter(function (a) { return a.art === "projektgate"; })
+      .sort(function (a, b) { return String(a.faellig_am || "9999").localeCompare(String(b.faellig_am || "9999")) || (a.reihenfolge || 0) - (b.reihenfolge || 0); });
+    if (!gates.length || !blaetter.length) return null;
+    var imStrang = {}; blaetter.forEach(function (s) { imStrang[s.id] = true; });
+    var liste = auf.filter(function (a) { return a.strang_id && imStrang[a.strang_id] && a.art !== "projektgate"; });
+    var ids = {}; liste.forEach(function (a) { ids[a.id] = true; });
+    // Reihenfolge im Strang ist die Abfolge: hat eine Aufgabe keinen Vorgänger im eigenen Strang, hängt sie an der vorigen –
+    // so wird jeder Strang eine Linie statt vieler paralleler Nebenstrecken
+    // Begleitende Stränge (eigener Oberstrang ohne Unterstränge, z. B. Innovation, Projektmanagement): nur die Reihenfolge zählt,
+    // damit sie als eine ruhige Linie neben den Stoßrichtungen laufen
+    var gruppen = oben.some(function (s) { return kinder[s.id]; });
+    var begleitend = {}; if (gruppen) oben.forEach(function (s) { if (!kinder[s.id]) begleitend[s.id] = true; });
+    var vorher = {};
+    blaetter.forEach(function (st) {
+      var reihe2 = liste.filter(function (a) { return a.strang_id === st.id; })
+        .sort(function (x, y) { return (x.reihenfolge == null ? 999 : x.reihenfolge) - (y.reihenfolge == null ? 999 : y.reihenfolge) || x.id - y.id; });
+      reihe2.forEach(function (a, i) {
+        var eigene = !begleitend[st.id] && (a.vorgaenger || []).some(function (v) { return reihe2.some(function (b) { return String(b.id) === String(v); }); });
+        if (!eigene && i > 0) vorher[a.id] = reihe2[i - 1].id;
+      });
+    });
+    var erstesOffen = (gates.filter(function (g) { return g.status !== "erledigt"; })[0] || gates[gates.length - 1]).id;
+    function level(a) {
+      if (a.projektgate_id && gates.some(function (g) { return g.id === a.projektgate_id; })) return a.projektgate_id;
+      if (a.faellig_am) { var g = gates.filter(function (x) { return x.faellig_am && x.faellig_am >= a.faellig_am; })[0]; if (g) return g.id; }
+      return erstesOffen;
+    }
+    function datum(d) { var t = String(d || "").slice(0, 10).split("-"); return t.length === 3 ? t[2] + "." + t[1] + "." + t[0] : "offen"; }
+    return {
+      zielbild: { kurz: "Gesamtplan" },
+      straenge: blaetter.map(function (s, i) {
+        var label = String(s.titel || "").replace(/^\d+\s+/, "");
+        return { id: "s" + s.id, kurz: ubKurz(label), label: label, frage: s.erklaerung || "", beschreibung: "", verantwortung: (s.verantwortlich || []).join(", "), farbe: UB_FARBEN[i % UB_FARBEN.length] };
+      }),
+      meilensteine: gates.map(function (g, i) {
+        return { id: "g" + g.id, nr: i + 1, termin: datum(g.faellig_am), titel: g.titel, ergebnis: g.beschreibung ? [g.beschreibung] : [],
+          braucht: liste.filter(function (a) { return level(a) === g.id; }).map(function (a) { return "a" + a.id; }) };
+      }),
+      schritte: liste.map(function (a) {
+        return { id: "a" + a.id, strang: "s" + a.strang_id, meilenstein: "g" + level(a), titel: a.titel, beschreibung: a.beschreibung || "",
+          status: a.status === "erledigt" ? "erreicht" : (a.spalte === "arbeit" || a.spalte === "pruefung") ? "aktiv" : "offen",
+          braucht: (a.vorgaenger || []).filter(function (v) { return ids[v] && !(begleitend[a.strang_id] && liste.some(function (b) { return String(b.id) === String(v) && b.strang_id === a.strang_id; })); })
+            .map(function (v) { return "a" + v; }).concat(vorher[a.id] ? ["a" + vorher[a.id]] : []),
+          termin: a.faellig_am ? "fällig " + datum(a.faellig_am) : "" };
+      })
+    };
+  }   // Planungsmodus: Stränge des Projekts (assets/projekt-plan.js)
   function projekt(id) {
     wurzel.innerHTML = '<div class="kb-laedt"><span></span><span></span></div>';
     Promise.all([
@@ -247,7 +314,8 @@
       return '<button type="button" data-aav="' + v[0] + '" aria-pressed="' + (v[0] === aav) + '">' + v[1] + "</button>"; }).join("") + "</span>";
     var aufInhalt;
     var hilfen = { titel: titel, details: details, zusatz: zusatz, phase: phase, wer: wer, paket: paketLabel, frist: frist };
-    if (aav === "plan") aufInhalt = '<div class="pl-rahmen">' + ProjektPlan.bild(STRAENGE, auf, auf.concat(EXTERN)) + "</div>";
+    // Plan: Linienplan „Weg zum Ergebnis“ wie im Kundenprojekt SV Akademie (assets/ubahn-plan.js) – Daniel, 23.10.2026
+    if (aav === "plan") aufInhalt = window.UBahnPlan && ubahnDaten(STRAENGE, auf) ? UB_GERUEST : '<div class="pl-rahmen">' + ProjektPlan.bild(STRAENGE, auf, auf.concat(EXTERN)) + "</div>";
     else if (aav === "liste" && plan) aufInhalt = '<div class="pl-rahmen">' + ProjektPlan.liste(STRAENGE, auf, hilfen, auf.concat(EXTERN)) + "</div>";
     else if (aav === "kanban") {
       var vor14 = Date.now() - 14 * 864e5;
@@ -433,6 +501,8 @@
       b.onclick = function () { var m = b.nextElementSibling; m.hidden = !m.hidden; b.setAttribute("aria-expanded", String(!m.hidden)); };
     });
     if (STRAENGE.length && window.ProjektPlan) ProjektPlan.verdrahten(wurzel, db, STRAENGE, STAND.auf, function () { projekt(p.id); });
+    var ub = wurzel.querySelector("[data-ub-wurzel]");
+    if (ub && window.UBahnPlan) UBahnPlan(ub, ubahnDaten(STRAENGE, STAND.auf), { hash: false });
     wurzel.querySelectorAll("[data-pz-feld]").forEach(function (gr) {
       var feld = gr.getAttribute("data-pz-feld");
       gr.querySelectorAll("button").forEach(function (b) { b.onclick = function () {
