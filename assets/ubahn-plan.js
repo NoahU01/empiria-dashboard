@@ -15,7 +15,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
 
   function esc(t) { return String(t == null ? "" : t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function msName(m) { return m.titel || "Ergebnislevel " + m.nr; }
-  function stufeErreicht(mid) { return (MS[mid].braucht || []).every(function (b) { return S[b] && S[b].status === "erreicht"; }); }
+  function stufeErreicht(mid) { var b = MS[mid].braucht || []; return b.length > 0 && b.every(function (x) { return S[x] && S[x].status === "erreicht"; }); }
   function fertig(id) { return MS[id] ? stufeErreicht(id) : S[id] && S[id].status === "erreicht"; }
   function zustand(s) {
     if (s.status === "erreicht") return "erreicht";
@@ -105,6 +105,11 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var stufenImBlick = D.meilensteine.filter(function (x) { return m.gesamt || x.id === m.id; });
     var imBlick = {}; stufenImBlick.forEach(function (x) { imBlick[x.id] = true; });
     var liste = D.schritte.filter(function (s) { return imBlick[s.meilenstein]; });
+    if (!liste.length) {   // Level ohne geplante Schritte (z. B. spätere Ergebnislevel)
+      planEl.style.height = "";
+      planEl.innerHTML = '<p class="ub-leer">Für dieses Level sind noch keine Schritte geplant.</p>';
+      return;
+    }
     var imPlan = {}; liste.forEach(function (s) { imPlan[s.id] = true; });
     var vorStufe = m.gesamt ? null : D.meilensteine[m.i - 1] || null;   // Starthalt: die Stufe davor
     var fokus = zustandUI.station ? vorlauf([zustandUI.station]) : m.gesamt ? imPlan : vorlauf(m.braucht || []);
@@ -166,7 +171,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var bahnen = D.straenge.filter(function (st) { return liste.some(function (s) { return s.strang === st.id; }); });
     // Termine (Klausur, Workshops): eigene Zeile unter den Monaten; Termine, die zugleich ein Schritt sind, stehen dort als Halt
     var termineImPlan = (D.termine || []).filter(function (t) { return !t.schritt && monatsBloecke.some(function (b) { return b.monat === t.monat; }); });
-    var linieY = {}, y0 = (nr > 1 ? 46 : 8) + (monatsBloecke.length ? 44 : 0) + (termineImPlan.length ? 30 : 0);   // oben eine Zeile für die Namen der Stufenhalte (nur im Gesamtplan)
+    var linieY = {}, y0 = (nr > 1 ? 46 : 16) + (monatsBloecke.length ? 44 : 0) + (termineImPlan.length ? 30 : 0);   // oben eine Zeile für die Namen der Stufenhalte (nur im Gesamtplan)
     bahnen.forEach(function (st) { linieY[st.id] = y0 + UEBER; y0 += UEBER + tiefsteZeile[st.id] * ZH + (tiefsteZeile[st.id] ? UNTER + 34 : UNTER); });
     var hoehe = y0 + 6 + (vorStufe ? 22 : 0);   // unten Platz für „Voraussetzung: …“
     function yVon(s) { return linieY[s.strang] + unter[s.id] * ZH; }

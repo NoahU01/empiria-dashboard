@@ -132,9 +132,17 @@
     oben.sort(reihe).forEach(function (s) { if (kinder[s.id]) kinder[s.id].sort(reihe).forEach(function (k) { blaetter.push(k); }); else blaetter.push(s); });
     var gates = auf.filter(function (a) { return a.art === "projektgate"; })
       .sort(function (a, b) { return String(a.faellig_am || "9999").localeCompare(String(b.faellig_am || "9999")) || (a.reihenfolge || 0) - (b.reihenfolge || 0); });
-    if (!gates.length || !blaetter.length) return null;
     var imStrang = {}; blaetter.forEach(function (s) { imStrang[s.id] = true; });
-    var liste = auf.filter(function (a) { return a.strang_id && imStrang[a.strang_id] && a.art !== "projektgate"; });
+    // Aufgaben ohne (bekannten) Strang laufen auf einer eigenen Linie „Weitere Aufgaben“
+    var ohne = auf.filter(function (a) { return a.art !== "projektgate" && !(a.strang_id && imStrang[a.strang_id]); });
+    if (ohne.length) { blaetter.push({ id: 0, titel: blaetter.length ? "Weitere Aufgaben" : "Aufgaben", erklaerung: "", verantwortlich: [] }); imStrang[0] = true; }
+    if (!blaetter.length) return null;
+    var liste = auf.filter(function (a) { return a.art !== "projektgate"; }).map(function (a) { return a.strang_id && imStrang[a.strang_id] ? a : Object.assign({}, a, { strang_id: 0 }); });
+    // Projekt ohne Projekt-Gates: ein Ergebnislevel „Projektziel“ über alle Aufgaben, fällig mit der letzten Aufgabe
+    if (!gates.length) {
+      var letzte = liste.map(function (a) { return a.faellig_am; }).filter(Boolean).sort().pop() || null;
+      gates = [{ id: 0, titel: "Projektziel", faellig_am: letzte, status: "offen", beschreibung: "" }];
+    }
     var ids = {}; liste.forEach(function (a) { ids[a.id] = true; });
     // Reihenfolge im Strang ist die Abfolge: hat eine Aufgabe keinen Vorgänger im eigenen Strang, hängt sie an der vorigen –
     // so wird jeder Strang eine Linie statt vieler paralleler Nebenstrecken
@@ -291,9 +299,9 @@
     var offen = auf.filter(function (a) { return a.status === "offen"; }).sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });
     // Aufgaben als Liste oder Kanban-Board (Backlog · To-do · In Arbeit · Review/Prüfung · Erledigt)
     var aav = "liste";
-    var plan = STRAENGE.length && window.ProjektPlan;
+    var plan = STRAENGE.length && window.ProjektPlan, linienplan = !!window.UBahnPlan;
     try { aav = localStorage.getItem("pr-auf-ansicht") || "liste"; } catch (x) {}
-    if (aav !== "kanban" && !(aav === "plan" && plan)) aav = "liste";
+    if (aav !== "kanban" && !(aav === "plan" && (plan || linienplan))) aav = "liste";
     function frist(a) {
       var ueber = a.status === "offen" && a.faellig_am && new Date(a.faellig_am) < new Date(new Date().toDateString());
       return '<span class="pr-frist' + (a.faellig_am ? " mk mk--frist" : "") + (ueber ? " pr-ueber" : "") + '">' + (a.faellig_am ? kurz(a.faellig_am) : "ohne Termin") + "</span>";
@@ -310,12 +318,12 @@
     // Listenansicht: Phase im Kanban schlicht in der grauen Zeile („In Arbeit · Daniel“) – Daniel, 09.10.2026
     var PHASE = { backlog: "Backlog", todo: "To-do", arbeit: "In Arbeit", pruefung: "Prüfung" };
     function phase(a) { return PHASE[a.spalte || "todo"] || "To-do"; }
-    var wahl = '<span class="pr-tl-wahl">' + [["liste", "Liste"]].concat(plan ? [["plan", "Plan"]] : [], [["kanban", "Kanban"]]).map(function (v) {
+    var wahl = '<span class="pr-tl-wahl">' + [["liste", "Liste"]].concat(plan || linienplan ? [["plan", "Plan"]] : [], [["kanban", "Kanban"]]).map(function (v) {
       return '<button type="button" data-aav="' + v[0] + '" aria-pressed="' + (v[0] === aav) + '">' + v[1] + "</button>"; }).join("") + "</span>";
     var aufInhalt;
     var hilfen = { titel: titel, details: details, zusatz: zusatz, phase: phase, wer: wer, paket: paketLabel, frist: frist };
     // Plan: Linienplan „Weg zum Ergebnis“ wie im Kundenprojekt SV Akademie (assets/ubahn-plan.js) – Daniel, 23.10.2026
-    if (aav === "plan") aufInhalt = window.UBahnPlan && ubahnDaten(STRAENGE, auf) ? UB_GERUEST : '<div class="pl-rahmen">' + ProjektPlan.bild(STRAENGE, auf, auf.concat(EXTERN)) + "</div>";
+    if (aav === "plan") aufInhalt = linienplan && ubahnDaten(STRAENGE, auf) ? UB_GERUEST : plan ? '<div class="pl-rahmen">' + ProjektPlan.bild(STRAENGE, auf, auf.concat(EXTERN)) + "</div>" : '<p class="pr-offen">Noch keine Aufgaben für den Plan.</p>';
     else if (aav === "liste" && plan) aufInhalt = '<div class="pl-rahmen">' + ProjektPlan.liste(STRAENGE, auf, hilfen, auf.concat(EXTERN)) + "</div>";
     else if (aav === "kanban") {
       var vor14 = Date.now() - 14 * 864e5;
@@ -501,8 +509,8 @@
       b.onclick = function () { var m = b.nextElementSibling; m.hidden = !m.hidden; b.setAttribute("aria-expanded", String(!m.hidden)); };
     });
     if (STRAENGE.length && window.ProjektPlan) ProjektPlan.verdrahten(wurzel, db, STRAENGE, STAND.auf, function () { projekt(p.id); });
-    var ub = wurzel.querySelector("[data-ub-wurzel]");
-    if (ub && window.UBahnPlan) UBahnPlan(ub, ubahnDaten(STRAENGE, STAND.auf), { hash: false });
+    var ub = wurzel.querySelector("[data-ub-wurzel]"), ubd = ub && window.UBahnPlan ? ubahnDaten(STRAENGE, STAND.auf) : null;
+    if (ubd) UBahnPlan(ub, ubd, { hash: false });
     wurzel.querySelectorAll("[data-pz-feld]").forEach(function (gr) {
       var feld = gr.getAttribute("data-pz-feld");
       gr.querySelectorAll("button").forEach(function (b) { b.onclick = function () {
