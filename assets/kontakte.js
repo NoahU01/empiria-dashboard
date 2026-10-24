@@ -52,15 +52,15 @@
     if (kopfKonto) kopfKonto.innerHTML = "";
     wurzel.innerHTML = '<div class="kb-hinweis kt-login"><p>' + (hinweis || "Melde dich einmal an: Du bekommst eine Mail an deine Adresse. Danach bleibst du auf diesem Gerät angemeldet – auch in der Web-App auf dem Homescreen.") + "</p>" +
       (mail ? "" : '<form data-login><input class="kb-suche" type="email" required value="daniel.stroebel@empiria.de" aria-label="Mailadresse"> <button class="kb-knopf" type="submit">Anmelde-Mail schicken</button></form>') +
-      (mail ? '<form data-code class="kt-code"><input class="kb-suche" type="text" inputmode="text" autocomplete="one-time-code" required placeholder="Code aus der Mail – oder den kopierten Login-Link einfügen" aria-label="Code oder Link"> <button class="kb-knopf" type="submit">Anmelden</button>' +
-        '<p class="kt-code-hilfe">Auf iPhone oder iPad: in der Mail lange auf „Sign in“ bzw. den Link tippen → „Link kopieren“ → hier einfügen. <button type="button" class="kt-neu" data-neu>Andere Adresse / neue Mail</button></p></form>' : "") + "</div>";
+      (mail ? '<form data-code class="kt-code"><input class="kb-suche" type="text" inputmode="text" autocomplete="one-time-code" required placeholder="Code aus der Mail (8 Ziffern)" aria-label="Code oder Link"> <button class="kb-knopf" type="submit">Anmelden</button>' +
+        '<p class="kt-code-hilfe">Bitte in der Mail <b>nicht auf den Link tippen</b> – er öffnet den Browser statt der Web-App. Steht in der Mail noch kein Code, lange auf den Link tippen → „Link kopieren“ → hier einfügen. <button type="button" class="kt-neu" data-neu>Andere Adresse / neue Mail</button></p></form>' : "") + "</div>";
     var f = wurzel.querySelector("[data-login]");
     if (f) f.addEventListener("submit", function (e) {
       e.preventDefault();
       var m = e.target.querySelector("input").value.trim();
       db.auth.signInWithOtp({ email: m, options: { emailRedirectTo: location.origin + location.pathname, shouldCreateUser: true } }).then(function (r) {
         if (r.error) anmeldenZeigen("Das hat nicht geklappt: " + esc(r.error.message));
-        else anmeldenZeigen("Mail ist unterwegs an <b>" + esc(m) + "</b>.", m);
+        else anmeldenZeigen("Mail ist unterwegs an <b>" + esc(m) + "</b>. Gib den Code aus der Mail hier ein.", m);
       });
     });
     var c = wurzel.querySelector("[data-code]");
