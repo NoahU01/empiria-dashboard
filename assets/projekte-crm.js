@@ -230,9 +230,9 @@
      schmale Leiste direkt unter dem Kopf: sichtbar, aber nicht dominant */
   function projektseite(s) {
     if (!s || !s.url) return "";
-    var raus = ' target="_blank" rel="noopener"';
+    var raus = ' target="_blank" rel="noopener"', intern = s.url.charAt(0) === "/"; // Seiten im Dashboard im selben Fenster
     return '<nav class="pr-seite" aria-label="Projektseite"><span class="pr-seite-marke">Projektseite</span>' +
-      '<a class="pr-seite-titel" href="' + esc(s.url) + '"' + raus + ">" + esc(s.titel || "Website") + ' <i aria-hidden="true">↗</i></a>' +
+      '<a class="pr-seite-titel" href="' + esc(s.url) + '"' + (intern ? "" : raus) + ">" + esc(s.titel || "Website") + (intern ? " <i aria-hidden=\"true\">→</i>" : ' <i aria-hidden="true">↗</i>') + "</a>" +
       ((s.teile || []).length ? '<span class="pr-seite-teile">' + s.teile.map(function (t) {
         return '<a href="' + esc(t.url) + '"' + raus + ">" + esc(t.titel) + "</a>"; }).join("") + "</span>" : "") +
       (s.repo ? '<a class="pr-seite-repo" href="https://github.com/' + esc(s.repo) + (s.zweig ? "/tree/" + esc(s.zweig) : "") + '"' + raus + ' title="Repository auf GitHub">' +
