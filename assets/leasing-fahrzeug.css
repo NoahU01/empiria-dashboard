@@ -81,6 +81,9 @@
 .lf-vgl td:first-child a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .lf-vgl td small { margin-left: 4px; font-size: var(--fs-xs); color: var(--grey-50); }
 .lf-vgl td b { font-weight: 700; color: var(--ink); }
+.lf-vgl td.lf-vgl-liefer { white-space: normal; min-width: 9em; font-size: var(--fs-s); }
+.lf-vgl td.lf-vgl-liefer--ja { color: var(--ink); }
+.lf-liefer a { color: inherit; text-underline-offset: 3px; }
 .lf-vgl tbody tr:first-child td b { background: var(--hl); padding: 1px 6px; border-radius: 4px; }
 @media (max-width: 640px) { .lf-vgl-mehr { display: none; } .lf-vgl { font-size: var(--fs-s); } }
 .lf-annahmen { margin-top: var(--s4); font-size: var(--fs-s); color: var(--grey-70); }

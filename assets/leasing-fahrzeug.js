@@ -89,7 +89,7 @@
       '<a class="lf-link" href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.anbieter) + " ↗</a></article>";
   }
 
-  fetch("/assets/leasing-fahrzeug.json?v=202610151800").then(function (r) { return r.json(); }).then(function (d) {
+  fetch("/assets/leasing-fahrzeug.json?v=202610251200").then(function (r) { return r.json(); }).then(function (d) {
     A = d.annahmen || {};
     var vergleich = document.querySelector("[data-lf-vergleich]");
     if (vergleich) {
@@ -104,12 +104,12 @@
         zeilen.push({ name: x.marke + " " + x.kurzname, ziel: "#lf-deal-" + i, a: x, antrieb: x.antrieb, r: rechne(x, x.antrieb, x.verbrauch), deal: true });
       });
       zeilen.sort(function (p, q) { return p.r.privat - q.r.privat; });
-      vergleich.innerHTML = '<table class="lf-vgl"><thead><tr><th>Modell</th><th>Privat im Monat</th><th>Leasing netto</th><th class="lf-vgl-mehr">Faktor</th><th class="lf-vgl-mehr">Versteuerung</th><th class="lf-vgl-mehr">Bis 20.12.</th></tr></thead><tbody>' +
+      vergleich.innerHTML = '<table class="lf-vgl"><thead><tr><th>Modell</th><th>Privat im Monat</th><th>Leasing netto</th><th class="lf-vgl-mehr">Faktor</th><th class="lf-vgl-mehr">Versteuerung</th><th class="lf-vgl-mehr">Lieferung</th></tr></thead><tbody>' +
         zeilen.map(function (z) {
           return '<tr><td><a href="' + z.ziel + '">' + esc(z.name) + "</a>" + (z.deal ? " <small>Deal</small>" : "") + (z.r.en ? "" : " <small>ohne Energie</small>") + "</td>" +
             "<td><b>" + euro(z.r.privat) + "</b></td><td>" + euro(z.a.rate_netto) + "</td>" +
             '<td class="lf-vgl-mehr">' + fak(z.a.leasingfaktor) + '</td><td class="lf-vgl-mehr">' + pz(satz(z.antrieb)) + "</td>" +
-            '<td class="lf-vgl-mehr">' + (z.a.dezember === "ja" ? "✓" : z.a.dezember === "knapp" ? "knapp" : "–") + "</td></tr>";
+            '<td class="lf-vgl-mehr lf-vgl-liefer' + (z.a.dezember === "ja" ? " lf-vgl-liefer--ja" : "") + '">' + (z.a.dezember === "ja" ? "✓ " : "") + esc(z.a.lieferung) + "</td></tr>";
         }).join("") + "</tbody></table>" +
         '<details class="lf-annahmen"><summary>So rechnen wir</summary><ul>' +
         "<li><b>Privat je Monat</b> = " + pz(A.anteil_privat_firmenkosten) + " der Firmenkosten + Versteuerung der Privatnutzung. Die " + pz(A.anteil_privat_firmenkosten) + " stehen für das, was von jedem Firmen-Euro nach Körperschaft- und Kapitalertragsteuer privat ankäme.</li>" +
@@ -123,7 +123,7 @@
     if (dealsZiel && d.deals) {
       var mk = d.markt || {};
       dealsZiel.innerHTML = '<p class="lf-unter">Marktniveau im Gewerbeleasing heute: Elektro Faktor ' + fak(mk.ev_median) + ", Plug-in-Hybrid " + fak(mk.phev_median) +
-        " (Median, Stichprobe von rund 180 Angeboten auf leasingmarkt.de, Stand " + esc(d.stand) + "). Hier steht nur, was klar darunter liegt. Bei Elektro und Plug-in-Hybrid gibt es im Suchprofil gerade keinen Ausreißer um 0,3, bei Benzinern schon. Wegen der 1-%-Versteuerung kosten sie privat aber nicht weniger als die günstigen Elektroautos.</p>" +
+        " (Median, Stichprobe von rund 180 Angeboten auf leasingmarkt.de, Stand " + esc(mk.stand || d.stand) + "). Hier steht nur, was klar darunter liegt. Bei Elektro und Plug-in-Hybrid gibt es im Suchprofil gerade keinen Ausreißer um 0,3, bei Benzinern schon. Wegen der 1-%-Versteuerung kosten sie privat aber nicht weniger als die günstigen Elektroautos.</p>" +
         '<div class="lf-deals">' + d.deals.map(function (x, i) { return deal(x, i); }).join("") + "</div>";
     }
     // Karten nach Kosten aus privater Sicht aufsteigend (Daniel, 15.10.2026); Modelle ohne Angebot ans Ende
@@ -151,6 +151,7 @@
         (m.notiz ? '<p class="lf-notiz">' + esc(m.notiz) + "</p>" : "") +
         (m.eckdaten && (m.eckdaten.reichweite_km || m.eckdaten.kofferraum_l) ? '<p class="lf-notiz">' +
           [m.eckdaten.reichweite_km ? m.eckdaten.reichweite_km + " km " + (m.antrieb === "PHEV" ? "elektrisch" : "WLTP") : "", m.eckdaten.kofferraum_l ? m.eckdaten.kofferraum_l + " l Kofferraum" : ""].filter(Boolean).join(" · ") + "</p>" : "") +
+        (m.lieferzeit_neu ? '<p class="lf-notiz lf-liefer">Neu bestellt: ' + esc(m.lieferzeit_neu) + (m.lieferzeit_quelle ? ' <a href="' + esc(m.lieferzeit_quelle) + '" target="_blank" rel="noopener">Quelle ↗</a>' : "") + "</p>" : "") +
         (m.angebot ? angebot(m.angebot, m.antrieb, m.verbrauch) : '<div class="lf-angebot lf-angebot--leer"><p class="lf-zeile">' + esc(m.bewertung || "Noch kein Angebot gesucht") + "</p></div>") +
         (m.angebot_dez ? '<details class="lf-alt"><summary>Bis 20.12. lieferbar: ' + euro(m.angebot_dez.rate_netto) + " netto · privat " + euro(rechne(m.angebot_dez, m.antrieb, m.verbrauch).privat) + "</summary>" + angebot(m.angebot_dez, m.antrieb, m.verbrauch) + "</details>" : "") +
         "</article>";

@@ -40,25 +40,27 @@
     "reichweite_km": 492,
     "kofferraum_l": 385
    },
-   "bewertung": "Verfügbar, aber kein Schnäppchen (Faktor um 1,0).",
+   "bewertung": "Sofort ab Lager mit allen Pflichtpunkten, Faktor um 1,0 – kein Schnäppchen.",
    "angebot": {
-    "anbieter": "Ehrhardt AG (leasingmarkt.de)",
-    "url": "https://www.leasingmarkt.de/leasing/pkw/volkswagen-id_3/13239693",
+    "anbieter": "Autohaus Ehingen (leasingmarkt.de)",
+    "url": "https://www.leasingmarkt.de/leasing/pkw/volkswagen-id_3/13298297",
     "laufzeit": 48,
-    "rate_netto": 379.83,
-    "blp_brutto": 47695,
-    "leasingfaktor": 0.95,
-    "gesamtkostenfaktor": 1.0,
+    "km_jahr": 10000,
+    "rate_netto": 349.0,
+    "ueberfuehrung_netto": 1168.07,
+    "blp_brutto": 40340,
     "lieferung": "Lager, sofort",
-    "version_ausstattung": "ID.3 Neo Style 58 kWh, HUD, Matrix (IQ.Light), ACC; 486 km",
+    "version_ausstattung": "ID.3 Neo Life 58 kWh, 462 km; CarPlay, Rückfahrkamera, Sitzheizung, LED, 12,9-Zoll-Display",
     "pflicht_erfuellt": "ja",
     "dezember": "ja",
-    "ueberfuehrung_netto": 1050.42,
-    "km_jahr": 10000
+    "leasingfaktor": 1.03,
+    "gesamtkostenfaktor": 1.1
    },
    "verbrauch": {
     "kwh_100": 14.1
-   }
+   },
+   "lieferzeit_neu": "ca. 2 Monate (VW-Großkundenliste); ein anderer Händler nennt 9 Monate",
+   "lieferzeit_quelle": "https://www.volkswagen-automobile-hannover.de/grosskunden/lieferzeiten"
   },
   {
    "id": "vw-golf-ehybrid",
@@ -100,23 +102,10 @@
     "reichweite_km": 143,
     "kofferraum_l": 273
    },
-   "bewertung": "Sehr gut: Style mit Gesamtkostenfaktor 0,67, sofort (BLP 52.500 €, etwas über Grenze).",
-   "angebot": {
-    "anbieter": "Autohaus Ihle (leasingmarkt.de)",
-    "url": "https://www.leasingmarkt.de/leasing/pkw/volkswagen-golf/13248424",
-    "laufzeit": 48,
-    "rate_netto": 275.0,
-    "blp_brutto": 52500,
-    "leasingfaktor": 0.62,
-    "gesamtkostenfaktor": 0.67,
-    "lieferung": "Lager, sofort",
-    "version_ausstattung": "Golf Style 1.5 eHybrid DSG „Premium-Deal“; 142 km elektrisch",
-    "pflicht_erfuellt": "ja",
-    "dezember": "ja",
-    "ueberfuehrung_netto": 945.38,
-    "km_jahr": 10000
-   },
-   "verbrauch": {}
+   "bewertung": "Derzeit kein aktives Gewerbeangebot unter 50.000 € Listenpreis; aktiv nur der GTE ab rund 62.000 €.",
+   "verbrauch": {},
+   "lieferzeit_neu": "ca. 2 Monate für den Golf (VW-Großkundenliste); frühere eHybrid-Bestellangebote nannten 01–03/2027",
+   "lieferzeit_quelle": "https://www.volkswagen-automobile-hannover.de/grosskunden/lieferzeiten"
   },
   {
    "id": "audi-a3-tfsie",
@@ -158,23 +147,25 @@
     "reichweite_km": 143,
     "kofferraum_l": 280
    },
-   "bewertung": "Mittelmäßig.",
+   "bewertung": "Sofort lieferbar, Faktor 0,78; Sitzheizung vor Abschluss bestätigen lassen.",
    "angebot": {
-    "anbieter": "Autohaus Weeber (leasingmarkt.de)",
-    "url": "https://www.leasingmarkt.de/leasing/pkw/audi-a3/13072033",
+    "anbieter": "Senger Bielefeld (leasingmarkt.de)",
+    "url": "https://www.leasingmarkt.de/leasing/pkw/audi-a3/13304605",
     "laufzeit": 48,
-    "rate_netto": 379.0,
-    "blp_brutto": 53060,
-    "leasingfaktor": 0.85,
-    "gesamtkostenfaktor": 0.91,
+    "km_jahr": 10000,
+    "rate_netto": 329.0,
+    "ueberfuehrung_netto": null,
+    "blp_brutto": 49875,
     "lieferung": "Lager, sofort",
-    "version_ausstattung": "A3 Sportback TFSI e; 140 km elektrisch",
-    "pflicht_erfuellt": "teilweise (CarPlay nicht genannt)",
+    "version_ausstattung": "Sportback TFSI e, 142 km elektrisch; Rückfahrkamera, Smartphone-Interface, Voll-LED",
+    "pflicht_erfuellt": "teilweise (Sitzheizung nicht genannt)",
     "dezember": "ja",
-    "ueberfuehrung_netto": 1275.63,
-    "km_jahr": 10000
+    "leasingfaktor": 0.78,
+    "gesamtkostenfaktor": 0.78
    },
-   "verbrauch": {}
+   "verbrauch": {},
+   "lieferzeit_neu": "ca. 4–5 Monate (Händlerangebot „Verfügbar 02/2027“)",
+   "lieferzeit_quelle": "https://www.leasingmarkt.de/leasing/pkw/audi-a3/13240708"
   },
   {
    "id": "bmw-ix1",
@@ -216,25 +207,27 @@
     "reichweite_km": 512,
     "kofferraum_l": 490
    },
-   "bewertung": "Ordentlich; Dezember nicht gesichert.",
+   "bewertung": "Ordentlicher Faktor 0,88, Listenpreis am Budgetrand; Dezember nicht gesichert.",
    "angebot": {
-    "anbieter": "BMW Rhein Ludwigsburg (leasingmarkt.de)",
-    "url": "https://www.leasingmarkt.de/leasing/pkw/bmw-ix1/13158194",
-    "laufzeit": 42,
-    "rate_netto": 383.49,
-    "blp_brutto": 52150,
-    "leasingfaktor": 0.88,
-    "gesamtkostenfaktor": 0.93,
-    "lieferung": "Bestellung, vsl. 12/2026",
-    "version_ausstattung": "iX1 eDrive20 xLine, Bestellaktion; 503 km",
-    "pflicht_erfuellt": "ja",
+    "anbieter": "Riller & Schnauck Berlin (leasingmarkt.de)",
+    "url": "https://www.leasingmarkt.de/leasing/pkw/bmw-ix1/13192527",
+    "laufzeit": 36,
+    "km_jahr": 10000,
+    "rate_netto": 373.11,
+    "ueberfuehrung_netto": 1168.07,
+    "blp_brutto": 50350,
+    "lieferung": "12/2026",
+    "version_ausstattung": "iX1 eDrive20, 473 km; LED, Rückfahrkamera, Sitzheizung, Touchscreen",
+    "pflicht_erfuellt": "teilweise (CarPlay nicht genannt)",
     "dezember": "knapp",
-    "ueberfuehrung_netto": 1048.74,
-    "km_jahr": 10000
+    "leasingfaktor": 0.88,
+    "gesamtkostenfaktor": 0.96
    },
    "verbrauch": {
     "kwh_100": 14.3
-   }
+   },
+   "lieferzeit_neu": "ca. 4 Monate (Händlerangebot „Verfügbar 02/2027“)",
+   "lieferzeit_quelle": "https://www.leasingmarkt.de/leasing/pkw/bmw-ix1/13307458"
   },
   {
    "id": "mb-a250e",
@@ -276,8 +269,10 @@
     "reichweite_km": 82,
     "kofferraum_l": 310
    },
-   "bewertung": "Kein Gewerbeangebot gefunden.",
-   "verbrauch": {}
+   "bewertung": "Kein Neuwagen-Gewerbeangebot gefunden (leasingmarkt.de: 0 Angebote).",
+   "verbrauch": {},
+   "lieferzeit_neu": null,
+   "lieferzeit_quelle": null
   },
   {
    "id": "smart-1",
@@ -319,26 +314,28 @@
     "reichweite_km": 420,
     "kofferraum_l": 323
    },
-   "bewertung": "Ordentlich, aber erst ab Februar.",
+   "bewertung": "Viel Ausstattung samt Wartung, aber erst ab Februar.",
    "angebot": {
     "anbieter": "smart Europe (leasingmarkt.de)",
-    "url": "https://www.leasingmarkt.de/leasing/pkw/smart-1/12634510",
+    "url": "https://www.leasingmarkt.de/leasing/pkw/smart-1/10635672",
     "laufzeit": 48,
-    "rate_netto": 370.59,
-    "blp_brutto": 47990,
-    "leasingfaktor": 0.92,
-    "gesamtkostenfaktor": 0.96,
-    "lieferung": "02/2027",
-    "version_ausstattung": "#1 Premium MY27, Head-up, Panoramadach",
+    "km_jahr": 10000,
+    "rate_netto": 355.45,
+    "ueberfuehrung_netto": null,
+    "blp_brutto": 44490,
+    "lieferung": "02/2027 (Bestellung)",
+    "version_ausstattung": "#1 Pro+ MY27, 420 km; Wartung 3 Jahre inklusive, 360°-Kamera, Sitzheizung, 12,8-Zoll-Display, CarPlay",
     "pflicht_erfuellt": "ja",
     "dezember": "nein",
-    "ueberfuehrung_netto": 831.93,
-    "km_jahr": 10000
+    "leasingfaktor": 0.95,
+    "gesamtkostenfaktor": 0.95
    },
    "verbrauch": {
     "kwh_100": 16.8,
     "real_kwh_100": 19.2
-   }
+   },
+   "lieferzeit_neu": "ab 02/2027 (Herstellerangebot)",
+   "lieferzeit_quelle": "https://www.leasingmarkt.de/leasing/pkw/smart-1/10635672"
   },
   {
    "id": "skoda-elroq",
@@ -380,41 +377,43 @@
     "reichweite_km": 566,
     "kofferraum_l": 470
    },
-   "bewertung": "Faktor 0,91 – Neuwagen erst Januar, sofort nur Tageszulassung über 50.000 €.",
+   "bewertung": "Faktor 0,80 bei voller Ausstattung, aber erst im Mai 2027.",
    "angebot": {
-    "anbieter": "Gottfried Schultz Mülheim (null-leasing.com)",
-    "url": "https://www.null-leasing.com/skoda-leasing/angebote/450625667",
+    "anbieter": "MGS Motor Gruppe Sachsen (null-leasing.com)",
+    "url": "https://www.null-leasing.com/skoda-leasing/angebote/48020748266624",
     "laufzeit": 48,
-    "rate_netto": 359.0,
-    "blp_brutto": 46770,
-    "leasingfaktor": 0.91,
-    "gesamtkostenfaktor": 0.91,
-    "lieferung": "vsl. 01/2027",
-    "version_ausstattung": "Elroq 85 Selection, Neuwagen",
-    "pflicht_erfuellt": "unklar",
+    "km_jahr": 10000,
+    "rate_netto": 273.0,
+    "ueberfuehrung_netto": 1250.0,
+    "blp_brutto": 40370,
+    "lieferung": "ab 03.05.2027",
+    "version_ausstattung": "Elroq 60 Essence, 450 km; Sitzheizung, LED, Rückfahrkamera, 13-Zoll-Display, CarPlay",
+    "pflicht_erfuellt": "ja",
     "dezember": "nein",
-    "ueberfuehrung_netto": 0,
-    "km_jahr": 10000
+    "leasingfaktor": 0.8,
+    "gesamtkostenfaktor": 0.88
    },
    "angebot_dez": {
-    "anbieter": "VW Zentrum Leverkusen (null-leasing.com)",
-    "url": "https://www.null-leasing.com/skoda-leasing/angebote/461205796",
+    "anbieter": "Händler (leasingmarkt.de)",
+    "url": "https://www.leasingmarkt.de/leasing/pkw/skoda-elroq/13216424",
     "laufzeit": 48,
-    "rate_netto": 399.0,
-    "blp_brutto": 52050,
-    "leasingfaktor": 0.91,
-    "gesamtkostenfaktor": 0.97,
-    "lieferung": "sofort",
-    "version_ausstattung": "Elroq 85 Selection, Tageszulassung 1.009 km, Matrix-LED, Wärmepumpe, ACC",
-    "pflicht_erfuellt": "ja",
-    "dezember": "ja",
-    "ueberfuehrung_netto": 1268.91,
-    "km_jahr": 10000
+    "km_jahr": 10000,
+    "rate_netto": 387.39,
+    "ueberfuehrung_netto": 1440.0,
+    "blp_brutto": 45000,
+    "lieferung": "sofort laut Kopf, Beschreibung: Neuwagen im Vorlauf",
+    "version_ausstattung": "Elroq Selection 85, Matrix-LED, Rückfahrkamera, Sitzheizung",
+    "pflicht_erfuellt": "teilweise (CarPlay nicht genannt)",
+    "dezember": "knapp",
+    "leasingfaktor": 1.02,
+    "gesamtkostenfaktor": 1.1
    },
    "verbrauch": {
     "kwh_100": 15.4,
     "real_kwh_100": 18.2
-   }
+   },
+   "lieferzeit_neu": "ca. 4–9 Monate (Bestellfahrzeuge mit Termin 02–08/2027)",
+   "lieferzeit_quelle": "https://www.null-leasing.com/skoda-leasing/angebote/48020733183168"
   },
   {
    "id": "cupra-born",
@@ -456,25 +455,27 @@
     "reichweite_km": 484,
     "kofferraum_l": 385
    },
-   "bewertung": "Gut im Faktor, aber nicht bis Dezember lieferbar.",
+   "bewertung": "Sofort lieferbar mit voller Ausstattung, Faktor um 1,0.",
    "angebot": {
-    "anbieter": "null-leasing.com",
-    "url": "https://www.null-leasing.com/cupra-leasing/angebote/460238537?lst=null&lsml=10000&lstm=48",
+    "anbieter": "Händler Schopfloch (null-leasing.com)",
+    "url": "https://www.null-leasing.com/cupra-leasing/angebote/50527980604768",
     "laufzeit": 48,
-    "rate_netto": 284.0,
-    "blp_brutto": 39990,
-    "leasingfaktor": 0.85,
-    "gesamtkostenfaktor": 0.92,
-    "lieferung": "ca. 4 Monate ab Bestellung",
-    "version_ausstattung": "Born 58 kWh Basis, frei konfigurierbar (Extras mit Aufpreis)",
-    "pflicht_erfuellt": "teilweise",
-    "dezember": "nein",
-    "ueberfuehrung_netto": 1252.1,
-    "km_jahr": 10000
+    "km_jahr": 10000,
+    "rate_netto": 359.0,
+    "ueberfuehrung_netto": 1590.0,
+    "blp_brutto": 43310,
+    "lieferung": "sofort",
+    "version_ausstattung": "Born 58 kWh, 458 km; Rückfahrkamera, Sitzheizung, LED, CarPlay",
+    "pflicht_erfuellt": "ja",
+    "dezember": "ja",
+    "leasingfaktor": 0.99,
+    "gesamtkostenfaktor": 1.08
    },
    "verbrauch": {
     "kwh_100": 14.2
-   }
+   },
+   "lieferzeit_neu": "ca. 5–6 Monate (Händlerangabe)",
+   "lieferzeit_quelle": "https://www.null-leasing.com/cupra-leasing/angebote/446832129"
   },
   {
    "id": "cupra-leon-ehybrid",
@@ -516,23 +517,25 @@
     "reichweite_km": 131,
     "kofferraum_l": 270
    },
-   "bewertung": "Stärkster Faktor (0,56), BLP 56.770 € – deutlich über Grenze.",
+   "bewertung": "Kombi mit allen Pflichtpunkten, sofort, Faktor 0,77 – jetzt unter 50.000 € Listenpreis.",
    "angebot": {
-    "anbieter": "VW Automobile Stuttgart (leasingmarkt.de)",
-    "url": "https://www.leasingmarkt.de/leasing/pkw/cupra-leon/13172265",
-    "laufzeit": 36,
-    "rate_netto": 269.0,
-    "blp_brutto": 56770,
-    "leasingfaktor": 0.56,
-    "gesamtkostenfaktor": 0.64,
+    "anbieter": "Händler (leasingmarkt.de)",
+    "url": "https://www.leasingmarkt.de/leasing/pkw/cupra-leon/13125483",
+    "laufzeit": 48,
+    "km_jahr": 10000,
+    "rate_netto": 292.44,
+    "ueberfuehrung_netto": 840.34,
+    "blp_brutto": 44990,
     "lieferung": "Lager, sofort",
-    "version_ausstattung": "Leon Sportstourer VZ Black Edition e-Hybrid 272 PS; 121 km elektrisch",
+    "version_ausstattung": "Leon Sportstourer VZ e-Hybrid, 122 km elektrisch; Matrix-LED, CarPlay, Rückfahrkamera, Sitzheizung, Standheizung",
     "pflicht_erfuellt": "ja",
     "dezember": "ja",
-    "ueberfuehrung_netto": 1252.1,
-    "km_jahr": 10000
+    "leasingfaktor": 0.77,
+    "gesamtkostenfaktor": 0.82
    },
-   "verbrauch": {}
+   "verbrauch": {},
+   "lieferzeit_neu": "ca. 5 Monate (Bestellfahrzeug „Verfügbar 03/2027“)",
+   "lieferzeit_quelle": "https://www.leasingmarkt.de/leasing/pkw/cupra-leon/12224201"
   },
   {
    "id": "peugeot-e308",
@@ -574,26 +577,28 @@
     "reichweite_km": 444,
     "kofferraum_l": 361
    },
-   "bewertung": "Schwach: teuer und ohne Kamera/Sitzheizung.",
+   "bewertung": "Teuer und lückenhaft ausgestattet.",
    "angebot": {
-    "anbieter": "Automobile Peter Mühlhausen (leasingmarkt.de)",
+    "anbieter": "Händler (leasingmarkt.de)",
     "url": "https://www.leasingmarkt.de/leasing/pkw/peugeot-308/12851248",
     "laufzeit": 48,
+    "km_jahr": 10000,
     "rate_netto": 407.84,
-    "blp_brutto": 43435,
-    "leasingfaktor": 1.12,
-    "gesamtkostenfaktor": 1.17,
-    "lieferung": "sofort",
-    "version_ausstattung": "e-308 SW Style 54 kWh",
-    "pflicht_erfuellt": "teilweise (Rückfahrkamera, Sitzheizung fehlen)",
-    "dezember": "ja",
     "ueberfuehrung_netto": 840.34,
-    "km_jahr": 10000
+    "blp_brutto": 43435,
+    "lieferung": "sofort",
+    "version_ausstattung": "e-308 SW Style, 444 km; LED, 10-Zoll-Display",
+    "pflicht_erfuellt": "teilweise (Rückfahrkamera, Sitzheizung, CarPlay nicht genannt)",
+    "dezember": "ja",
+    "leasingfaktor": 1.12,
+    "gesamtkostenfaktor": 1.17
    },
    "verbrauch": {
     "kwh_100": 15.1,
     "real_kwh_100": 16.3
-   }
+   },
+   "lieferzeit_neu": null,
+   "lieferzeit_quelle": null
   },
   {
    "id": "peugeot-e2008",
@@ -635,41 +640,43 @@
     "reichweite_km": 400,
     "kofferraum_l": 434
    },
-   "bewertung": "Sehr guter Faktor 0,70 (Aktion bis 31.10.), Lieferung Januar.",
+   "bewertung": "Faktor 0,70, Aktion nur bis 31.10.; Lieferung Januar. Sofort: GT für 285,71 €.",
    "angebot": {
-    "anbieter": "Autohaus Markötter Gütersloh (leasingmarkt.de)",
+    "anbieter": "Autohaus in Gütersloh (leasingmarkt.de)",
     "url": "https://www.leasingmarkt.de/leasing/pkw/peugeot-2008/12316405",
     "laufzeit": 48,
+    "km_jahr": 10000,
     "rate_netto": 246.9,
+    "ueberfuehrung_netto": 1084.03,
     "blp_brutto": 42000,
-    "leasingfaktor": 0.7,
-    "gesamtkostenfaktor": 0.77,
-    "lieferung": "01/2027",
-    "version_ausstattung": "e-2008 Business: Rückfahrkamera, Sitzheizung, CarPlay, Wärmepumpe; Gewerbeaktion bis 31.10.2026",
+    "lieferung": "01/2027 (Bestellung)",
+    "version_ausstattung": "e-2008 Business, 400 km; Rückfahrkamera, Sitzheizung, LED, CarPlay; Gewerbeaktion bis 31.10.2026",
     "pflicht_erfuellt": "ja",
     "dezember": "nein",
-    "ueberfuehrung_netto": 1243.69,
-    "km_jahr": 10000
+    "leasingfaktor": 0.7,
+    "gesamtkostenfaktor": 0.76
    },
    "angebot_dez": {
-    "anbieter": "Autohaus Tabor Kehl (leasingmarkt.de)",
-    "url": "https://www.leasingmarkt.de/leasing/pkw/peugeot-2008/13165633",
-    "laufzeit": 48,
-    "rate_netto": 316.82,
-    "blp_brutto": 44450,
-    "leasingfaktor": 0.85,
-    "gesamtkostenfaktor": 0.91,
-    "lieferung": "sofort",
-    "version_ausstattung": "e-2008 Allure, Tageszulassung",
-    "pflicht_erfuellt": "teilweise (Rückfahrkamera, Sitzheizung nicht gelistet)",
-    "dezember": "ja",
+    "anbieter": "Autotrend Deipenau (leasingmarkt.de)",
+    "url": "https://www.leasingmarkt.de/leasing/pkw/peugeot-2008/13137251",
+    "laufzeit": 36,
+    "km_jahr": 10000,
+    "rate_netto": 285.71,
     "ueberfuehrung_netto": 1084.03,
-    "km_jahr": 10000
+    "blp_brutto": 48400,
+    "lieferung": "sofort",
+    "version_ausstattung": "e-2008 GT, 405 km; Rückfahrkamera, Sitzheizung, LED, CarPlay",
+    "pflicht_erfuellt": "ja",
+    "dezember": "ja",
+    "leasingfaktor": 0.7,
+    "gesamtkostenfaktor": 0.78
    },
    "verbrauch": {
     "kwh_100": 15.3,
     "real_kwh_100": 17.9
-   }
+   },
+   "lieferzeit_neu": "ca. 12 Wochen (Händlerangabe)",
+   "lieferzeit_quelle": "https://www.leasingmarkt.de/leasing/pkw/peugeot-2008/12316405"
   },
   {
    "id": "renault-megane",
@@ -711,26 +718,28 @@
     "reichweite_km": 494,
     "kofferraum_l": 440
    },
-   "bewertung": "Kein überzeugendes Neuwagenangebot.",
+   "bewertung": "Gute Reichweite, Faktor 0,93; Sitzheizung offen, nicht vor Januar.",
    "angebot": {
-    "anbieter": "Allane",
-    "url": "https://allane.de/de/konfigurieren/renault/megane-e-tech/schraeghecklimousine/techno/831056820260922",
+    "anbieter": "Die Schneider Gruppe (leasingmarkt.de)",
+    "url": "https://www.leasingmarkt.de/leasing/pkw/renault-megane_e_tech/13284375",
     "laufzeit": 48,
-    "rate_netto": 379.0,
-    "blp_brutto": 34990,
-    "leasingfaktor": 1.29,
-    "gesamtkostenfaktor": 1.37,
-    "lieferung": "ca. 16 Wochen",
-    "version_ausstattung": "Techno 220 Comfort Range",
-    "pflicht_erfuellt": "unklar",
+    "km_jahr": 10000,
+    "rate_netto": 319.24,
+    "ueberfuehrung_netto": 1252.1,
+    "blp_brutto": 41000,
+    "lieferung": "01/2027 (Bestellung)",
+    "version_ausstattung": "Mégane E-Tech Techno Comfort Range, 494 km; LED, Rückfahrkamera, CarPlay, 12-Zoll-Display",
+    "pflicht_erfuellt": "teilweise (Sitzheizung nicht genannt)",
     "dezember": "nein",
-    "ueberfuehrung_netto": 1090.0,
-    "km_jahr": 10000
+    "leasingfaktor": 0.93,
+    "gesamtkostenfaktor": 1.0
    },
    "verbrauch": {
     "kwh_100": 16.5,
     "real_kwh_100": 19.2
-   }
+   },
+   "lieferzeit_neu": "Bestellfahrzeug ab 01/2027 (Händlerangebot)",
+   "lieferzeit_quelle": "https://www.leasingmarkt.de/leasing/pkw/renault-megane_e_tech/13284375"
   },
   {
    "id": "volvo-ex30",
@@ -772,26 +781,28 @@
     "reichweite_km": 475,
     "kofferraum_l": 318
    },
-   "bewertung": "Sofort lieferbar, Faktor nur mittelmäßig.",
+   "bewertung": "Sofort lieferbar, voll ausgestattet, Faktor nur mittelmäßig.",
    "angebot": {
     "anbieter": "MTS Automobile Oberursel (null-leasing.com)",
-    "url": "https://www.null-leasing.com/volvo-leasing/angebote/459573963",
+    "url": "https://www.null-leasing.com/volvo-leasing/angebote/459573963?lsml=10000&lstm=48",
     "laufzeit": 48,
+    "km_jahr": 10000,
     "rate_netto": 370.0,
+    "ueberfuehrung_netto": 1400.0,
     "blp_brutto": 41640,
-    "leasingfaktor": 1.06,
-    "gesamtkostenfaktor": 1.13,
     "lieferung": "sofort",
-    "version_ausstattung": "P5 Long Range Black Edition Plus, Winterpaket",
+    "version_ausstattung": "EX30 P5 Long Range Black Edition Plus, 475 km; Sitzheizung, Kameras, LED, CarPlay",
     "pflicht_erfuellt": "ja",
     "dezember": "ja",
-    "ueberfuehrung_netto": 1176.47,
-    "km_jahr": 10000
+    "leasingfaktor": 1.06,
+    "gesamtkostenfaktor": 1.14
    },
    "verbrauch": {
     "kwh_100": 17.0,
     "real_kwh_100": 19.5
-   }
+   },
+   "lieferzeit_neu": "ab 02/2027 (frei konfiguriert, Händlerangabe)",
+   "lieferzeit_quelle": "https://www.leasingmarkt.de/leasing/pkw/volvo-ex30/13253803"
   },
   {
    "id": "mini-aceman",
@@ -833,8 +844,10 @@
     "reichweite_km": 394,
     "kofferraum_l": 300
    },
-   "bewertung": "Kein passendes Angebot: Aceman SE nur auf Händleranfrage; Aceman E verfehlt 400 km.",
-   "verbrauch": {}
+   "bewertung": "Derzeit kein Gewerbeangebot auf leasingmarkt.de, preiswert-leasen.de und Allane.",
+   "verbrauch": {},
+   "lieferzeit_neu": null,
+   "lieferzeit_quelle": null
   },
   {
    "id": "honda-eny1",
@@ -919,25 +932,27 @@
     "reichweite_km": 510,
     "kofferraum_l": 490
    },
-   "bewertung": "Lagerfahrzeug Tabor: Faktor 0,98, sofort lieferbar.",
+   "bewertung": "Größte Reichweite, sofort, Faktor um 1,0.",
    "angebot": {
-    "anbieter": "Autohaus Tabor (leasingmarkt.de)",
-    "url": "https://www.leasingmarkt.de/leasing/pkw/byd-atto_3_evo/13238470",
+    "anbieter": "9Drive (preiswert-leasen.de)",
+    "url": "https://www.preiswert-leasen.de/angebot/byd-atto-3-e98774cc-eece-4de5-b732-7982fe839dfa?laufzeit=48&km=10000",
     "laufzeit": 48,
-    "rate_netto": 377.26,
+    "km_jahr": 10000,
+    "rate_netto": 384.93,
+    "ueberfuehrung_netto": 1290.0,
     "blp_brutto": 45740,
-    "leasingfaktor": 0.98,
-    "gesamtkostenfaktor": 1.04,
-    "lieferung": "Lager, sofort",
-    "version_ausstattung": "Evo Design 74,8 kWh, 360°-Kamera, Sitzheizung/-belüftung, CarPlay",
+    "lieferung": "sofort",
+    "version_ausstattung": "Atto 3 Evo Design, 510 km; 360°-Kamera, Sitzheizung, LED, 15,6-Zoll-Display",
     "pflicht_erfuellt": "ja",
     "dezember": "ja",
-    "ueberfuehrung_netto": 1084.03,
-    "km_jahr": 10000
+    "leasingfaktor": 1.0,
+    "gesamtkostenfaktor": 1.07
    },
    "verbrauch": {
     "kwh_100": 16.4
-   }
+   },
+   "lieferzeit_neu": "ca. 20 Wochen (Allane)",
+   "lieferzeit_quelle": "https://www.preiswert-leasen.de/angebot/byd-atto-3-ace57d64-0ab9-4818-9faa-4288525ac8fd?laufzeit=48&km=10000"
   },
   {
    "id": "leapmotor-b10",
@@ -979,25 +994,27 @@
     "reichweite_km": 434,
     "kofferraum_l": 420
    },
-   "bewertung": "Allane Faktor 1,00 (Lieferzeit offen); Dezember-tauglich nur AMS mit 1,21.",
+   "bewertung": "Niedrigster Listenpreis der Elektro-SUVs, Faktor um 1,0; erst ab März 2027.",
    "angebot": {
-    "anbieter": "Allane",
-    "url": "https://allane.de/de/konfigurieren/leapmotor/b10/suv/design-pro-max/849626420261001/farbe?customerType=business",
+    "anbieter": "Borgmann Gelsenkirchen (null-leasing.com)",
+    "url": "https://www.null-leasing.com/leapmotor-leasing/angebote/435831232",
     "laufzeit": 48,
-    "rate_netto": 292.52,
-    "blp_brutto": 34900,
-    "leasingfaktor": 1.0,
-    "gesamtkostenfaktor": 1.07,
-    "lieferung": "Bestellfahrzeug, Lieferzeit offen",
-    "version_ausstattung": "Design Pro Max 67 kWh; plus Schlusszahlung 879,83 € netto",
+    "km_jahr": 10000,
+    "rate_netto": 289.07,
+    "ueberfuehrung_netto": 1490.0,
+    "blp_brutto": 33900,
+    "lieferung": "ca. 5 Monate ab Bestellung",
+    "version_ausstattung": "B10 Design ProMax (rein elektrisch), 434 km; Rückfahrkamera, Sitzheizung, CarPlay",
     "pflicht_erfuellt": "ja",
     "dezember": "nein",
-    "ueberfuehrung_netto": 999.41,
-    "km_jahr": 10000
+    "leasingfaktor": 1.01,
+    "gesamtkostenfaktor": 1.12
    },
    "verbrauch": {
     "kwh_100": 17.3
-   }
+   },
+   "lieferzeit_neu": "ca. 3–5 Monate (Händlerangaben)",
+   "lieferzeit_quelle": "https://www.null-leasing.com/leapmotor-leasing/angebote/435831232"
   },
   {
    "id": "lynkco-02",
@@ -1039,25 +1056,27 @@
     "reichweite_km": 445,
     "kofferraum_l": 410
    },
-   "bewertung": "Ordentlich, nicht herausragend.",
+   "bewertung": "Gut ausgestattet, sofort; nur ein einziges Gewerbeangebot am Markt.",
    "angebot": {
     "anbieter": "Autohaus Bischof (leasingmarkt.de)",
     "url": "https://www.leasingmarkt.de/leasing/pkw/lynk_and_co-02/12505888",
     "laufzeit": 48,
+    "km_jahr": 10000,
     "rate_netto": 377.0,
+    "ueberfuehrung_netto": 1218.49,
     "blp_brutto": 39995,
-    "leasingfaktor": 1.12,
-    "gesamtkostenfaktor": 1.2,
     "lieferung": "Lager, sofort",
-    "version_ausstattung": "02 More, 360°-Kamera, Harman Kardon, Panoramadach",
+    "version_ausstattung": "02 More, 435 km; CarPlay, Rückfahrkamera, Sitzheizung, LED",
     "pflicht_erfuellt": "ja",
     "dezember": "ja",
-    "ueberfuehrung_netto": 1218.49,
-    "km_jahr": 10000
+    "leasingfaktor": 1.12,
+    "gesamtkostenfaktor": 1.2
    },
    "verbrauch": {
     "kwh_100": 17.1
-   }
+   },
+   "lieferzeit_neu": null,
+   "lieferzeit_quelle": null
   },
   {
    "id": "hyundai-ioniq5",
@@ -1065,7 +1084,7 @@
    "marke": "Hyundai",
    "modell": "IONIQ 5",
    "antrieb": "E",
-   "notiz": "Größer als Golf Variant (4,66 m), Lieferung erst 04/2027",
+   "notiz": "Größer als Golf Variant (4,66 m)",
    "bilder": [
     {
      "klein": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/2021_Hyundai_Ioniq_5_Premium_EV_-_54kWh_%28170PS%29_Electric_-_Silver_-_02-2025%2C_Front.jpg/330px-2021_Hyundai_Ioniq_5_Premium_EV_-_54kWh_%28170PS%29_Electric_-_Silver_-_02-2025%2C_Front.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
@@ -1096,25 +1115,44 @@
     }
    ],
    "angebot": {
-    "anbieter": "ahg Horb (leasingmarkt.de)",
-    "url": "https://www.leasingmarkt.de/leasing/pkw/hyundai-ioniq_5/13279279",
-    "laufzeit": 48,
-    "rate_netto": 220.88,
-    "blp_brutto": 45750,
-    "leasingfaktor": 0.57,
-    "gesamtkostenfaktor": 0.64,
-    "lieferung": "04/2027 (Bestellung)",
-    "version_ausstattung": "Basis 170 PS, frei konfigurierbar; 36 Mon. 234,51 €",
+    "anbieter": "Siemon Salzbergen (null-leasing.com)",
+    "url": "https://www.null-leasing.com/hyundai-leasing/angebote/49601690851744",
+    "laufzeit": 36,
+    "km_jahr": 10000,
+    "rate_netto": 198.08,
+    "ueberfuehrung_netto": 1495.0,
+    "blp_brutto": 46200,
+    "lieferung": "ca. 3–5 Monate ab Bestellung",
+    "version_ausstattung": "IONIQ 5 63 kWh, 440 km; CarPlay, Kamera, Sitzheizung, LED",
+    "pflicht_erfuellt": "ja",
     "dezember": "nein",
-    "ueberfuehrung_netto": 1256.3,
-    "km_jahr": 10000
+    "leasingfaktor": 0.51,
+    "gesamtkostenfaktor": 0.62
    },
    "verbrauch": {
     "kwh_100": 15.6
    },
    "eckdaten": {
     "reichweite_km": 440
-   }
+   },
+   "angebot_dez": {
+    "anbieter": "Autohaus Wiluda (leasingmarkt.de)",
+    "url": "https://www.leasingmarkt.de/leasing/pkw/hyundai-ioniq_5/13048379",
+    "laufzeit": 36,
+    "km_jahr": 10000,
+    "rate_netto": 370.53,
+    "ueberfuehrung_netto": 1050.42,
+    "blp_brutto": 52200,
+    "lieferung": "sofort",
+    "version_ausstattung": "Centriq 63 kWh, 440 km; Rückfahrkamera, Sitzheizung, LED",
+    "pflicht_erfuellt": "teilweise (CarPlay nicht genannt)",
+    "dezember": "ja",
+    "leasingfaktor": 0.84,
+    "gesamtkostenfaktor": 0.91
+   },
+   "lieferzeit_neu": "ca. 3–6 Monate (Händlerangaben)",
+   "lieferzeit_quelle": "https://www.null-leasing.com/hyundai-leasing/angebote/49601690851744",
+   "bewertung": "Faktor 0,51, aber größer als ein Golf und erst ab Februar 2027."
   },
   {
    "id": "peugeot-3008",
@@ -1122,7 +1160,7 @@
    "marke": "Peugeot",
    "modell": "3008 Hybrid (Benzin)",
    "antrieb": "Benzin",
-   "notiz": "Fastback-SUV mit abfallendem Dach; Lieferung erst 02/2027; Sitzheizung vor Bestellung bestätigen lassen. Lagerwagen bis Dezember: Faktor 0,39, privat ca. 301 €.",
+   "notiz": "Fastback-SUV mit abfallendem Dach; Benziner, 1 % Versteuerung",
    "bilder": [
     {
      "klein": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ed/Peugeot_e-3008_Automesse_Ludwigsburg_2024_IMG_1537.jpg/330px-Peugeot_e-3008_Automesse_Ludwigsburg_2024_IMG_1537.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
@@ -1153,28 +1191,47 @@
     }
    ],
    "angebot": {
-    "anbieter": "Gromes, Wartenberg (leasingmarkt.de)",
-    "url": "https://www.leasingmarkt.de/leasing/pkw/peugeot-3008/13276385",
+    "anbieter": "Gromes Wartenberg (null-leasing.com)",
+    "url": "https://www.null-leasing.com/peugeot-leasing/angebote/50711108811360",
     "laufzeit": 36,
-    "rate_netto": 114.83,
-    "blp_brutto": 42640,
-    "leasingfaktor": 0.32,
-    "gesamtkostenfaktor": 0.41,
-    "lieferung": "02/2027 (Bestellung)",
-    "dezember": "nein",
-    "ueberfuehrung_netto": 1134.45,
     "km_jahr": 10000,
-    "version_ausstattung": "3008 Hybrid 145 Allure Plus"
+    "rate_netto": 114.83,
+    "ueberfuehrung_netto": 1134.45,
+    "blp_brutto": 42640,
+    "lieferung": "ca. 4 Monate ab Bestellung",
+    "version_ausstattung": "3008 Allure Plus Hybrid 145; Rückfahrkamera, Sitzheizung, LED, 21-Zoll-Panoramadisplay, CarPlay",
+    "pflicht_erfuellt": "ja",
+    "dezember": "nein",
+    "leasingfaktor": 0.32,
+    "gesamtkostenfaktor": 0.41
    },
-   "verbrauch": {}
+   "verbrauch": {},
+   "angebot_dez": {
+    "anbieter": "Autohaus Exner Plauen (leasingmarkt.de)",
+    "url": "https://www.leasingmarkt.de/leasing/pkw/peugeot-3008/13304536",
+    "laufzeit": 36,
+    "km_jahr": 10000,
+    "rate_netto": 139.0,
+    "ueberfuehrung_netto": 1289.92,
+    "blp_brutto": 44100,
+    "lieferung": "sofort",
+    "version_ausstattung": "3008 Allure Business MHEV 145; 360°-Kamera, Sitzheizung, LED, CarPlay",
+    "pflicht_erfuellt": "ja",
+    "dezember": "ja",
+    "leasingfaktor": 0.38,
+    "gesamtkostenfaktor": 0.47
+   },
+   "lieferzeit_neu": "ca. 3–4 Monate (Händlerangaben)",
+   "lieferzeit_quelle": "https://www.null-leasing.com/peugeot-leasing/angebote/50711108811360",
+   "bewertung": "Faktor 0,32; auch sofort für 139 € netto – Benziner, also 1 % Versteuerung."
   },
   {
    "id": "ford-puma",
    "gruppe": "Europäische Marken",
    "marke": "Ford",
-   "modell": "Puma Hybrid (Benzin)",
+   "modell": "Puma (Benzin)",
    "antrieb": "Benzin",
-   "notiz": "Eine Klasse kleiner als ein Golf.",
+   "notiz": "Eine Klasse kleiner als ein Golf; Schaltgetriebe",
    "bilder": [
     {
      "klein": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/90/2024_Ford_Puma_ST-Line_EcoBoost_-_999cc_1.0_%28125PS%29_Petrol_-_Cactus_Grey_-_08-2024%2C_Front.jpg/330px-2024_Ford_Puma_ST-Line_EcoBoost_-_999cc_1.0_%28125PS%29_Petrol_-_Cactus_Grey_-_08-2024%2C_Front.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
@@ -1205,20 +1262,139 @@
     }
    ],
    "angebot": {
-    "anbieter": "Automobilforum Kaufbeuren (leasingmarkt.de)",
-    "url": "https://www.leasingmarkt.de/leasing/pkw/ford-puma/13123968",
+    "anbieter": "Autohaus Louis Dresen (leasingmarkt.de)",
+    "url": "https://www.leasingmarkt.de/leasing/pkw/ford-puma/12524206",
     "laufzeit": 36,
-    "rate_netto": 125.21,
-    "blp_brutto": 37250,
-    "leasingfaktor": 0.4,
-    "gesamtkostenfaktor": 0.51,
-    "lieferung": "12/2026, ohne festen Tag",
-    "dezember": "knapp",
-    "ueberfuehrung_netto": 1252.1,
     "km_jahr": 10000,
-    "version_ausstattung": "Puma 1.0 EcoBoost Hybrid ST-Line"
+    "rate_netto": 142.02,
+    "ueberfuehrung_netto": 1084.03,
+    "blp_brutto": 32500,
+    "lieferung": "Lager, sofort",
+    "version_ausstattung": "Puma Titanium 125 PS, Schaltgetriebe; Rückfahrkamera, Sitzheizung, LED",
+    "pflicht_erfuellt": "teilweise (CarPlay nicht genannt)",
+    "dezember": "ja",
+    "leasingfaktor": 0.52,
+    "gesamtkostenfaktor": 0.63
    },
-   "verbrauch": {}
+   "verbrauch": {},
+   "lieferzeit_neu": "ca. 16 Wochen (carwow)",
+   "lieferzeit_quelle": "https://www.preiswert-leasen.de/angebot/ford-puma-9a71aa02-e0f9-4398-ac9f-a9064779e997?laufzeit=36&km=10000",
+   "bewertung": "Günstigste Rate, sofort; kleiner als ein Golf, Schaltgetriebe."
+  },
+  {
+   "id": "vw-idcross",
+   "gruppe": "Deutsche Marken",
+   "marke": "VW",
+   "modell": "ID.Cross",
+   "antrieb": "E",
+   "notiz": "Neu seit 07/2026 – kompaktes SUV, etwas kürzer als ein Golf",
+   "bilder": [
+    {
+     "klein": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Volkswagen_ID._Cross_au_Mondial_de_l%27Auto_2026_%2801%29.jpg/330px-Volkswagen_ID._Cross_au_Mondial_de_l%27Auto_2026_%2801%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "gross": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Volkswagen_ID._Cross_au_Mondial_de_l%27Auto_2026_%2801%29.jpg/960px-Volkswagen_ID._Cross_au_Mondial_de_l%27Auto_2026_%2801%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "voll": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Volkswagen_ID._Cross_au_Mondial_de_l%27Auto_2026_%2801%29.jpg/1920px-Volkswagen_ID._Cross_au_Mondial_de_l%27Auto_2026_%2801%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "titel": "File:Volkswagen ID. Cross au Mondial de l'Auto 2026 (01).jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Volkswagen_ID._Cross_au_Mondial_de_l%27Auto_2026_(01).jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Y.Leclercq"
+    },
+    {
+     "klein": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dc/Volkswagen_ID._Cross_au_Mondial_de_l%27Auto_2026_%2802%29.jpg/330px-Volkswagen_ID._Cross_au_Mondial_de_l%27Auto_2026_%2802%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "gross": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dc/Volkswagen_ID._Cross_au_Mondial_de_l%27Auto_2026_%2802%29.jpg/960px-Volkswagen_ID._Cross_au_Mondial_de_l%27Auto_2026_%2802%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "voll": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dc/Volkswagen_ID._Cross_au_Mondial_de_l%27Auto_2026_%2802%29.jpg/1920px-Volkswagen_ID._Cross_au_Mondial_de_l%27Auto_2026_%2802%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "titel": "File:Volkswagen ID. Cross au Mondial de l'Auto 2026 (02).jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Volkswagen_ID._Cross_au_Mondial_de_l%27Auto_2026_(02).jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Y.Leclercq"
+    }
+   ],
+   "eckdaten": {
+    "reichweite_km": 425,
+    "kofferraum_l": 475
+   },
+   "verbrauch": {
+    "kwh_100": 14.4
+   },
+   "angebot": {
+    "anbieter": "Motor-Nützel Bayreuth (null-leasing.com)",
+    "url": "https://www.null-leasing.com/volkswagen-leasing/angebote/461012883",
+    "laufzeit": 48,
+    "km_jahr": 10000,
+    "rate_netto": 296.0,
+    "ueberfuehrung_netto": 1499.0,
+    "blp_brutto": 40259,
+    "lieferung": "ab 09.03.2027",
+    "version_ausstattung": "ID.Cross Style 52 kWh, 425 km; Matrix-LED, CarPlay, Rückfahrkamera, Sitzheizung",
+    "pflicht_erfuellt": "ja",
+    "dezember": "nein",
+    "leasingfaktor": 0.87,
+    "gesamtkostenfaktor": 0.97
+   },
+   "lieferzeit_neu": "Life ca. 4 Monate, Style ab 03/2027 (Händlerangebote)",
+   "lieferzeit_quelle": "https://www.null-leasing.com/volkswagen-leasing/angebote/461012883",
+   "bewertung": "Neu: kompaktes SUV, 475 l Kofferraum, volle Ausstattung; Faktor 0,87, erst ab März 2027."
+  },
+  {
+   "id": "skoda-epiq",
+   "gruppe": "Europäische Marken",
+   "marke": "Škoda",
+   "modell": "Epiq",
+   "antrieb": "E",
+   "notiz": "Neu seit 05/2026 – kompaktes SUV, Technik wie ID.Cross",
+   "bilder": [
+    {
+     "klein": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7b/2026_Skoda_Epiq%2C_white_%281%29.jpg/330px-2026_Skoda_Epiq%2C_white_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "gross": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7b/2026_Skoda_Epiq%2C_white_%281%29.jpg/960px-2026_Skoda_Epiq%2C_white_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "voll": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7b/2026_Skoda_Epiq%2C_white_%281%29.jpg/1920px-2026_Skoda_Epiq%2C_white_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "titel": "File:2026 Skoda Epiq, white (1).jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2026_Skoda_Epiq,_white_(1).jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Ssu"
+    },
+    {
+     "klein": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/2026_Skoda_Epiq%2C_white_%285%29.jpg/330px-2026_Skoda_Epiq%2C_white_%285%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "gross": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/2026_Skoda_Epiq%2C_white_%285%29.jpg/960px-2026_Skoda_Epiq%2C_white_%285%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "voll": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/2026_Skoda_Epiq%2C_white_%285%29.jpg/1920px-2026_Skoda_Epiq%2C_white_%285%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "titel": "File:2026 Skoda Epiq, white (5).jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:2026_Skoda_Epiq,_white_(5).jpg",
+     "lizenz": "CC BY-SA 4.0",
+     "urheber": "Ssu"
+    },
+    {
+     "klein": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/49/Skoda_epiq_interior.jpg/330px-Skoda_epiq_interior.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "gross": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/49/Skoda_epiq_interior.jpg/960px-Skoda_epiq_interior.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "voll": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/49/Skoda_epiq_interior.jpg/1920px-Skoda_epiq_interior.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "titel": "File:Skoda epiq interior.jpg",
+     "seite": "https://commons.wikimedia.org/wiki/File:Skoda_epiq_interior.jpg",
+     "lizenz": "CC BY 4.0",
+     "urheber": "Oil151kv"
+    }
+   ],
+   "eckdaten": {
+    "reichweite_km": 434,
+    "kofferraum_l": 475
+   },
+   "verbrauch": {
+    "kwh_100": 13.9
+   },
+   "angebot": {
+    "anbieter": "Auto Bach Diez (null-leasing.com)",
+    "url": "https://www.null-leasing.com/skoda-leasing/angebote/51047678327456",
+    "laufzeit": 48,
+    "km_jahr": 10000,
+    "rate_netto": 279.0,
+    "ueberfuehrung_netto": 1190.0,
+    "blp_brutto": 37879,
+    "lieferung": "ab 15.05.2027 (vorbestelltes Fahrzeug)",
+    "version_ausstattung": "Epiq Selection 55, 434 km; Rückfahrkamera, Sitzheizung, LED",
+    "pflicht_erfuellt": "teilweise (CarPlay nicht genannt)",
+    "dezember": "nein",
+    "leasingfaktor": 0.88,
+    "gesamtkostenfaktor": 0.95
+   },
+   "lieferzeit_neu": "Ende November bis Anfang Dezember 2027 (gut 13 Monate, Händlerangabe vom 22.10.2026)",
+   "lieferzeit_quelle": "https://automobilsalon-bellemann.de/news/skoda-epiq-lieferzeit-auslieferung-2026/",
+   "bewertung": "Neu: kompaktes SUV, 475 l Kofferraum, Faktor 0,88; frei bestellt erst Ende 2027."
   }
  ],
  "markt": {
@@ -1232,64 +1408,40 @@
    "https://www.preiswert-leasen.de/leasing/elektroauto",
    "https://www.leasingmarkt.de/e-auto"
   ],
-  "text": "Stichprobe leasingmarkt.de Gewerbe (116 E-Auto-, 62 PHEV-Angebote, 10.000 km, 24–48 Monate): E-Auto Median 0,90, Plug-in-Hybrid Median 0,69. leasingmarkt wertet unter 0,50 als Top, 0,90–1,00 als durchschnittlich."
+  "text": "Stichprobe leasingmarkt.de Gewerbe (116 E-Auto-, 62 PHEV-Angebote, 10.000 km, 24–48 Monate): E-Auto Median 0,90, Plug-in-Hybrid Median 0,69. leasingmarkt wertet unter 0,50 als Top, 0,90–1,00 als durchschnittlich.",
+  "stand": "14.10.2026"
  },
  "deals": [
   {
    "marke": "Hyundai",
    "modell": "IONIQ 5 63 kWh 2WD",
    "in_liste": true,
-   "anbieter": "ahg Horb (leasingmarkt.de)",
-   "url": "https://www.leasingmarkt.de/leasing/pkw/hyundai-ioniq_5/13279279",
+   "anbieter": "Siemon Salzbergen (null-leasing.com)",
+   "url": "https://www.null-leasing.com/hyundai-leasing/angebote/49601690851744",
    "kunde": "Gewerbe",
-   "laufzeit": 48,
+   "laufzeit": 36,
    "km_jahr": 10000,
    "sonderzahlung": 0,
-   "rate_netto": 220.88,
-   "ueberfuehrung_netto": 1256.3,
-   "blp_brutto": 45750,
-   "version_ausstattung": "Basis 170 PS, frei konfigurierbar; 36 Mon. 234,51 €",
+   "rate_netto": 198.08,
+   "ueberfuehrung_netto": 1495.0,
+   "blp_brutto": 46200,
+   "version_ausstattung": "IONIQ 5 63 kWh, 440 km; CarPlay, Kamera, Sitzheizung, LED",
    "reichweite_km": 440,
-   "lieferung": "04/2027 (Bestellung)",
-   "leasingfaktor": 0.57,
-   "gesamtkostenfaktor": 0.64,
-   "warum_so_gut": "Hyundai-Gewerbeaktion bis 31.12.2026, der Händler liegt noch darunter.",
-   "gueltig_bis": "Aktion bis 31.12.2026",
-   "haken": "Größer als Golf Variant (4,66 m), Lieferung erst 04/2027",
-   "beleg_url": "https://www.hyundai.com/de/de/beratung-kauf/gewerbekunden/uebersicht/gewerbeleasing.html",
-   "hinweis": "Seitentitel zeigt eine andere Standardrate; die 220,88 € gelten für Gewerbe, 48 Monate, 10.000 km.",
+   "lieferung": "ca. 3–5 Monate ab Bestellung",
+   "leasingfaktor": 0.51,
+   "gesamtkostenfaktor": 0.62,
+   "warum_so_gut": "Händler-Gewerbeaktion für vorbestellte Fahrzeuge.",
+   "gueltig_bis": "solange Kontingent",
+   "haken": "Größer als Golf Variant (4,66 m)",
+   "beleg_url": "https://www.null-leasing.com/hyundai-leasing/angebote/49601690851744",
+   "hinweis": "Auf der Seite 36 Monate und 10.000 km wählen – sie startet mit 24 Monaten und 5.000 km.",
    "antrieb": "E",
    "kurzname": "IONIQ 5",
    "dezember": "nein",
    "verbrauch": {
     "kwh_100": 15.6
-   }
-  },
-  {
-   "marke": "Cupra",
-   "modell": "Leon Sportstourer VZ Black Edition e-Hybrid 272 PS",
-   "in_liste": true,
-   "anbieter": "VW Automobile Stuttgart (leasingmarkt.de)",
-   "url": "https://www.leasingmarkt.de/leasing/pkw/cupra-leon/13172265",
-   "kunde": "Gewerbe",
-   "laufzeit": 36,
-   "km_jahr": 10000,
-   "sonderzahlung": 0,
-   "rate_netto": 269.0,
-   "ueberfuehrung_netto": 1252.1,
-   "blp_brutto": 56770,
-   "version_ausstattung": "Kombi, DCC, Standheizung, 19 Zoll, Rückfahrkamera",
-   "reichweite_km": 121,
-   "lieferung": "sofort (Lager)",
-   "leasingfaktor": 0.56,
-   "gesamtkostenfaktor": 0.64,
-   "warum_so_gut": "Einschätzung: Der Händler baut Lagerfahrzeuge ab.",
-   "gueltig_bis": "solange Vorrat",
-   "haken": "Listenpreis 56.770 € (über 50.000 €), nur 36 Monate",
-   "antrieb": "PHEV",
-   "kurzname": "Leon Sportstourer e-Hybrid",
-   "dezember": "ja",
-   "verbrauch": {}
+   },
+   "pflicht_erfuellt": "ja"
   },
   {
    "marke": "Peugeot",
@@ -1298,8 +1450,8 @@
    "antrieb": "Benzin",
    "antrieb_text": "Benzin-Mildhybrid",
    "in_liste": true,
-   "anbieter": "Gromes, Wartenberg (leasingmarkt.de)",
-   "url": "https://www.leasingmarkt.de/leasing/pkw/peugeot-3008/13276385",
+   "anbieter": "Gromes Wartenberg (null-leasing.com)",
+   "url": "https://www.null-leasing.com/peugeot-leasing/angebote/50711108811360",
    "kunde": "Gewerbe",
    "laufzeit": 36,
    "km_jahr": 10000,
@@ -1307,40 +1459,48 @@
    "rate_netto": 114.83,
    "ueberfuehrung_netto": 1134.45,
    "blp_brutto": 42640,
-   "lieferung": "02/2027 (Bestellung)",
+   "lieferung": "ca. 4 Monate ab Bestellung",
    "dezember": "nein",
    "leasingfaktor": 0.32,
    "gesamtkostenfaktor": 0.41,
-   "warum_so_gut": "Mehrere Händler bieten ihn um Faktor 0,32 an – vermutlich eine Gewerbeaktion von Stellantis/Leasys (Einschätzung).",
-   "haken": "Fastback-SUV mit abfallendem Dach; Lieferung erst 02/2027; Sitzheizung vor Bestellung bestätigen lassen. Lagerwagen bis Dezember: Faktor 0,39, privat ca. 301 €.",
-   "verbrauch": {}
+   "warum_so_gut": "Händleraktion für Bestellfahrzeuge; auch der Lagerwagen liegt bei Faktor 0,38.",
+   "haken": "Benziner mit 1 % Versteuerung; Fastback-SUV. Sofort lieferbar: 139 € netto (Exner Plauen).",
+   "verbrauch": {},
+   "version_ausstattung": "3008 Allure Plus Hybrid 145; Rückfahrkamera, Sitzheizung, LED, 21-Zoll-Panoramadisplay, CarPlay",
+   "pflicht_erfuellt": "ja",
+   "gueltig_bis": "Händlerangebot",
+   "beleg_url": "https://www.leasingmarkt.de/leasing/pkw/peugeot-3008/13304536"
   },
   {
    "marke": "Ford",
-   "modell": "Puma 1.0 EcoBoost Hybrid ST-Line",
-   "kurzname": "Puma Hybrid (Benzin)",
+   "modell": "Puma Titanium 125 PS",
+   "kurzname": "Puma (Benzin)",
    "antrieb": "Benzin",
-   "antrieb_text": "Benzin-Mildhybrid",
+   "antrieb_text": "Benzin",
    "in_liste": true,
-   "anbieter": "Automobilforum Kaufbeuren (leasingmarkt.de)",
-   "url": "https://www.leasingmarkt.de/leasing/pkw/ford-puma/13123968",
+   "anbieter": "Autohaus Louis Dresen (leasingmarkt.de)",
+   "url": "https://www.leasingmarkt.de/leasing/pkw/ford-puma/12524206",
    "kunde": "Gewerbe",
    "laufzeit": 36,
    "km_jahr": 10000,
    "sonderzahlung": 0,
-   "rate_netto": 125.21,
-   "ueberfuehrung_netto": 1252.1,
-   "blp_brutto": 37250,
-   "lieferung": "12/2026, ohne festen Tag",
-   "dezember": "knapp",
-   "leasingfaktor": 0.4,
-   "gesamtkostenfaktor": 0.51,
-   "warum_so_gut": "Niedriger Listenpreis bei voller Pflichtausstattung (Einschätzung).",
-   "haken": "Eine Klasse kleiner als ein Golf.",
-   "verbrauch": {}
+   "rate_netto": 142.02,
+   "ueberfuehrung_netto": 1084.03,
+   "blp_brutto": 32500,
+   "lieferung": "Lager, sofort",
+   "dezember": "ja",
+   "leasingfaktor": 0.52,
+   "gesamtkostenfaktor": 0.63,
+   "warum_so_gut": "Ford-Gewerbewochen beim Händler.",
+   "haken": "Kleiner als ein Golf, Schaltgetriebe, CarPlay im Inserat nicht genannt.",
+   "verbrauch": {},
+   "version_ausstattung": "Puma Titanium 125 PS, Schaltgetriebe; Rückfahrkamera, Sitzheizung, LED",
+   "pflicht_erfuellt": "teilweise (CarPlay nicht genannt)",
+   "gueltig_bis": "Aktion des Händlers",
+   "beleg_url": "https://www.leasingmarkt.de/leasing/pkw/ford-puma/12524206"
   }
  ],
- "stand": "14.10.2026",
+ "stand": "25.10.2026",
  "annahmen": {
   "km_jahr": 10000,
   "monate": 36,
