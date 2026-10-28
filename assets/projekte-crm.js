@@ -125,7 +125,7 @@
     return w[0].slice(0, 2).toUpperCase();
   }
   // opt.termine (neuer Aufbau): Plan ohne To-dos – die Linie „Projektmanagement“ zeigt die Projekttermine
-  // (Regeltermine, Abstimmungen, Runden) der letzten vier Wochen und alle kommenden; Aufgaben ohne Strang bleiben in der Liste.
+  // (Regeltermine, Abstimmungen, Runden) der letzten zwei Wochen und alle kommenden; Aufgaben ohne Strang bleiben in der Liste.
   // Kurzer Name im Plan (höchstens drei Wörter): mit Teilnehmenden „Austausch Nachname“, sonst Titel ohne Klammerzusatz und „der SV Akademie“
   function kurzTermin(e) {
     var tn = (e.teilnehmer || []).map(function (n) { return String(n).trim().split(/\s+/).pop(); });
@@ -168,7 +168,9 @@
         .sort(function (x, y) { return (x.reihenfolge == null ? 999 : x.reihenfolge) - (y.reihenfolge == null ? 999 : y.reihenfolge) || x.id - y.id; });
       reihe2.forEach(function (a, i) {
         var eigene = !begleitend[st.id] && (a.vorgaenger || []).some(function (v) { return reihe2.some(function (b) { return String(b.id) === String(v); }); });
-        if (!eigene && i > 0) vorher[a.id] = reihe2[i - 1].id;
+        // beginnt eine Aufgabe, bevor die vorige endet (z. B. Webseite ab 09.11., Lea bis 24.11.), läuft sie eigenständig daneben
+        var daneben = i > 0 && a.beginnt_am && reihe2[i - 1].faellig_am && a.beginnt_am < reihe2[i - 1].faellig_am;
+        if (!eigene && i > 0 && !daneben) vorher[a.id] = reihe2[i - 1].id;
       });
     });
     var erstesOffen = (gates.filter(function (g) { return g.status !== "erledigt"; })[0] || gates[gates.length - 1]).id;
@@ -181,7 +183,7 @@
     // Termine als Halte auf der Linie Projektmanagement (nur Termine und Workshops, keine Meilensteine wie der Schulungsinfotag): vergangene erledigt, in zeitlicher Folge
     var termHalte = [];
     if (pm && opt.termine) {
-      var grenze = Date.now() - 28 * 864e5, jetzt = Date.now();
+      var grenze = Date.now() - 14 * 864e5, jetzt = Date.now();
       var tl = opt.termine.filter(function (e) { return new Date(e.datum).getTime() >= grenze && (e.art === "Termin" || e.art === "Workshop"); }).sort(function (a, b) { return new Date(a.datum) - new Date(b.datum); });
       tl.forEach(function (e, i) {
         var d = new Date(e.datum), tag = d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2), mitZeit = d.getHours() || d.getMinutes();
@@ -207,10 +209,10 @@
           status: a.status === "erledigt" ? "erreicht" : (a.spalte === "arbeit" || a.spalte === "pruefung") ? "aktiv" : "offen",
           braucht: (a.vorgaenger || []).filter(function (v) { return ids[v] && !(begleitend[a.strang_id] && liste.some(function (b) { return String(b.id) === String(v) && b.strang_id === a.strang_id; })); })
             .map(function (v) { return "a" + v; }).concat(vorher[a.id] ? ["a" + vorher[a.id]] : []),
-          termin: a.faellig_am ? "fällig " + datum(a.faellig_am) : "",
+          termin: a.beginnt_am && a.faellig_am ? datum(a.beginnt_am) + " bis " + datum(a.faellig_am) : a.faellig_am ? "fällig " + datum(a.faellig_am) : "",
           // Monat für die Monatseinteilung wie in der Kundenansicht: Fälligkeit, bei Erledigtem ohne Fälligkeit das Erledigt-Datum
           monat: String(a.faellig_am || (a.status === "erledigt" && a.erledigt_am) || "").slice(0, 7) || null,
-          von: a.beginnt_am ? String(a.beginnt_am).slice(0, 7) : null };   // Zeitraum (z. B. Entwicklung Lea Oktober–November), sobald es das Feld gibt
+          von: a.beginnt_am ? String(a.beginnt_am).slice(0, 7) : null, zeitraum: !!a.beginnt_am };   // Zeitraum (z. B. Lea Oktober–November, Webseite 09.–27.11.)
       }).concat(termHalte)
     };
     // Der letzte Termin eines Levels gehört zu dessen Weg – sonst stünde die Terminlinie im Level-Ausschnitt blass
@@ -227,7 +229,7 @@
       db.from("projekt_beteiligte").select("id, seite, rolle, name, kontakte(id, vorname, nachname, position)").eq("projekt_id", id),
       db.from("projekt_ereignisse").select("id, datum, art, titel, quelle, format, ort, teilnehmer, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("datum", { ascending: false }),
       db.from("projekt_punkte").select("id, ereignis_id, art, text, angelegt_am, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am", { ascending: false }),
-      db.from("aufgaben").select("id, paket_id, strang_id, reihenfolge, art, projektgate_id, titel, beschreibung, prompt, status, spalte, faellig_am, erledigt_am, ereignis_id, weg, vorgaenger, warten_auf, hinweis, zeitblock_vorschlag, mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, unterlagen, person:kontakt_id(id, vorname, nachname), organisationen(id, name), zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
+      db.from("aufgaben").select("id, paket_id, strang_id, reihenfolge, art, projektgate_id, titel, beschreibung, prompt, status, spalte, faellig_am, beginnt_am, erledigt_am, ereignis_id, weg, vorgaenger, warten_auf, hinweis, zeitblock_vorschlag, mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, unterlagen, person:kontakt_id(id, vorname, nachname), organisationen(id, name), zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
       ,db.from("projekt_pakete").select("id, nr, titel, ziel, stand, status").eq("projekt_id", id).order("nr")
       ,db.from("projekt_straenge").select("id, titel, reihenfolge, eltern_id, erklaerung, verantwortlich, verantwortlich_kontakte").eq("projekt_id", id).order("reihenfolge")
       ,db.from("projekt_verlauf").select("id, datum, art, titel, inhalt").eq("projekt_id", id).order("datum", { ascending: false })

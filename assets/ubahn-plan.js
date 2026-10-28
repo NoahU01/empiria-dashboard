@@ -76,6 +76,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   // Endhaltestelle: senkrechter Balken, in den jede beteiligte Linie waagerecht auf ihrer Höhe einläuft.
   // Keine Transparenz: helle Töne sind echte Mischfarben mit Weiß, damit Überlagerungen nicht dunkler werden.
   var MASS = 1;   // Größe des Plans (1 = 100 %), skaliert Linien und Schrift gemeinsam
+  var ENDE = 132;   // Platz rechts für Endhalt und Namen der Stufe (Name zweizeilig, 90 px)
   var ABST = 136, ZH = 72, UEBER = 64, UNTER = 58, LUECKE = 40, EINLAUF = 26, SPALTE = 200;
   function hell(hex, t) {   // Farbe mit Weiß mischen, t = Anteil Weiß
     var n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
@@ -157,26 +158,32 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var HALT = 64;                               // Platz für einen Stufenhalt zwischen zwei Bändern
     var START = vorStufe ? 70 : EINLAUF;         // links: Starthalt der Stufe davor
     var verfuegbar = planEl.clientWidth / MASS - SPALTE;   // Breite in Plan-Einheiten (MASS = gewählte Größe)
-    ABST = Math.max(87, Math.min(140, (verfuegbar - 14 - START - HALT * (nr - 1) - 172) / lauf));
+    ABST = Math.max(78, Math.min(140, (verfuegbar - 14 - START - HALT * (nr - 1) - ENDE) / lauf));
     function xVon(s) { var x = MS[s.meilenstein]; return START + (bandStart[x.id] + tiefe[s.id]) * ABST + bandNr[x.id] * HALT + ABST / 2; }
     function xStart(s) { if (tiefeA[s.id] == null) return xVon(s); var x = MS[s.meilenstein]; return START + (bandStart[x.id] + tiefeA[s.id]) * ABST + bandNr[x.id] * HALT + ABST / 2; }
     function xHalt(mid) { return START + (bandStart[mid] + bandBreite[mid]) * ABST + bandNr[mid] * HALT + 14; }   // Stufenhalt nach dem Band
 
     var unter = {}, gruppen = {}, tiefsteZeile = {};
+    // Zeile je Halt: die oberste Zeile seiner Linie, in der er keinen anderen Halt überdeckt – so rücken
+    // Schritte in derselben Spalte und eigenständig startende Zeiträume (z. B. Webseite neben Lea) eine Zeile tiefer
+    var belegt = {};
     liste.forEach(function (s) {
-      var k = s.strang + "|" + s.meilenstein + "|" + tiefe[s.id];
-      gruppen[k] = (gruppen[k] || 0); unter[s.id] = gruppen[k]++;
+      var k = s.strang + "|" + s.meilenstein, a = tiefeA[s.id] != null ? tiefeA[s.id] : tiefe[s.id], e = tiefe[s.id], z = 0;
+      var frei = (s.braucht || []).every(function (b) { return !imPlan[b] || S[b].strang !== s.strang; });
+      belegt[k] = belegt[k] || [];
+      while (belegt[k].some(function (x) { return x.z === z && x.a <= e && a <= x.e && (frei || x.a === a || x.e === e || a === e); })) z++;
+      belegt[k].push({ z: z, a: a, e: e }); unter[s.id] = z; gruppen[k] = Math.max(gruppen[k] || 0, z + 1);
       tiefsteZeile[s.strang] = Math.max(tiefsteZeile[s.strang] || 0, unter[s.id]);
     });
     var bahnen = D.straenge.filter(function (st) { return liste.some(function (s) { return s.strang === st.id; }); });
     // Termine (Klausur, Workshops): eigene Zeile unter den Monaten; Termine, die zugleich ein Schritt sind, stehen dort als Halt
     var termineImPlan = (D.termine || []).filter(function (t) { return !t.schritt && monatsBloecke.some(function (b) { return b.monat === t.monat; }); });
     var linieY = {}, y0 = (nr > 1 ? 46 : 16) + (monatsBloecke.length ? 44 : 0) + (termineImPlan.length ? 30 : 0);   // oben eine Zeile für die Namen der Stufenhalte (nur im Gesamtplan)
-    bahnen.forEach(function (st) { linieY[st.id] = y0 + UEBER; y0 += UEBER + tiefsteZeile[st.id] * ZH + (tiefsteZeile[st.id] ? UNTER + 34 : UNTER); });
+    bahnen.forEach(function (st) { linieY[st.id] = y0 + UEBER; y0 += UEBER + tiefsteZeile[st.id] * ZH + (tiefsteZeile[st.id] ? UNTER + 56 : UNTER); });
     var hoehe = y0 + 6 + (vorStufe ? 22 : 0);   // unten Platz für „Voraussetzung: …“
     function yVon(s) { return linieY[s.strang] + unter[s.id] * ZH; }
     var letzte = stufenImBlick[stufenImBlick.length - 1];
-    var breite = xHalt(letzte.id) + 172;
+    var breite = xHalt(letzte.id) + ENDE;
     var obenAlle = Math.min.apply(null, bahnen.map(function (st) { return linieY[st.id]; })) - 18;
     var untenAlle = Math.max.apply(null, bahnen.map(function (st) { return linieY[st.id]; })) + 18;
 
@@ -253,7 +260,9 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       if (!weiter) {
         var ms = MS[s.meilenstein], rein = fokus[s.id] && vorlauf(ms.braucht || [])[s.id] && !zustandUI.station;
         var ende = rein ? xHalt(ms.id) : xVon(s) + ABST / 2;
-        strecke(weg(x2, y2, ende, linieY[s.strang], true), f, false, !rein && (blass(s.id) || !!zustandUI.station));
+        // eigenständig startender Nebenstrang (eigene Zeile, kein Nachfolger): läuft auf seiner Zeile bis zum Stufenhalt
+        var eigeneZeile = unter[s.id] > 0 && freiStart(s);
+        strecke(weg(xVon(s), y2, ende, eigeneZeile ? y2 : linieY[s.strang], true), f, false, !rein && (blass(s.id) || !!zustandUI.station));
       }
     });
     // Stufenhalte: Balken über alle Linien; der gewählte bzw. letzte kräftig, Zwischenhalte etwas schmaler
@@ -289,7 +298,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       if (s.kritisch) punkte += '<circle cx="' + (cx + r + 3) + '" cy="' + (cy - r - 3) + '" r="7" fill="' + (schwach ? "#f6c9bf" : "#E8553A") + '"/><text x="' + (cx + r + 3) + '" y="' + (cy - r + 0.6) + '" text-anchor="middle" class="ub-ausruf">!</text>';
       var vonOben = (s.braucht || []).some(function (b) { return imPlan[b] && S[b].strang !== s.strang && yVon(S[b]) < cy; });
       var obenL = unter[s.id] === 0 && !vonOben;
-      var mitte = (xs + cx) / 2, bn = Math.max(ABST - 14, lang + 2 * r);
+      var mitte = (xs + cx) / 2, bn = Math.max(ABST - 6, lang + 2 * r);   // Namen fast spaltenbreit – bei engen Monaten bleiben sie lesbar
       namen += '<button type="button" class="ub-name ub-name--' + z + (obenL ? " ub-name--oben" : "") + (schwach ? " ub-name--blass" : "") +
         '" data-station="' + s.id + '" style="left:' + (mitte - bn / 2) + "px;top:" + (obenL ? cy - r - 8 : cy + r + 8) + "px;width:" + bn + 'px">' + esc(s.titel) + "</button>";
       namen += '<button type="button" class="ub-treffer" data-station="' + s.id + '" aria-label="' + esc(s.titel) + '" style="left:' + (mitte - 16) + "px;top:" + (cy - 16) + "px" + (lang > 1 ? ";width:" + (lang + 32) + "px;margin-left:" + (-lang / 2) + "px" : "") + '"></button>';

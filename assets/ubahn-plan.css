@@ -70,7 +70,7 @@
 .ub-route-halt.ist-an .ub-route-titel{color:#111;font-weight:600}
 .ub-route-halt.ist-an .ub-route-punkt{width:13px;height:13px;background:#fff;border:4.5px solid #111;margin:0 0 1px}
 .ub-route-halt.ist-an .ub-route-datum{color:#111}
-.ub-halt-name--ende{width:124px}
+.ub-halt-name--ende{width:90px}
 .ub-route-aktuell{margin-top:-4px;font-size:.66rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#111}
 .ub-zoom{position:relative;z-index:6;display:flex;align-items:center;gap:2px;background:#fff;border:1px solid #e0dcd5;border-radius:999px;padding:3px 5px;font:500 .72rem/1 Poppins,sans-serif;color:#111}
 /* Dashboard: Rahmen um den Plan in der Projektseite */
