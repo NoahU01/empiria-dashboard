@@ -28,7 +28,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     while (st.length) {
       var id = st.pop();
       if (MS[id]) { (MS[id].braucht || []).forEach(function (b) { st.push(b); }); continue; }   // Stufe als Voraussetzung
-      if (drin[id] || !S[id]) continue; drin[id] = true; (S[id].braucht || []).forEach(function (b) { st.push(b); });
+      if (drin[id] || !S[id]) continue; drin[id] = true; (S[id].braucht || []).concat(S[id].einfluss || []).forEach(function (b) { st.push(b); });   // was einfließt, gehört dazu (z. B. LEA in die Webseite)
     }
     return drin;
   }
