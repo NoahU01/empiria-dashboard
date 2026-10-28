@@ -124,7 +124,16 @@
     if (w.length > 1) return (w[0][0] + w[1][0]).toUpperCase();
     return w[0].slice(0, 2).toUpperCase();
   }
-  function ubahnDaten(straenge, auf) {
+  // opt.termine (neuer Aufbau): Plan ohne To-dos – die Linie „Projektmanagement“ zeigt die Projekttermine
+  // (Regeltermine, Abstimmungen, Runden) der letzten vier Wochen und alle kommenden; Aufgaben ohne Strang bleiben in der Liste.
+  // Kurzer Name im Plan (höchstens drei Wörter): mit Teilnehmenden „Austausch Nachname“, sonst Titel ohne Klammerzusatz und „der SV Akademie“
+  function kurzTermin(e) {
+    var tn = (e.teilnehmer || []).map(function (n) { return String(n).trim().split(/\s+/).pop(); });
+    if (tn.length) return "Austausch " + tn.slice(0, 2).join(", ");
+    return String(e.titel || "").replace(/\s*\(.*?\)\s*/g, " ").replace(/\s+der\s+SV[\s-]Akademie\b/i, "").trim();
+  }
+  function ubahnDaten(straenge, auf, opt) {
+    opt = opt || {};
     var kinder = {}, oben = [];
     straenge.forEach(function (s) { if (s.eltern_id) (kinder[s.eltern_id] = kinder[s.eltern_id] || []).push(s); else oben.push(s); });
     function reihe(a, b) { return (a.reihenfolge || 0) - (b.reihenfolge || 0) || a.id - b.id; }
@@ -133,6 +142,9 @@
     var gates = auf.filter(function (a) { return a.art === "projektgate"; })
       .sort(function (a, b) { return String(a.faellig_am || "9999").localeCompare(String(b.faellig_am || "9999")) || (a.reihenfolge || 0) - (b.reihenfolge || 0); });
     var imStrang = {}; blaetter.forEach(function (s) { imStrang[s.id] = true; });
+    var pm = opt.termine ? blaetter.filter(function (s) { return /projektmanagement/i.test(s.titel || ""); })[0] : null;
+    if (opt.termine) auf = auf.filter(function (a) { return a.strang_id && imStrang[a.strang_id] && !(pm && a.strang_id === pm.id) || a.art === "projektgate"; });
+    if (opt.termine && !pm && opt.termine.length) { pm = { id: -1, titel: "Termine", erklaerung: "", verantwortlich: [] }; blaetter.push(pm); imStrang[-1] = true; }
     // Aufgaben ohne (bekannten) Strang laufen auf einer eigenen Linie „Weitere Aufgaben“
     var ohne = auf.filter(function (a) { return a.art !== "projektgate" && !(a.strang_id && imStrang[a.strang_id]); });
     if (ohne.length) { blaetter.push({ id: 0, titel: blaetter.length ? "Weitere Aufgaben" : "Aufgaben", erklaerung: "", verantwortlich: [] }); imStrang[0] = true; }
@@ -166,7 +178,21 @@
       return erstesOffen;
     }
     function datum(d) { var t = String(d || "").slice(0, 10).split("-"); return t.length === 3 ? t[2] + "." + t[1] + "." + t[0] : "offen"; }
-    return {
+    // Termine als Halte auf der Linie Projektmanagement: vergangene erledigt, in zeitlicher Folge
+    var termHalte = [];
+    if (pm && opt.termine) {
+      var grenze = Date.now() - 28 * 864e5, jetzt = Date.now();
+      var tl = opt.termine.filter(function (e) { return new Date(e.datum).getTime() >= grenze; }).sort(function (a, b) { return new Date(a.datum) - new Date(b.datum); });
+      tl.forEach(function (e, i) {
+        var d = new Date(e.datum), tag = d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2), mitZeit = d.getHours() || d.getMinutes();
+        var g = gates.filter(function (x) { return x.faellig_am && x.faellig_am >= tag; })[0] || gates[gates.length - 1];
+        termHalte.push({ id: "e" + e.id, strang: "s" + pm.id, meilenstein: "g" + g.id, titel: kurzTermin(e),
+          beschreibung: [e.titel, e.format === "vor Ort" ? "vor Ort" + (e.ort ? ": " + e.ort : "") : e.format, (e.teilnehmer || []).length ? "mit " + e.teilnehmer.join(", ") : ""].filter(Boolean).join(" · "),
+          status: d.getTime() < jetzt ? "erreicht" : "offen", braucht: i ? ["e" + tl[i - 1].id] : [],
+          termin: "am " + d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) + (mitZeit ? ", " + d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + " Uhr" : "") });
+      });
+    }
+    var erg = {
       zielbild: { kurz: "Gesamtplan" },
       straenge: blaetter.map(function (s, i) {
         var label = String(s.titel || "").replace(/^\d+\s+/, "");
@@ -182,8 +208,14 @@
           braucht: (a.vorgaenger || []).filter(function (v) { return ids[v] && !(begleitend[a.strang_id] && liste.some(function (b) { return String(b.id) === String(v) && b.strang_id === a.strang_id; })); })
             .map(function (v) { return "a" + v; }).concat(vorher[a.id] ? ["a" + vorher[a.id]] : []),
           termin: a.faellig_am ? "fällig " + datum(a.faellig_am) : "" };
-      })
+      }).concat(termHalte)
     };
+    // Der letzte Termin eines Levels gehört zu dessen Weg – sonst stünde die Terminlinie im Level-Ausschnitt blass
+    erg.meilensteine.forEach(function (m) {
+      var im = termHalte.filter(function (t) { return t.meilenstein === m.id; });
+      if (im.length) m.braucht.push(im[im.length - 1].id);
+    });
+    return erg;
   }   // Planungsmodus: Stränge des Projekts (assets/projekt-plan.js)
   function projekt(id) {
     wurzel.innerHTML = '<div class="kb-laedt"><span></span><span></span></div>';
@@ -351,7 +383,7 @@
       }).join("") + "</ul>" + (neu && ohneT && ohneT < offen.length ? '<button type="button" class="kt3-klapp pr-fertig-mehr" data-klapp-knopf="ohne" data-text="Weitere ' + ohneT + ' Aufgaben ohne Termin" aria-expanded="false">Weitere ' + ohneT + " Aufgaben ohne Termin</button>" : "") : '<p class="kt3-leise">Nichts offen.</p>';
       // Erledigte Aufgaben bleiben sichtbar – hellgrau mit Haken unter den offenen, neueste zuerst (Daniel, 10.10.2026)
       var fertig = auf.filter(function (a) { return a.status === "erledigt"; }).sort(function (a, b) { return String(b.erledigt_am || "").localeCompare(String(a.erledigt_am || "")); });
-      if (fertig.length) aufInhalt += '<div class="pr-fertig"><p class="pr-fertig-kopf">Erledigt</p><ul class="pr-auf2 pr-auf-fertig">' + fertig.map(function (a, i) {
+      if (fertig.length && !neu) aufInhalt += '<div class="pr-fertig"><p class="pr-fertig-kopf">Erledigt</p><ul class="pr-auf2 pr-auf-fertig">' + fertig.map(function (a, i) {
         return '<li data-a="' + a.id + '"' + (i >= 5 ? " data-mehr hidden" : "") + '><div class="pr-auf-zeile"><button type="button" class="st-haken an" aria-label="Wieder öffnen" title="Wieder öffnen"></button>' +
           '<span class="pr-frist">' + (a.erledigt_am ? "erledigt " + new Date(a.erledigt_am).toLocaleDateString("de-DE", { day: "numeric", month: "numeric" }) : "erledigt") + "</span>" +
           '<span class="pr-auf-titel">' + esc(a.titel) + '</span><span class="pr-wer">' + esc(wer(a) || "") + "</span></div></li>";
@@ -468,7 +500,7 @@
     });
     neuR.appendChild(hin);
     r.replaceWith(neuR);
-    var ubw = weg.querySelector("[data-ub-wurzel]"), ubd = ubahnDaten(STRAENGE, STAND.auf);
+    var ubw = weg.querySelector("[data-ub-wurzel]"), ubd = ubahnDaten(STRAENGE, STAND.auf, { termine: ere });
     if (ubd && window.UBahnPlan) UBahnPlan(ubw, ubd, { hash: false });
     else ubw.innerHTML = '<p class="pr-offen">Noch keine Aufgaben für den Plan.</p>';
     // Größe und Legende in die Kopfzeile von „Weg zum Ergebnis“ – bleiben auch zugeklappt erreichbar
