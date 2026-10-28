@@ -249,7 +249,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     }
     // Woher kommt eine Strecke in den Halt? aus der eigenen Linie, aus einem Stufenhalt – oder frei
     liste.forEach(function (s) {
-      var f = STR[s.strang].farbe, x2 = xStart(s), y2 = yVon(s), linieRein = false;
+      var f = STR[s.strang].farbe, x2 = xStart(s), y2 = yVon(s), linieRein = false, abHier = null;
       (s.braucht || []).forEach(function (b) {
         if (MS[b]) {                                             // startet, sobald eine Stufe erreicht ist
           var hx = imBlick[b] ? xHalt(b) + 13 : vorStufe ? 34 : 0;   // aus dem Stufenhalt – nie links daran vorbei
@@ -268,7 +268,12 @@ window.UBahnPlan = function (wurzel, D, OPT) {
           if (pk.length === 4 && unter[b] === 0 && unter[s.id] > 0 && nachMain(b)) pk = pk.slice(1);
           else if (pk.length === 4 && unter[b] > 0 && unter[s.id] === 0 && vorMain(s)) pk = pk.slice(0, 3);
           // läuft über eine Stufengrenze hinweg: direkte Verbindung – wird über dem Stufenhalt gezeichnet
-          strecke(pk, f, s.status !== "offen", blass(s.id) || blass(b));
+          // läuft ein Halt schon, sein Vorgänger aber noch nicht: grau bis zur Zusammenführung, ab dort in Linienfarbe
+          if (s.status !== "offen" && S[b].status === "offen") {
+            strecke(pk, f, false, blass(s.id) || blass(b));
+            var auf = pk.filter(function (q) { return Math.abs(q[1] - y2) < 1; })[0];   // wo dieser Weg die Strecke des Halts erreicht
+            if (auf) abHier = abHier == null ? auf[0] : Math.max(abHier, auf[0]);
+          } else strecke(pk, f, s.status !== "offen", blass(s.id) || blass(b));
           linieRein = true;
         } else {
           var dir = y2 > y1 ? 1 : -1, yk = y2 - dir * 26, pq = [[x1, y1], [x1, yk], [x2, yk], [x2, y2]];
@@ -278,6 +283,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
           quer += '<path d="' + rund(pq) + '" stroke="' + (blass(s.id) ? "#dedad4" : "#8a857d") + '" stroke-width="2" fill="none" stroke-dasharray="3 5"/>';
         }
       });
+      if (abHier != null && abHier < x2) strecke([[abHier, y2], [x2, y2]], f, true, blass(s.id));   // ab der Zusammenführung in Linienfarbe
       // frei startend: eigene kurze Strecke mit Kopfbahnhof (Querstrich) – „kann sofort los“
       if (!linieRein) {
         var xa = x2 - ABST * 0.42, geg = s.status !== "offen";

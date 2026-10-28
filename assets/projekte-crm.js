@@ -190,7 +190,8 @@
         var g = gates.filter(function (x) { return x.faellig_am && x.faellig_am >= tag; })[0] || gates[gates.length - 1];
         termHalte.push({ id: "e" + e.id, strang: "s" + pm.id, meilenstein: "g" + g.id, titel: kurzTermin(e),
           beschreibung: [e.titel, e.format === "vor Ort" ? "vor Ort" + (e.ort ? ": " + e.ort : "") : e.format, (e.teilnehmer || []).length ? "mit " + e.teilnehmer.join(", ") : ""].filter(Boolean).join(" · "),
-          status: d.getTime() < jetzt ? "erreicht" : "offen", braucht: i ? ["e" + tl[i - 1].id] : [], monat: tag.slice(0, 7), tag: d.getDate(),
+          // vergangene erreicht; der nächste anstehende Termin ist in Arbeit (Vorbereitung läuft) – der Weg dorthin in Vollfarbe
+          status: d.getTime() < jetzt ? "erreicht" : (i === 0 || new Date(tl[i - 1].datum).getTime() < jetzt) ? "aktiv" : "offen", braucht: i ? ["e" + tl[i - 1].id] : [], monat: tag.slice(0, 7), tag: d.getDate(),
           termin: "am " + d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) + (mitZeit ? ", " + d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + " Uhr" : "") });
       });
     }
