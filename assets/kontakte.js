@@ -164,7 +164,8 @@
       return fa.localeCompare(fb, "de") || (a.nachname || "").localeCompare(b.nachname || "", "de") || (a.vorname || "").localeCompare(b.vorname || "", "de");
     });
     return '<table class="kt3-tab kt-xmas"><thead><tr><th>Firma</th><th>Person</th><th>E-Mail</th><th>Geschenk</th></tr></thead><tbody>' + summeZeile() + l.map(function (k) {
-      return "<tr" + (geschenk(k.weihnachtsgeschenk) ? ' class="kt-xmas-ja"' : "") + "><td>" + esc(k.organisationen ? k.organisationen.name : "–") + "</td><td>" + esc([k.nachname, k.vorname].filter(Boolean).join(", ")) + "</td>" +
+      return "<tr" + (geschenk(k.weihnachtsgeschenk) ? ' class="kt-xmas-ja"' : "") + "><td>" + (k.organisationen ? '<a class="kt-xmas-link" href="#f=' + k.organisationen.id + '">' + esc(k.organisationen.name) + "</a>" : "–") + "</td>" +
+        '<td><a class="kt-xmas-link" href="#k=' + k.id + '">' + esc([k.nachname, k.vorname].filter(Boolean).join(", ")) + "</a></td>" +
         '<td><span class="kt-xmas-wahl kt-xmas-mail" role="group" data-xmas-mail="' + k.id + '">' + [[true, "ja"], [false, "nein"]].map(function (x) {
           return '<button type="button" data-m="' + x[0] + '" aria-pressed="' + (k.weihnachtsmail !== false ? x[0] : !x[0]) + '">' + x[1] + "</button>"; }).join("") + "</span></td>" +
         '<td><span class="kt-xmas-wahl" role="group" data-xmas="' + k.id + '">' + XMAS.map(function (x) {

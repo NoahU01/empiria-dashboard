@@ -2227,3 +2227,7 @@ button.pr-archiv-titel[aria-expanded="true"] .tl-dreieck { transform: rotate(-13
 .sx-plan .pl-strang { margin-bottom: 10px; }
 /* Strategie-Plan: solange noch keine Handlungspakete drin sind, braucht jeder Abschnitt Platz für das Meilenstein-Etikett */
 .sx-plan .pl-seg { min-width: 170px; }
+
+/* Xmas: Firma und Person führen zum Profil (Daniel, 28.10.2026) – Schriftstärke und Farbe bleiben die der Zeile (fett nur mit Geschenk) */
+.kt-xmas a.kt-xmas-link { color: inherit; font-weight: inherit; text-decoration: none; }
+.kt-xmas a.kt-xmas-link:hover, .kt-xmas a.kt-xmas-link:focus-visible { text-decoration: underline; text-underline-offset: 2px; }
