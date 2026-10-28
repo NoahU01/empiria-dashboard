@@ -420,48 +420,59 @@
       if (titel) { var t = sek.querySelector(".pr-klapp > span:first-child") || sek.querySelector("h3"); if (t) t.textContent = titel; }
       return sek;
     }
-    function bereich(cls, titel, unter, marke) {
-      var b = document.createElement("section"); b.className = "pr-n " + cls;
-      b.innerHTML = '<div class="pr-n-kopf"><h2 class="pr-n-h">' + titel + "</h2>" + (marke ? '<span class="pr-n-marke">' + marke + "</span>" : "") + "</div>" +
-        (unter ? '<p class="pr-n-unter">' + unter + "</p>" : "");
+    // Große Bereiche auf- und zuklappbar (Daniel, 28.10.2026): Kopfzeile mit Titel, Zusatz rechts (z. B. Größe und Legende) und Pfeil.
+    // Der Inhalt hängt an b.inhalt; der Zustand gilt bis zum Verlassen des Projekts (wie bei den Kästen).
+    function bereich(cls, key, titel, unter, marke, offenStart) {
+      var b = document.createElement("section"), g = klappLesen(p.id), auf = key in g ? g[key] : offenStart;
+      b.className = "pr-n " + cls + (auf ? "" : " pr-n-zu");
+      b.innerHTML = '<div class="pr-n-kopf"><button type="button" class="pr-n-auf" aria-expanded="' + auf + '"><span class="pr-n-titel"><span class="pr-n-h">' + titel + "</span>" +
+        (marke ? '<span class="pr-n-marke">' + marke + "</span>" : "") + "</span>" + (unter ? '<span class="pr-n-unter">' + unter + "</span>" : "") + "</button>" +
+        '<span class="pr-n-rechts"></span><button type="button" class="pr-n-pfeil-knopf" aria-label="Auf- oder zuklappen" tabindex="-1"><span class="pr-n-pfeil" aria-hidden="true"></span></button></div><div class="pr-n-inhalt"></div>';
+      b.inhalt = b.querySelector(".pr-n-inhalt"); b.rechts = b.querySelector(".pr-n-rechts");
+      function umschalten() {
+        var jetztAuf = b.classList.contains("pr-n-zu");
+        b.classList.toggle("pr-n-zu", !jetztAuf); b.querySelector(".pr-n-auf").setAttribute("aria-expanded", String(jetztAuf)); klappSchreiben(p.id, key, jetztAuf);
+      }
+      b.querySelector(".pr-n-auf").onclick = umschalten; b.querySelector(".pr-n-pfeil-knopf").onclick = umschalten;
       return b;
     }
     var neuR = document.createElement("div"); neuR.className = "pr-n-raster";
     // 1 Weg zum Ergebnis
-    var weg = bereich("pr-n-weg", "Weg zum Ergebnis", "");
-    var ub = document.createElement("div"); ub.innerHTML = UB_GERUEST; weg.appendChild(ub.firstChild);
+    var weg = bereich("pr-n-weg", "n-weg", "Weg zum Ergebnis", "", "", true);
+    var ub = document.createElement("div"); ub.innerHTML = UB_GERUEST; weg.inhalt.appendChild(ub.firstChild);
     neuR.appendChild(weg);
     // 2 Was jetzt ansteht – nur intern
-    var jetzt = bereich("pr-n-jetzt", "Was jetzt ansteht", "Lagebericht, Aufgaben und nächste Termine – geht nicht an den Kunden.", "nur intern");
+    var jetzt = bereich("pr-n-jetzt", "n-jetzt", "Was jetzt ansteht", "Lagebericht, Aufgaben und nächste Termine – geht nicht an den Kunden.", "nur intern", true);
     var st = nimm(".pr-status");
     if (st) {
       var stT = st.querySelector(".pr-klapp > span:first-child") || st.querySelector("h3");
       if (stT) stT.textContent = "Lagebericht" + (p.statusbericht && p.statusbericht.stand ? " · Stand " + new Date(p.statusbericht.stand + "T12:00:00").toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) : "");
-      jetzt.appendChild(st);
+      jetzt.inhalt.appendChild(st);
     }
-    var au = offen(nimm(".pr-aufgaben"), "Aufgaben"); if (au) jetzt.appendChild(au);
+    var au = offen(nimm(".pr-aufgaben"), "Aufgaben"); if (au) jetzt.inhalt.appendChild(au);
     var jetztZeit = Date.now(), komm = ere.filter(function (e) { return new Date(e.datum) > jetztZeit; }).sort(function (a, b) { return new Date(a.datum) - new Date(b.datum); }).slice(0, 4);
     if (komm.length) {
       var te = document.createElement("section"); te.className = "kt3-box kt3-breit pr-n-termine";
       te.innerHTML = "<h3>Nächste Termine</h3><ul>" + komm.map(function (e) {
         return '<li><span class="pr-n-datum">' + kurz(e.datum) + zeit(e.datum, " · ") + "</span><b>" + esc(e.titel) + "</b><small>" + esc(format(e)) + "</small></li>"; }).join("") + "</ul>";
-      jetzt.appendChild(te);
+      jetzt.inhalt.appendChild(te);
     }
     neuR.appendChild(jetzt);
     // 3 Hintergrund – zugeklappt
-    var hin = document.createElement("details"); hin.className = "pr-n pr-n-hinter";
-    hin.innerHTML = '<summary><span><span class="pr-n-h">Hintergrund</span><span class="pr-n-unter">Ziel, Stoßrichtung, Arbeitspakete, Team, Termine mit Protokollen und Verlauf</span></span><span class="pr-n-pfeil" aria-hidden="true"></span></summary>';
-    var hk = document.createElement("div"); hk.className = "pr-n-hinter-inhalt";
+    var hin = bereich("pr-n-hinter", "n-hinter", "Hintergrund", "Ziel, Stoßrichtung, Arbeitspakete, Team, Termine mit Protokollen und Verlauf", "", false);
+    var hk = hin.inhalt;
     [[".pr-ziel"], [".pr-kurs"], [".pr-pakete"], [".pr-team"], [".pr-tl-frei", "Termine und Protokolle"], [".pr-archiv", "Verlauf"]].forEach(function (x) {
       var el = nimm(x[0]); if (!el) return;
       if (x[1]) { var t = el.querySelector(".pr-klapp > span:first-child") || el.querySelector("h3"); if (t) t.textContent = x[1]; }
       hk.appendChild(el);
     });
-    hin.appendChild(hk); neuR.appendChild(hin);
+    neuR.appendChild(hin);
     r.replaceWith(neuR);
     var ubw = weg.querySelector("[data-ub-wurzel]"), ubd = ubahnDaten(STRAENGE, STAND.auf);
     if (ubd && window.UBahnPlan) UBahnPlan(ubw, ubd, { hash: false });
     else ubw.innerHTML = '<p class="pr-offen">Noch keine Aufgaben für den Plan.</p>';
+    // Größe und Legende in die Kopfzeile von „Weg zum Ergebnis“ – bleiben auch zugeklappt erreichbar
+    var leiste = ubw.querySelector(".ub-dash-kopf"); if (leiste) weg.rechts.appendChild(leiste);
   }
 
   /* Darstellung „SV Akademie“: aufklappbare Module 01–05 wie auf der Seite Projekt SV Akademie.

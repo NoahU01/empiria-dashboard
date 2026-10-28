@@ -2282,3 +2282,16 @@ main.kt-main .kt-info-sub a:hover { text-decoration-color: var(--ink); }
 .pr-n-raster > * { min-width: 0; box-sizing: border-box; width: 100%; }
 .pr-n .pr-ziel-kopf { padding-left: 0; padding-right: 40px; margin: 0; width: 100%; box-sizing: border-box; }
 .pr-n .pr-ziel { padding-left: 0; padding-right: 0; }
+/* Große Bereiche auf- und zuklappbar (Daniel, 28.10.2026) */
+.pr-n-kopf { display: flex; align-items: center; gap: 16px; flex-wrap: nowrap; }
+.pr-n-auf { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 0; border: 0; background: none; font: inherit; color: inherit; text-align: left; cursor: pointer; }
+.pr-n-titel { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.pr-n-auf .pr-n-unter { margin: 0; }
+.pr-n-rechts { flex: none; }
+.pr-n-rechts .ub-dash-kopf { margin: 0 !important; }
+.pr-n-pfeil-knopf { flex: none; width: 32px; height: 32px; padding: 0; border: 0; background: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.pr-n .pr-n-pfeil { transform: rotate(-135deg); margin: 6px 0 0; }
+.pr-n.pr-n-zu .pr-n-pfeil { transform: rotate(45deg); margin: -4px 0 0; }
+.pr-n-zu > .pr-n-inhalt { display: none; }
+.pr-n-inhalt > .ub-dash { margin-top: 20px; }
+@media (max-width: 700px) { .pr-n-kopf { flex-wrap: wrap; } .pr-n-rechts { order: 3; width: 100%; } }
