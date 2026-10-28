@@ -91,6 +91,17 @@
     }
   }
 
+  /* ---------- Seitenkopf (Daniel, 28.10.2026) ----------
+     Subheadline und Headline stehen immer links an derselben Stelle. Liste: „Kontaktdatenbank“ / „Kontakte.“
+     Person oder Firma: „Kontaktdatenbank · Person“ (führt zurück zur Liste), der Name als Headline. */
+  var KOPF = { k: document.querySelector(".db-kopf .kicker"), h: document.querySelector(".db-kopf h1") };
+  if (KOPF.k) { KOPF.kText = KOPF.k.innerHTML; KOPF.hText = KOPF.h.innerHTML; }
+  function kopfSetzen(titel, zurueck) {
+    if (!KOPF.k) return;
+    KOPF.k.innerHTML = titel ? '<a href="' + zurueck + '">' + KOPF.kText + '</a><span class="kt-kopf-art">· ' + (zurueck === "#firmen" ? "Firma" : "Person") + "</span>" : KOPF.kText;
+    KOPF.h.innerHTML = titel ? esc(titel) : KOPF.hText;
+  }
+
   /* ---------- Laden ---------- */
   var AUFGABEN_FELDER = "id, titel, beschreibung, faellig_am, angelegt_am, kontakt_id, organisation_id, organisationen(id, name), kontakte(id, vorname, nachname)";
   function laden() {
@@ -134,6 +145,7 @@
   function treffer(k, q) { return !q || (name(k) + " " + firma(k) + " " + (k.position || "")).toLowerCase().indexOf(q) > -1; }
 
   function uebersicht() {
+    kopfSetzen(null);
     var t = zustand.tab, html = tabsHtml(), q = zustand.suche.toLowerCase();
     if (t === "personen") html += suchfeld("Name, Firma oder Position") + personenTabelle(alle.filter(function (k) { return treffer(k, q); }).sort(nachNachname));
     if (t === "firmen") html += suchfeld("Firma suchen") + firmenTabelle();
@@ -274,21 +286,22 @@
       ids.length ? db.from("anschriften").select("kontakt_id, typ, strasse, plz, ort, land, status").in("kontakt_id", ids).eq("typ", "geschäftlich") : Promise.resolve({ data: [] })
     ]).then(function (r) {
       var org = r[0].data || { name: "Firma" }, meld = r[1].data || [], merk = r[2].data || [];
-      var h = '<a class="kb-zurueck" href="#firmen"><span aria-hidden="true">&larr;</span> Firmen</a>';
+      var h = "";
+      kopfSetzen(org.name, "#firmen");
       var web = org.website ? '<a href="' + esc(/^http/.test(org.website) ? org.website : "https://" + org.website) + '" target="_blank" rel="noopener">' + esc(org.website.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")) + "</a>" : "";
-      h += '<div class="kt3-kopf"><div><h2 class="kt3-name">' + esc(org.name) + '</h2><p class="kt3-sub">' +
+      h += '<div class="kt-info"><p class="kt-info-sub">' +
         [web, esc(org.sitz || ""), esc(org.rechtsform || ""), esc(org.konzern || (org.gruppe && org.gruppe !== org.name ? "gehört zu " + org.gruppe : "")), esc(org.marktumfeld || "")].filter(Boolean).join(" · ") + "</p>" +
-        (org.groesse ? '<p class="kt3-tags">' + esc(org.groesse) + "</p>" : "") + "</div></div>";
+        (org.groesse ? '<p class="kt-info-tags">' + esc(org.groesse) + "</p>" : "") + "</div>";
       if (org.klaeren) h += '<p class="kt3-klaer">' + esc(org.klaeren) + "</p>";
       h += '<div class="kt3-raster">' + projekteBox(r[3].data || []);
       // Firmenanschrift: die geschäftlichen Anschriften ihrer Personen, gleiche zusammengefasst (häufigste zuerst)
       var adr = {};
       (r[4].data || []).filter(function (a) { return a.status !== "veraltet" && (a.strasse || a.ort); }).forEach(function (a) {
         var t = anschriftText(a), key = t.toLowerCase().replace(/\s+/g, " ");
-        (adr[key] = adr[key] || { t: t, n: 0 }).n++;
+        (adr[key] = adr[key] || { t: t, h: anschriftBrief(a), n: 0 }).n++;
       });
       var adrL = Object.keys(adr).map(function (k) { return adr[k]; }).sort(function (a, b) { return b.n - a.n; });
-      h += box("Anschrift", adrL.map(function (a) { return '<p class="kt3-zeile"><span>' + (adrL.length > 1 ? a.n + (a.n === 1 ? " Person" : " Personen") : "Geschäftlich") + "</span>" + esc(a.t) + "</p>"; }).join(""),
+      h += box("Anschrift", adrL.map(function (a) { return '<p class="kt3-zeile kt-adr"><span>' + (adrL.length > 1 ? a.n + (a.n === 1 ? " Person" : " Personen") : "Firma") + "</span>" + a.h + "</p>"; }).join(""),
         "Noch keine Anschrift erfasst." + (org.sitz ? " Sitz laut Recherche: " + esc(org.sitz) + "." : ""));
       var ansatz = {};
       merk.forEach(function (m) { if (m.merkmale && (m.merkmale.kategorie === "Bedarf" || m.merkmale.kategorie === "Angebot")) (ansatz[m.merkmale.kategorie] = ansatz[m.merkmale.kategorie] || {})[m.merkmale.wert] = 1; });
@@ -352,19 +365,13 @@
     }).join("") + "</ul></section>";
   }
   function personHtml(k, todos, projekte) {
-    var o = k.organisationen, h = '<a class="kb-zurueck" href="#' + zustand.tab + '"><span aria-hidden="true">&larr;</span> Kontakte</a>';
-    var wege = (k.kontaktwege || []).filter(function (w) { return w.status !== "veraltet" && (w.art === "E-Mail" || w.art === "Mobil" || w.art === "Telefon"); })
-      .sort(function (a, b) { return b.bevorzugt - a.bevorzugt; });
-    var mail = wege.filter(function (w) { return w.art === "E-Mail"; })[0], tel = wege.filter(function (w) { return w.art !== "E-Mail"; })[0];
+    var o = k.organisationen, h = "";
+    kopfSetzen([k.titel, k.vorname, k.nachname].filter(Boolean).join(" "), "#" + zustand.tab);
     var ART = { direkt: "direkter Kontakt", LinkedIn: "nur LinkedIn", "Sales Navigator": "aus Sales Navigator", recherchiert: "recherchiert" };
-    h += '<div class="kt3-kopf"><div><h2 class="kt3-name">' + esc([k.titel, k.vorname].filter(Boolean).join(" ")) + ' <span class="kt3-nachname">' + esc(k.nachname) + "</span></h2>" +
-      '<p class="kt3-sub">' + esc(k.position || "") + (o ? (k.position ? " · " : "") + lf(o) : "") + "</p>" +
-      '<p class="kt3-tags">' + [ART[k.kontaktart], k.ansprache && "per " + k.ansprache, k.prioritaet && "Priorität " + k.prioritaet,
+    h += '<div class="kt-info"><p class="kt-info-sub">' + esc(k.position || "") + (o ? (k.position ? " · " : "") + lf(o) : "") + "</p>" +
+      '<p class="kt-info-tags">' + [ART[k.kontaktart], k.ansprache && "per " + k.ansprache, k.prioritaet && "Priorität " + k.prioritaet,
         (k.kontakt_marken || []).map(function (m) { return m.marke; }).join(", ")].filter(Boolean).map(esc).join(" · ") +
-      (k.kontaktstopp ? ' · <b class="kt-stopp">Kontaktstopp</b>' : "") + "</p></div>" +
-      '<div class="kt3-erreich">' + (mail ? '<a href="mailto:' + esc(mail.wert) + '">' + esc(mail.wert) + "</a>" : "") +
-      (tel ? '<a href="tel:' + esc(tel.wert.replace(/[^\d+]/g, "")) + '">' + esc(tel.wert) + "</a>" : "") +
-      (k.linkedin_url ? '<a href="' + esc(k.linkedin_url) + '" target="_blank" rel="noopener">LinkedIn</a>' : "") + "</div></div>";
+      (k.kontaktstopp ? ' · <b class="kt-stopp">Kontaktstopp</b>' : "") + "</p></div>";
     var naechst = k.naechster_kontakt ? "Termin am " + datum(k.naechster_kontakt) : faellig(k) ? "<b>jetzt wieder dran</b>" :
       k.rhythmus_tage && k.letzter_kontakt ? datum(new Date(new Date(k.letzter_kontakt).getTime() + k.rhythmus_tage * 864e5)) : "–";
     h += '<p class="kt3-stand"><span>Letzter Kontakt</span>' + zuletzt(k.letzter_kontakt) + '<span>Nächster Kontakt</span>' + naechst +
@@ -372,7 +379,7 @@
     var klaer = [k.klaeren, o && o.klaeren && "Firma: " + o.klaeren].filter(Boolean);
     if (klaer.length) h += '<p class="kt3-klaer">' + klaer.map(esc).join(" · ") + "</p>";
 
-    h += '<div class="kt3-raster">' + projekteBox(projekte || []) + kontaktdatenBox(k.kontaktwege, k.anschriften);
+    h += '<div class="kt3-raster">' + projekteBox(projekte || []) + kontaktdatenBox(k.kontaktwege, k.anschriften, k.linkedin_url);
     var m = {}; (k.kontakt_merkmale || []).forEach(function (x) { if (x.merkmale) (m[x.merkmale.kategorie] = m[x.merkmale.kategorie] || []).push(x.merkmale.wert); });
     var kamp = (k.kampagnen_teilnehmer || []).filter(function (t) { return t.status === "freigegeben" || t.status === "vorgeschlagen"; });
     h += box("Ansatzpunkte",
@@ -406,8 +413,11 @@
   function anschriftText(a) {
     return [a.strasse, [a.plz, a.ort].filter(Boolean).join(" "), a.land && !/^(de|deutschland|germany)$/i.test(a.land) ? a.land : ""].filter(Boolean).join(" · ");
   }
+  function anschriftBrief(a) {
+    return [esc(a.strasse || ""), esc([a.plz, a.ort].filter(Boolean).join(" ")), a.land && !/^(de|deutschland|germany)$/i.test(a.land) ? esc(a.land) : ""].filter(Boolean).join("<br>");
+  }
   // Kontaktdaten und Anschriften (Daniel, 28.10.2026): alles, was im CRM steht – veraltete Einträge ausgeblendet
-  function kontaktdatenBox(wege, anschr) {
+  function kontaktdatenBox(wege, anschr, linkedin) {
     var REIHE = ["E-Mail", "Mobil", "Telefon", "Fax", "Web"];
     var w = (wege || []).filter(function (x) { return x.status !== "veraltet" && x.wert; })
       .sort(function (a, b) { return REIHE.indexOf(a.art) - REIHE.indexOf(b.art) || (b.bevorzugt - a.bevorzugt); });
@@ -419,8 +429,8 @@
         : x.art === "Fax" ? esc(x.wert) : '<a href="tel:' + esc(x.wert.replace(/[^\d+]/g, "")) + '">' + esc(x.wert) + "</a>";
       return '<p class="kt3-zeile"><span>' + esc(x.art) + "</span>" + v + (x.kontext ? ' <span class="kt3-leise">· ' + esc(x.kontext) + "</span>" : "") + "</p>";
     }).join("") + an.map(function (a) {
-      return '<p class="kt3-zeile"><span>Anschrift' + (a.typ === "privat" ? " privat" : "") + "</span>" + esc(anschriftText(a)) + "</p>";
-    }).join("");
+      return '<p class="kt3-zeile kt-adr"><span>' + (a.typ === "privat" ? "Privat" : "Anschrift") + "</span>" + anschriftBrief(a) + "</p>";
+    }).join("") + (linkedin ? '<p class="kt3-zeile"><span>LinkedIn</span><a href="' + esc(linkedin) + '" target="_blank" rel="noopener">Profil öffnen</a></p>' : "");
     return box("Kontaktdaten", h, "Noch keine Kontaktdaten erfasst.");
   }
   function box(titel, inhalt, leer, fuss) {

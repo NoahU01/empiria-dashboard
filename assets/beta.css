@@ -2231,3 +2231,28 @@ button.pr-archiv-titel[aria-expanded="true"] .tl-dreieck { transform: rotate(-13
 /* Xmas: Firma und Person führen zum Profil (Daniel, 28.10.2026) – Schriftstärke und Farbe bleiben die der Zeile (fett nur mit Geschenk) */
 .kt-xmas a.kt-xmas-link { color: inherit; font-weight: inherit; text-decoration: none; }
 .kt-xmas a.kt-xmas-link:hover, .kt-xmas a.kt-xmas-link:focus-visible { text-decoration: underline; text-underline-offset: 2px; }
+
+/* Kontakte › Person und Firma (Daniel, 28.10.2026): Kopf wie in der Liste – Subheadline und Headline links an derselben Stelle.
+   Subheadline = Rücksprung „← Kontakte“, Headline = Name. Die Regeln der Projektseite (Name im Kasten, Kopf rechts) gelten hier nicht. */
+body.kt3-detail main.kt-main .db-kopf { justify-content: space-between; }
+body.kt3-detail main.kt-main .db-kopf h1 { display: block !important; }
+/* Subheadline in der Detailansicht genau wie in der Liste: Strich, Versalien – „Kontaktdatenbank“ führt zurück */
+main.kt-main .db-kopf .kicker { display: flex !important; align-items: center; gap: 10px; margin-bottom: 10px; font-size: var(--fs-xs); font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); }
+main.kt-main .db-kopf .kicker::before { content: ""; width: 18px; height: 2px; background: var(--ink); }
+main.kt-main .db-kopf .kicker a { color: inherit; text-decoration: none; }
+main.kt-main .db-kopf .kicker a:hover { text-decoration: underline; text-underline-offset: 3px; }
+main.kt-main .kt-kopf-art { color: var(--grey-50); }
+@media (max-width: 760px) { body.kt3-detail main.kt-main .db-konto { display: none; } }
+main.kt-main .kt-kopf-zurueck { color: inherit; text-decoration: none; }
+main.kt-main .kt-kopf-zurueck:hover { text-decoration: underline; text-underline-offset: 3px; }
+main.kt-main .kt-info { margin: 0 0 4px; }
+main.kt-main .kt-info-sub { margin: 0; font-size: var(--fs-l); font-weight: 300; color: var(--ink-2); }
+main.kt-main .kt-info-sub a { color: var(--ink); }
+main.kt-main .kt-info-tags { margin: 6px 0 0; font-size: var(--fs-s); color: var(--grey-50); }
+/* Zeilen im Kasten: Bezeichnung und Wert auf gleicher Höhe, umbrochene Werte mit eigenem Zeilenabstand */
+main.kt-main .kt3-zeile { grid-template-columns: 96px minmax(0, 1fr); align-items: baseline; padding: 7px 0; line-height: 1.45; }
+main.kt-main .kt3-zeile + .kt3-zeile { border-top: 1px solid #f1efec; }
+main.kt-main .kt3-zeile > span:first-child { line-height: 1.45; }
+/* Firma im Personenprofil sichtbar als Link (Daniel, 28.10.2026) */
+main.kt-main .kt-info-sub a { color: var(--ink); text-decoration: underline; text-decoration-color: #cfcac2; text-underline-offset: 4px; }
+main.kt-main .kt-info-sub a:hover { text-decoration-color: var(--ink); }
