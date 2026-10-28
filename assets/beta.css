@@ -2256,3 +2256,29 @@ main.kt-main .kt3-zeile > span:first-child { line-height: 1.45; }
 /* Firma im Personenprofil sichtbar als Link (Daniel, 28.10.2026) */
 main.kt-main .kt-info-sub a { color: var(--ink); text-decoration: underline; text-decoration-color: #cfcac2; text-underline-offset: 4px; }
 main.kt-main .kt-info-sub a:hover { text-decoration-color: var(--ink); }
+
+/* Projektseite, neuer Aufbau (Daniel, 28.10.2026): Weg zum Ergebnis · Was jetzt ansteht (intern) · Hintergrund – wie die Kundenseite */
+.pr-n-raster { display: grid; gap: 18px; margin-top: 28px; }
+.pr-n { background: #fff; border: 1px solid #e8e5e0; border-radius: 18px; padding: clamp(20px, 3vw, 32px); }
+.pr-n-kopf { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.pr-n-h { margin: 0; font-family: var(--font-serif); font-weight: 700; font-size: clamp(1.25rem, 2vw, 1.5rem); line-height: 1.2; }
+.pr-n-marke { padding: 3px 10px; border-radius: 999px; background: #f1efec; font-size: var(--fs-xs); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--grey-70); }
+.pr-n-unter { margin: 6px 0 0; font-size: var(--fs-s); color: var(--grey-50); }
+.pr-n-weg .ub-dash { margin-top: 4px; }
+.pr-n-weg .ub-dash-kopf { margin-top: -38px; }
+/* innen: die bisherigen Kästen ohne eigenen Rahmen, durch feine Linien getrennt */
+.pr-n .kt3-box { border: 0; border-radius: 0; box-shadow: none; padding: 22px 0 0; margin: 22px 0 0; border-top: 1px solid #efece7; background: none; }
+.pr-n-jetzt > .kt3-box:first-of-type { margin-top: 18px; }
+.pr-n-termine ul { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 10px; }
+.pr-n-termine li { display: grid; grid-template-columns: 170px minmax(0, 1fr); column-gap: 16px; font-size: var(--fs-m); }
+.pr-n-termine li small { grid-column: 2; color: var(--grey-50); font-size: var(--fs-s); }
+.pr-n-datum { color: var(--grey-50); font-size: var(--fs-s); }
+.pr-n-hinter > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 20px; cursor: pointer; }
+.pr-n-hinter > summary::-webkit-details-marker { display: none; }
+.pr-n-hinter > summary .pr-n-h, .pr-n-hinter > summary .pr-n-unter { display: block; }
+.pr-n-pfeil { width: 12px; height: 12px; border-right: 2px solid var(--ink); border-bottom: 2px solid var(--ink); transform: rotate(45deg); margin-right: 6px; transition: transform .2s; flex: none; }
+.pr-n-hinter[open] .pr-n-pfeil { transform: rotate(-135deg); }
+@media (max-width: 700px) { .pr-n-termine li { grid-template-columns: 1fr; } .pr-n-termine li small { grid-column: 1; } .pr-n-weg .ub-dash-kopf { margin-top: 8px; } }
+.pr-n-raster > * { min-width: 0; box-sizing: border-box; width: 100%; }
+.pr-n .pr-ziel-kopf { padding-left: 0; padding-right: 40px; margin: 0; width: 100%; box-sizing: border-box; }
+.pr-n .pr-ziel { padding-left: 0; padding-right: 0; }

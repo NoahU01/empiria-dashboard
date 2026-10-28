@@ -302,6 +302,8 @@
     var plan = STRAENGE.length && window.ProjektPlan, linienplan = !!window.UBahnPlan;
     try { aav = localStorage.getItem("pr-auf-ansicht") || "liste"; } catch (x) {}
     if (aav !== "kanban" && !(aav === "plan" && (plan || linienplan))) aav = "liste";
+    var neu = !!NEUER_AUFBAU[p.id];
+    if (neu && aav === "plan") aav = "liste";
     function frist(a) {
       var ueber = a.status === "offen" && a.faellig_am && new Date(a.faellig_am) < new Date(new Date().toDateString());
       return '<span class="pr-frist' + (a.faellig_am ? " mk mk--frist" : "") + (ueber ? " pr-ueber" : "") + '">' + (a.faellig_am ? kurz(a.faellig_am) : "ohne Termin") + "</span>";
@@ -318,13 +320,13 @@
     // Listenansicht: Phase im Kanban schlicht in der grauen Zeile („In Arbeit · Daniel“) – Daniel, 09.10.2026
     var PHASE = { backlog: "Backlog", todo: "To-do", arbeit: "In Arbeit", pruefung: "Prüfung" };
     function phase(a) { return PHASE[a.spalte || "todo"] || "To-do"; }
-    var wahl = '<span class="pr-tl-wahl">' + [["liste", "Liste"]].concat(plan || linienplan ? [["plan", "Plan"]] : [], [["kanban", "Kanban"]]).map(function (v) {
+    var wahl = '<span class="pr-tl-wahl">' + [["liste", "Liste"]].concat((plan || linienplan) && !neu ? [["plan", "Plan"]] : [], [["kanban", "Kanban"]]).map(function (v) {
       return '<button type="button" data-aav="' + v[0] + '" aria-pressed="' + (v[0] === aav) + '">' + v[1] + "</button>"; }).join("") + "</span>";
     var aufInhalt;
     var hilfen = { titel: titel, details: details, zusatz: zusatz, phase: phase, wer: wer, paket: paketLabel, frist: frist };
     // Plan: Linienplan „Weg zum Ergebnis“ wie im Kundenprojekt SV Akademie (assets/ubahn-plan.js) – Daniel, 23.10.2026
     if (aav === "plan") aufInhalt = linienplan && ubahnDaten(STRAENGE, auf) ? UB_GERUEST : plan ? '<div class="pl-rahmen">' + ProjektPlan.bild(STRAENGE, auf, auf.concat(EXTERN)) + "</div>" : '<p class="pr-offen">Noch keine Aufgaben für den Plan.</p>';
-    else if (aav === "liste" && plan) aufInhalt = '<div class="pl-rahmen">' + ProjektPlan.liste(STRAENGE, auf, hilfen, auf.concat(EXTERN)) + "</div>";
+    else if (aav === "liste" && plan && !neu) aufInhalt = '<div class="pl-rahmen">' + ProjektPlan.liste(STRAENGE, auf, hilfen, auf.concat(EXTERN)) + "</div>";
     else if (aav === "kanban") {
       var vor14 = Date.now() - 14 * 864e5;
       var SPALTEN = [["backlog", "Backlog"], ["todo", "To-do"], ["arbeit", "In Arbeit"], ["pruefung", "Review / Prüfung"], ["erledigt", "Erledigt"]];
@@ -340,11 +342,13 @@
         }).join("") + "</div>";
       }).join("") + "</div>";
     } else {
-      var offen = auf.filter(function (a) { return a.status === "offen"; }).sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });
+      var offen = auf.filter(function (a) { return a.status === "offen" && !(neu && a.art === "projektgate"); }).sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });
+      // Neuer Aufbau: Ergebnislevel stehen im Plan, nicht in der Liste; Aufgaben ohne Termin erst auf Klick (Daniel, 28.10.2026)
+      var ohneT = neu ? offen.filter(function (a) { return !a.faellig_am; }).length : 0;
       aufInhalt = offen.length ? '<ul class="pr-auf2">' + offen.map(function (a) {
-        return '<li data-a="' + a.id + '"><div class="pr-auf-zeile"><button type="button" class="st-haken" aria-label="Erledigt"></button>' + frist(a) + titel(a) +
+        return '<li data-a="' + a.id + '"' + (neu && !a.faellig_am && ohneT < offen.length ? ' data-mehr="ohne" hidden' : "") + '><div class="pr-auf-zeile"><button type="button" class="st-haken" aria-label="Erledigt"></button>' + frist(a) + titel(a) +
           '<span class="pr-wer">' + phase(a) + " · " + esc(wer(a) || "offen") + paketLabel(a) + "</span></div>" + '<div class="pr-auf-zusatz">' + zusatz(a) + "</div>" + details(a) + "</li>";
-      }).join("") + "</ul>" : '<p class="kt3-leise">Nichts offen.</p>';
+      }).join("") + "</ul>" + (neu && ohneT && ohneT < offen.length ? '<button type="button" class="kt3-klapp pr-fertig-mehr" data-klapp-knopf="ohne" data-text="Weitere ' + ohneT + ' Aufgaben ohne Termin" aria-expanded="false">Weitere ' + ohneT + " Aufgaben ohne Termin</button>" : "") : '<p class="kt3-leise">Nichts offen.</p>';
       // Erledigte Aufgaben bleiben sichtbar – hellgrau mit Haken unter den offenen, neueste zuerst (Daniel, 10.10.2026)
       var fertig = auf.filter(function (a) { return a.status === "erledigt"; }).sort(function (a, b) { return String(b.erledigt_am || "").localeCompare(String(a.erledigt_am || "")); });
       if (fertig.length) aufInhalt += '<div class="pr-fertig"><p class="pr-fertig-kopf">Erledigt</p><ul class="pr-auf2 pr-auf-fertig">' + fertig.map(function (a, i) {
@@ -398,6 +402,66 @@
     wurzel.innerHTML = h + "</div>";
     if (lookWert() === "sva") module(p);
     verdrahten(p);
+    if (neu) neuOrdnen(p, ere);
+  }
+
+  /* ---------- Neuer Aufbau der Projektseite (Daniel, 28.10.2026) – zuerst bei der SV Akademie ----------
+     Reihenfolge wie auf der Kundenseite: 1 Weg zum Ergebnis (Linienplan) · 2 Was jetzt ansteht (nur intern: Lagebericht,
+     Aufgaben als Liste oder Kanban, nächste Termine) · 3 Hintergrund, zugeklappt (Ziel, Stoßrichtung, Arbeitspakete, Team,
+     Termine mit Protokollen, Verlauf). Die fertig gezeichneten Kästen werden umgehängt – ihre Knöpfe behalten die Funktion. */
+  var NEUER_AUFBAU = { 1: true };
+  function neuOrdnen(p, ere) {
+    var r = wurzel.querySelector(".kt3-raster"); if (!r) return;
+    function nimm(sel) { return r.querySelector(":scope > " + sel); }
+    function offen(sek, titel) {   // Kasten aufgeklappt zeigen, Überschrift ggf. umbenennen
+      if (!sek) return null;
+      sek.classList.remove("pr-zu");
+      var b = sek.querySelector(".pr-klapp"); if (b) b.setAttribute("aria-expanded", "true");
+      if (titel) { var t = sek.querySelector(".pr-klapp > span:first-child") || sek.querySelector("h3"); if (t) t.textContent = titel; }
+      return sek;
+    }
+    function bereich(cls, titel, unter, marke) {
+      var b = document.createElement("section"); b.className = "pr-n " + cls;
+      b.innerHTML = '<div class="pr-n-kopf"><h2 class="pr-n-h">' + titel + "</h2>" + (marke ? '<span class="pr-n-marke">' + marke + "</span>" : "") + "</div>" +
+        (unter ? '<p class="pr-n-unter">' + unter + "</p>" : "");
+      return b;
+    }
+    var neuR = document.createElement("div"); neuR.className = "pr-n-raster";
+    // 1 Weg zum Ergebnis
+    var weg = bereich("pr-n-weg", "Weg zum Ergebnis", "");
+    var ub = document.createElement("div"); ub.innerHTML = UB_GERUEST; weg.appendChild(ub.firstChild);
+    neuR.appendChild(weg);
+    // 2 Was jetzt ansteht – nur intern
+    var jetzt = bereich("pr-n-jetzt", "Was jetzt ansteht", "Lagebericht, Aufgaben und nächste Termine – geht nicht an den Kunden.", "nur intern");
+    var st = nimm(".pr-status");
+    if (st) {
+      var stT = st.querySelector(".pr-klapp > span:first-child") || st.querySelector("h3");
+      if (stT) stT.textContent = "Lagebericht" + (p.statusbericht && p.statusbericht.stand ? " · Stand " + new Date(p.statusbericht.stand + "T12:00:00").toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) : "");
+      jetzt.appendChild(st);
+    }
+    var au = offen(nimm(".pr-aufgaben"), "Aufgaben"); if (au) jetzt.appendChild(au);
+    var jetztZeit = Date.now(), komm = ere.filter(function (e) { return new Date(e.datum) > jetztZeit; }).sort(function (a, b) { return new Date(a.datum) - new Date(b.datum); }).slice(0, 4);
+    if (komm.length) {
+      var te = document.createElement("section"); te.className = "kt3-box kt3-breit pr-n-termine";
+      te.innerHTML = "<h3>Nächste Termine</h3><ul>" + komm.map(function (e) {
+        return '<li><span class="pr-n-datum">' + kurz(e.datum) + zeit(e.datum, " · ") + "</span><b>" + esc(e.titel) + "</b><small>" + esc(format(e)) + "</small></li>"; }).join("") + "</ul>";
+      jetzt.appendChild(te);
+    }
+    neuR.appendChild(jetzt);
+    // 3 Hintergrund – zugeklappt
+    var hin = document.createElement("details"); hin.className = "pr-n pr-n-hinter";
+    hin.innerHTML = '<summary><span><span class="pr-n-h">Hintergrund</span><span class="pr-n-unter">Ziel, Stoßrichtung, Arbeitspakete, Team, Termine mit Protokollen und Verlauf</span></span><span class="pr-n-pfeil" aria-hidden="true"></span></summary>';
+    var hk = document.createElement("div"); hk.className = "pr-n-hinter-inhalt";
+    [[".pr-ziel"], [".pr-kurs"], [".pr-pakete"], [".pr-team"], [".pr-tl-frei", "Termine und Protokolle"], [".pr-archiv", "Verlauf"]].forEach(function (x) {
+      var el = nimm(x[0]); if (!el) return;
+      if (x[1]) { var t = el.querySelector(".pr-klapp > span:first-child") || el.querySelector("h3"); if (t) t.textContent = x[1]; }
+      hk.appendChild(el);
+    });
+    hin.appendChild(hk); neuR.appendChild(hin);
+    r.replaceWith(neuR);
+    var ubw = weg.querySelector("[data-ub-wurzel]"), ubd = ubahnDaten(STRAENGE, STAND.auf);
+    if (ubd && window.UBahnPlan) UBahnPlan(ubw, ubd, { hash: false });
+    else ubw.innerHTML = '<p class="pr-offen">Noch keine Aufgaben für den Plan.</p>';
   }
 
   /* Darstellung „SV Akademie“: aufklappbare Module 01–05 wie auf der Seite Projekt SV Akademie.
@@ -589,8 +653,8 @@
   }
   document.addEventListener("click", function (e) {
     var b = e.target.closest("[data-klapp-knopf]"); if (!b || !wurzel.contains(b)) return;
-    var auf = b.getAttribute("aria-expanded") !== "true";
-    b.closest(".kt3-box").querySelectorAll("[data-mehr]").forEach(function (x) { x.hidden = !auf; });
-    b.setAttribute("aria-expanded", String(auf)); b.textContent = auf ? "Weniger zeigen" : "Alle zeigen";
+    var auf = b.getAttribute("aria-expanded") !== "true", g = b.getAttribute("data-klapp-knopf");
+    b.closest(".kt3-box").querySelectorAll(g ? '[data-mehr="' + g + '"]' : '[data-mehr]:not([data-mehr="ohne"])').forEach(function (x) { x.hidden = !auf; });
+    b.setAttribute("aria-expanded", String(auf)); b.textContent = auf ? "Weniger zeigen" : (b.getAttribute("data-text") || "Alle zeigen");
   });
 })();
