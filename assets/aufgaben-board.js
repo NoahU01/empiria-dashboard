@@ -33,7 +33,8 @@
       projekte = r[0].data || [];
       // Strategische Meilensteine sind keine Aufgaben – sie stehen nur im Bereich Strategie (Daniel, 20.10.2026)
       var strat = projekte.filter(function (p) { return p.typ === "strategie"; }).map(function (p) { return p.id; });
-      aufgaben = (r[1].data || []).filter(function (a) { return !(a.art === "projektgate" && strat.indexOf(a.projekt_id) > -1); });
+      // Nur Daniels Aufgaben (Daniel, 29.10.2026): Projektaufgaben anderer Personen (z. B. Lukas Euring) stehen in ihrem Projekt, nicht hier
+      aufgaben = (r[1].data || []).filter(function (a) { return !(a.art === "projektgate" && strat.indexOf(a.projekt_id) > -1) && meine(a); });
       var ids = projekte.map(function (p) { return p.id; });
       wahl = wahl.filter(function (w) { return w === "op" || ids.indexOf(w) > -1 || (typeof w === "string" && MARKEN.indexOf(w.slice(2)) > -1); });
       if (window.AufgabenDetails) AufgabenDetails.vorlagenAnhaengen(db, aufgaben).then(zeichnen); else zeichnen();
@@ -56,6 +57,7 @@
     var p = projektVon(a);
     return wahl.indexOf(a.projekt_id) > -1 || (!!p && wahl.indexOf("m:" + (p.marke || "empiria")) > -1);
   }
+  function meine(a) { return /\bDaniel\b/.test(a.zustaendig_name || name(a.kontakte) || a.verantwortlich || ""); }
   function wer(a) { return a.zustaendig_name || name(a.kontakte) || a.verantwortlich || ""; }
 
   function filter() {
