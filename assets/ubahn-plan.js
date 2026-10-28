@@ -453,6 +453,8 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     if (s.ergebnis) h += "<p>" + esc(s.ergebnis) + "</p>";
     if (s.kritisch) h += "<p>Kritisch: " + esc(s.kritisch.grund) + "</p>";
     if (vor.length) h += '<p class="ub-pop-meta">Braucht vorher: ' + vor.map(esc).join(", ") + "</p>";
+    var ein = (s.einfluss || []).filter(function (b) { return S[b]; }).map(function (b) { return S[b].titel; });
+    if (ein.length) h += '<p class="ub-pop-meta">Fließt ein: ' + ein.map(esc).join(", ") + "</p>";
     var pop = document.createElement("div");
     pop.className = "ub-pop"; pop.innerHTML = h;
     flaeche.appendChild(pop);
