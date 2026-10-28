@@ -343,6 +343,9 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   function ziehen(sc) {
     if (!sc) return;
     zug.sc = sc;
+    // Ist der Plan breiter als der Platz, blendet der Rand aus – so ist klar, dass rechts/links noch etwas kommt
+    function rand() { sc.classList.toggle("ub-mehr-r", sc.scrollLeft + sc.clientWidth < sc.scrollWidth - 2); sc.classList.toggle("ub-mehr-l", sc.scrollLeft > 2); }
+    sc.addEventListener("scroll", rand); rand();
     sc.addEventListener("mousedown", function (e) { if (e.button !== 0) return; zug.start = { x: e.clientX, l: sc.scrollLeft }; zug.bewegt = false; });
     sc.addEventListener("click", function (e) { if (zug.bewegt) { e.stopPropagation(); e.preventDefault(); zug.bewegt = false; } }, true);
   }

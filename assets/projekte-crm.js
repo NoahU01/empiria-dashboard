@@ -178,17 +178,17 @@
       return erstesOffen;
     }
     function datum(d) { var t = String(d || "").slice(0, 10).split("-"); return t.length === 3 ? t[2] + "." + t[1] + "." + t[0] : "offen"; }
-    // Termine als Halte auf der Linie Projektmanagement: vergangene erledigt, in zeitlicher Folge
+    // Termine als Halte auf der Linie Projektmanagement (nur Termine und Workshops, keine Meilensteine wie der Schulungsinfotag): vergangene erledigt, in zeitlicher Folge
     var termHalte = [];
     if (pm && opt.termine) {
       var grenze = Date.now() - 28 * 864e5, jetzt = Date.now();
-      var tl = opt.termine.filter(function (e) { return new Date(e.datum).getTime() >= grenze; }).sort(function (a, b) { return new Date(a.datum) - new Date(b.datum); });
+      var tl = opt.termine.filter(function (e) { return new Date(e.datum).getTime() >= grenze && (e.art === "Termin" || e.art === "Workshop"); }).sort(function (a, b) { return new Date(a.datum) - new Date(b.datum); });
       tl.forEach(function (e, i) {
         var d = new Date(e.datum), tag = d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2), mitZeit = d.getHours() || d.getMinutes();
         var g = gates.filter(function (x) { return x.faellig_am && x.faellig_am >= tag; })[0] || gates[gates.length - 1];
         termHalte.push({ id: "e" + e.id, strang: "s" + pm.id, meilenstein: "g" + g.id, titel: kurzTermin(e),
           beschreibung: [e.titel, e.format === "vor Ort" ? "vor Ort" + (e.ort ? ": " + e.ort : "") : e.format, (e.teilnehmer || []).length ? "mit " + e.teilnehmer.join(", ") : ""].filter(Boolean).join(" · "),
-          status: d.getTime() < jetzt ? "erreicht" : "offen", braucht: i ? ["e" + tl[i - 1].id] : [],
+          status: d.getTime() < jetzt ? "erreicht" : "offen", braucht: i ? ["e" + tl[i - 1].id] : [], monat: tag.slice(0, 7),
           termin: "am " + d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) + (mitZeit ? ", " + d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + " Uhr" : "") });
       });
     }
@@ -207,7 +207,10 @@
           status: a.status === "erledigt" ? "erreicht" : (a.spalte === "arbeit" || a.spalte === "pruefung") ? "aktiv" : "offen",
           braucht: (a.vorgaenger || []).filter(function (v) { return ids[v] && !(begleitend[a.strang_id] && liste.some(function (b) { return String(b.id) === String(v) && b.strang_id === a.strang_id; })); })
             .map(function (v) { return "a" + v; }).concat(vorher[a.id] ? ["a" + vorher[a.id]] : []),
-          termin: a.faellig_am ? "fällig " + datum(a.faellig_am) : "" };
+          termin: a.faellig_am ? "fällig " + datum(a.faellig_am) : "",
+          // Monat für die Monatseinteilung wie in der Kundenansicht: Fälligkeit, bei Erledigtem ohne Fälligkeit das Erledigt-Datum
+          monat: String(a.faellig_am || (a.status === "erledigt" && a.erledigt_am) || "").slice(0, 7) || null,
+          von: a.beginnt_am ? String(a.beginnt_am).slice(0, 7) : null };   // Zeitraum (z. B. Entwicklung Lea Oktober–November), sobald es das Feld gibt
       }).concat(termHalte)
     };
     // Der letzte Termin eines Levels gehört zu dessen Weg – sonst stünde die Terminlinie im Level-Ausschnitt blass

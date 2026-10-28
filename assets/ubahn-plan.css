@@ -10,6 +10,9 @@
 .ub-bahn small{display:block;font-size:.74rem;color:var(--grey-50,#8a8a8a);margin-top:1px}
 .ub-scroll{overflow-x:auto;flex:1;min-width:0;padding:0 0 4px;cursor:grab}
 .ub-scroll.ub-zieht{cursor:grabbing;user-select:none}
+.ub-scroll.ub-mehr-r{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 56px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 56px),transparent)}
+.ub-scroll.ub-mehr-l{-webkit-mask-image:linear-gradient(90deg,transparent,#000 56px);mask-image:linear-gradient(90deg,transparent,#000 56px)}
+.ub-scroll.ub-mehr-l.ub-mehr-r{-webkit-mask-image:linear-gradient(90deg,transparent,#000 56px,#000 calc(100% - 56px),transparent);mask-image:linear-gradient(90deg,transparent,#000 56px,#000 calc(100% - 56px),transparent)}
 .ub-flaeche{position:relative}
 .ub-svg{position:absolute;left:0;top:0}
 .ub-ausruf{font:600 9px/1 Poppins,sans-serif;fill:#fff}
