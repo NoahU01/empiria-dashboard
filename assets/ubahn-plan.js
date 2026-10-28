@@ -196,7 +196,9 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     // Zeile je Halt: die oberste Zeile seiner Linie, in der er keinen anderen Halt überdeckt – so rücken
     // Schritte in derselben Spalte und eigenständig startende Zeiträume (z. B. Webseite neben Lea) eine Zeile tiefer
     var belegt = {};
-    liste.forEach(function (s) {
+    function freiZ(s) { return (s.braucht || []).every(function (b) { return !imPlan[b] || S[b].strang !== s.strang; }); }
+    // erst die Halte der durchgehenden Linie, dann die frei startenden – so bleibt die Hauptlinie oben
+    liste.filter(function (s) { return !freiZ(s); }).concat(liste.filter(freiZ)).forEach(function (s) {
       var k = s.strang + "|" + s.meilenstein, a = tiefeA[s.id] != null ? tiefeA[s.id] : tiefe[s.id], e = tiefe[s.id], z = 0;
       var frei = (s.braucht || []).every(function (b) { return !imPlan[b] || S[b].strang !== s.strang; });
       belegt[k] = belegt[k] || [];
@@ -284,6 +286,13 @@ window.UBahnPlan = function (wurzel, D, OPT) {
         }
       });
       if (abHier != null && abHier < x2) strecke([[abHier, y2], [x2, y2]], f, true, blass(s.id));   // ab der Zusammenführung in Linienfarbe
+      // fließt ein (gestrichelt): z. B. LEA in die Webseite – vom Ende des Zulieferers senkrecht auf den Zeitraum
+      (s.einfluss || []).forEach(function (b) {
+        if (!imPlan[b]) return;
+        var v = S[b], x1 = xVon(v), y1 = yVon(v), xz = Math.max(x2, Math.min(xVon(s), x1)), ym = (y1 + y2) / 2;
+        var pq = Math.abs(xz - x1) < 1 ? [[x1, y1], [x1, y2]] : [[x1, y1], [x1, ym], [xz, ym], [xz, y2]];
+        quer += '<path d="' + rund(pq) + '" stroke="' + (blass(s.id) ? "#dedad4" : "#8a857d") + '" stroke-width="2" fill="none" stroke-dasharray="3 5"/>';
+      });
       // frei startend: eigene kurze Strecke mit Kopfbahnhof (Querstrich) – „kann sofort los“
       if (!linieRein) {
         var xa = x2 - ABST * 0.42, geg = s.status !== "offen";

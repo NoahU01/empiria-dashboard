@@ -162,6 +162,7 @@
     // damit sie als eine ruhige Linie neben den Stoßrichtungen laufen
     var gruppen = oben.some(function (s) { return kinder[s.id]; });
     var begleitend = {}; if (gruppen) oben.forEach(function (s) { if (!kinder[s.id]) begleitend[s.id] = true; });
+    var erstesOffen = (gates.filter(function (g) { return g.status !== "erledigt"; })[0] || gates[gates.length - 1]).id;
     var vorher = {};
     blaetter.forEach(function (st) {
       var reihe2 = liste.filter(function (a) { return a.strang_id === st.id; })
@@ -170,14 +171,18 @@
         var eigene = !begleitend[st.id] && (a.vorgaenger || []).some(function (v) { return reihe2.some(function (b) { return String(b.id) === String(v); }); });
         // beginnt eine Aufgabe, bevor die vorige endet (z. B. Webseite ab 09.11., Lea bis 24.11.), läuft sie eigenständig daneben
         var daneben = i > 0 && a.beginnt_am && reihe2[i - 1].faellig_am && a.beginnt_am < reihe2[i - 1].faellig_am;
-        if (!eigene && i > 0 && !daneben) vorher[a.id] = reihe2[i - 1].id;
+        // in einem neuen Level ohne eigenen Vorgänger beginnt die Linie frei (wie MAK nach Big Bang)
+        if (!eigene && i > 0 && !daneben && level(a) === level(reihe2[i - 1])) vorher[a.id] = reihe2[i - 1].id;
       });
     });
-    var erstesOffen = (gates.filter(function (g) { return g.status !== "erledigt"; })[0] || gates[gates.length - 1]).id;
     function level(a) {
       if (a.projektgate_id && gates.some(function (g) { return g.id === a.projektgate_id; })) return a.projektgate_id;
       if (a.faellig_am) { var g = gates.filter(function (x) { return x.faellig_am && x.faellig_am >= a.faellig_am; })[0]; if (g) return g.id; }
       return erstesOffen;
+    }
+    function fliesstEin(a, v) {
+      var b = liste.filter(function (x) { return String(x.id) === String(v); })[0];
+      return !!(b && b.strang_id === a.strang_id && a.beginnt_am && b.beginnt_am && b.faellig_am && a.beginnt_am < b.faellig_am);   // nur ein Zeitraum fließt ein
     }
     function datum(d) { var t = String(d || "").slice(0, 10).split("-"); return t.length === 3 ? t[2] + "." + t[1] + "." + t[0] : "offen"; }
     // Termine als Halte auf der Linie Projektmanagement (nur Termine und Workshops, keine Meilensteine wie der Schulungsinfotag): vergangene erledigt, in zeitlicher Folge
@@ -199,7 +204,7 @@
       zielbild: { kurz: "Gesamtplan" },
       straenge: blaetter.map(function (s, i) {
         var label = String(s.titel || "").replace(/^\d+\s+/, "");
-        return { id: "s" + s.id, kurz: ubKurz(label), label: label, frage: s.erklaerung || "", beschreibung: "", verantwortung: (s.verantwortlich || []).join(", "), farbe: UB_FARBEN[i % UB_FARBEN.length] };
+        return { id: "s" + s.id, kurz: ubKurz(label), label: label, frage: s.erklaerung || "", beschreibung: "", verantwortung: (s.verantwortlich || []).length === 2 ? s.verantwortlich.join(" & ") : (s.verantwortlich || []).join(", "), farbe: UB_FARBEN[i % UB_FARBEN.length] };
       }),
       meilensteine: gates.map(function (g, i) {
         return { id: "g" + g.id, nr: i + 1, termin: datum(g.faellig_am), titel: g.titel, ergebnis: g.beschreibung ? [g.beschreibung] : [],
@@ -208,8 +213,10 @@
       schritte: liste.map(function (a) {
         return { id: "a" + a.id, strang: "s" + a.strang_id, meilenstein: "g" + level(a), titel: a.titel, beschreibung: a.beschreibung || "",
           status: a.status === "erledigt" ? "erreicht" : (a.spalte === "arbeit" || a.spalte === "pruefung") ? "aktiv" : "offen",
-          braucht: (a.vorgaenger || []).filter(function (v) { return ids[v] && !(begleitend[a.strang_id] && liste.some(function (b) { return String(b.id) === String(v) && b.strang_id === a.strang_id; })); })
+          braucht: (a.vorgaenger || []).filter(function (v) { return ids[v] && !fliesstEin(a, v) && !(begleitend[a.strang_id] && liste.some(function (b) { return String(b.id) === String(v) && b.strang_id === a.strang_id; })); })
             .map(function (v) { return "a" + v; }).concat(vorher[a.id] ? ["a" + vorher[a.id]] : []),
+          // Vorgänger auf derselben Linie, der erst nach dem Beginn endet, fließt ein (gestrichelt, z. B. LEA in die Webseite)
+          einfluss: (a.vorgaenger || []).filter(function (v) { return ids[v] && fliesstEin(a, v); }).map(function (v) { return "a" + v; }),
           termin: a.beginnt_am && a.faellig_am ? datum(a.beginnt_am) + " bis " + datum(a.faellig_am) : a.faellig_am ? "fällig " + datum(a.faellig_am) : "",
           // Monat für die Monatseinteilung wie in der Kundenansicht: Fälligkeit, bei Erledigtem ohne Fälligkeit das Erledigt-Datum
           monat: String(a.faellig_am || (a.status === "erledigt" && a.erledigt_am) || "").slice(0, 7) || null,
