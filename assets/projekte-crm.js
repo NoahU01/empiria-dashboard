@@ -128,10 +128,13 @@
   // (Regeltermine, Abstimmungen, Runden) der letzten zwei Wochen und alle kommenden; Aufgaben ohne Strang bleiben in der Liste.
   // Kurzer Name im Plan (höchstens drei Wörter): mit Teilnehmenden „Austausch Nachname“, sonst Titel ohne Klammerzusatz und „der SV Akademie“
   function kurzTermin(e) {
+    // kurzer Titel (höchstens drei Wörter) bleibt; lange Titel werden zu „Austausch Nachname“
+    var t = String(e.titel || "").replace(/\s*\(.*?\)\s*/g, " ").replace(/\s+der\s+SV[\s-]Akademie\b/i, "").trim();
     var tn = (e.teilnehmer || []).map(function (n) { return String(n).trim().split(/\s+/).pop(); });
-    if (tn.length) return "Austausch " + tn.slice(0, 2).join(", ");
-    return String(e.titel || "").replace(/\s*\(.*?\)\s*/g, " ").replace(/\s+der\s+SV[\s-]Akademie\b/i, "").trim();
+    if (t.split(/\s+/).length <= 3 || !tn.length) return t;
+    return "Austausch " + tn.slice(0, 2).join(", ");
   }
+  function ohneText(n) { return n === 1 ? "1 weitere Aufgabe ohne Termin" : n + " weitere Aufgaben ohne Termin"; }
   function ubahnDaten(straenge, auf, opt) {
     opt = opt || {};
     var kinder = {}, oben = [];
@@ -144,7 +147,8 @@
     var imStrang = {}; blaetter.forEach(function (s) { imStrang[s.id] = true; });
     var pm = opt.termine ? blaetter.filter(function (s) { return /projektmanagement/i.test(s.titel || ""); })[0] : null;
     if (opt.termine) auf = auf.filter(function (a) { return a.strang_id && imStrang[a.strang_id] && !(pm && a.strang_id === pm.id) || a.art === "projektgate"; });
-    if (opt.termine && !pm && opt.termine.length) { pm = { id: -1, titel: "Termine", erklaerung: "", verantwortlich: [] }; blaetter.push(pm); imStrang[-1] = true; }
+    if (opt.termine && !pm && opt.termine.some(function (e) { return new Date(e.datum).getTime() >= Date.now() - 14 * 864e5 && (e.art === "Termin" || e.art === "Workshop"); }))   // eigene Terminlinie nur, wenn es Termine im Blick gibt
+      { pm = { id: -1, titel: "Termine", erklaerung: "", verantwortlich: [] }; blaetter.push(pm); imStrang[-1] = true; }
     // Aufgaben ohne (bekannten) Strang laufen auf einer eigenen Linie „Weitere Aufgaben“
     var ohne = auf.filter(function (a) { return a.art !== "projektgate" && !(a.strang_id && imStrang[a.strang_id]); });
     if (ohne.length) { blaetter.push({ id: 0, titel: blaetter.length ? "Weitere Aufgaben" : "Aufgaben", erklaerung: "", verantwortlich: [] }); imStrang[0] = true; }
@@ -349,7 +353,7 @@
     var plan = STRAENGE.length && window.ProjektPlan, linienplan = !!window.UBahnPlan;
     try { aav = localStorage.getItem("pr-auf-ansicht") || "liste"; } catch (x) {}
     if (aav !== "kanban" && !(aav === "plan" && (plan || linienplan))) aav = "liste";
-    var neu = !!NEUER_AUFBAU[p.id];
+    var neu = p.typ !== "strategie";   // neuer Aufbau für alle Projekte (Daniel, 29.10.2026); Strategie-Projekte haben ihre eigene Ansicht
     if (neu && aav === "plan") aav = "liste";
     function frist(a) {
       var ueber = a.status === "offen" && a.faellig_am && new Date(a.faellig_am) < new Date(new Date().toDateString());
@@ -395,7 +399,7 @@
       aufInhalt = offen.length ? '<ul class="pr-auf2">' + offen.map(function (a) {
         return '<li data-a="' + a.id + '"' + (neu && !a.faellig_am && ohneT < offen.length ? ' data-mehr="ohne" hidden' : "") + '><div class="pr-auf-zeile"><button type="button" class="st-haken" aria-label="Erledigt"></button>' + frist(a) + titel(a) +
           '<span class="pr-wer">' + phase(a) + " · " + esc(wer(a) || "offen") + paketLabel(a) + "</span></div>" + '<div class="pr-auf-zusatz">' + zusatz(a) + "</div>" + details(a) + "</li>";
-      }).join("") + "</ul>" + (neu && ohneT && ohneT < offen.length ? '<button type="button" class="kt3-klapp pr-fertig-mehr" data-klapp-knopf="ohne" data-text="Weitere ' + ohneT + ' Aufgaben ohne Termin" aria-expanded="false">Weitere ' + ohneT + " Aufgaben ohne Termin</button>" : "") : '<p class="kt3-leise">Nichts offen.</p>';
+      }).join("") + "</ul>" + (neu && ohneT && ohneT < offen.length ? '<button type="button" class="kt3-klapp pr-fertig-mehr" data-klapp-knopf="ohne" data-text="' + ohneText(ohneT) + '" aria-expanded="false">' + ohneText(ohneT) + "</button>" : "") : '<p class="kt3-leise">Nichts offen.</p>';
       // Erledigte Aufgaben bleiben sichtbar – hellgrau mit Haken unter den offenen, neueste zuerst (Daniel, 10.10.2026)
       var fertig = auf.filter(function (a) { return a.status === "erledigt"; }).sort(function (a, b) { return String(b.erledigt_am || "").localeCompare(String(a.erledigt_am || "")); });
       if (fertig.length && !neu) aufInhalt += '<div class="pr-fertig"><p class="pr-fertig-kopf">Erledigt</p><ul class="pr-auf2 pr-auf-fertig">' + fertig.map(function (a, i) {
@@ -447,7 +451,7 @@
     h += '<section class="kt3-box kt3-breit pr-team"><h3>Projektteam</h3><div class="pr-bet-zeile"><div class="pr-bet-spalte"><h4>Beteiligte beim Kunden</h4>' + seite("Kunde") + '</div><div class="pr-bet-spalte"><h4>Team empiria</h4>' + seite("empiria") + seite("Partner").replace('<p class="kt3-leise">–</p>', "") + "</div></div></section>";
     h += archivKasten();
     wurzel.innerHTML = h + "</div>";
-    if (lookWert() === "sva") module(p);
+    if (lookWert() === "sva" && !neu) module(p);
     verdrahten(p);
     if (neu) neuOrdnen(p, ere);
   }
@@ -456,7 +460,6 @@
      Reihenfolge wie auf der Kundenseite: 1 Weg zum Ergebnis (Linienplan) · 2 Was jetzt ansteht (nur intern: Lagebericht,
      Aufgaben als Liste oder Kanban, nächste Termine) · 3 Hintergrund, zugeklappt (Ziel, Stoßrichtung, Arbeitspakete, Team,
      Termine mit Protokollen, Verlauf). Die fertig gezeichneten Kästen werden umgehängt – ihre Knöpfe behalten die Funktion. */
-  var NEUER_AUFBAU = { 1: true };
   function neuOrdnen(p, ere) {
     var r = wurzel.querySelector(".kt3-raster"); if (!r) return;
     function nimm(sel) { return r.querySelector(":scope > " + sel); }
@@ -485,11 +488,11 @@
     }
     var neuR = document.createElement("div"); neuR.className = "pr-n-raster";
     // 1 Weg zum Ergebnis
-    var weg = bereich("pr-n-weg", "n-weg", "Weg zum Ergebnis", "", "", true);
+    var weg = bereich("pr-n-weg", "n-weg", "Weg zum Ergebnis", "", "", false);   // Startsicht: alle drei Kästen zu (Daniel, 29.10.2026)
     var ub = document.createElement("div"); ub.innerHTML = UB_GERUEST; weg.inhalt.appendChild(ub.firstChild);
     neuR.appendChild(weg);
     // 2 Was jetzt ansteht – nur intern
-    var jetzt = bereich("pr-n-jetzt", "n-jetzt", "Was jetzt ansteht", "Lagebericht, Aufgaben und nächste Termine – geht nicht an den Kunden.", "nur intern", true);
+    var jetzt = bereich("pr-n-jetzt", "n-jetzt", "Was jetzt ansteht", "Lagebericht, Aufgaben und nächste Termine – geht nicht an den Kunden.", "nur intern", false);
     var st = nimm(".pr-status");
     if (st) {
       var stT = st.querySelector(".pr-klapp > span:first-child") || st.querySelector("h3");
