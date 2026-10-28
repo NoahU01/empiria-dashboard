@@ -125,7 +125,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     liste.forEach(function (s) { t(s.id); });
     // Zeitachse: Haben alle Schritte eines Levels einen geplanten Monat, stehen sie in der Spalte ihres Monats;
     // innerhalb eines Monats bleibt die Reihenfolge der Abhängigkeiten. Monatsblöcke werden als dezente Linien gezeichnet.
-    var monatsBloecke = [], tiefeA = {};
+    var monatsBloecke = [], tiefeA = {}, bandMin = {};
     stufenImBlick.forEach(function (x) {
       var ss = liste.filter(function (s) { return s.meilenstein === x.id; });
       if (!ss.length || !ss.every(function (s) { return s.monat; })) return;
@@ -146,19 +146,48 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       function nimm(mo, sp) { if (monate.indexOf(mo) < 0) monate.push(mo); breite[mo] = Math.max(breite[mo] || 1, sp + 1); }
       ss.forEach(function (s) { nimm(s.monat, l(s.id)); if (zeitraum(s)) nimm(s.von, la_(s.id)); });
       monate.sort();
+      // Datumstreue Zeiträume: Haben Halte ein Tagesdatum (tag), dienen die datierten Halte eines Monats als Stützpunkte –
+      // Beginn und Ende eines Zeitraums liegen zwischen ihnen nach Datum (z. B. Webseite 09.–27.11. um die AL/GL-Runde am 11.11. herum)
+      var stuetzen = {};
+      monate.forEach(function (mo) {
+        var pk = ss.filter(function (s) { return !zeitraum(s) && s.monat === mo && s.tag; }).map(function (s) { return [s.tag, l(s.id)]; })
+          .sort(function (a, b) { return a[0] - b[0] || b[1] - a[1]; });
+        var mono = [];
+        pk.forEach(function (p) { var v = mono[mono.length - 1]; if (!v || (p[0] > v[0] && p[1] > v[1])) mono.push(p); });   // nur steigende Stützpunkte
+        stuetzen[mo] = mono;
+        var letzte = mono[mono.length - 1];   // endet ein Zeitraum nach dem letzten datierten Halt, bekommt der Monat eine halbe Spalte Auslauf
+        if (letzte && ss.some(function (s) { return zeitraum(s) && s.monat === mo && s.tag > letzte[0]; })) breite[mo] = Math.max(breite[mo], letzte[1] + 1.5);
+      });
+      function lage(mo, tag) {
+        var t = String(mo).split("-"), tage = new Date(+t[0], +t[1], 0).getDate();
+        var p = [[0, -0.5]].concat(stuetzen[mo] || [], [[tage + 1, breite[mo] - 0.5]]);
+        for (var i = 1; i < p.length; i++) if (tag <= p[i][0]) return p[i - 1][1] + (tag - p[i - 1][0]) / (p[i][0] - p[i - 1][0]) * (p[i][1] - p[i - 1][1]);
+        return breite[mo] - 0.5;
+      }
       var off = 0, ab = {};
       monate.forEach(function (mo) { ab[mo] = off; monatsBloecke.push({ ms: x.id, monat: mo, ab: off, breite: breite[mo] }); off += breite[mo]; });
       ss.forEach(function (s) { tiefe[s.id] = ab[s.monat] + l(s.id); if (zeitraum(s)) tiefeA[s.id] = ab[s.von] + la_(s.id); });
+      ss.forEach(function (s) {
+        // datierter Halt, der in seinem Monat allein auf seiner Linie steht: an sein Datum rücken (gleiche Termine stehen übereinander)
+        if (!zeitraum(s) && s.tag && stuetzen[s.monat] && stuetzen[s.monat].length && ss.filter(function (n) { return n.strang === s.strang && (n.monat === s.monat || n.von === s.monat); }).length === 1)
+          tiefe[s.id] = ab[s.monat] + Math.max(0, lage(s.monat, s.tag));
+        if (!zeitraum(s) || !s.tag) return;
+        if (s.tagVon) tiefeA[s.id] = ab[s.von] + Math.max(0, lage(s.von, s.tagVon));
+        // nie vor dem Vorgänger auf der eigenen Linie beginnen, nie vor dem eigenen Beginn enden
+        (s.braucht || []).forEach(function (b) { if (imPlan[b] && S[b].strang === s.strang && tiefe[b] != null) tiefeA[s.id] = Math.max(tiefeA[s.id], tiefe[b] + 0.7); });
+        tiefe[s.id] = Math.max(ab[s.monat] + lage(s.monat, s.tag), tiefeA[s.id] + 0.8);
+      });
+      bandMin[x.id] = off;
     });
     var bandStart = {}, bandBreite = {}, lauf = 0, nr = 0, bandNr = {};
     stufenImBlick.forEach(function (x) {
-      var w = 1; liste.forEach(function (s) { if (s.meilenstein === x.id) w = Math.max(w, tiefe[s.id] + 1); });
+      var w = Math.max(1, bandMin[x.id] || 0); liste.forEach(function (s) { if (s.meilenstein === x.id) w = Math.max(w, tiefe[s.id] + 1); });
       bandStart[x.id] = lauf; bandBreite[x.id] = w; bandNr[x.id] = nr++; lauf += w;
     });
     var HALT = 64;                               // Platz für einen Stufenhalt zwischen zwei Bändern
     var START = vorStufe ? 70 : EINLAUF;         // links: Starthalt der Stufe davor
     var verfuegbar = planEl.clientWidth / MASS - SPALTE;   // Breite in Plan-Einheiten (MASS = gewählte Größe)
-    ABST = Math.max(78, Math.min(140, (verfuegbar - 14 - START - HALT * (nr - 1) - ENDE) / lauf));
+    ABST = Math.max(73, Math.min(140, (verfuegbar - 14 - START - HALT * (nr - 1) - ENDE) / lauf));
     function xVon(s) { var x = MS[s.meilenstein]; return START + (bandStart[x.id] + tiefe[s.id]) * ABST + bandNr[x.id] * HALT + ABST / 2; }
     function xStart(s) { if (tiefeA[s.id] == null) return xVon(s); var x = MS[s.meilenstein]; return START + (bandStart[x.id] + tiefeA[s.id]) * ABST + bandNr[x.id] * HALT + ABST / 2; }
     function xHalt(mid) { return START + (bandStart[mid] + bandBreite[mid]) * ABST + bandNr[mid] * HALT + 14; }   // Stufenhalt nach dem Band

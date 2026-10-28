@@ -190,7 +190,7 @@
         var g = gates.filter(function (x) { return x.faellig_am && x.faellig_am >= tag; })[0] || gates[gates.length - 1];
         termHalte.push({ id: "e" + e.id, strang: "s" + pm.id, meilenstein: "g" + g.id, titel: kurzTermin(e),
           beschreibung: [e.titel, e.format === "vor Ort" ? "vor Ort" + (e.ort ? ": " + e.ort : "") : e.format, (e.teilnehmer || []).length ? "mit " + e.teilnehmer.join(", ") : ""].filter(Boolean).join(" · "),
-          status: d.getTime() < jetzt ? "erreicht" : "offen", braucht: i ? ["e" + tl[i - 1].id] : [], monat: tag.slice(0, 7),
+          status: d.getTime() < jetzt ? "erreicht" : "offen", braucht: i ? ["e" + tl[i - 1].id] : [], monat: tag.slice(0, 7), tag: d.getDate(),
           termin: "am " + d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) + (mitZeit ? ", " + d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + " Uhr" : "") });
       });
     }
@@ -212,7 +212,9 @@
           termin: a.beginnt_am && a.faellig_am ? datum(a.beginnt_am) + " bis " + datum(a.faellig_am) : a.faellig_am ? "fällig " + datum(a.faellig_am) : "",
           // Monat für die Monatseinteilung wie in der Kundenansicht: Fälligkeit, bei Erledigtem ohne Fälligkeit das Erledigt-Datum
           monat: String(a.faellig_am || (a.status === "erledigt" && a.erledigt_am) || "").slice(0, 7) || null,
-          von: a.beginnt_am ? String(a.beginnt_am).slice(0, 7) : null, zeitraum: !!a.beginnt_am };   // Zeitraum (z. B. Lea Oktober–November, Webseite 09.–27.11.)
+          von: a.beginnt_am ? String(a.beginnt_am).slice(0, 7) : null, zeitraum: !!a.beginnt_am,
+          // Tag im Monat: Zeiträume liegen im Plan datumsgenau zwischen den datierten Halten
+          tag: +String(a.faellig_am || (a.status === "erledigt" && a.erledigt_am) || "").slice(8, 10) || null, tagVon: a.beginnt_am ? +String(a.beginnt_am).slice(8, 10) : null };   // Zeitraum (z. B. Lea Oktober–November, Webseite 09.–27.11.)
       }).concat(termHalte)
     };
     // Der letzte Termin eines Levels gehört zu dessen Weg – sonst stünde die Terminlinie im Level-Ausschnitt blass
