@@ -270,7 +270,8 @@
       db.from("organisationen").select("id, name, gruppe, marktumfeld, website, klaeren, sitz, rechtsform, groesse, konzern, fuehrung, themen, recherche_stand").eq("id", id).single(),
       db.from("firmen_meldungen").select("art, datum, titel, typ, quelle_name, quelle_url, relevanz, aufhaenger").eq("organisation_id", id).order("datum", { ascending: false }),
       ids.length ? db.from("kontakt_merkmale").select("kontakt_id, merkmale(kategorie, wert)").in("kontakt_id", ids) : Promise.resolve({ data: [] }),
-      db.from("projekte").select("id, name, phase, status").eq("organisation_id", id)
+      db.from("projekte").select("id, name, phase, status").eq("organisation_id", id),
+      ids.length ? db.from("anschriften").select("kontakt_id, typ, strasse, plz, ort, land, status").in("kontakt_id", ids).eq("typ", "geschäftlich") : Promise.resolve({ data: [] })
     ]).then(function (r) {
       var org = r[0].data || { name: "Firma" }, meld = r[1].data || [], merk = r[2].data || [];
       var h = '<a class="kb-zurueck" href="#firmen"><span aria-hidden="true">&larr;</span> Firmen</a>';
@@ -280,6 +281,15 @@
         (org.groesse ? '<p class="kt3-tags">' + esc(org.groesse) + "</p>" : "") + "</div></div>";
       if (org.klaeren) h += '<p class="kt3-klaer">' + esc(org.klaeren) + "</p>";
       h += '<div class="kt3-raster">' + projekteBox(r[3].data || []);
+      // Firmenanschrift: die geschäftlichen Anschriften ihrer Personen, gleiche zusammengefasst (häufigste zuerst)
+      var adr = {};
+      (r[4].data || []).filter(function (a) { return a.status !== "veraltet" && (a.strasse || a.ort); }).forEach(function (a) {
+        var t = anschriftText(a), key = t.toLowerCase().replace(/\s+/g, " ");
+        (adr[key] = adr[key] || { t: t, n: 0 }).n++;
+      });
+      var adrL = Object.keys(adr).map(function (k) { return adr[k]; }).sort(function (a, b) { return b.n - a.n; });
+      h += box("Anschrift", adrL.map(function (a) { return '<p class="kt3-zeile"><span>' + (adrL.length > 1 ? a.n + (a.n === 1 ? " Person" : " Personen") : "Geschäftlich") + "</span>" + esc(a.t) + "</p>"; }).join(""),
+        "Noch keine Anschrift erfasst." + (org.sitz ? " Sitz laut Recherche: " + esc(org.sitz) + "." : ""));
       var ansatz = {};
       merk.forEach(function (m) { if (m.merkmale && (m.merkmale.kategorie === "Bedarf" || m.merkmale.kategorie === "Angebot")) (ansatz[m.merkmale.kategorie] = ansatz[m.merkmale.kategorie] || {})[m.merkmale.wert] = 1; });
       h += box("Ansatzpunkte", (ansatz.Bedarf ? '<p class="kt3-zeile"><span>Bedarf</span>' + esc(Object.keys(ansatz.Bedarf).join(", ")) + "</p>" : "") +
@@ -322,7 +332,7 @@
   function person(id) {
     wurzel.innerHTML = '<div class="kb-laedt"><span></span><span></span></div>';
     Promise.all([
-      db.from("kontakte").select("*, organisationen(id, name, gruppe, klaeren), kontaktwege(art, wert, kontext, bevorzugt, status), kontakt_marken(marke), " +
+      db.from("kontakte").select("*, organisationen(id, name, gruppe, klaeren), kontaktwege(art, wert, kontext, bevorzugt, status), anschriften(typ, strasse, plz, ort, land, status), kontakt_marken(marke), " +
         "kontakt_merkmale(merkmale(kategorie, wert)), kampagnen_teilnehmer(status, zuordnungsgrund, kampagnen(name, zeitraum)), " +
         "aktivitaeten(datum, kanal, richtung, anlass, inhalt, ergebnis, teilnehmer, ort, link)").eq("id", id).single(),
       db.from("aufgaben").select("id, titel, faellig_am").eq("kontakt_id", id).eq("status", "offen").order("angelegt_am"),
@@ -362,7 +372,7 @@
     var klaer = [k.klaeren, o && o.klaeren && "Firma: " + o.klaeren].filter(Boolean);
     if (klaer.length) h += '<p class="kt3-klaer">' + klaer.map(esc).join(" · ") + "</p>";
 
-    h += '<div class="kt3-raster">' + projekteBox(projekte || []);
+    h += '<div class="kt3-raster">' + projekteBox(projekte || []) + kontaktdatenBox(k.kontaktwege, k.anschriften);
     var m = {}; (k.kontakt_merkmale || []).forEach(function (x) { if (x.merkmale) (m[x.merkmale.kategorie] = m[x.merkmale.kategorie] || []).push(x.merkmale.wert); });
     var kamp = (k.kampagnen_teilnehmer || []).filter(function (t) { return t.status === "freigegeben" || t.status === "vorgeschlagen"; });
     h += box("Ansatzpunkte",
@@ -392,6 +402,27 @@
     box.querySelectorAll("[data-mehr], .kt3-mehr").forEach(function (x) { x.hidden = !auf; });
     b.setAttribute("aria-expanded", String(auf)); b.textContent = auf ? "Weniger zeigen" : "Alle zeigen";
   });
+  // Postanschrift einzeilig: „Straße · PLZ Ort“ (Land nur, wenn nicht Deutschland)
+  function anschriftText(a) {
+    return [a.strasse, [a.plz, a.ort].filter(Boolean).join(" "), a.land && !/^(de|deutschland|germany)$/i.test(a.land) ? a.land : ""].filter(Boolean).join(" · ");
+  }
+  // Kontaktdaten und Anschriften (Daniel, 28.10.2026): alles, was im CRM steht – veraltete Einträge ausgeblendet
+  function kontaktdatenBox(wege, anschr) {
+    var REIHE = ["E-Mail", "Mobil", "Telefon", "Fax", "Web"];
+    var w = (wege || []).filter(function (x) { return x.status !== "veraltet" && x.wert; })
+      .sort(function (a, b) { return REIHE.indexOf(a.art) - REIHE.indexOf(b.art) || (b.bevorzugt - a.bevorzugt); });
+    var an = (anschr || []).filter(function (a) { return a.status !== "veraltet" && (a.strasse || a.ort); })
+      .sort(function (a, b) { return (a.typ === "privat") - (b.typ === "privat"); });
+    var h = w.map(function (x) {
+      var v = x.art === "E-Mail" ? '<a href="mailto:' + esc(x.wert) + '">' + esc(x.wert) + "</a>"
+        : x.art === "Web" ? '<a href="' + esc(/^http/.test(x.wert) ? x.wert : "https://" + x.wert) + '" target="_blank" rel="noopener">' + esc(x.wert.replace(/^https?:\/\/(www\.)?/, "")) + "</a>"
+        : x.art === "Fax" ? esc(x.wert) : '<a href="tel:' + esc(x.wert.replace(/[^\d+]/g, "")) + '">' + esc(x.wert) + "</a>";
+      return '<p class="kt3-zeile"><span>' + esc(x.art) + "</span>" + v + (x.kontext ? ' <span class="kt3-leise">· ' + esc(x.kontext) + "</span>" : "") + "</p>";
+    }).join("") + an.map(function (a) {
+      return '<p class="kt3-zeile"><span>Anschrift' + (a.typ === "privat" ? " privat" : "") + "</span>" + esc(anschriftText(a)) + "</p>";
+    }).join("");
+    return box("Kontaktdaten", h, "Noch keine Kontaktdaten erfasst.");
+  }
   function box(titel, inhalt, leer, fuss) {
     return '<section class="kt3-box"><h3>' + titel + "</h3>" + (inhalt || '<p class="kt3-leise">' + leer + "</p>") + (fuss || "") + "</section>";
   }
