@@ -467,5 +467,12 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     if (i >= 0 && i < STUFEN.length) neu(STUFEN[i]);
   });
   setzeGroesse(groesse);
+  // Der Plan kennt seine Breite erst, wenn er sichtbar ist (zugeklappter Kasten, gedrehtes Gerät):
+  // ändert sich die Breite, wird er neu gezeichnet – sonst stand er gestaucht und lief über den Kasten hinaus.
+  var letzteBreite = -1;
+  if (window.ResizeObserver) new ResizeObserver(function () {
+    var w = planEl.clientWidth;
+    if (w && Math.abs(w - letzteBreite) > 4) { letzteBreite = w; plan(); detail(); }
+  }).observe(planEl);
   stufen(); plan(); detail();
 };
