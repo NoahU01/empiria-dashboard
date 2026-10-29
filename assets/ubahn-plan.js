@@ -357,6 +357,10 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     });
     svg += quer + duenn + dick;
     var punkte = "";   // Halte zuletzt, damit keine Linie sie überdeckt
+    // Namen dürfen so breit werden, wie links und rechts auf ihrer Linie Platz ist (Daniel, 29.10.2026) – erst dann umbrechen
+    var mitten = {};
+    liste.forEach(function (s) { var y = Math.round(yVon(s)); (mitten[y] = mitten[y] || []).push((xStart(s) + xVon(s)) / 2); });
+    var xEnde = xHalt(letzte.id);
     liste.forEach(function (s) {
       var z = zustand(s), f = STR[s.strang].farbe, cx = xVon(s), cy = yVon(s), schwach = blass(s.id), sel = zustandUI.station === s.id;
       var xs = xStart(s), lang = cx - xs;   // Zeitraum: Kapsel vom Beginn bis zum Ende
@@ -375,6 +379,11 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       var vonOben = (s.braucht || []).some(function (b) { return imPlan[b] && !gleich(S[b], s) && yVon(S[b]) < cy; });
       var obenL = unter[s.id] === 0 && !vonOben;
       var mitte = (xs + cx) / 2, bn = Math.max(ABST - 6, lang + 2 * r);   // Namen fast spaltenbreit – bei engen Monaten bleiben sie lesbar
+      // zum Nachbarn auf derselben Linie höchstens die halbe Strecke (er braucht die andere Hälfte), zum Rand die ganze
+      var li = null, re = null;
+      (mitten[Math.round(cy)] || []).forEach(function (m) { if (m < mitte - 1) li = li == null ? m : Math.max(li, m); else if (m > mitte + 1) re = re == null ? m : Math.min(re, m); });
+      var links = li == null ? mitte : (mitte - li) / 2, rechts = re == null ? xEnde - mitte : (re - mitte) / 2;
+      bn = Math.max(bn, Math.min(2 * Math.min(links, rechts) - 8, 210));
       namen += '<button type="button" class="ub-name ub-name--' + z + (obenL ? " ub-name--oben" : "") + (schwach ? " ub-name--blass" : "") +
         '" data-station="' + s.id + '" style="left:' + (mitte - bn / 2) + "px;top:" + (obenL ? cy - r - 8 : cy + r + 8) + "px;width:" + bn + 'px">' + esc(s.titel) + "</button>";
       namen += '<button type="button" class="ub-treffer" data-station="' + s.id + '" aria-label="' + esc(s.titel) + '" style="left:' + (mitte - 16) + "px;top:" + (cy - 16) + "px" + (lang > 1 ? ";width:" + (lang + 32) + "px;margin-left:" + (-lang / 2) + "px" : "") + '"></button>';
