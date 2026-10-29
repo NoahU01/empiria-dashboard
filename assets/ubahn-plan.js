@@ -51,7 +51,8 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     return (MS[id].ergebnis || []).join(" ");
   }
   function stufen() {
-    var sel = zustandUI.ms, h = '<div class="ub-route" role="tablist">';
+    // so viele Spalten wie Halte (mindestens sechs) – bei sechs Leveln plus Gesamtplan bleibt alles in einer Zeile (VVDE)
+    var sel = zustandUI.ms, h = '<div class="ub-route" role="tablist" style="--n:' + Math.max(6, D.meilensteine.length + 1) + '">';
     D.meilensteine.map(function (x) { return x.id; }).concat(["ziel"]).forEach(function (id) {
       var z = id === "ziel", x = MS[id], an = id === sel;
       h += '<button type="button" role="tab" class="ub-route-halt' + (an ? " ist-an" : "") + (!z && stufeErreicht(id) ? " ist-erreicht" : "") + (z ? " ist-ziel" : "") + '" data-ms="' + id + '" aria-selected="' + an + '">' +
