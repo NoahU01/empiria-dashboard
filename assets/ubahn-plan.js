@@ -351,8 +351,8 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     }
     bahnen.forEach(function (st) {
       (st.unter || []).forEach(function (u, i) {
-        if (liste.some(function (s) { return s.strang === st.id && (s.zeile || 0) === i; })) return;
-        strecke([[START, linieY[st.id] + zOff[st.id][i] * ZH], [xHalt(letzte.id), linieY[st.id] + zOff[st.id][i] * ZH]], STR[st.id].farbe, false, false);
+        // leerer Strang im gewählten Abschnitt: keine Linie (Daniel, 29.10.2026) – nur der Name bleibt als Gliederung stehen
+        return;
       });
     });
     svg += quer + duenn + dick;
