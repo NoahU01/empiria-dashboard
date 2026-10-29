@@ -2300,7 +2300,7 @@ main.kt-main .kt-info-sub a:hover { text-decoration-color: var(--ink); }
 .pr-einordnung dt { color: var(--grey-50, #8a8a8a); font-weight: 400; }
 .pr-einordnung dd { margin: 0; color: var(--ink); font-weight: 400; }
 /* Abgeschlossene Projekte (Daniel, 29.10.2026): zugeklappt am Ende der Übersicht, Hinweis im Projektkopf */
-.pr-fertig-proj { margin-top: 18px; border-top: 1px solid #eeece9; padding-top: 12px; }
+.pr-fertig-proj { margin-top: 18px; }
 .pr-fertig-proj summary { cursor: pointer; font-size: var(--fs-m); font-weight: 500; color: var(--grey-50, #8a8a8a); list-style: none; }
 .pr-fertig-proj summary::-webkit-details-marker { display: none; }
 .pr-fertig-proj summary::after { content: ""; display: inline-block; width: 7px; height: 7px; margin: 0 0 3px 10px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); }
@@ -2311,4 +2311,11 @@ main.kt-main .kt-info-sub a:hover { text-decoration-color: var(--ink); }
 .pr-fertig-proj li a:hover { text-decoration: underline; }
 .pr-fertig-proj li span { color: var(--grey-50, #8a8a8a); }
 .pr-abg { margin: 6px 0 0; font-size: var(--fs-m); color: var(--grey-50, #8a8a8a); }
+/* Projektkopf (Daniel, 29.10.2026): langer Titel bleibt links und bricht um, „Jetzt prüfen“ bleibt rechts daneben –
+   vorher rutschte der Knopf in eine eigene Zeile und schob den Titel nach rechts (z. B. Medienkonzept und Geschäftsausstattung) */
+body.kt3-detail .db-kopf { justify-content: space-between; flex-wrap: nowrap; }
+body.kt3-detail .db-kopf > div:first-child { flex: 1 1 auto; min-width: 0; }
+body.kt3-detail .db-kopf h1 { overflow-wrap: break-word; hyphens: auto; }
+body.kt3-detail .db-kopf > :not(:first-child) { flex: none; }
+@media (max-width: 760px) { body.kt3-detail .db-kopf { flex-wrap: wrap; } }
 
