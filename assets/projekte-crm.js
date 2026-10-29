@@ -262,6 +262,29 @@
           aufgaben: a.aufgaben ? a.aufgaben.map(function (x) { return { id: x.id, titel: x.titel, erledigt: x.status === "erledigt", termin: x.faellig_am ? datum(x.faellig_am) : "" }; }) : null };   // Zeitraum (z. B. Lea Oktober–November, Webseite 09.–27.11.)
       }).concat(termHalte)
     };
+    // Monatslinien in jedem Projekt (Daniel, 29.10.2026): Halte ohne Datum bekommen einen Monat – den ihres Vorgängers,
+    // sonst den Beginn ihres Levels (Monat nach dem vorigen Level), im laufenden Level frühestens den aktuellen Monat.
+    // Das Fenster zeigt weiter „ohne Termin“ (termin bleibt leer).
+    if (opt.termine) {
+      var SM = {}; erg.schritte.forEach(function (x) { SM[x.id] = x; });
+      var heute = new Date(), jetztMo = heute.getFullYear() + "-" + ("0" + (heute.getMonth() + 1)).slice(-2);
+      var aktG = (gates.filter(function (g) { return g.status !== "erledigt"; })[0] || {}).id;
+      function nachMonat(d) { var t = String(d).slice(0, 7).split("-"), m = +t[1] + 1, j = +t[0]; if (m > 12) { m = 1; j++; } return j + "-" + ("0" + m).slice(-2); }
+      var start = {}; gates.forEach(function (g, i) { start["g" + g.id] = i && gates[i - 1].faellig_am ? nachMonat(gates[i - 1].faellig_am) : null; });
+      for (var runde = 0; runde < 6; runde++) erg.schritte.forEach(function (x) {
+        if (x._mo === false || (x.monat && !x._mo)) return;   // eigener Monat aus den Daten bleibt
+        var k = [start[x.meilenstein]].concat((x.braucht || []).concat(x.einfluss || []).map(function (b) { return SM[b] && SM[b].monat; }));
+        if (x.status !== "erreicht" && x.meilenstein === "g" + aktG) k.push(jetztMo);
+        k = k.filter(Boolean).sort();
+        if (k.length) { x.monat = k[k.length - 1]; x._mo = true; }
+      });
+      // Rest (z. B. Erledigtes ohne Datum im ersten Level): frühester Monat des Levels, sonst der aktuelle Monat
+      erg.schritte.forEach(function (x) {
+        if (x.monat) return;
+        var im = erg.schritte.filter(function (y) { return y.meilenstein === x.meilenstein && y.monat; }).map(function (y) { return y.monat; }).sort();
+        x.monat = im[0] || jetztMo;
+      });
+    }
     // Der letzte Termin eines Levels gehört zu dessen Weg – sonst stünde die Terminlinie im Level-Ausschnitt blass
     erg.meilensteine.forEach(function (m) {
       var im = termHalte.filter(function (t) { return t.meilenstein === m.id; });

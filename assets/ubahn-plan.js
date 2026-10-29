@@ -216,7 +216,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var letzte = stufenImBlick[stufenImBlick.length - 1];
     var breite = xHalt(letzte.id) + ENDE;
     var obenAlle = Math.min.apply(null, bahnen.map(function (st) { return linieY[st.id]; })) - 18;
-    var untenAlle = Math.max.apply(null, bahnen.map(function (st) { return linieY[st.id]; })) + 18;
+    var untenAlle = Math.max.apply(null, bahnen.map(function (st) { return linieY[st.id] + (tiefsteZeile[st.id] || 0) * ZH; })) + 18;   // auch die Nebenzeilen der letzten Bahn
 
     var svg = '<svg width="' + breite + '" height="' + hoehe + '" class="ub-svg" aria-hidden="true">';
     var monatsNamen = "";
@@ -321,7 +321,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     });
     if (vorStufe) {
       halte += balken(8, false, true);
-      namen += '<div class="ub-halt-name ub-halt-name--start" style="left:8px;top:' + (untenAlle + 8) + 'px"><small>Voraussetzung: ' + esc(msName(vorStufe)) + (stufeErreicht(vorStufe.id) ? " (erreicht)" : " (noch offen)") + "</small></div>";
+      namen += '<div class="ub-halt-name ub-halt-name--start" style="left:8px;top:' + (hoehe - 24) + 'px"><small>Voraussetzung: ' + esc(msName(vorStufe)) + (stufeErreicht(vorStufe.id) ? " (erreicht)" : " (noch offen)") + "</small></div>";
     }
     svg += quer + duenn + dick;
     var punkte = "";   // Halte zuletzt, damit keine Linie sie überdeckt
