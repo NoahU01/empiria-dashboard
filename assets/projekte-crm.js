@@ -233,6 +233,7 @@
     }
     function fliesstEin(a, v) {
       var b = liste.filter(function (x) { return String(x.id) === String(v); })[0];
+      if (b && b.strang_id === a.strang_id && opt.termine && a.beginnt_am && b.beginnt_am && level(a) !== level(b)) return true;   // über einen Meilenstein hinweg: gestrichelt (z. B. Klärung Tragfähigkeit → Detaillierung)
       return !!(b && b.strang_id === a.strang_id && a.beginnt_am && b.beginnt_am && b.faellig_am && a.beginnt_am < b.faellig_am);   // nur ein Zeitraum fließt ein
     }
     function datum(d) { var t = String(d || "").slice(0, 10).split("-"); return t.length === 3 ? t[2] + "." + t[1] + "." + t[0] : "offen"; }

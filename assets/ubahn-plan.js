@@ -305,7 +305,8 @@ window.UBahnPlan = function (wurzel, D, OPT) {
           strecke(weg(hx, linieY[s.strang], x2, y2, false), f, s.status !== "offen", blass(s.id)); linieRein = true; return;
         }
         if (!imPlan[b]) {                                        // Vorarbeit aus einer früheren Stufe: kommt aus dem Starthalt
-          if (!linieRein) strecke(weg(vorStufe ? 34 : 0, linieY[s.strang], x2, y2, false), f, s.status !== "offen", blass(s.id));
+          // auf der Linie des eigenen Strangs (z. B. Marketing), nicht quer durch die Bahn von der obersten Linie
+          if (!linieRein) strecke(weg(vorStufe ? 34 : 0, linieY[s.strang] + (zOff[s.strang] ? zOff[s.strang][s.zeile || 0] || 0 : 0) * ZH, x2, y2, false), f, s.status !== "offen", blass(s.id));
           linieRein = true; return;
         }
         var v = S[b], x1 = xVon(v), y1 = yVon(v);
@@ -464,12 +465,18 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var sc = planEl.querySelector(".ub-scroll");
     // Namen der Dauerthemen bleiben beim Verschieben am linken Rand sichtbar
     var dauerN = planEl.querySelectorAll(".ub-dauer");
-    if (sc && dauerN.length) { var mit = function () { dauerN.forEach(function (n) { n.style.transform = "translateX(" + Math.max(0, sc.scrollLeft - parseFloat(n.style.left) + 36) + "px)"; }); }; sc.addEventListener("scroll", mit); setTimeout(mit, 0); }
+    // der Trefferpunkt wandert mit, damit das Fenster am sichtbaren Namen aufgeht
+    var mit = function () { dauerN.forEach(function (n) {
+      var dx = Math.max(0, sc.scrollLeft - parseFloat(n.style.left) + 36), tr = planEl.querySelector('.ub-treffer--dauer[data-station="' + n.getAttribute("data-station") + '"]');
+      n.style.transform = "translateX(" + dx + "px)"; if (tr) tr.style.left = (parseFloat(n.style.left) + dx) + "px";
+    }); };
+    if (sc && dauerN.length) sc.addEventListener("scroll", mit);
     if (sc && altLinks != null) sc.scrollLeft = altLinks;
     else if (sc && !zustandUI.station && sc.scrollWidth > sc.clientWidth) {
       var offen = liste.filter(function (s) { return fokus[s.id] && s.status !== "erreicht"; }).map(xVon);
       sc.scrollLeft = offen.length ? Math.max(0, Math.min.apply(null, offen) - 2 * ABST) : 0;
     }
+    if (sc && dauerN.length) mit();
     ziehen(sc);
   }
 
@@ -567,6 +574,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       c.addEventListener("change", function () { wurzel.dispatchEvent(new CustomEvent("ub-abhaken", { detail: { id: +c.getAttribute("data-ub-auf"), erledigt: c.checked } })); });
     });
     var px = parseFloat(punkt.style.left) + 16, py = parseFloat(punkt.style.top) + 16;
+    if (s.dauer) { var dn = planEl.querySelector('.ub-dauer[data-station="' + id + '"]'); if (dn) px = parseFloat(punkt.style.left) + dn.offsetWidth - 40; }   // Dauerthema: Fenster neben dem Namen, nicht darüber
     // Position wählen, die keinen Halt auf dem Weg dorthin verdeckt (Reihenfolge: rechts, unten, oben, links)
     var W = pop.offsetWidth, H = pop.offsetHeight, FW = flaeche.offsetWidth, FH = flaeche.offsetHeight;
     var weg = vorlauf([id]), halte = [];
@@ -591,7 +599,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     if (strangOffen && !e.target.closest(".ub-pop--strang, .ub-bahn, .ub-unterstrang, .ub-strang-treffer")) strangInfo(null);
     if (terminOffen && !e.target.closest(".ub-pop--termin, .ub-termin")) terminInfo(null);
     if (!zustandUI.station) return;
-    if (e.target.closest(".ub-name, .ub-treffer, .ub-pop")) return;
+    if (e.target.closest(".ub-name, .ub-dauer, .ub-treffer, .ub-pop")) return;
     zustandUI.station = null; plan(); detail();
   });
 
