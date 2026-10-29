@@ -305,7 +305,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
         var ms = MS[s.meilenstein], rein = fokus[s.id] && vorlauf(ms.braucht || [])[s.id] && !zustandUI.station;
         var ende = rein ? xHalt(ms.id) : xVon(s) + ABST / 2;
         // eigenständig startender Nebenstrang (eigene Zeile, kein Nachfolger): läuft auf seiner Zeile bis zum Stufenhalt
-        var eigeneZeile = unter[s.id] > 0 && freiStart(s);
+        var eigeneZeile = unter[s.id] > 0 && (freiStart(s) || s.zeile > 0);   // Unterstrang einer Stoßrichtung bleibt bis zum Ende auf seiner Linie
         strecke(weg(xVon(s), y2, ende, eigeneZeile ? y2 : linieY[s.strang], true), f, false, !rein && (blass(s.id) || !!zustandUI.station));
       }
     });

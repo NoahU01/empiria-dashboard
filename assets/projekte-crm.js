@@ -127,12 +127,15 @@
   // opt.termine (neuer Aufbau): Plan ohne To-dos – die Linie „Projektmanagement“ zeigt die Projekttermine
   // (Regeltermine, Abstimmungen, Runden) der letzten zwei Wochen und alle kommenden; Aufgaben ohne Strang bleiben in der Liste.
   // Kurzer Name im Plan (höchstens drei Wörter): mit Teilnehmenden „Austausch Nachname“, sonst Titel ohne Klammerzusatz und „der SV Akademie“
+  var EIGENE = /^(Daniel( Ströbel)?|Tobias Müller|Noah( Hermanns)?)$/i;   // eigenes Team – kein Gegenüber für den Namen im Plan
   function kurzTermin(e) {
-    // kurzer Titel (höchstens drei Wörter) bleibt; lange Titel werden zu „Austausch Nachname“
+    // kurzer Titel (höchstens drei Wörter) bleibt; sonst „Austausch Nachname“ des Gegenübers, sonst der Kern des Titels
     var t = String(e.titel || "").replace(/\s*\(.*?\)\s*/g, " ").replace(/\s+der\s+SV[\s-]Akademie\b/i, "").trim();
-    var tn = (e.teilnehmer || []).map(function (n) { return String(n).trim().split(/\s+/).pop(); });
-    if (t.split(/\s+/).length <= 3 || !tn.length) return t;
-    return "Austausch " + tn.slice(0, 2).join(", ");
+    if (t.split(/\s+/).length <= 3) return t;
+    var tn = (e.teilnehmer || []).filter(function (n) { return !EIGENE.test(String(n).trim()); }).map(function (n) { return String(n).trim().split(/\s+/).pop(); });
+    if (tn.length) return "Austausch " + tn.slice(0, 2).join(", ");
+    var kern = t.indexOf(" / ") > -1 ? t.split(" / ").pop() : t.split(" – ")[0];   // „M&S / Mapfre Re“ → Mapfre Re
+    return kern.split(/\s+/).slice(0, 3).join(" ");
   }
   function ohneText(n) { return n === 1 ? "1 weitere Aufgabe ohne Termin" : n + " weitere Aufgaben ohne Termin"; }
   function ubahnDaten(straenge, auf, opt) {
@@ -145,10 +148,14 @@
     // Drei Ebenen (Daniel, 29.10.2026): Stoßrichtung → Strang → Arbeitspaket. Eine Stoßrichtung ist eine Bahn im Plan,
     // ihre Stränge laufen darin als eigene Linien untereinander (z. B. Transformation 1: KI-Assistent LEA, Webseite)
     var elter = {}; straenge.forEach(function (s) { elter[s.id] = s.eltern_id || null; });
-    function bahnVon(id) { var e = elter[id]; return e && elter[e] ? e : id; }
-    function zeileVon(id) {
-      var e = elter[id]; if (!(e && elter[e])) return 0;
-      return Math.max(0, (kinder[e] || []).slice().sort(reihe).map(function (x) { return x.id; }).indexOf(id));
+    var EB = strangEbenen(straenge);
+    function bahnVon(id) { if (!opt.termine) { var e = elter[id]; return e && elter[e] ? e : id; } return EB.bahn(id); }
+    function zeileVon(id) { return opt.termine ? EB.zeile(id) : 0; }
+    if (opt.termine) {   // Bahnen: Stränge auf der Ebene der Stoßrichtungen und begleitende Linien, in Baumreihenfolge
+      blaetter = [];
+      (function lauf(liste) { liste.slice().sort(reihe).forEach(function (s) {
+        if (EB.tiefe(s.id) === EB.bahnT || EB.begleitend(s.id)) blaetter.push(s); else if (kinder[s.id]) lauf(kinder[s.id]);
+      }); })(oben);
     }
     // Gibt es Arbeitspakete mit Strang, zeigt der Plan die Pakete – die Aufgaben stehen im Fenster des Pakets und in der Liste
     if (opt.pakete && opt.pakete.some(function (pk) { return pk.strang_id; })) {
@@ -334,17 +341,34 @@
     return ' <span class="pk-label">· Paket ' + (pk.strang_id ? "" : nr2(pk.nr) + " ") + esc(pk.titel) + "</span>";
   }
   // Status eines Arbeitspakets aus seinen Aufgaben: alle erledigt → erledigt, eine begonnen → in Arbeit, sonst der eingetragene Status
+  // Ebenen der Stränge (Daniel, 29.10.2026): die vorletzte Ebene sind die Stoßrichtungen (Bahnen im Plan), darunter die Stränge
+  // (eigene Linien in der Bahn). Oberste Stränge ohne Unterstränge oberhalb dieser Ebene laufen als begleitende Linie (Innovation, PM).
+  // SV Akademie: Vision & Strategie umsetzen › Transformation 1 › KI-Assistent LEA · Baden-Baden: Folgegeschäft › Folgetermine
+  function strangEbenen(straenge) {
+    var st = {}, kinder = {}; straenge.forEach(function (x) { st[x.id] = x; if (x.eltern_id) (kinder[x.eltern_id] = kinder[x.eltern_id] || []).push(x); });
+    function tiefe(id) { var t = 1, x = st[id]; while (x && x.eltern_id && st[x.eltern_id]) { t++; x = st[x.eltern_id]; } return t; }
+    var maxT = 1; straenge.forEach(function (x) { maxT = Math.max(maxT, tiefe(x.id)); });
+    var bahnT = Math.max(1, maxT - 1);
+    function bahn(id) { var x = st[id]; while (x && tiefe(x.id) > bahnT) x = st[x.eltern_id]; return x ? x.id : id; }
+    function reihe(a, b) { return (a.reihenfolge || 0) - (b.reihenfolge || 0) || a.id - b.id; }
+    function zeile(id) {
+      var b = bahn(id); if (b === id) return 0;
+      var x = st[id]; while (x && x.eltern_id !== b) x = st[x.eltern_id];
+      return x ? Math.max(0, (kinder[b] || []).slice().sort(reihe).indexOf(x)) : 0;
+    }
+    return { st: st, bahn: bahn, zeile: zeile, bahnT: bahnT, tiefe: tiefe,
+      begleitend: function (id) { return maxT > 1 && tiefe(id) < bahnT && !kinder[id]; } };
+  }
   // Einordnung einer Aufgabe (Daniel, 29.10.2026): Stoßrichtung › Strang › Arbeitspaket – steht aufgeklappt über den Details
   function einordnung(a) {
     var pk = a.paket_id && PAKETE.filter(function (x) { return x.id === a.paket_id; })[0];
-    var sid = (pk && pk.strang_id) || a.strang_id, st = {}; STRAENGE.forEach(function (x) { st[x.id] = x; });
+    var sid = (pk && pk.strang_id) || a.strang_id, E = strangEbenen(STRAENGE), st = E.st;
     var name = function (x) { return String(x.titel || "").replace(/^\d+\s+/, ""); };
     var z = [], s0 = st[sid];
     if (s0) {
-      var e = st[s0.eltern_id];
-      var gruppiert = STRAENGE.some(function (x) { return x.eltern_id; }), hatKinder = STRAENGE.some(function (x) { return x.eltern_id === s0.id; });
-      if (e && st[e.eltern_id]) { z.push(["Stoßrichtung", name(e)]); z.push(["Strang", name(s0)]); }   // dritte Ebene: Unterstrang einer Stoßrichtung
-      else if (!e && !hatKinder && gruppiert) z.push(["Linie", name(s0)]);   // begleitende Linie wie Innovation oder Projektmanagement
+      var b = st[E.bahn(sid)];
+      if (E.begleitend(sid)) z.push(["Linie", name(s0)]);   // begleitende Linie wie Innovation oder Projektmanagement
+      else if (b && b.id !== s0.id) { z.push(["Stoßrichtung", name(b)]); z.push(["Strang", name(s0)]); }
       else if (name(s0) !== "Aufgaben") z.push(["Stoßrichtung", name(s0)]);   // „Aufgaben“ ist nur der Sammelstrang eines Projekts ohne Stoßrichtungen
     }
     if (pk) z.push(["Arbeitspaket", pk.titel]);
