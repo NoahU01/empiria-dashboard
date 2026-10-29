@@ -481,8 +481,9 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var text = st.beschreibung || st.frage;
     var pop = document.createElement("div");
     pop.className = "ub-pop ub-pop--strang";
-    pop.innerHTML = '<p class="ub-pop-titel">' + esc(st.label) + '</p><p class="ub-pop-meta">Stoßrichtung &middot; verantwortlich: ' + esc(st.verantwortung) + "</p>" +
-      "<p>" + (text ? "Worum es geht: " + esc(text) : "Die Beschreibung des Strangs folgt.") + "</p>";
+    // ohne Verantwortliche kein leeres „verantwortlich:“; die Erklärung steht für sich (Daniel, 29.10.2026)
+    pop.innerHTML = '<p class="ub-pop-titel">' + esc(st.label) + '</p><p class="ub-pop-meta">' + (/projektmanagement|innovation/i.test(st.label) ? "Linie" : "Stoßrichtung") + (st.verantwortung ? " &middot; verantwortlich: " + esc(st.verantwortung) : "") + "</p>" +
+      "<p>" + (text ? esc(text) : "Die Beschreibung folgt.") + "</p>";
     sp.appendChild(pop);
     pop.style.top = (parseFloat(knopf.style.top) - 6) + "px";
   }
