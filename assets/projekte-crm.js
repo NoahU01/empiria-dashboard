@@ -243,17 +243,12 @@
           termin: "am " + d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) + (mitZeit ? ", " + d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + " Uhr" : "") });
       });
     }
-    // Zeile je Strang nur für Stränge, die im Plan vorkommen – leere Stränge lassen keine Lücke (VVDE: nur „Vertrieb“ belegt)
-    var zRang = {};
-    blaetter.forEach(function (st) {
-      var us = []; liste.forEach(function (a) { if (a.strang_id === st.id && us.indexOf(a._strang) < 0) us.push(a._strang); });
-      us.sort(function (x, y) { return zeileVon(x) - zeileVon(y); }).forEach(function (u, i) { zRang[u] = i; });
-    });
     var erg = {
       zielbild: { kurz: "Gesamtplan" },
       straenge: blaetter.map(function (s, i) {
         var label = String(s.titel || "").replace(/^\d+\s+/, "");
-        return { id: "s" + s.id, kurz: ubKurz(label), label: label, frage: s.erklaerung || "", beschreibung: "", verantwortung: (s.verantwortlich || []).length === 2 ? s.verantwortlich.join(" & ") : (s.verantwortlich || []).join(", "), farbe: UB_FARBEN[i % UB_FARBEN.length] };
+        var un = opt.termine && kinder[s.id] && EB.bahn(s.id) === s.id ? kinder[s.id].slice().sort(reihe).map(function (k) { return String(k.titel || "").replace(/^\d+\s+/, ""); }) : null;
+        return { id: "s" + s.id, unter: un, kurz: ubKurz(label), label: label, frage: s.erklaerung || "", beschreibung: "", verantwortung: (s.verantwortlich || []).length === 2 ? s.verantwortlich.join(" & ") : (s.verantwortlich || []).join(", "), farbe: UB_FARBEN[i % UB_FARBEN.length] };
       }),
       meilensteine: gates.map(function (g, i) {
         return { id: "g" + g.id, nr: i + 1, termin: datum(g.faellig_am), titel: g.titel, ergebnis: g.beschreibung ? [g.beschreibung] : [],
@@ -272,7 +267,7 @@
           von: a.beginnt_am ? String(a.beginnt_am).slice(0, 7) : null, zeitraum: !!a.beginnt_am,
           // Tag im Monat: Zeiträume liegen im Plan datumsgenau zwischen den datierten Halten
           tag: +String(a.faellig_am || (a.status === "erledigt" && a.erledigt_am) || "").slice(8, 10) || null, tagVon: a.beginnt_am ? +String(a.beginnt_am).slice(8, 10) : null,
-          zeile: a._strang != null && zRang[a._strang] != null ? zRang[a._strang] : (a.zeile || 0),
+          zeile: a.zeile || 0,   // Zeile = Platz des Strangs in seiner Stoßrichtung (alle Stränge sind sichtbar)
           aufgaben: a.aufgaben ? a.aufgaben.map(function (x) { return { id: x.id, titel: x.titel, erledigt: x.status === "erledigt", termin: x.faellig_am ? datum(x.faellig_am) : "" }; }) : null };   // Zeitraum (z. B. Lea Oktober–November, Webseite 09.–27.11.)
       }).concat(termHalte)
     };

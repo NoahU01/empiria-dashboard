@@ -207,11 +207,14 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       belegt[k].push({ z: z, a: a, e: e }); unter[s.id] = z; gruppen[k] = Math.max(gruppen[k] || 0, z + 1);
       tiefsteZeile[s.strang] = Math.max(tiefsteZeile[s.strang] || 0, unter[s.id]);
     });
-    var bahnen = D.straenge.filter(function (st) { return liste.some(function (s) { return s.strang === st.id; }); });
+    // Stoßrichtungen mit Strängen stehen immer im Plan, auch wenn noch nichts darin geplant ist (Daniel, 29.10.2026):
+    // jeder Strang ist eine eigene, beschriftete Linie; leere Linien bleiben hellgrau
+    var bahnen = D.straenge.filter(function (st) { return (st.unter || []).length || liste.some(function (s) { return s.strang === st.id; }); });
+    bahnen.forEach(function (st) { if ((st.unter || []).length) tiefsteZeile[st.id] = Math.max(tiefsteZeile[st.id] || 0, st.unter.length - 1); });
     // Termine (Klausur, Workshops): eigene Zeile unter den Monaten; Termine, die zugleich ein Schritt sind, stehen dort als Halt
     var termineImPlan = (D.termine || []).filter(function (t) { return !t.schritt && monatsBloecke.some(function (b) { return b.monat === t.monat; }); });
     var linieY = {}, y0 = (nr > 1 ? 46 : 16) + (monatsBloecke.length ? 44 : 0) + (termineImPlan.length ? 30 : 0);   // oben eine Zeile für die Namen der Stufenhalte (nur im Gesamtplan)
-    bahnen.forEach(function (st) { linieY[st.id] = y0 + UEBER; y0 += UEBER + tiefsteZeile[st.id] * ZH + (tiefsteZeile[st.id] ? UNTER + 56 : UNTER); });
+    bahnen.forEach(function (st) { var ext = (st.unter || []).length ? 28 : 0; linieY[st.id] = y0 + UEBER + ext; y0 += ext + UEBER + tiefsteZeile[st.id] * ZH + (tiefsteZeile[st.id] ? UNTER + 56 : UNTER); });
     var hoehe = y0 + 6 + (vorStufe ? 22 : 0);   // unten Platz für „Voraussetzung: …“
     function yVon(s) { return linieY[s.strang] + unter[s.id] * ZH; }
     var letzte = stufenImBlick[stufenImBlick.length - 1];
@@ -324,6 +327,12 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       halte += balken(8, false, true);
       namen += '<div class="ub-halt-name ub-halt-name--start" style="left:8px;top:' + (hoehe - 24) + 'px"><small>Voraussetzung: ' + esc(msName(vorStufe)) + (stufeErreicht(vorStufe.id) ? " (erreicht)" : " (noch offen)") + "</small></div>";
     }
+    bahnen.forEach(function (st) {
+      (st.unter || []).forEach(function (u, i) {
+        if (liste.some(function (s) { return s.strang === st.id && unter[s.id] === i; })) return;
+        strecke([[START, linieY[st.id] + i * ZH], [xHalt(letzte.id), linieY[st.id] + i * ZH]], STR[st.id].farbe, false, false);
+      });
+    });
     svg += quer + duenn + dick;
     var punkte = "";   // Halte zuletzt, damit keine Linie sie überdeckt
     liste.forEach(function (s) {
@@ -358,7 +367,10 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     });
     namen = treffer + namen;
     var spalte = bahnen.map(function (st) {
-      return '<button type="button" class="ub-bahn" data-strang="' + st.id + '" aria-label="' + esc(st.label) + ': worum es in dieser Stoßrichtung geht" style="top:' + (linieY[st.id] - 15) + 'px"><span class="ub-linie" style="background:' + st.farbe + '">' + esc(st.kurz) + "</span><span><b>" + esc(st.label) + '</b><small>' + esc(st.verantwortung) + "</small></span></button>";
+      var mitU = (st.unter || []).length;
+      // mit Strängen: Titel der Stoßrichtung über der ersten Linie (wächst nach oben), Strangnamen auf Höhe ihrer Linie
+      return (mitU ? st.unter.map(function (u, i) { return '<span class="ub-unterstrang" style="top:' + (linieY[st.id] + i * ZH) + 'px">' + esc(u) + "</span>"; }).join("") : "") +
+        '<button type="button" class="ub-bahn' + (mitU ? " ub-bahn--oben" : "") + '" data-strang="' + st.id + '" aria-label="' + esc(st.label) + ': worum es in dieser Stoßrichtung geht" style="top:' + (linieY[st.id] - (mitU ? 22 : 15)) + 'px"><span class="ub-linie" style="background:' + st.farbe + '">' + esc(st.kurz) + "</span><span><b>" + esc(st.label) + '</b><small>' + esc(st.verantwortung) + "</small></span></button>";
     }).join("");
     // Scrollstand merken: Klick auf einen Halt zeichnet neu – der Plan bleibt dort stehen, wo man hingeschoben hat
     var altSc = planEl.querySelector(".ub-scroll"), altLinks = altSc && altSc.clientWidth && planEl.ubBlick === zustandUI.ms ? altSc.scrollLeft : null;   // nur, wenn der Plan schon sichtbar war
