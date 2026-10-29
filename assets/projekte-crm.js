@@ -334,6 +334,22 @@
     return ' <span class="pk-label">· Paket ' + (pk.strang_id ? "" : nr2(pk.nr) + " ") + esc(pk.titel) + "</span>";
   }
   // Status eines Arbeitspakets aus seinen Aufgaben: alle erledigt → erledigt, eine begonnen → in Arbeit, sonst der eingetragene Status
+  // Einordnung einer Aufgabe (Daniel, 29.10.2026): Stoßrichtung › Strang › Arbeitspaket – steht aufgeklappt über den Details
+  function einordnung(a) {
+    var pk = a.paket_id && PAKETE.filter(function (x) { return x.id === a.paket_id; })[0];
+    var sid = (pk && pk.strang_id) || a.strang_id, st = {}; STRAENGE.forEach(function (x) { st[x.id] = x; });
+    var name = function (x) { return String(x.titel || "").replace(/^\d+\s+/, ""); };
+    var z = [], s0 = st[sid];
+    if (s0) {
+      var e = st[s0.eltern_id];
+      var gruppiert = STRAENGE.some(function (x) { return x.eltern_id; }), hatKinder = STRAENGE.some(function (x) { return x.eltern_id === s0.id; });
+      if (e && st[e.eltern_id]) { z.push(["Stoßrichtung", name(e)]); z.push(["Strang", name(s0)]); }   // dritte Ebene: Unterstrang einer Stoßrichtung
+      else if (!e && !hatKinder && gruppiert) z.push(["Linie", name(s0)]);   // begleitende Linie wie Innovation oder Projektmanagement
+      else if (name(s0) !== "Aufgaben") z.push(["Stoßrichtung", name(s0)]);   // „Aufgaben“ ist nur der Sammelstrang eines Projekts ohne Stoßrichtungen
+    }
+    if (pk) z.push(["Arbeitspaket", pk.titel]);
+    return z.length ? '<dl class="pr-einordnung">' + z.map(function (x) { return "<dt>" + x[0] + "</dt><dd>" + esc(x[1]) + "</dd>"; }).join("") + "</dl>" : "";
+  }
   function paketStatus(pk, auf) {
     var a = auf.filter(function (x) { return x.paket_id === pk.id && x.art !== "projektgate"; });
     if (a.length && a.every(function (x) { return x.status === "erledigt"; })) return "erledigt";
@@ -400,7 +416,7 @@
       return det(a) ? '<button type="button" class="pr-auf-titel" data-auf-auf aria-expanded="false"><span>' + esc(a.titel) + '</span><span class="tl-dreieck" aria-hidden="true"></span></button>'
         : '<span class="pr-auf-titel">' + esc(a.titel) + "</span>";
     }
-    function details(a) { return det(a) ? '<div class="pr-auf-details" hidden>' + det(a) + "</div>" : ""; }
+    function details(a) { return det(a) ? '<div class="pr-auf-details" hidden>' + einordnung(a) + det(a) + "</div>" : ""; }
     // Immer sichtbar: „Hängt ab von …“ und Hinweise wie „Wartet auf Rückmeldung von …“
     function zusatz(a) { return window.AufgabenDetails ? AufgabenDetails.lage(a, auf.concat(EXTERN)) : ""; }
     // Listenansicht: Phase im Kanban schlicht in der grauen Zeile („In Arbeit · Daniel“) – Daniel, 09.10.2026

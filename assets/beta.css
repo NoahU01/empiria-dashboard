@@ -2295,3 +2295,8 @@ main.kt-main .kt-info-sub a:hover { text-decoration-color: var(--ink); }
 .pr-n-zu > .pr-n-inhalt { display: none; }
 .pr-n-inhalt > .ub-dash { margin-top: 20px; }
 @media (max-width: 700px) { .pr-n-kopf { flex-wrap: wrap; } .pr-n-rechts { order: 3; width: 100%; } }
+/* Einordnung einer Aufgabe: Stoßrichtung · Strang · Arbeitspaket (Daniel, 29.10.2026) */
+.pr-einordnung { display: grid; grid-template-columns: max-content 1fr; gap: 2px 14px; margin: 0 0 10px; font-size: var(--fs-s, .82rem); line-height: 1.5; }
+.pr-einordnung dt { color: var(--grey-50, #8a8a8a); font-weight: 400; }
+.pr-einordnung dd { margin: 0; color: var(--ink); font-weight: 400; }
+
