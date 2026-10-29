@@ -490,7 +490,9 @@
     // 1 Weg zum Ergebnis
     var weg = bereich("pr-n-weg", "n-weg", "Weg zum Ergebnis", "", "", false);   // Startsicht: alle drei Kästen zu (Daniel, 29.10.2026)
     var ub = document.createElement("div"); ub.innerHTML = UB_GERUEST; weg.inhalt.appendChild(ub.firstChild);
-    neuR.appendChild(weg);
+    // „Operative Aufgaben“ sammelt Einzelaufgaben ohne gemeinsames Ziel – dort kein Weg zum Ergebnis (Daniel, 29.10.2026)
+    var ohneWeg = p.name === "Operative Aufgaben";
+    if (!ohneWeg) neuR.appendChild(weg);
     // 2 Was jetzt ansteht – nur intern
     var jetzt = bereich("pr-n-jetzt", "n-jetzt", "Was jetzt ansteht", "Lagebericht, Aufgaben und nächste Termine – geht nicht an den Kunden.", "nur intern", false);
     var st = nimm(".pr-status");
@@ -518,6 +520,7 @@
     });
     neuR.appendChild(hin);
     r.replaceWith(neuR);
+    if (ohneWeg) return;
     var ubw = weg.querySelector("[data-ub-wurzel]"), ubd = ubahnDaten(STRAENGE, STAND.auf, { termine: ere });
     if (ubd && window.UBahnPlan) UBahnPlan(ubw, ubd, { hash: false });
     else ubw.innerHTML = '<p class="pr-offen">Noch keine Aufgaben für den Plan.</p>';
