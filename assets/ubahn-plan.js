@@ -80,7 +80,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   // Keine Transparenz: helle Töne sind echte Mischfarben mit Weiß, damit Überlagerungen nicht dunkler werden.
   var MASS = 1;   // Größe des Plans (1 = 100 %), skaliert Linien und Schrift gemeinsam
   var ENDE = 132;   // Platz rechts für Endhalt und Namen der Stufe (Name zweizeilig, 90 px)
-  var ABST = 136, ZH = 96, UEBER = 64, UNTER = 58, LUECKE = 40, EINLAUF = 26, SPALTE = 200;
+  var ABST = 136, ZH = 112, UEBER = 64, UNTER = 58, LUECKE = 40, EINLAUF = 26, SPALTE = 200;
   function hell(hex, t) {   // Farbe mit Weiß mischen, t = Anteil Weiß
     var n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
     function m(c) { return Math.round(c + (255 - c) * t); }
