@@ -25,6 +25,17 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   var ZTEXT = { erreicht: "erledigt", aktiv: "in Arbeit", frei: "kann starten", wartet: "wartet auf Vorarbeit" };
   // dieselbe Linie: gleiche Bahn und – bei Strängen innerhalb einer Stoßrichtung – derselbe Strang (sonst gestrichelte Abhängigkeit)
   function gleich(a, b) { return a.strang === b.strang && (a.sub == null || b.sub == null || a.sub === b.sub); }
+  // Text im Fenster: Zeilen mit „•“ oder „-“ am Anfang werden zur Liste, übrige Zeilen zu Absätzen
+  function textHtml(t) {
+    var h = "", liste = [];
+    function zu() { if (liste.length) { h += "<ul>" + liste.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"; liste = []; } }
+    String(t).split("\n").forEach(function (z) {
+      z = z.trim(); if (!z) return;
+      if (/^[•\-–]\s*/.test(z)) liste.push(z.replace(/^[•\-–]\s*/, "")); else { zu(); h += "<p>" + esc(z) + "</p>"; }
+    });
+    zu();
+    return h;
+  }
   function vorlauf(ids) {               // alles, was in diese Schritte einfließt – inklusive der Schritte selbst
     var drin = {}, st = ids.slice();
     while (st.length) {
@@ -513,7 +524,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var vor = (s.braucht || []).filter(function (b) { return S[b] && S[b].status !== "erreicht"; }).map(function (b) { return S[b].titel; });
     var meta = [st.verantwortung + (s.wer ? " (" + s.wer + ")" : ""), ZTEXT[z]].concat(s.termin ? [s.termin] : zeitraum(s) ? [monatsName(s.von).split(" ")[0] + " bis " + monatsName(s.monat)] : s.monat ? [monatsName(s.monat)] : []);
     var h = '<p class="ub-pop-titel">' + esc(s.titel) + '</p><p class="ub-pop-meta">' + meta.map(esc).join(" &middot; ") + "</p>";
-    if (s.beschreibung) h += "<p>" + esc(s.beschreibung) + "</p>";
+    if (s.beschreibung) h += textHtml(s.beschreibung);
     if (s.ergebnis) h += "<p>" + esc(s.ergebnis) + "</p>";
     if (s.kritisch) h += "<p>Kritisch: " + esc(s.kritisch.grund) + "</p>";
     if (vor.length) h += '<p class="ub-pop-meta">Braucht vorher: ' + vor.map(esc).join(", ") + "</p>";

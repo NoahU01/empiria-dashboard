@@ -214,7 +214,9 @@
         // beginnt eine Aufgabe, bevor die vorige endet (z. B. Webseite ab 09.11., Lea bis 24.11.), läuft sie eigenständig daneben
         var daneben = i > 0 && a.beginnt_am && reihe2[i - 1].faellig_am && a.beginnt_am < reihe2[i - 1].faellig_am;
         // in einem neuen Level ohne eigenen Vorgänger beginnt die Linie frei (wie MAK nach Big Bang)
-        if (!eigene && i > 0 && !daneben && level(a) === level(reihe2[i - 1])) vorher[a.id] = reihe2[i - 1].id;
+        // gleiche Reihenfolge = parallel (Daniel, 29.10.2026): an den letzten Halt mit kleinerer Reihenfolge hängen, nicht aneinander
+        var vor = null; for (var j = i - 1; j >= 0; j--) { if (a.reihenfolge == null || reihe2[j].reihenfolge == null || reihe2[j].reihenfolge < a.reihenfolge) { vor = reihe2[j]; break; } }
+        if (!eigene && vor && !daneben && level(a) === level(vor)) vorher[a.id] = vor.id;
       });
       });
     });

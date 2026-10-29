@@ -1018,7 +1018,7 @@ body.kt3-detail .db-kopf { margin-bottom: 18px; }
 .pk-status--fertig { color: var(--ok); }
 .pk-anz { font-size: var(--fs-s); font-weight: 300; color: var(--grey-50); white-space: nowrap; }
 .pk-koerper { padding: 0 0 var(--s5) 44px; }
-.pk-ziel { margin: 0 0 var(--s4); max-width: 820px; font-size: var(--fs-s); line-height: 1.55; color: var(--ink-2); }
+.pk-ziel { margin: 0 0 var(--s4); max-width: 820px; font-size: var(--fs-s); line-height: 1.55; color: var(--ink-2); white-space: pre-line; }
 .pk-zwei { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s5); }
 .pk-zwei h4 { margin: 0 0 var(--s2); font-size: var(--fs-xs); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-50); }
 .pk-zwei ul { margin: 0; padding-left: 18px; font-size: var(--fs-s); line-height: 1.5; }
