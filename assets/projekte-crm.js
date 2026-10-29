@@ -268,6 +268,7 @@
           // Tag im Monat: Zeiträume liegen im Plan datumsgenau zwischen den datierten Halten
           tag: +String(a.faellig_am || (a.status === "erledigt" && a.erledigt_am) || "").slice(8, 10) || null, tagVon: a.beginnt_am ? +String(a.beginnt_am).slice(8, 10) : null,
           zeile: a.zeile || 0,   // Zeile = Platz des Strangs in seiner Stoßrichtung (alle Stränge sind sichtbar)
+          sub: a._strang != null && a._strang !== a.strang_id ? "u" + a._strang : null,   // Strang innerhalb der Stoßrichtung
           aufgaben: a.aufgaben ? a.aufgaben.map(function (x) { return { id: x.id, titel: x.titel, erledigt: x.status === "erledigt", termin: x.faellig_am ? datum(x.faellig_am) : "" }; }) : null };   // Zeitraum (z. B. Lea Oktober–November, Webseite 09.–27.11.)
       }).concat(termHalte)
     };
