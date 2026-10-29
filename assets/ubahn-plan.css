@@ -34,6 +34,12 @@
 .ub-pop p + p{margin-top:6px}
 .ub-pop-titel{font-size:.84rem;font-weight:600}
 .ub-pop-meta{color:var(--grey-50,#8a8a8a)}
+.ub-pop .ub-pop-auf-kopf{margin-top:10px}
+.ub-pop ul.ub-pop-auf{list-style:none;padding:0;margin:4px 0 0}
+.ub-pop-auf label{display:flex;gap:8px;align-items:flex-start;cursor:pointer}
+.ub-pop-auf input{margin:2px 0 0;flex:none;accent-color:#111;cursor:pointer}
+.ub-pop-auf small{font-size:inherit;color:var(--grey-50,#8a8a8a)}
+.ub-pop-auf-fertig{color:var(--grey-50,#8a8a8a)}
 .ub-monat{position:absolute;transform:translateX(-50%);white-space:nowrap;font-size:.72rem;color:#8a857d;pointer-events:none}
 .ub-bahn{font:inherit;color:inherit;text-align:left;background:none;border:0;padding:4px 0;border-radius:8px;cursor:pointer}
 .ub-bahn > span:nth-child(2){flex:1;min-width:0}

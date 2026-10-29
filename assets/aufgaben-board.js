@@ -26,7 +26,7 @@
     var vor14 = new Date(Date.now() - 14 * 864e5).toISOString();
     Promise.all([
       db.from("projekte").select("id, name, typ, marke, status").order("reihenfolge", { nullsFirst: false }).order("name"),
-      db.from("aufgaben").select("id, art, titel, beschreibung, prompt, status, spalte, faellig_am, marke, erledigt_am, projekt_id, weg, vorgaenger, warten_auf, hinweis, zustaendig_name, verantwortlich, kontakte:zustaendig_kontakt_id(vorname, nachname), organisationen(id, name), person:kontakt_id(id, vorname, nachname), ereignis:ereignis_id(id, titel, datum, projekt_id), mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, zeitblock_vorschlag, unterlagen")
+      db.from("aufgaben").select("id, art, titel, paket:paket_id(titel), beschreibung, prompt, status, spalte, faellig_am, marke, erledigt_am, projekt_id, weg, vorgaenger, warten_auf, hinweis, zustaendig_name, verantwortlich, kontakte:zustaendig_kontakt_id(vorname, nachname), organisationen(id, name), person:kontakt_id(id, vorname, nachname), ereignis:ereignis_id(id, titel, datum, projekt_id), mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, zeitblock_vorschlag, unterlagen")
         .or("status.eq.offen,and(status.eq.erledigt,erledigt_am.gte." + vor14 + ")")
     ]).then(function (r) {
       if (r[1].error) { wurzel.innerHTML = '<p class="kb-leer">Fehler: ' + esc(r[1].error.message) + "</p>"; return; }
@@ -100,7 +100,7 @@
     var p = projektVon(a), herkunft = p ? '<a href="/strategie/projekte.html#p=' + p.id + '">' + esc(p.name) + "</a>" : esc(a.organisationen ? a.organisationen.name : "Operativ");
     return '<li class="al-z" data-a="' + a.id + '"><input type="checkbox" class="al-haken" data-fertig aria-label="Erledigt"' + (a.status === "erledigt" ? " checked" : "") + ">" +
       '<div class="al-was">' + (det(a) ? '<button type="button" class="pr-auf-titel" data-auf-auf aria-expanded="false"><span>' + esc(a.titel) + '</span><span class="tl-dreieck" aria-hidden="true"></span></button>' : '<span class="pr-auf-titel">' + esc(a.titel) + "</span>") +
-      '<small><b class="al-marke">' + esc(markeVon(a)) + "</b> · " + (SP_NAME[a.spalte || "todo"] || "To-do") + " · " + herkunft + " · " + esc(wer(a) || "offen") + "</small>" + zusatz(a) + (det(a) ? '<div class="pr-auf-details" hidden>' + det(a) + "</div>" : "") + "</div></li>";
+      '<small><b class="al-marke">' + esc(markeVon(a)) + "</b> · " + (SP_NAME[a.spalte || "todo"] || "To-do") + " · " + herkunft + (a.paket && a.paket.titel !== a.titel ? " · Paket " + esc(a.paket.titel) : "") + " · " + esc(wer(a) || "offen") + "</small>" + zusatz(a) + (det(a) ? '<div class="pr-auf-details" hidden>' + det(a) + "</div>" : "") + "</div></li>";
   }
   // Wartet auf Rückmeldung: jemand anderes ist dran (warten_auf gesetzt, nicht Daniel selbst) und es ist noch keine Antwort da
   function wartetAufAndere(a) { return !!a.warten_auf && !a.antwort_am && !/^daniel\b/i.test(a.warten_auf); }

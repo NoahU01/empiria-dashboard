@@ -23,8 +23,16 @@
       '<label>Titel<input name="titel" value="' + esc(a.titel) + '" required></label>' +
       '<label>Termin<input type="date" name="faellig_am" value="' + esc(String(a.faellig_am || "").slice(0, 10)) + '"></label>' +
       '<label>Details <small>eine Zeile = ein Punkt</small><textarea name="beschreibung" rows="5">' + esc(a.beschreibung || "") + "</textarea></label>" +
+      paketFeld(a) +
       '<p class="ad-form-knoepfe"><button type="submit" class="ad-form-ok">Speichern</button><button type="button" data-ad-abbrechen>Abbrechen</button></p></form>';
     return (li.length ? '<ul class="ad-punkte">' + li.join("") + "</ul>" : "") + pr + f;
+  }
+  // Arbeitspaket zuordnen (Daniel, 29.10.2026) – nur auf der Projektseite, dort sind die Pakete des Projekts bekannt
+  function paketFeld(a) {
+    var pk = (window.AufgabenDetails && AufgabenDetails.pakete) || [];
+    if (!pk.length || a.art === "projektgate") return "";
+    return '<label>Arbeitspaket<select name="paket_id"><option value="">kein Arbeitspaket</option>' + pk.map(function (p) {
+      return '<option value="' + p.id + '"' + (p.id === a.paket_id ? " selected" : "") + ">" + esc(p.titel) + "</option>"; }).join("") + "</select></label>";
   }
   document.addEventListener("click", function (e) {
     var b = e.target.closest && e.target.closest("[data-ad-bearb], [data-ad-abbrechen]"); if (!b) return;
@@ -39,6 +47,7 @@
     e.preventDefault();
     var titel = form.titel.value.trim(); if (!titel) return;
     var felder = { titel: titel, faellig_am: form.faellig_am.value || null, beschreibung: form.beschreibung.value.replace(/\s+$/, "") || null };
+    if (form.paket_id) felder.paket_id = form.paket_id.value ? +form.paket_id.value : null;
     form.classList.add("laedt");
     window.empiriaDb.from("aufgaben").update(felder).eq("id", +form.getAttribute("data-ad-form")).then(function (r) {
       form.classList.remove("laedt");

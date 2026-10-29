@@ -142,6 +142,26 @@
     function reihe(a, b) { return (a.reihenfolge || 0) - (b.reihenfolge || 0) || a.id - b.id; }
     var blaetter = [];
     oben.sort(reihe).forEach(function (s) { if (kinder[s.id]) kinder[s.id].sort(reihe).forEach(function (k) { blaetter.push(k); }); else blaetter.push(s); });
+    // Drei Ebenen (Daniel, 29.10.2026): Stoßrichtung → Strang → Arbeitspaket. Eine Stoßrichtung ist eine Bahn im Plan,
+    // ihre Stränge laufen darin als eigene Linien untereinander (z. B. Transformation 1: KI-Assistent LEA, Webseite)
+    var elter = {}; straenge.forEach(function (s) { elter[s.id] = s.eltern_id || null; });
+    function bahnVon(id) { var e = elter[id]; return e && elter[e] ? e : id; }
+    function zeileVon(id) {
+      var e = elter[id]; if (!(e && elter[e])) return 0;
+      return Math.max(0, (kinder[e] || []).slice().sort(reihe).map(function (x) { return x.id; }).indexOf(id));
+    }
+    // Gibt es Arbeitspakete mit Strang, zeigt der Plan die Pakete – die Aufgaben stehen im Fenster des Pakets und in der Liste
+    if (opt.pakete && opt.pakete.some(function (pk) { return pk.strang_id; })) {
+      var alleAuf = auf;
+      auf = auf.filter(function (a) { return a.art === "projektgate"; }).concat(opt.pakete.filter(function (pk) { return pk.strang_id; }).map(function (pk) {
+        var st = paketStatus(pk, alleAuf);
+        return { id: pk.id, art: "paket", titel: pk.titel, beschreibung: pk.ziel || "", strang_id: pk.strang_id, reihenfolge: pk.reihenfolge,
+          beginnt_am: pk.beginnt_am, faellig_am: pk.faellig_am, projektgate_id: pk.projektgate_id, vorgaenger: pk.vorgaenger || [],
+          status: st === "erledigt" ? "erledigt" : "offen", spalte: st === "in Arbeit" ? "arbeit" : "todo",
+          aufgaben: alleAuf.filter(function (a) { return a.paket_id === pk.id && a.art !== "projektgate"; }) };
+      }));
+    }
+    auf = auf.map(function (a) { return a.strang_id && elter[a.strang_id] !== undefined ? Object.assign({}, a, { strang_id: bahnVon(a.strang_id), _strang: a.strang_id, zeile: zeileVon(a.strang_id) }) : a; });
     var gates = auf.filter(function (a) { return a.art === "projektgate"; })
       .sort(function (a, b) { return String(a.faellig_am || "9999").localeCompare(String(b.faellig_am || "9999")) || (a.reihenfolge || 0) - (b.reihenfolge || 0); });
     var imStrang = {}; blaetter.forEach(function (s) { imStrang[s.id] = true; });
@@ -169,7 +189,10 @@
     var erstesOffen = (gates.filter(function (g) { return g.status !== "erledigt"; })[0] || gates[gates.length - 1]).id;
     var vorher = {};
     blaetter.forEach(function (st) {
-      var reihe2 = liste.filter(function (a) { return a.strang_id === st.id; })
+      // je Strang der Bahn eine eigene Kette (Unterstränge einer Stoßrichtung laufen getrennt)
+      var unter = []; liste.forEach(function (a) { if (a.strang_id === st.id && unter.indexOf(a._strang) < 0) unter.push(a._strang); });
+      unter.forEach(function (us) {
+      var reihe2 = liste.filter(function (a) { return a.strang_id === st.id && a._strang === us; })
         .sort(function (x, y) { return (x.reihenfolge == null ? 999 : x.reihenfolge) - (y.reihenfolge == null ? 999 : y.reihenfolge) || x.id - y.id; });
       reihe2.forEach(function (a, i) {
         var eigene = !begleitend[st.id] && (a.vorgaenger || []).some(function (v) { return reihe2.some(function (b) { return String(b.id) === String(v); }); });
@@ -177,6 +200,7 @@
         var daneben = i > 0 && a.beginnt_am && reihe2[i - 1].faellig_am && a.beginnt_am < reihe2[i - 1].faellig_am;
         // in einem neuen Level ohne eigenen Vorgänger beginnt die Linie frei (wie MAK nach Big Bang)
         if (!eigene && i > 0 && !daneben && level(a) === level(reihe2[i - 1])) vorher[a.id] = reihe2[i - 1].id;
+      });
       });
     });
     function level(a) {
@@ -226,7 +250,9 @@
           monat: String(a.faellig_am || (a.status === "erledigt" && a.erledigt_am) || "").slice(0, 7) || null,
           von: a.beginnt_am ? String(a.beginnt_am).slice(0, 7) : null, zeitraum: !!a.beginnt_am,
           // Tag im Monat: Zeiträume liegen im Plan datumsgenau zwischen den datierten Halten
-          tag: +String(a.faellig_am || (a.status === "erledigt" && a.erledigt_am) || "").slice(8, 10) || null, tagVon: a.beginnt_am ? +String(a.beginnt_am).slice(8, 10) : null };   // Zeitraum (z. B. Lea Oktober–November, Webseite 09.–27.11.)
+          tag: +String(a.faellig_am || (a.status === "erledigt" && a.erledigt_am) || "").slice(8, 10) || null, tagVon: a.beginnt_am ? +String(a.beginnt_am).slice(8, 10) : null,
+          zeile: a.zeile || 0,
+          aufgaben: a.aufgaben ? a.aufgaben.map(function (x) { return { id: x.id, titel: x.titel, erledigt: x.status === "erledigt", termin: x.faellig_am ? datum(x.faellig_am) : "" }; }) : null };   // Zeitraum (z. B. Lea Oktober–November, Webseite 09.–27.11.)
       }).concat(termHalte)
     };
     // Der letzte Termin eines Levels gehört zu dessen Weg – sonst stünde die Terminlinie im Level-Ausschnitt blass
@@ -244,7 +270,7 @@
       db.from("projekt_ereignisse").select("id, datum, art, titel, quelle, format, ort, teilnehmer, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("datum", { ascending: false }),
       db.from("projekt_punkte").select("id, ereignis_id, art, text, angelegt_am, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am", { ascending: false }),
       db.from("aufgaben").select("id, paket_id, strang_id, reihenfolge, art, projektgate_id, titel, beschreibung, prompt, status, spalte, faellig_am, beginnt_am, erledigt_am, ereignis_id, weg, vorgaenger, warten_auf, hinweis, zeitblock_vorschlag, mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, unterlagen, person:kontakt_id(id, vorname, nachname), organisationen(id, name), zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
-      ,db.from("projekt_pakete").select("id, nr, titel, ziel, stand, status").eq("projekt_id", id).order("nr")
+      ,db.from("projekt_pakete").select("id, nr, titel, ziel, stand, status, strang_id, beginnt_am, faellig_am, vorgaenger, projektgate_id, reihenfolge").eq("projekt_id", id).order("nr")
       ,db.from("projekt_straenge").select("id, titel, reihenfolge, eltern_id, erklaerung, verantwortlich, verantwortlich_kontakte").eq("projekt_id", id).order("reihenfolge")
       ,db.from("projekt_verlauf").select("id, datum, art, titel, inhalt").eq("projekt_id", id).order("datum", { ascending: false })
     ]).then(function (r) {
@@ -257,6 +283,7 @@
       var fremd = []; auf.forEach(function (a) { (a.vorgaenger || []).forEach(function (v) { v = +v; if (!eigene[v] && fremd.indexOf(v) < 0) fremd.push(v); }); });
       var extern = fremd.length ? db.from("aufgaben").select("id, titel, status, projekt_id").in("id", fremd).then(function (x) { EXTERN = x.data || []; }) : Promise.resolve(EXTERN = []);
       PAKETE = (r[5] && r[5].data) || [];
+      if (window.AufgabenDetails) AufgabenDetails.pakete = PAKETE;   // Auswahl „Arbeitspaket“ beim Bearbeiten einer Aufgabe
       var weiter = function () { zeichnen(r[0].data, r[1].data || [], r[2].data || [], r[3].data || [], auf); };
       extern.then(function () { if (window.AufgabenDetails) AufgabenDetails.vorlagenAnhaengen(db, auf).then(weiter); else weiter(); });
     });
@@ -303,7 +330,15 @@
   function nr2(n) { return n < 10 ? "0" + n : String(n); }
   function paketLabel(a) {
     var pk = a.paket_id && PAKETE.filter(function (x) { return x.id === a.paket_id; })[0];
-    return pk ? ' <span class="pk-label">· Paket ' + nr2(pk.nr) + " " + esc(pk.titel) + "</span>" : "";
+    if (!pk || pk.titel === a.titel) return "";   // Aufgabe heißt wie ihr Paket: kein doppelter Hinweis
+    return ' <span class="pk-label">· Paket ' + (pk.strang_id ? "" : nr2(pk.nr) + " ") + esc(pk.titel) + "</span>";
+  }
+  // Status eines Arbeitspakets aus seinen Aufgaben: alle erledigt → erledigt, eine begonnen → in Arbeit, sonst der eingetragene Status
+  function paketStatus(pk, auf) {
+    var a = auf.filter(function (x) { return x.paket_id === pk.id && x.art !== "projektgate"; });
+    if (a.length && a.every(function (x) { return x.status === "erledigt"; })) return "erledigt";
+    if (a.some(function (x) { return x.status === "erledigt" || x.spalte === "arbeit" || x.spalte === "pruefung"; })) return "in Arbeit";
+    return pk.status || "offen";
   }
   function pakete(auf) {
     if (!PAKETE.length) return "";
@@ -312,7 +347,7 @@
         .sort(function (a, b) { return (a.faellig_am || "9999").localeCompare(b.faellig_am || "9999"); });
       var stand = String(pk.stand || "").split("\n").filter(Boolean);
       return '<li class="pk"><button type="button" class="pk-kopf" aria-expanded="false" data-pk><span class="pk-nr">' + nr2(pk.nr) + '</span><span class="pk-titel">' + esc(pk.titel) + "</span>" +
-        '<span class="pk-status pk-status--' + esc(pk.status) + '">' + esc(pk.status) + "</span>" +
+        '<span class="pk-status pk-status--' + esc(paketStatus(pk, auf).replace(/\s/g, "-")) + '">' + esc(paketStatus(pk, auf)) + "</span>" +
         '<span class="pk-anz">' + (offen.length ? offen.length + (offen.length === 1 ? " offener Auftrag" : " offene Aufträge") : "keine offenen Aufträge") + '</span><span class="tl-dreieck" aria-hidden="true"></span></button>' +
         '<div class="pk-koerper" hidden>' + (pk.ziel ? '<p class="pk-ziel">' + esc(pk.ziel) + "</p>" : "") + '<div class="pk-zwei">' +
           '<div><h4>Was steht</h4>' + (stand.length ? "<ul>" + stand.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : '<p class="kt3-leise">Noch nichts.</p>') + "</div>" +
@@ -522,7 +557,13 @@
     neuR.appendChild(hin);
     r.replaceWith(neuR);
     if (ohneWeg) return;
-    var ubw = weg.querySelector("[data-ub-wurzel]"), ubd = ubahnDaten(STRAENGE, STAND.auf, { termine: ere });
+    var ubw = weg.querySelector("[data-ub-wurzel]"), ubd = ubahnDaten(STRAENGE, STAND.auf, { termine: ere, pakete: PAKETE });
+    // Aufgaben im Fenster eines Arbeitspakets abhaken: speichern und die Projektseite neu laden (Plan, Liste und Status ziehen nach)
+    ubw.addEventListener("ub-abhaken", function (e) {
+      var d = e.detail || {};
+      db.from("aufgaben").update(d.erledigt ? { status: "erledigt", erledigt_am: new Date().toISOString() } : { status: "offen", erledigt_am: null }).eq("id", d.id)
+        .then(function (x) { if (x.error) alert("Nicht gespeichert: " + x.error.message); projekt(p.id); });
+    });
     if (ubd && window.UBahnPlan) UBahnPlan(ubw, ubd, { hash: false });
     else ubw.innerHTML = '<p class="pr-offen">Noch keine Aufgaben für den Plan.</p>';
     // Größe und Legende in die Kopfzeile von „Weg zum Ergebnis“ – bleiben auch zugeklappt erreichbar

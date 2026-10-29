@@ -199,7 +199,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     function freiZ(s) { return (s.braucht || []).every(function (b) { return !imPlan[b] || S[b].strang !== s.strang; }); }
     // erst die Halte der durchgehenden Linie, dann die frei startenden – so bleibt die Hauptlinie oben
     liste.filter(function (s) { return !freiZ(s); }).concat(liste.filter(freiZ)).forEach(function (s) {
-      var k = s.strang + "|" + s.meilenstein, a = tiefeA[s.id] != null ? tiefeA[s.id] : tiefe[s.id], e = tiefe[s.id], z = 0;
+      var k = s.strang + "|" + s.meilenstein, a = tiefeA[s.id] != null ? tiefeA[s.id] : tiefe[s.id], e = tiefe[s.id], z = s.zeile || 0;   // Unterstrang einer Stoßrichtung: eigene Zeile
       var frei = (s.braucht || []).every(function (b) { return !imPlan[b] || S[b].strang !== s.strang; });
       belegt[k] = belegt[k] || [];
       while (belegt[k].some(function (x) { return x.z === z && x.a <= e && a <= x.e && (frei || x.a === a || x.e === e || a === e); })) z++;
@@ -459,9 +459,16 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     if (vor.length) h += '<p class="ub-pop-meta">Braucht vorher: ' + vor.map(esc).join(", ") + "</p>";
     var ein = (s.einfluss || []).filter(function (b) { return S[b]; }).map(function (b) { return S[b].titel; });
     if (ein.length) h += '<p class="ub-pop-meta">Fließt ein: ' + ein.map(esc).join(", ") + "</p>";
+    // Arbeitspaket: seine Aufgaben zum Abhaken
+    if (s.aufgaben) h += '<p class="ub-pop-meta ub-pop-auf-kopf">Aufgaben</p>' + (s.aufgaben.length ? '<ul class="ub-pop-auf">' + s.aufgaben.map(function (x) {
+      return '<li><label><input type="checkbox" data-ub-auf="' + x.id + '"' + (x.erledigt ? " checked" : "") + "><span" + (x.erledigt ? ' class="ub-pop-auf-fertig"' : "") + ">" + esc(x.titel) +
+        (x.termin && !x.erledigt ? '<small> · fällig ' + esc(x.termin) + "</small>" : "") + "</span></label></li>"; }).join("") + "</ul>" : '<p class="ub-pop-meta">Noch keine Aufgaben.</p>');
     var pop = document.createElement("div");
     pop.className = "ub-pop"; pop.innerHTML = h;
     flaeche.appendChild(pop);
+    pop.querySelectorAll("[data-ub-auf]").forEach(function (c) {   // Abhaken meldet die Seite, die speichert und neu zeichnet
+      c.addEventListener("change", function () { wurzel.dispatchEvent(new CustomEvent("ub-abhaken", { detail: { id: +c.getAttribute("data-ub-auf"), erledigt: c.checked } })); });
+    });
     var px = parseFloat(punkt.style.left) + 16, py = parseFloat(punkt.style.top) + 16;
     // Position wählen, die keinen Halt auf dem Weg dorthin verdeckt (Reihenfolge: rechts, unten, oben, links)
     var W = pop.offsetWidth, H = pop.offsetHeight, FW = flaeche.offsetWidth, FH = flaeche.offsetHeight;
