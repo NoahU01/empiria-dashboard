@@ -248,7 +248,7 @@
       straenge: blaetter.map(function (s, i) {
         var label = String(s.titel || "").replace(/^\d+\s+/, "");
         var un = opt.termine && kinder[s.id] && EB.bahn(s.id) === s.id ? kinder[s.id].slice().sort(reihe).map(function (k) { return String(k.titel || "").replace(/^\d+\s+/, ""); }) : null;
-        return { id: "s" + s.id, unter: un, kurz: ubKurz(label), label: label, frage: s.erklaerung || "", beschreibung: "", verantwortung: (s.verantwortlich || []).length === 2 ? s.verantwortlich.join(" & ") : (s.verantwortlich || []).join(", "), farbe: UB_FARBEN[i % UB_FARBEN.length] };
+        return { id: "s" + s.id, unter: un, kurz: ubKurz(label), label: label, frage: s.erklaerung || "", beschreibung: "", verantwortung: (s.verantwortlich || []).length === 2 ? s.verantwortlich.join(" & ") : (s.verantwortlich || []).join(", "), farbe: s.farbe || UB_FARBEN[i % UB_FARBEN.length] };   // eigene Farbe der Stoßrichtung (projekt_straenge.farbe), sonst die Reihe
       }),
       meilensteine: gates.map(function (g, i) {
         return { id: "g" + g.id, nr: i + 1, termin: datum(g.faellig_am), titel: g.titel, ergebnis: g.beschreibung ? [g.beschreibung] : [],
@@ -310,7 +310,7 @@
       db.from("projekt_punkte").select("id, ereignis_id, art, text, angelegt_am, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am", { ascending: false }),
       db.from("aufgaben").select("id, paket_id, strang_id, reihenfolge, art, projektgate_id, titel, beschreibung, prompt, status, spalte, faellig_am, beginnt_am, erledigt_am, ereignis_id, weg, vorgaenger, warten_auf, hinweis, zeitblock_vorschlag, mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, unterlagen, person:kontakt_id(id, vorname, nachname), organisationen(id, name), zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
       ,db.from("projekt_pakete").select("id, nr, titel, ziel, stand, status, strang_id, beginnt_am, faellig_am, vorgaenger, projektgate_id, reihenfolge").eq("projekt_id", id).order("nr")
-      ,db.from("projekt_straenge").select("id, titel, reihenfolge, eltern_id, erklaerung, verantwortlich, verantwortlich_kontakte").eq("projekt_id", id).order("reihenfolge")
+      ,db.from("projekt_straenge").select("id, titel, reihenfolge, eltern_id, erklaerung, verantwortlich, verantwortlich_kontakte, farbe").eq("projekt_id", id).order("reihenfolge")
       ,db.from("projekt_verlauf").select("id, datum, art, titel, inhalt").eq("projekt_id", id).order("datum", { ascending: false })
     ]).then(function (r) {
       VERLAUF = (r[7] && r[7].data) || [];
