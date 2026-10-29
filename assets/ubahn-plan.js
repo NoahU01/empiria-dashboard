@@ -396,8 +396,11 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       var links = li == null ? mitte : (mitte - li) / 2, rechts = re == null ? xEnde - mitte : (re - mitte) / 2;
       var grenze = 2 * Math.min(links, rechts) - 8;   // nie über die Hälfte zum Nachbarn – auch nicht bei langen Kapseln
       bn = Math.max(40, Math.min(Math.max(bn, Math.min(grenze, 210)), grenze));
+      // letzter Halt der Linie mit engem linken Nachbarn: der Name darf nach rechts in den freien Raum reichen (links weiter nur bis zur Hälfte)
+      var nl = mitte - bn / 2, rechtsBuendig = false;
+      if (re == null && li != null && links < 105 && rechts > links) { var bw = Math.min(210, links + rechts - 12); if (bw > bn) { bn = bw; nl = mitte - links + 4; rechtsBuendig = true; } }
       namen += '<button type="button" class="ub-name ub-name--' + z + (obenL ? " ub-name--oben" : "") + (schwach ? " ub-name--blass" : "") +
-        '" data-station="' + s.id + '" style="left:' + (mitte - bn / 2) + "px;top:" + (obenL ? cy - r - 8 : cy + r + 8) + "px;width:" + bn + 'px">' + esc(s.titel) + "</button>";
+        '" data-station="' + s.id + '" style="left:' + nl + "px;" + (rechtsBuendig ? "text-align:left;" : "") + "top:" + (obenL ? cy - r - 8 : cy + r + 8) + "px;width:" + bn + 'px">' + esc(s.titel) + "</button>";
       namen += '<button type="button" class="ub-treffer" data-station="' + s.id + '" aria-label="' + esc(s.titel) + '" style="left:' + (mitte - 16) + "px;top:" + (cy - 16) + "px" + (lang > 1 ? ";width:" + (lang + 32) + "px;margin-left:" + (-lang / 2) + "px" : "") + '"></button>';
     });
     svg += halte + durch + punkte + "</svg>";

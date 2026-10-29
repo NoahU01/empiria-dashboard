@@ -140,6 +140,8 @@
     // kurzer Titel (höchstens drei Wörter) bleibt; sonst „Austausch Nachname“ des Gegenübers, sonst der Kern des Titels
     var t = String(e.titel || "").replace(/\s*\(.*?\)\s*/g, " ").replace(/\s+der\s+SV[\s-]Akademie\b/i, "").trim();
     if (t.split(/\s+/).length <= 3) return t;
+    var thema = /^\S+ – ([^,]+)/.exec(t);   // „VVDE – Status Quo, Gesamtbild …“ → Status Quo
+    if (thema && thema[1].split(/\s+/).length <= 3) return thema[1].trim();
     var tn = (e.teilnehmer || []).filter(function (n) { return !EIGENE.test(String(n).trim()); }).map(function (n) { return String(n).trim().split(/\s+/).pop(); });
     if (tn.length) return "Austausch " + tn.slice(0, 2).join(", ");
     var kern = t.indexOf(" / ") > -1 ? t.split(" / ").pop() : t.split(" – ")[0];   // „M&S / Mapfre Re“ → Mapfre Re
@@ -235,13 +237,15 @@
     if (pm && opt.termine) {
       var grenze = Date.now() - 14 * 864e5, jetzt = Date.now();
       var tl = opt.termine.filter(function (e) { return new Date(e.datum).getTime() >= grenze && (e.art === "Termin" || e.art === "Workshop"); }).sort(function (a, b) { return new Date(a.datum) - new Date(b.datum); });
+      function nachr(e) { return e.format === "nachrichtlich"; }   // nur zur Information, ohne unsere Teilnahme – nie „in Arbeit“
+      var naechster = tl.filter(function (e) { return !nachr(e) && new Date(e.datum).getTime() >= jetzt; })[0];
       tl.forEach(function (e, i) {
         var d = new Date(e.datum), tag = d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2), mitZeit = d.getHours() || d.getMinutes();
         var g = gates.filter(function (x) { return x.faellig_am && x.faellig_am >= tag; })[0] || gates[gates.length - 1];
         termHalte.push({ id: "e" + e.id, strang: "s" + pm.id, meilenstein: "g" + g.id, titel: kurzTermin(e),
-          beschreibung: [e.titel, e.format === "vor Ort" ? "vor Ort" + (e.ort ? ": " + e.ort : "") : e.format, (e.teilnehmer || []).length ? "mit " + e.teilnehmer.join(", ") : ""].filter(Boolean).join(" · "),
+          beschreibung: nachr(e) ? e.titel + " · nachrichtlich, ohne unsere Teilnahme" : [e.titel, e.format === "vor Ort" ? "vor Ort" + (e.ort ? ": " + e.ort : "") : e.format, (e.teilnehmer || []).length ? "mit " + e.teilnehmer.join(", ") : ""].filter(Boolean).join(" · "),
           // vergangene erreicht; der nächste anstehende Termin ist in Arbeit (Vorbereitung läuft) – der Weg dorthin in Vollfarbe
-          status: d.getTime() < jetzt ? "erreicht" : (i === 0 || new Date(tl[i - 1].datum).getTime() < jetzt) ? "aktiv" : "offen", braucht: i ? ["e" + tl[i - 1].id] : [], monat: tag.slice(0, 7), tag: d.getDate(),
+          status: d.getTime() < jetzt ? "erreicht" : e === naechster ? "aktiv" : "offen", braucht: i ? ["e" + tl[i - 1].id] : [], monat: tag.slice(0, 7), tag: d.getDate(),
           termin: "am " + d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) + (mitZeit ? ", " + d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + " Uhr" : "") });
       });
     }
