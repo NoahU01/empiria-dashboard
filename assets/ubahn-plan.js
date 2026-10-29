@@ -10,6 +10,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   if (!D || !D.meilensteine.length) return;
   var S = {}, STR = {}, MS = {};
   D.schritte.forEach(function (s) { S[s.id] = s; });
+  D.dauer = D.dauer || []; D.dauer.forEach(function (s) { S[s.id] = s; });   // Dauerthemen: eigene ruhige Linie, kein Halt
   D.straenge.forEach(function (s, i) { s.i = i; STR[s.id] = s; });
   D.meilensteine.forEach(function (m, i) { m.i = i; MS[m.id] = m; });
 
@@ -230,6 +231,14 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       belegt[k].push({ z: z, a: a, e: e }); unter[s.id] = z;
       bedarf[s.strang] = bedarf[s.strang] || {}; bedarf[s.strang][zi] = Math.max(bedarf[s.strang][zi] || 1, z + 1);
     });
+    // Dauerthemen (Daniel, 29.10.2026): je eines eine Zeile unter den Halten ihres Strangs
+    var dauerZ = {};
+    D.dauer.forEach(function (d) {
+      if (!STR[d.strang]) return;
+      var zi = d.zeile || 0, b = bedarf[d.strang] = bedarf[d.strang] || {}, z = b[zi] || 0;
+      if (!z && liste.some(function (s) { return s.strang === d.strang && (s.zeile || 0) === zi; })) z = 1;
+      dauerZ[d.id] = z; b[zi] = z + 1;
+    });
     // Stoßrichtungen mit Strängen stehen immer im Plan, auch wenn noch nichts darin geplant ist (Daniel, 29.10.2026):
     // jeder Strang ist eine eigene, beschriftete Linie; leere Linien bleiben hellgrau
     var bahnen = D.straenge.filter(function (st) { return (st.unter || []).length || liste.some(function (s) { return s.strang === st.id; }); });
@@ -241,6 +250,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       tiefsteZeile[st.id] = off - 1;
     });
     liste.forEach(function (s) { unter[s.id] = (zOff[s.strang] ? zOff[s.strang][s.zeile || 0] || 0 : 0) + unter[s.id]; });
+    D.dauer.forEach(function (d) { if (dauerZ[d.id] != null && zOff[d.strang]) unter[d.id] = (zOff[d.strang][d.zeile || 0] || 0) + dauerZ[d.id]; });
     // Termine (Klausur, Workshops): eigene Zeile unter den Monaten; Termine, die zugleich ein Schritt sind, stehen dort als Halt
     var termineImPlan = (D.termine || []).filter(function (t) { return !t.schritt && monatsBloecke.some(function (b) { return b.monat === t.monat; }); });
     var linieY = {}, y0 = (nr > 1 ? 70 : 16) + (monatsBloecke.length ? 44 : 0) + (termineImPlan.length ? 30 : 0);   // oben eine Zeile für die Namen der Stufenhalte (nur im Gesamtplan)
@@ -366,7 +376,17 @@ window.UBahnPlan = function (wurzel, D, OPT) {
         return;
       });
     });
-    svg += quer + duenn + dick;
+    // Dauerthema: dünne, helle Linie über den ganzen Ausschnitt, Name ruhig darüber – nie fett, keine Kapsel
+    var dauerLinien = "";
+    D.dauer.forEach(function (d) {
+      if (unter[d.id] == null) return;
+      var y = linieY[d.strang] + unter[d.id] * ZH, xa = vorStufe ? 40 : START, xe = xHalt(letzte.id) + 13, f = STR[d.strang].farbe;
+      var schwach = !!zustandUI.station && zustandUI.station !== d.id;
+      dauerLinien += '<path d="M' + xa + " " + y + "H" + xe + '" stroke="' + hell(f, schwach ? 0.85 : 0.45) + '" stroke-width="4" stroke-linecap="round" fill="none"/>';
+      namen += '<button type="button" class="ub-dauer' + (schwach ? " ub-name--blass" : "") + '" data-station="' + d.id + '" style="left:' + xa + "px;top:" + (y - 26) + 'px">' + esc(d.titel) + "<small>Dauerthema</small></button>";
+      namen += '<button type="button" class="ub-treffer ub-treffer--dauer" data-station="' + d.id + '" aria-label="' + esc(d.titel) + '" style="left:' + xa + "px;top:" + (y - 16) + 'px"></button>';
+    });
+    svg += dauerLinien + quer + duenn + dick;
     var punkte = "";   // Halte zuletzt, damit keine Linie sie überdeckt
     // Namen dürfen so breit werden, wie links und rechts auf ihrer Linie Platz ist (Daniel, 29.10.2026) – erst dann umbrechen
     var mitten = {};
@@ -442,6 +462,9 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     });
     strangInfo(strangOffen);
     var sc = planEl.querySelector(".ub-scroll");
+    // Namen der Dauerthemen bleiben beim Verschieben am linken Rand sichtbar
+    var dauerN = planEl.querySelectorAll(".ub-dauer");
+    if (sc && dauerN.length) { var mit = function () { dauerN.forEach(function (n) { n.style.transform = "translateX(" + Math.max(0, sc.scrollLeft - parseFloat(n.style.left) + 36) + "px)"; }); }; sc.addEventListener("scroll", mit); setTimeout(mit, 0); }
     if (sc && altLinks != null) sc.scrollLeft = altLinks;
     else if (sc && !zustandUI.station && sc.scrollWidth > sc.clientWidth) {
       var offen = liste.filter(function (s) { return fokus[s.id] && s.status !== "erreicht"; }).map(xVon);
@@ -525,7 +548,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var punkt = planEl.querySelector('.ub-treffer[data-station="' + id + '"]'), flaeche = planEl.querySelector(".ub-flaeche");
     if (!punkt || !flaeche) return;
     var vor = (s.braucht || []).filter(function (b) { return S[b] && S[b].status !== "erreicht"; }).map(function (b) { return S[b].titel; });
-    var meta = [st.verantwortung + (s.wer ? " (" + s.wer + ")" : ""), ZTEXT[z]].concat(s.termin ? [s.termin] : zeitraum(s) ? [monatsName(s.von).split(" ")[0] + " bis " + monatsName(s.monat)] : s.monat ? [monatsName(s.monat)] : []);
+    var meta = s.dauer ? [st.verantwortung, "Dauerthema", s.termin].filter(Boolean) : [st.verantwortung + (s.wer ? " (" + s.wer + ")" : ""), ZTEXT[z]].concat(s.termin ? [s.termin] : zeitraum(s) ? [monatsName(s.von).split(" ")[0] + " bis " + monatsName(s.monat)] : s.monat ? [monatsName(s.monat)] : []);
     var h = '<p class="ub-pop-titel">' + esc(s.titel) + '</p><p class="ub-pop-meta">' + meta.map(esc).join(" &middot; ") + "</p>";
     if (s.beschreibung) h += textHtml(s.beschreibung);
     if (s.ergebnis) h += "<p>" + esc(s.ergebnis) + "</p>";

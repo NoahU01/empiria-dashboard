@@ -174,6 +174,7 @@
         var st = paketStatus(pk, alleAuf);
         return { id: pk.id, art: "paket", titel: pk.titel, beschreibung: pk.ziel || "", strang_id: pk.strang_id, reihenfolge: pk.reihenfolge,
           beginnt_am: pk.beginnt_am, faellig_am: pk.faellig_am, projektgate_id: pk.projektgate_id, vorgaenger: pk.vorgaenger || [],
+          dauer: !!(pk.beginnt_am && !pk.faellig_am),   // Dauerthema: hat einen Beginn, aber kein Ende (Daniel, 29.10.2026)
           status: st === "erledigt" ? "erledigt" : "offen", spalte: st === "in Arbeit" ? "arbeit" : "todo",
           aufgaben: alleAuf.filter(function (a) { return a.paket_id === pk.id && a.art !== "projektgate"; }) };
       }));
@@ -191,6 +192,9 @@
     if (ohne.length) { blaetter.push({ id: 0, titel: blaetter.length ? "Weitere Aufgaben" : "Aufgaben", erklaerung: "", verantwortlich: [] }); imStrang[0] = true; }
     if (!blaetter.length) return null;
     var liste = auf.filter(function (a) { return a.art !== "projektgate"; }).map(function (a) { return a.strang_id && imStrang[a.strang_id] ? a : Object.assign({}, a, { strang_id: 0 }); });
+    // Dauerthemen laufen durch alle Monate und Level – keine Halte, keine Kette, eigene ruhige Linie
+    var dauerListe = liste.filter(function (a) { return a.dauer; }).sort(function (x, y) { return (x.reihenfolge || 0) - (y.reihenfolge || 0) || x.id - y.id; });
+    liste = liste.filter(function (a) { return !a.dauer; });
     // Projekt ohne Projekt-Gates: ein Ergebnislevel „Projektziel“ über alle Aufgaben, fällig mit der letzten Aufgabe
     if (!gates.length) {
       var letzte = liste.map(function (a) { return a.faellig_am; }).filter(Boolean).sort().pop() || null;
@@ -277,7 +281,12 @@
           zeile: a.zeile || 0,   // Zeile = Platz des Strangs in seiner Stoßrichtung (alle Stränge sind sichtbar)
           sub: a._strang != null && a._strang !== a.strang_id ? "u" + a._strang : null,   // Strang innerhalb der Stoßrichtung
           aufgaben: a.aufgaben ? a.aufgaben.map(function (x) { return { id: x.id, titel: x.titel, erledigt: x.status === "erledigt", termin: x.faellig_am ? datum(x.faellig_am) : "" }; }) : null };   // Zeitraum (z. B. Lea Oktober–November, Webseite 09.–27.11.)
-      }).concat(termHalte)
+      }).concat(termHalte),
+      dauer: dauerListe.map(function (a) {
+        return { id: "a" + a.id, dauer: true, strang: "s" + a.strang_id, zeile: a.zeile || 0, sub: a._strang != null && a._strang !== a.strang_id ? "u" + a._strang : null,
+          titel: a.titel, beschreibung: a.beschreibung || "", status: "aktiv", braucht: [], termin: "seit " + datum(a.beginnt_am),
+          aufgaben: a.aufgaben ? a.aufgaben.map(function (x) { return { id: x.id, titel: x.titel, erledigt: x.status === "erledigt", termin: x.faellig_am ? datum(x.faellig_am) : "" }; }) : null };
+      })
     };
     // Monatslinien in jedem Projekt (Daniel, 29.10.2026): Halte ohne Datum bekommen einen Monat – den ihres Vorgängers,
     // sonst den Beginn ihres Levels (Monat nach dem vorigen Level), im laufenden Level frühestens den aktuellen Monat.
