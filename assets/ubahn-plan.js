@@ -149,6 +149,14 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       function nimm(mo, sp) { if (monate.indexOf(mo) < 0) monate.push(mo); breite[mo] = Math.max(breite[mo] || 1, sp + 1); }
       ss.forEach(function (s) { nimm(s.monat, l(s.id)); if (zeitraum(s)) nimm(s.von, la_(s.id)); });
       monate.sort();
+      // lückenlose Monate (Daniel, 29.10.2026): auch Monate ohne Halt stehen in der Zeitachse – schmal, damit ein Zeitraum
+      // wie Mai bis September seine wirkliche Länge zeigt
+      if (monate.length) {
+        var voll = [], m0 = monate[0];
+        while (m0 <= monate[monate.length - 1] && voll.length < 120) { voll.push(m0); var tt = m0.split("-"), mm = +tt[1] + 1, jj = +tt[0]; if (mm > 12) { mm = 1; jj++; } m0 = jj + "-" + ("0" + mm).slice(-2); }
+        voll.forEach(function (mo) { if (!breite[mo]) breite[mo] = 0.6; });
+        monate = voll;
+      }
       // Datumstreue Zeiträume: Haben Halte ein Tagesdatum (tag), dienen die datierten Halte eines Monats als Stützpunkte –
       // Beginn und Ende eines Zeitraums liegen zwischen ihnen nach Datum (z. B. Webseite 09.–27.11. um die AL/GL-Runde am 11.11. herum)
       var stuetzen = {};
@@ -177,14 +185,15 @@ window.UBahnPlan = function (wurzel, D, OPT) {
         if (!zeitraum(s) || !s.tag) return;
         if (s.tagVon) tiefeA[s.id] = ab[s.von] + Math.max(0, lage(s.von, s.tagVon));
         // nie vor dem Vorgänger auf der eigenen Linie beginnen, nie vor dem eigenen Beginn enden
-        (s.braucht || []).forEach(function (b) { if (imPlan[b] && gleich(S[b], s) && tiefe[b] != null) tiefeA[s.id] = Math.max(tiefeA[s.id], tiefe[b] + 0.7); });
+        // nur Vorgänger im selben Level zählen – die Spalten jedes Levels zählen für sich
+        (s.braucht || []).forEach(function (b) { if (imPlan[b] && gleich(S[b], s) && S[b].meilenstein === s.meilenstein && tiefe[b] != null) tiefeA[s.id] = Math.max(tiefeA[s.id], tiefe[b] + 0.7); });
         tiefe[s.id] = Math.max(ab[s.monat] + lage(s.monat, s.tag), tiefeA[s.id] + 0.8);
       });
       bandMin[x.id] = off;
     });
     var bandStart = {}, bandBreite = {}, lauf = 0, nr = 0, bandNr = {};
     stufenImBlick.forEach(function (x) {
-      var w = Math.max(1, bandMin[x.id] || 0); liste.forEach(function (s) { if (s.meilenstein === x.id) w = Math.max(w, tiefe[s.id] + 1); });
+      var w = Math.max(stufenImBlick.length > 1 ? 2 : 1, bandMin[x.id] || 0);   // im Gesamtplan auch leere Level breit genug für ihren Namen liste.forEach(function (s) { if (s.meilenstein === x.id) w = Math.max(w, tiefe[s.id] + 1); });
       bandStart[x.id] = lauf; bandBreite[x.id] = w; bandNr[x.id] = nr++; lauf += w;
     });
     var HALT = 64;                               // Platz für einen Stufenhalt zwischen zwei Bändern
@@ -223,7 +232,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     liste.forEach(function (s) { unter[s.id] = (zOff[s.strang] ? zOff[s.strang][s.zeile || 0] || 0 : 0) + unter[s.id]; });
     // Termine (Klausur, Workshops): eigene Zeile unter den Monaten; Termine, die zugleich ein Schritt sind, stehen dort als Halt
     var termineImPlan = (D.termine || []).filter(function (t) { return !t.schritt && monatsBloecke.some(function (b) { return b.monat === t.monat; }); });
-    var linieY = {}, y0 = (nr > 1 ? 46 : 16) + (monatsBloecke.length ? 44 : 0) + (termineImPlan.length ? 30 : 0);   // oben eine Zeile für die Namen der Stufenhalte (nur im Gesamtplan)
+    var linieY = {}, y0 = (nr > 1 ? 70 : 16) + (monatsBloecke.length ? 44 : 0) + (termineImPlan.length ? 30 : 0);   // oben eine Zeile für die Namen der Stufenhalte (nur im Gesamtplan)
     bahnen.forEach(function (st) { var ext = (st.unter || []).length ? 28 : 0; linieY[st.id] = y0 + UEBER + ext; y0 += ext + UEBER + tiefsteZeile[st.id] * ZH + (tiefsteZeile[st.id] ? UNTER + 56 : UNTER); });
     var hoehe = y0 + 6 + (vorStufe ? 22 : 0);   // unten Platz für „Voraussetzung: …“
     function yVon(s) { return linieY[s.strang] + unter[s.id] * ZH; }
@@ -235,9 +244,10 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var svg = '<svg width="' + breite + '" height="' + hoehe + '" class="ub-svg" aria-hidden="true">';
     var monatsNamen = "";
     monatsBloecke.forEach(function (b) {
-      var xa = START + (bandStart[b.ms] + b.ab) * ABST + bandNr[b.ms] * HALT, yo = nr > 1 ? 46 : 8;
+      var xa = START + (bandStart[b.ms] + b.ab) * ABST + bandNr[b.ms] * HALT, yo = nr > 1 ? 70 : 8;
       // schmaler Monat (eine Spalte): kurzer Name, damit sich die Monatsnamen nicht überlagern
-      var mn = b.breite * ABST < 120 ? ["Jan.", "Feb.", "März", "Apr.", "Mai", "Juni", "Juli", "Aug.", "Sept.", "Okt.", "Nov.", "Dez."][+String(b.monat).split("-")[1] - 1] + " " + String(b.monat).slice(0, 4) : monatsName(b.monat);
+      var kurzM = ["Jan.", "Feb.", "März", "Apr.", "Mai", "Juni", "Juli", "Aug.", "Sept.", "Okt.", "Nov.", "Dez."][+String(b.monat).split("-")[1] - 1];
+      var mn = b.breite * ABST < 64 ? kurzM : b.breite * ABST < 120 ? kurzM + " " + String(b.monat).slice(0, 4) : monatsName(b.monat);
       monatsNamen += '<div class="ub-monat" style="left:' + (xa + b.breite * ABST / 2) + "px;top:" + yo + 'px">' + mn + "</div>";
       if (!b.ab) return;   // keine Linie vor dem ersten Monat: links steht schon die Grenze der Spalte
       svg += '<line x1="' + xa + '" y1="' + (yo + 26) + '" x2="' + xa + '" y2="' + hoehe + '" stroke="#ebe7e1" stroke-width="1"/>';
@@ -245,7 +255,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     termineImPlan.forEach(function (t) {
       var b = monatsBloecke.filter(function (x) { return x.monat === t.monat; })[0];
       var xa = START + (bandStart[b.ms] + b.ab) * ABST + bandNr[b.ms] * HALT, bw = b.breite * ABST;
-      var tx = xa + Math.max(10, Math.min(bw - 10, bw * ((t.tag || 15) - 0.5) / 31)), ty = (nr > 1 ? 46 : 8) + 44;
+      var tx = xa + Math.max(10, Math.min(bw - 10, bw * ((t.tag || 15) - 0.5) / 31)), ty = (nr > 1 ? 70 : 8) + 44;
       svg += '<rect x="' + (tx - 5) + '" y="' + (ty - 5) + '" width="10" height="10" fill="#111" transform="rotate(45 ' + tx + " " + ty + ')"/>';
       monatsNamen += '<button type="button" class="ub-termin" data-termin="' + esc(t.id) + '" style="left:' + (tx - 9) + "px;top:" + (ty - 11) + 'px"><span>' + esc(t.titel) + " &middot; " + esc(t.wann.replace(/\.20\d\d$/, ".")) + "</span></button>";
     });

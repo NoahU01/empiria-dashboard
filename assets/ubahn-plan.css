@@ -85,6 +85,7 @@
 .ub-dash [data-ub-stufen]{margin-bottom:36px}
 .ub-dash .ub-name{background:#fff;border-radius:4px;-webkit-line-clamp:5}   /* Namen decken kreuzende Abhängigkeitslinien ab */
 .ub-dash .ub-bahn{left:0}
+.ub-dash .ub-halt-name:not(.ub-halt-name--ende):not(.ub-halt-name--start){white-space:normal;width:150px}   /* Level-Namen im Gesamtplan umbrechen statt überlappen */
 .ub-unterstrang{position:absolute;left:42px;right:10px;font-size:.74rem;line-height:1.3;color:var(--grey-50,#8a8a8a);transform:translateY(-50%);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;hyphens:auto;overflow-wrap:break-word}
 .ub-bahn--oben{transform:translateY(-100%);align-items:flex-end}   /* Strang einer Stoßrichtung, auf Höhe seiner Linie */
 .ub-leer{margin:0;padding:28px 0;font-size:.95rem;color:#8a857d}
