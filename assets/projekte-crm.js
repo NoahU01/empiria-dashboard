@@ -482,6 +482,7 @@
       function umschalten() {
         var jetztAuf = b.classList.contains("pr-n-zu");
         b.classList.toggle("pr-n-zu", !jetztAuf); b.querySelector(".pr-n-auf").setAttribute("aria-expanded", String(jetztAuf)); klappSchreiben(p.id, key, jetztAuf);
+        var ubw = jetztAuf && b.querySelector("[data-ub-wurzel]"); if (ubw) ubw.dispatchEvent(new CustomEvent("ub-zeigen"));
       }
       b.querySelector(".pr-n-auf").onclick = umschalten; b.querySelector(".pr-n-pfeil-knopf").onclick = umschalten;
       return b;

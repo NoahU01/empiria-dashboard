@@ -359,6 +359,9 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var spalte = bahnen.map(function (st) {
       return '<button type="button" class="ub-bahn" data-strang="' + st.id + '" aria-label="' + esc(st.label) + ': worum es in dieser Stoßrichtung geht" style="top:' + (linieY[st.id] - 15) + 'px"><span class="ub-linie" style="background:' + st.farbe + '">' + esc(st.kurz) + "</span><span><b>" + esc(st.label) + '</b><small>' + esc(st.verantwortung) + "</small></span></button>";
     }).join("");
+    // Scrollstand merken: Klick auf einen Halt zeichnet neu – der Plan bleibt dort stehen, wo man hingeschoben hat
+    var altSc = planEl.querySelector(".ub-scroll"), altLinks = altSc && altSc.clientWidth && planEl.ubBlick === zustandUI.ms ? altSc.scrollLeft : null;   // nur, wenn der Plan schon sichtbar war
+    planEl.ubBlick = zustandUI.ms;
     planEl.innerHTML = '<div class="ub-rahmen" style="width:' + (planEl.clientWidth / MASS) + "px;transform:scale(" + MASS + ');transform-origin:0 0"><div class="ub-spalte" style="height:' + hoehe + 'px">' + spalte + '</div><div class="ub-scroll"><div class="ub-flaeche" style="width:' + breite + "px;height:" + hoehe + 'px">' + svg + monatsNamen + namen + "</div></div></div>";
     planEl.style.height = Math.ceil(planEl.firstChild.offsetHeight * MASS) + "px";   // transform nimmt keinen Platz ein: Höhe nachführen
     planEl.querySelectorAll("[data-station]").forEach(function (b) {
@@ -377,7 +380,8 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     });
     strangInfo(strangOffen);
     var sc = planEl.querySelector(".ub-scroll");
-    if (sc && !zustandUI.station && sc.scrollWidth > sc.clientWidth) {
+    if (sc && altLinks != null) sc.scrollLeft = altLinks;
+    else if (sc && !zustandUI.station && sc.scrollWidth > sc.clientWidth) {
       var offen = liste.filter(function (s) { return fokus[s.id] && s.status !== "erreicht"; }).map(xVon);
       sc.scrollLeft = offen.length ? Math.max(0, Math.min.apply(null, offen) - 2 * ABST) : 0;
     }
@@ -528,9 +532,11 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   // Der Plan kennt seine Breite erst, wenn er sichtbar ist (zugeklappter Kasten, gedrehtes Gerät):
   // ändert sich die Breite, wird er neu gezeichnet – sonst stand er gestaucht und lief über den Kasten hinaus.
   var letzteBreite = -1;
-  if (window.ResizeObserver) new ResizeObserver(function () {
+  function breitePruefen() {
     var w = planEl.clientWidth;
     if (w && Math.abs(w - letzteBreite) > 4) { letzteBreite = w; plan(); detail(); }
-  }).observe(planEl);
+  }
+  if (window.ResizeObserver) new ResizeObserver(breitePruefen).observe(planEl);
+  wurzel.addEventListener("ub-zeigen", breitePruefen);   // beim Aufklappen des Kastens sofort richtig zeichnen
   stufen(); plan(); detail();
 };
