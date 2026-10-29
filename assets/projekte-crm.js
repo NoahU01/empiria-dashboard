@@ -398,7 +398,7 @@
     var z = [], s0 = st[sid];
     if (s0) {
       var b = st[E.bahn(sid)];
-      if (E.begleitend(sid)) z.push(["Linie", name(s0)]);   // begleitende Linie wie Innovation oder Projektmanagement
+      if (E.begleitend(sid) || /^(projektmanagement|innovation)$/i.test(name(s0))) z.push(["Linie", name(s0)]);   // begleitende Linie wie Innovation oder Projektmanagement
       else if (b && b.id !== s0.id) { z.push(["Stoßrichtung", name(b)]); z.push(["Strang", name(s0)]); }
       else if (name(s0) !== "Aufgaben") z.push(["Stoßrichtung", name(s0)]);   // „Aufgaben“ ist nur der Sammelstrang eines Projekts ohne Stoßrichtungen
     }
