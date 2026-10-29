@@ -56,11 +56,18 @@
   function liste() {
     wurzel.innerHTML = '<div class="kb-laedt"><span></span><span></span></div>';
     Promise.all([
-      db.from("projekte").select("id, name, typ, marke, status, prioritaet, naechstes_gate, gate_datum, organisationen(id, name)").order("reihenfolge", { nullsFirst: false }).order("name"),
+      db.from("projekte").select("id, name, typ, marke, status, prioritaet, naechstes_gate, gate_datum, ende, organisationen(id, name)").order("reihenfolge", { nullsFirst: false }).order("name"),
       db.from("projekt_ereignisse").select("projekt_id, datum, titel").gte("datum", new Date().toISOString()).order("datum")
     ]).then(function (r) {
       // Strategie je Marke ist kein Projekt – sie steht im Bereich Strategie (Daniel, 20.10.2026)
-      var p = (r[0].data || []).filter(function (x) { return x.typ !== "strategie"; }), nae = {};
+      var alle = (r[0].data || []).filter(function (x) { return x.typ !== "strategie"; }), nae = {};
+      // Abgeschlossene Projekte (Daniel, 29.10.2026): bleiben erhalten, stehen aber zugeklappt am Ende statt zwischen den laufenden
+      var p = alle.filter(function (x) { return x.status !== "abgeschlossen"; }), fertig = alle.filter(function (x) { return x.status === "abgeschlossen"; });
+      function fertigBereich(l) {
+        if (!l.length) return "";
+        return '<details class="pr-fertig-proj"><summary>Abgeschlossene Projekte</summary><ul>' + l.slice().sort(function (a, b) { return String(b.ende || "").localeCompare(String(a.ende || "")); }).map(function (x) {
+          return '<li><a href="#p=' + x.id + '">' + esc(x.name) + "</a><span>" + esc([x.organisationen ? x.organisationen.name : null, x.ende ? "abgeschlossen am " + new Date(x.ende + "T12:00:00").toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) : "abgeschlossen"].filter(Boolean).join(" · ")) + "</span></li>"; }).join("") + "</ul></details>";
+      }
       (r[1].data || []).forEach(function (e) { if (!nae[e.projekt_id]) nae[e.projekt_id] = e; });
       var MARKEN = ["empiria", "sofortsichtbar", "Müller&Ströbel."];
       var kunde = p.filter(function (x) { return x.typ !== "intern"; }), intern = p.filter(function (x) { return x.typ === "intern"; });
@@ -84,7 +91,7 @@
               '<span class="pz-meta">' + esc([mitKunde && x.organisationen ? x.organisationen.name : null, x.status !== "läuft" ? STATUS_NAME[x.status] : null].filter(Boolean).join(" · ")) + "</span></a></li>";
           }).join("") : '<li class="kt3-leise">Keine.</li>') + "</ul></section>";
         }
-        wurzel.innerHTML = wahl + '<div class="pz-zwei">' + spalte("Kundenprojekte", kunde, true) + spalte("Interne Projekte", intern, false) + "</div>";
+        wurzel.innerHTML = wahl + '<div class="pz-zwei">' + spalte("Kundenprojekte", kunde, true) + spalte("Interne Projekte", intern, false) + "</div>" + fertigBereich(fertig);
         verdrahtenWahl();
         return;
       }
@@ -101,7 +108,8 @@
           }).join("") : '<tr><td colspan="3" class="kt3-leise">Keine Kundenprojekte.</td></tr>') + "</tbody></table>" +
           '<table class="kt3-tab pr-tab"><thead><tr><th>Internes Projekt</th></tr></thead><tbody>' + (i.length ? i.map(function (x) {
             return '<tr data-href="#p=' + x.id + '"><td>' + name_(x) + "</td></tr>";
-          }).join("") : '<tr><td class="kt3-leise">Keine internen Projekte.</td></tr>') + "</tbody></table></div></section>";
+          }).join("") : '<tr><td class="kt3-leise">Keine internen Projekte.</td></tr>') + "</tbody></table></div>" +
+          fertigBereich(fertig.filter(function (x) { return (x.marke || "empiria") === m; })) + "</section>";
       }).join("");
       wurzel.querySelectorAll("tr[data-href]").forEach(function (tr) { tr.onclick = function (e) { if (!e.target.closest("a")) location.hash = tr.getAttribute("data-href"); }; });
       verdrahtenWahl();
@@ -427,7 +435,8 @@
     h += '<div class="kt3-kopf"><div><h2 class="kt3-name">' + esc(p.name) + '</h2><p class="kt3-sub">' +
       (p.organisationen ? '<a href="/strategie/kontakte.html#f=' + p.organisationen.id + '">' + esc(p.organisationen.name) + "</a>" : esc(p.marke || "")) + "</p>" +
       (p.thema ? '<p class="pr-thema">' + esc(p.thema) + "</p>" : "") +
-      (p.typ === "intern" && p.naechstes_gate ? '<p class="pr-gate"><span>Nächstes Gate</span>' + esc(p.naechstes_gate) + (p.gate_datum ? " · bis " + kurz(p.gate_datum) : "") + "</p>" : "") + "</div></div>";
+      (p.status === "abgeschlossen" ? '<p class="pr-abg">' + (p.ende ? "Abgeschlossen am " + new Date(p.ende + "T12:00:00").toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) : "Abgeschlossen") + "</p>" : "") +
+      (p.status !== "abgeschlossen" && p.typ === "intern" && p.naechstes_gate ? '<p class="pr-gate"><span>Nächstes Gate</span>' + esc(p.naechstes_gate) + (p.gate_datum ? " · bis " + kurz(p.gate_datum) : "") + "</p>" : "") + "</div></div>";
     // Priorität und Status – direkt hier ändern (Daniel, 10.10.2026)
     function wahlZeile(feld, titel, werte, aktuell) {
       return '<div class="pz-feld"><span class="pz-feld-titel">' + titel + '</span><span class="pr-tl-wahl" data-pz-feld="' + feld + '">' + werte.map(function (v) {
@@ -593,15 +602,19 @@
     var ohneWeg = p.name === "Operative Aufgaben";
     if (!ohneWeg) neuR.appendChild(weg);
     // 2 Was jetzt ansteht – nur intern
-    var jetzt = bereich("pr-n-jetzt", "n-jetzt", "Was jetzt ansteht", "Lagebericht, Aufgaben und nächste Termine – geht nicht an den Kunden.", "nur intern", false);
+    // Abgeschlossenes Projekt (Daniel, 29.10.2026): statt „Was jetzt ansteht“ der Abschluss – was erreicht wurde, was offen blieb
+    var zu = p.status === "abgeschlossen";
+    var jetzt = zu ? bereich("pr-n-jetzt", "n-jetzt", "Abschluss", "Was erreicht wurde und was offen geblieben ist.", "nur intern", false)
+      : bereich("pr-n-jetzt", "n-jetzt", "Was jetzt ansteht", "Lagebericht, Aufgaben und nächste Termine – geht nicht an den Kunden.", "nur intern", false);
     var st = nimm(".pr-status");
+    if (st && zu) offen(st);
     if (st) {
       var stT = st.querySelector(".pr-klapp > span:first-child") || st.querySelector("h3");
-      if (stT) stT.textContent = "Lagebericht" + (p.statusbericht && p.statusbericht.stand ? " · Stand " + new Date(p.statusbericht.stand + "T12:00:00").toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) : "");
+      if (stT) stT.textContent = (zu ? "Abschlussbericht" : "Lagebericht") + (p.statusbericht && p.statusbericht.stand ? " · Stand " + new Date(p.statusbericht.stand + "T12:00:00").toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) : "");
       jetzt.inhalt.appendChild(st);
     }
-    var au = offen(nimm(".pr-aufgaben"), "Aufgaben"); if (au) jetzt.inhalt.appendChild(au);
-    var jetztZeit = Date.now(), komm = ere.filter(function (e) { return new Date(e.datum) > jetztZeit; }).sort(function (a, b) { return new Date(a.datum) - new Date(b.datum); }).slice(0, 4);
+    var au = offen(nimm(".pr-aufgaben"), "Aufgaben"); if (au && !zu) jetzt.inhalt.appendChild(au); else if (au) au.remove();
+    var jetztZeit = Date.now(), komm = zu ? [] : ere.filter(function (e) { return new Date(e.datum) > jetztZeit; }).sort(function (a, b) { return new Date(a.datum) - new Date(b.datum); }).slice(0, 4);
     if (komm.length) {
       var te = document.createElement("section"); te.className = "kt3-box kt3-breit pr-n-termine";
       te.innerHTML = "<h3>Nächste Termine</h3><ul>" + komm.map(function (e) {

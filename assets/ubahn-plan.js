@@ -57,7 +57,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       h += '<button type="button" role="tab" class="ub-route-halt' + (an ? " ist-an" : "") + (!z && stufeErreicht(id) ? " ist-erreicht" : "") + (z ? " ist-ziel" : "") + '" data-ms="' + id + '" aria-selected="' + an + '">' +
         '<span class="ub-route-titel">' + esc(z ? "Gesamtplan" : kastenText(x)) + '</span><span class="ub-route-punkt"></span>' +
         '<span class="ub-route-datum">' + esc(z ? "Ziel" : "Level " + x.nr + " · " + x.termin) + "</span>" +
-        (id === AKTUELL ? '<span class="ub-route-aktuell">aktuell</span>' : "") + "</button>";
+        (id === AKTUELL && !stufeErreicht(id) ? '<span class="ub-route-aktuell">aktuell</span>' : "") + "</button>";   // alles erreicht (abgeschlossen): kein „aktuell“
     });
     stufenEl.innerHTML = h + '</div><p class="ub-kopf-wenn">' + esc(stufenText(sel)) + "</p>";
     stufenEl.querySelectorAll("[data-ms]").forEach(function (k) {

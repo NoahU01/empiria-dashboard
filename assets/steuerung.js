@@ -29,7 +29,7 @@
     Promise.all([
       db.from("vorlagen").select("id, titel, kern, vorschlag, knopf_ja, frist, projekt_id, link, rang, status, entscheidung, entscheidung_text, art, punkte, optionen, ablage, auftrag_am, marke").in("status", ["offen", "entschieden"]).order("rang"),
       db.from("projekte").select("id, name, marke, typ, status"),
-      db.from("aufgaben").select("id, status, faellig_am, projekt_id, titel, marke").eq("status", "offen"),
+      db.from("aufgaben").select("id, status, faellig_am, projekt_id, titel, marke").eq("status", "offen").neq("art", "projektgate"),
       db.from("projekt_ereignisse").select("id, projekt_id, datum, art, titel").gte("datum", HEUTE.toISOString()),
       db.from("belege_eingang").select("id, postfach, absender, absender_name, betreff, pdf_link, status, zuordnung, begruendung, titel, lieferant, belegdatum, betrag, kategorie, ust, pk_belegnr, fehler, hochgeladen_am, anweisung")
         .in("status", ["vorschlag", "fehler", "anweisung"]).order("belegdatum"),

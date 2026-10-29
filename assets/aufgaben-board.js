@@ -34,7 +34,7 @@
       // Strategische Meilensteine sind keine Aufgaben – sie stehen nur im Bereich Strategie (Daniel, 20.10.2026)
       var strat = projekte.filter(function (p) { return p.typ === "strategie"; }).map(function (p) { return p.id; });
       // Nur Daniels Aufgaben (Daniel, 29.10.2026): Projektaufgaben anderer Personen (z. B. Lukas Euring) stehen in ihrem Projekt, nicht hier
-      aufgaben = (r[1].data || []).filter(function (a) { return !(a.art === "projektgate" && strat.indexOf(a.projekt_id) > -1) && meine(a); });
+      aufgaben = (r[1].data || []).filter(function (a) { return a.art !== "projektgate" && meine(a); });   // Ergebnislevel sind keine Aufgaben – sie stehen im Plan des Projekts
       var ids = projekte.map(function (p) { return p.id; });
       wahl = wahl.filter(function (w) { return w === "op" || ids.indexOf(w) > -1 || (typeof w === "string" && MARKEN.indexOf(w.slice(2)) > -1); });
       if (window.AufgabenDetails) AufgabenDetails.vorlagenAnhaengen(db, aufgaben).then(zeichnen); else zeichnen();
