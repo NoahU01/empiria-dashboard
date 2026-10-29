@@ -247,8 +247,9 @@
       zielbild: { kurz: "Gesamtplan" },
       straenge: blaetter.map(function (s, i) {
         var label = String(s.titel || "").replace(/^\d+\s+/, "");
-        var un = opt.termine && kinder[s.id] && EB.bahn(s.id) === s.id ? kinder[s.id].slice().sort(reihe).map(function (k) { return String(k.titel || "").replace(/^\d+\s+/, ""); }) : null;
-        return { id: "s" + s.id, unter: un, kurz: ubKurz(label), label: label, frage: s.erklaerung || "", beschreibung: "", verantwortung: (s.verantwortlich || []).length === 2 ? s.verantwortlich.join(" & ") : (s.verantwortlich || []).join(", "), farbe: s.farbe || UB_FARBEN[i % UB_FARBEN.length] };   // eigene Farbe der Stoßrichtung (projekt_straenge.farbe), sonst die Reihe
+        var uk = opt.termine && kinder[s.id] && EB.bahn(s.id) === s.id ? kinder[s.id].slice().sort(reihe) : null;
+        var un = uk ? uk.map(function (k) { return String(k.titel || "").replace(/^\d+\s+/, ""); }) : null;
+        return { id: "s" + s.id, unter: un, unterText: uk ? uk.map(function (k) { return k.erklaerung || ""; }) : null, kurz: ubKurz(label), label: label, frage: s.erklaerung || "", beschreibung: "", verantwortung: (s.verantwortlich || []).length === 2 ? s.verantwortlich.join(" & ") : (s.verantwortlich || []).join(", "), farbe: s.farbe || UB_FARBEN[i % UB_FARBEN.length] };   // eigene Farbe der Stoßrichtung (projekt_straenge.farbe), sonst die Reihe
       }),
       meilensteine: gates.map(function (g, i) {
         return { id: "g" + g.id, nr: i + 1, termin: datum(g.faellig_am), titel: g.titel, ergebnis: g.beschreibung ? [g.beschreibung] : [],
@@ -411,7 +412,7 @@
     var a = auf.filter(function (x) { return x.paket_id === pk.id && x.art !== "projektgate"; });
     if (a.length && a.every(function (x) { return x.status === "erledigt"; })) return "erledigt";
     if (a.some(function (x) { return x.status === "erledigt" || x.spalte === "arbeit" || x.spalte === "pruefung"; })) return "in Arbeit";
-    return pk.status || "offen";
+    return pk.status === "läuft" ? "in Arbeit" : pk.status === "fertig" ? "erledigt" : pk.status || "offen";   // eingetragener Status, wenn noch keine Aufgaben darin sind
   }
   function pakete(auf) {
     if (!PAKETE.length) return "";

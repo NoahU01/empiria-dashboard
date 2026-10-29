@@ -401,7 +401,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var spalte = bahnen.map(function (st) {
       var mitU = (st.unter || []).length;
       // mit Strängen: Titel der Stoßrichtung über der ersten Linie (wächst nach oben), Strangnamen auf Höhe ihrer Linie
-      return (mitU ? st.unter.map(function (u, i) { return '<span class="ub-unterstrang" style="top:' + (linieY[st.id] + zOff[st.id][i] * ZH) + 'px">' + esc(u) + "</span>"; }).join("") : "") +
+      return (mitU ? st.unter.map(function (u, i) { return '<button type="button" class="ub-unterstrang" data-unter="' + st.id + "|" + i + '" style="top:' + (linieY[st.id] + zOff[st.id][i] * ZH) + 'px">' + esc(u) + "</button>"; }).join("") : "") +
         '<button type="button" class="ub-bahn' + (mitU ? " ub-bahn--oben" : "") + '" data-strang="' + st.id + '" aria-label="' + esc(st.label) + ': worum es in dieser Stoßrichtung geht" style="top:' + (linieY[st.id] - (mitU ? 22 : 15)) + 'px"><span class="ub-linie" style="background:' + st.farbe + '">' + esc(st.kurz) + "</span><span><b>" + esc(st.label) + '</b><small>' + esc(st.verantwortung) + "</small></span></button>";
     }).join("");
     // Scrollstand merken: Klick auf einen Halt zeichnet neu – der Plan bleibt dort stehen, wo man hingeschoben hat
@@ -422,6 +422,9 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     terminInfo(terminOffen);
     planEl.querySelectorAll("[data-strang]").forEach(function (b) {
       b.addEventListener("click", function (e) { e.stopPropagation(); strangInfo(b.getAttribute("data-strang") === strangOffen ? null : b.getAttribute("data-strang")); });
+    });
+    planEl.querySelectorAll(".ub-unterstrang").forEach(function (b) {
+      b.addEventListener("click", function (e) { e.stopPropagation(); strangInfo(b.getAttribute("data-unter") === strangOffen ? null : b.getAttribute("data-unter")); });
     });
     strangInfo(strangOffen);
     var sc = planEl.querySelector(".ub-scroll");
@@ -476,7 +479,18 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     planEl.querySelectorAll(".ub-bahn").forEach(function (b) { b.setAttribute("aria-expanded", b.getAttribute("data-strang") === id ? "true" : "false"); });
     strangOffen = id;
     if (!id) return;
-    var st = STR[id], knopf = planEl.querySelector('.ub-bahn[data-strang="' + id + '"]'), sp = planEl.querySelector(".ub-spalte");
+    var sp = planEl.querySelector(".ub-spalte");
+    if (String(id).indexOf("|") > -1) {   // Strang innerhalb einer Stoßrichtung: Name und Erläuterung des Strangs
+      var t = id.split("|"), b = STR[t[0]], k = planEl.querySelector('.ub-unterstrang[data-unter="' + id + '"]');
+      if (!b || !k || !sp) return;
+      var pu = document.createElement("div");
+      pu.className = "ub-pop ub-pop--strang";
+      pu.innerHTML = '<p class="ub-pop-titel">' + esc(b.unter[+t[1]]) + '</p><p class="ub-pop-meta">Strang in ' + esc(b.label) + "</p><p>" + (b.unterText && b.unterText[+t[1]] ? esc(b.unterText[+t[1]]) : "Die Erläuterung folgt.") + "</p>";
+      sp.appendChild(pu);
+      pu.style.top = (parseFloat(k.style.top) + 14) + "px";
+      return;
+    }
+    var st = STR[id], knopf = planEl.querySelector('.ub-bahn[data-strang="' + id + '"]');
     if (!knopf || !sp) return;
     var text = st.beschreibung || st.frage;
     var pop = document.createElement("div");
@@ -537,7 +551,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   }
   // Klick irgendwo daneben löst die Auswahl
   document.addEventListener("click", function (e) {
-    if (strangOffen && !e.target.closest(".ub-pop--strang, .ub-bahn, .ub-strang-treffer")) strangInfo(null);
+    if (strangOffen && !e.target.closest(".ub-pop--strang, .ub-bahn, .ub-unterstrang, .ub-strang-treffer")) strangInfo(null);
     if (terminOffen && !e.target.closest(".ub-pop--termin, .ub-termin")) terminInfo(null);
     if (!zustandUI.station) return;
     if (e.target.closest(".ub-name, .ub-treffer, .ub-pop")) return;
