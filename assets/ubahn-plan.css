@@ -98,3 +98,10 @@
 .ub-dauer small::before{content:"· ";}
 .ub-dauer.ub-name--blass,.ub-dauer.ub-name--blass small{color:#d3cfc9}
 .ub-treffer--dauer{pointer-events:none}
+/* Dauerthema: Beschreibung im Fenster bearbeiten */
+.ub-pop-bearb{margin:.6em 0 0}
+.ub-pop-bearb button,.ub-pop-feld button{border:0;background:none;padding:0;font:inherit;color:#111;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.ub-pop-feld textarea{display:block;width:100%;box-sizing:border-box;margin:.6em 0 .5em;padding:8px 10px;border:1px solid #e0dcd5;border-radius:8px;font:inherit;line-height:1.5;color:#111;resize:vertical}
+.ub-pop-feld textarea:focus{outline:none;border-color:#a39e96}
+.ub-pop-feld p{display:flex;gap:16px;margin:0}
+.ub-pop-feld button:disabled{color:#a39e96;text-decoration:none;cursor:default}

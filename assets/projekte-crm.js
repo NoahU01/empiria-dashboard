@@ -659,7 +659,12 @@
       db.from("aufgaben").update(d.erledigt ? { status: "erledigt", erledigt_am: new Date().toISOString() } : { status: "offen", erledigt_am: null }).eq("id", d.id)
         .then(function (x) { if (x.error) alert("Nicht gespeichert: " + x.error.message); projekt(p.id); });
     });
-    if (ubd && window.UBahnPlan) UBahnPlan(ubw, ubd, { hash: false });
+    ubw.addEventListener("ub-text", function (e) {   // Beschreibung eines Dauerthemas (projekt_pakete.ziel)
+      var d = e.detail || {};
+      db.from("projekt_pakete").update({ ziel: d.text || null }).eq("id", d.id)
+        .then(function (x) { if (x.error) alert("Nicht gespeichert: " + x.error.message); projekt(p.id); });
+    });
+    if (ubd && window.UBahnPlan) UBahnPlan(ubw, ubd, { hash: false, bearbeiten: true });
     else ubw.innerHTML = '<p class="pr-offen">Noch keine Aufgaben für den Plan.</p>';
     // Größe und Legende in die Kopfzeile von „Weg zum Ergebnis“ – bleiben auch zugeklappt erreichbar
     var leiste = ubw.querySelector(".ub-dash-kopf"); if (leiste) weg.rechts.appendChild(leiste);

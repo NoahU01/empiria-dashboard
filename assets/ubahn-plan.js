@@ -13,6 +13,15 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   D.dauer = D.dauer || []; D.dauer.forEach(function (s) { S[s.id] = s; });   // Dauerthemen: eigene ruhige Linie, kein Halt
   D.straenge.forEach(function (s, i) { s.i = i; STR[s.id] = s; });
   D.meilensteine.forEach(function (m, i) { m.i = i; MS[m.id] = m; });
+  // Jedes Level umfasst die Monate nach dem vorigen Meilenstein bis zu seinem eigenen (Daniel, 29.10.2026): ein Zeitraum,
+  // der schon im vorigen Level beginnt (z. B. Produktfreigabe ab Dezember 2027 bis Januar 2028), läuft im Plan ab dem Level-Beginn
+  function msMonat(m) { var t = /(\d{2})\.(\d{2})\.(\d{4})/.exec((m && m.termin) || ""); return t ? t[3] + "-" + t[2] : null; }
+  function naechsterMonat(mo) { var t = mo.split("-"), mm = +t[1] + 1, jj = +t[0]; if (mm > 12) { mm = 1; jj++; } return jj + "-" + ("0" + mm).slice(-2); }
+  D.meilensteine.forEach(function (m, i) { m.bis = msMonat(m); m.ab = i && msMonat(D.meilensteine[i - 1]) ? naechsterMonat(msMonat(D.meilensteine[i - 1])) : null; });
+  D.schritte.forEach(function (s) {
+    var m = MS[s.meilenstein];
+    if (m && m.ab && s.von && s.von < m.ab && (!s.monat || s.monat >= m.ab)) { s.von = m.ab; s.tagVon = 1; }
+  });
 
   function esc(t) { return String(t == null ? "" : t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function msName(m) { return m.titel || "Ergebnislevel " + m.nr; }
@@ -164,9 +173,9 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       // lückenlose Monate (Daniel, 29.10.2026): auch Monate ohne Halt stehen in der Zeitachse – schmal, damit ein Zeitraum
       // wie Mai bis September seine wirkliche Länge zeigt
       if (monate.length) {
-        var voll = [], m0 = monate[0];
-        while (m0 <= monate[monate.length - 1] && voll.length < 120) { voll.push(m0); var tt = m0.split("-"), mm = +tt[1] + 1, jj = +tt[0]; if (mm > 12) { mm = 1; jj++; } m0 = jj + "-" + ("0" + mm).slice(-2); }
-        voll.forEach(function (mo) { if (!breite[mo]) breite[mo] = 0.6; });
+        var voll = [], m0 = x.ab && x.ab < monate[0] ? x.ab : monate[0], m1 = x.bis && x.bis > monate[monate.length - 1] ? x.bis : monate[monate.length - 1];
+        while (m0 <= m1 && voll.length < 120) { voll.push(m0); var tt = m0.split("-"), mm = +tt[1] + 1, jj = +tt[0]; if (mm > 12) { mm = 1; jj++; } m0 = jj + "-" + ("0" + mm).slice(-2); }
+        voll.forEach(function (mo) { if (!breite[mo]) breite[mo] = 1; });   // jeder Monat mindestens eine Spalte – gleichmäßige Monatslinien bis zum Meilenstein
         monate = voll;
       }
       // Datumstreue Zeiträume: Haben Halte ein Tagesdatum (tag), dienen die datierten Halte eines Monats als Stützpunkte –
@@ -557,7 +566,9 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var vor = (s.braucht || []).filter(function (b) { return S[b] && S[b].status !== "erreicht"; }).map(function (b) { return S[b].titel; });
     var meta = s.dauer ? [st.verantwortung, "Dauerthema", s.termin].filter(Boolean) : [st.verantwortung + (s.wer ? " (" + s.wer + ")" : ""), ZTEXT[z]].concat(s.termin ? [s.termin] : zeitraum(s) ? [monatsName(s.von).split(" ")[0] + " bis " + monatsName(s.monat)] : s.monat ? [monatsName(s.monat)] : []);
     var h = '<p class="ub-pop-titel">' + esc(s.titel) + '</p><p class="ub-pop-meta">' + meta.map(esc).join(" &middot; ") + "</p>";
-    if (s.beschreibung) h += textHtml(s.beschreibung);
+    if (s.beschreibung) h += s.dauer ? '<div class="ub-pop-text">' + textHtml(s.beschreibung) + "</div>" : textHtml(s.beschreibung);
+    // Dauerthema: Beschreibung direkt im Fenster bearbeiten (Daniel, 29.10.2026) – die Seite speichert (Ereignis „ub-text“)
+    if (s.dauer && OPT.bearbeiten) h += '<p class="ub-pop-bearb"><button type="button" data-ub-bearb>' + (s.beschreibung ? "Beschreibung bearbeiten" : "Beschreibung ergänzen") + "</button></p>";
     if (s.ergebnis) h += "<p>" + esc(s.ergebnis) + "</p>";
     if (s.kritisch) h += "<p>Kritisch: " + esc(s.kritisch.grund) + "</p>";
     if (vor.length) h += '<p class="ub-pop-meta">Braucht vorher: ' + vor.map(esc).join(", ") + "</p>";
@@ -570,6 +581,22 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var pop = document.createElement("div");
     pop.className = "ub-pop"; pop.innerHTML = h;
     flaeche.appendChild(pop);
+    var bk = pop.querySelector("[data-ub-bearb]");
+    if (bk) bk.addEventListener("click", function () {
+      var feld = document.createElement("div");
+      feld.className = "ub-pop-feld";
+      feld.innerHTML = '<textarea rows="7" aria-label="Beschreibung"></textarea><p><button type="button" data-ub-sichern>Speichern</button><button type="button" data-ub-abbr>Abbrechen</button></p>';
+      feld.querySelector("textarea").value = s.beschreibung || "";
+      var alt = pop.querySelector(".ub-pop-text"); if (alt) alt.remove();   // beim Bearbeiten nur das Feld, kein doppelter Text
+      bk.parentNode.replaceWith(feld);
+      feld.querySelector("textarea").focus();
+      feld.querySelector("[data-ub-abbr]").addEventListener("click", function () { detail(); });
+      feld.querySelector("[data-ub-sichern]").addEventListener("click", function () {
+        var text = feld.querySelector("textarea").value.trim();
+        this.disabled = true; this.textContent = "Speichert …";
+        wurzel.dispatchEvent(new CustomEvent("ub-text", { detail: { id: +String(id).replace(/^a/, ""), text: text } }));
+      });
+    });
     pop.querySelectorAll("[data-ub-auf]").forEach(function (c) {   // Abhaken meldet die Seite, die speichert und neu zeichnet
       c.addEventListener("change", function () { wurzel.dispatchEvent(new CustomEvent("ub-abhaken", { detail: { id: +c.getAttribute("data-ub-auf"), erledigt: c.checked } })); });
     });
@@ -596,6 +623,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   }
   // Klick irgendwo daneben löst die Auswahl
   document.addEventListener("click", function (e) {
+    if (!e.target.isConnected) return;   // Knopf wurde beim Klick ersetzt (z. B. „Beschreibung bearbeiten“) – kein Klick daneben
     if (strangOffen && !e.target.closest(".ub-pop--strang, .ub-bahn, .ub-unterstrang, .ub-strang-treffer")) strangInfo(null);
     if (terminOffen && !e.target.closest(".ub-pop--termin, .ub-termin")) terminInfo(null);
     if (!zustandUI.station) return;
