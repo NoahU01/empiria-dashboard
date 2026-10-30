@@ -669,6 +669,10 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     document.documentElement.classList.toggle("ub-weit-offen", an);
     if (an) { zoomHeim = [zoomEl.parentNode, zoomEl.nextSibling]; weitEl.insertBefore(zoomEl, weitEl.firstChild); zoomEl.classList.add("ub-zoom--weit"); }
     else if (zoomHeim) { zoomHeim[0].insertBefore(zoomEl, zoomHeim[1]); zoomEl.classList.remove("ub-zoom--weit"); }
+    // Überschrift „Weg zum Ergebnis“ oben links, wie in der Kundenansicht (Daniel, 30.10.2026)
+    var tEl = weitEl.querySelector(":scope > .ub-weit-titel");
+    if (an && !tEl) { tEl = document.createElement("h2"); tEl.className = "ub-weit-titel"; tEl.textContent = OPT.titel || "Weg zum Ergebnis"; weitEl.insertBefore(tEl, weitEl.firstChild); }
+    else if (!an && tEl) tEl.remove();
     weitKnopf.innerHTML = an ? ICON_ZU : ICON_AUF;
     weitKnopf.setAttribute("aria-pressed", an ? "true" : "false");
     weitKnopf.setAttribute("aria-label", an ? "Volle Breite schließen" : "Plan in voller Breite");

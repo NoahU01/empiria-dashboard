@@ -106,7 +106,9 @@
 .ub-pop-feld p{display:flex;gap:16px;margin:0}
 .ub-pop-feld button:disabled{color:#a39e96;text-decoration:none;cursor:default}
 /* Volle Breite (Daniel, 30.10.2026): Plan über die ganze Seite, Leiste oben rechts */
-.ub-weit{position:fixed;inset:0;z-index:1000;margin:0;max-width:none;background:#fff;overflow:auto;padding:64px 32px 32px;box-sizing:border-box}
+.ub-weit{position:fixed;inset:0;z-index:1000;margin:0;max-width:none;background:#fff;overflow:auto;padding:24px 32px 32px;box-sizing:border-box}
 html.ub-weit-offen{overflow:hidden}
-.ub-zoom.ub-zoom--weit{position:fixed;top:16px;right:32px;z-index:1001}
+.ub-zoom.ub-zoom--weit{position:fixed;top:22px;right:32px;z-index:1001}
 .ub-weit-knopf svg{display:block}
+.ub-weit-titel{margin:0 0 28px;padding-right:320px;font-family:var(--font-serif,Lora,serif);font-weight:700;font-size:clamp(1.25rem,2vw,1.5rem);line-height:1.3;color:#111}
+.ub-weit .ub-dash-kopf{display:none}
