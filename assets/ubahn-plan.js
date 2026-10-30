@@ -413,11 +413,11 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     liste.forEach(function (s) {
       var z = zustand(s), f = STR[s.strang].farbe, cx = xVon(s), cy = yVon(s), schwach = blass(s.id), sel = zustandUI.station === s.id;
       var xs = xStart(s), lang = cx - xs;   // Zeitraum: Kapsel vom Beginn bis zum Ende
-      var umstieg = (s.braucht || []).some(function (b) { return imPlan[b] && !gleich(S[b], s); });
-      var r = z === "aktiv" ? 11 : z === "erreicht" ? 6 : (umstieg ? 10 : 8);
+      // alle Halte und Zeiträume gleich dick – die Abhängigkeit zeigt die gestrichelte Linie (Daniel, 30.10.2026)
+      var r = z === "aktiv" ? 11 : z === "erreicht" ? 6 : 8;
       if (sel) r += 2;
       // Halte weiß wie im Liniennetzplan: erledigt klein mit Rand in Linienfarbe, in Arbeit groß mit schwarzem Rand, kommt noch grau
-      var rand = z === "erreicht" ? [schwach ? hell(f, 0.8) : f, 2.5] : z === "aktiv" ? [schwach ? "#c9c5bf" : "#111", 4.5] : [schwach ? "#e8e5e0" : "#a39e96", umstieg ? 3.5 : 3];
+      var rand = z === "erreicht" ? [schwach ? hell(f, 0.8) : f, 2.5] : z === "aktiv" ? [schwach ? "#c9c5bf" : "#111", 4.5] : [schwach ? "#e8e5e0" : "#a39e96", 3];
       // erledigt wie in Sicht 1.1: klein und vollflächig in der Linienfarbe, mit weißem Rand
       var fuell = "#fff";
       if (z === "erreicht") { fuell = schwach ? hell(f, 0.8) : f; rand = ["#fff", 2]; }
