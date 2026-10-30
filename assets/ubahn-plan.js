@@ -454,7 +454,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       var mitU = (st.unter || []).length;
       // mit Strängen: Titel der Stoßrichtung über der ersten Linie (wächst nach oben), Strangnamen auf Höhe ihrer Linie
       var k = !!KOMPAKT[st.id];
-      return '<button type="button" class="ub-kompakt-knopf" data-kompakt="' + st.id + '" aria-pressed="' + k + '" aria-label="' + (k ? "Mehr zeigen: " : "Weniger zeigen: ") + esc(st.label) + '" title="' + (k ? "Mehr zeigen" : "Weniger zeigen") + '" style="top:' + (linieY[st.id] + (mitU ? -16 : 18)) + 'px">' + (k ? "+" : "&minus;") + "</button>" +
+      return '<button type="button" class="ub-kompakt-knopf" data-kompakt="' + st.id + '" aria-pressed="' + k + '" aria-label="' + (k ? "Mehr zeigen: " : "Weniger zeigen: ") + esc(st.label) + '" title="' + (k ? "Mehr zeigen" : "Weniger zeigen") + '" style="top:' + (linieY[st.id] + (mitU ? -36 : 8)) + 'px">' + (k ? "+" : "&minus;") + "</button>" +
         (mitU && !k ? st.unter.map(function (u, i) { return '<button type="button" class="ub-unterstrang" data-unter="' + st.id + "|" + i + '" style="top:' + (linieY[st.id] + zOff[st.id][i] * ZH) + 'px">' + esc(u) + "</button>"; }).join("") : "") +
         '<button type="button" class="ub-bahn' + (mitU ? " ub-bahn--oben" : "") + '" data-strang="' + st.id + '" aria-label="' + esc(st.label) + ': worum es in dieser Stoßrichtung geht" style="top:' + (linieY[st.id] - (mitU ? 22 : 15)) + 'px"><span class="ub-linie" style="background:' + st.farbe + '">' + esc(st.kurz) + "</span><span><b>" + esc(st.label) + '</b><small>' + esc(st.verantwortung) + "</small></span></button>";
     }).join("");
@@ -478,6 +478,9 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       b.addEventListener("click", function (e) { e.stopPropagation(); strangInfo(b.getAttribute("data-strang") === strangOffen ? null : b.getAttribute("data-strang")); });
     });
     planEl.querySelectorAll("[data-kompakt]").forEach(function (b) {
+      // an die untere rechte Ecke des Kürzels setzen – aus der wirklichen Lage, egal wie viele Zeilen der Name hat
+      var sp = planEl.querySelector(".ub-spalte"), li = planEl.querySelector('.ub-bahn[data-strang="' + b.getAttribute("data-kompakt") + '"] .ub-linie');
+      if (sp && li) { var rs = sp.getBoundingClientRect(), rl = li.getBoundingClientRect(); b.style.top = ((rl.bottom - rs.top) / MASS - 11) + "px"; b.style.left = ((rl.right - rs.left) / MASS - 11) + "px"; }
       b.addEventListener("click", function (e) {
         e.stopPropagation();
         var id = b.getAttribute("data-kompakt");
