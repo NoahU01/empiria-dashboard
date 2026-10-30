@@ -359,10 +359,16 @@ window.UBahnPlan = function (wurzel, D, OPT) {
         quer += '<path d="' + rund(pq) + '" stroke="' + (blass(s.id) ? "#dedad4" : "#8a857d") + '" stroke-width="2" fill="none" stroke-dasharray="3 5"/>';
       });
       // frei startend: eigene kurze Strecke mit Kopfbahnhof (Querstrich) – „kann sofort los“
+      // Querstrich nur, wer wirklich eigenständig beginnen kann (Daniel, 30.10.2026): wer auf Vorarbeit wartet – Vorgänger aus
+      // einem anderen Strang oder ein Zulieferer, der endet, bevor dieser Zeitraum beginnt –, bekommt nur die kurze Strecke
       if (!linieRein) {
         var xa = x2 - ABST * 0.42, geg = s.status !== "offen";
+        function ende(v) { return (v.monat || "") + "-" + ("0" + (v.tag || 31)).slice(-2); }
+        var anf = (s.von || s.monat || "") + "-" + ("0" + (s.tagVon || s.tag || 1)).slice(-2);
+        var wartet = (s.braucht || []).some(function (b) { return S[b] && !MS[b]; }) ||
+          (s.einfluss || []).some(function (b) { return S[b] && ende(S[b]) < anf; });
         strecke([[xa, y2], [x2, y2]], f, geg, blass(s.id));
-        strecke([[xa, y2 - 9], [xa, y2 + 9]], f, geg, blass(s.id));
+        if (!wartet) strecke([[xa, y2 - 9], [xa, y2 + 9]], f, geg, blass(s.id));
       }
       // Auslauf: Halt ohne Nachfolger auf der eigenen Linie endet im Stufenhalt seiner Stufe, wenn er einfließt
       var weiter = D.schritte.some(function (n) { return gleich(n, s) && imPlan[n.id] && (n.braucht || []).indexOf(s.id) > -1; });
