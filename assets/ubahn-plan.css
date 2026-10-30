@@ -105,3 +105,8 @@
 .ub-pop-feld textarea:focus{outline:none;border-color:#a39e96}
 .ub-pop-feld p{display:flex;gap:16px;margin:0}
 .ub-pop-feld button:disabled{color:#a39e96;text-decoration:none;cursor:default}
+/* Volle Breite (Daniel, 30.10.2026): Plan über die ganze Seite, Leiste oben rechts */
+.ub-weit{position:fixed;inset:0;z-index:1000;margin:0;max-width:none;background:#fff;overflow:auto;padding:64px 32px 32px;box-sizing:border-box}
+html.ub-weit-offen{overflow:hidden}
+.ub-zoom.ub-zoom--weit{position:fixed;top:16px;right:32px;z-index:1001}
+.ub-weit-knopf svg{display:block}

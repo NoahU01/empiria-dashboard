@@ -220,7 +220,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var HALT = 64;                               // Platz für einen Stufenhalt zwischen zwei Bändern
     var START = vorStufe ? 70 : EINLAUF;         // links: Starthalt der Stufe davor
     var verfuegbar = planEl.clientWidth / MASS - SPALTE;   // Breite in Plan-Einheiten (MASS = gewählte Größe)
-    ABST = Math.max(73, Math.min(140, (verfuegbar - 14 - START - HALT * (nr - 1) - ENDE) / lauf));
+    ABST = Math.max(73, Math.min(WEIT ? 400 : 140, (verfuegbar - 14 - START - HALT * (nr - 1) - ENDE) / lauf));
     function xVon(s) { var x = MS[s.meilenstein]; return START + (bandStart[x.id] + tiefe[s.id]) * ABST + bandNr[x.id] * HALT + ABST / 2; }
     function xStart(s) { if (tiefeA[s.id] == null) return xVon(s); var x = MS[s.meilenstein]; return START + (bandStart[x.id] + tiefeA[s.id]) * ABST + bandNr[x.id] * HALT + ABST / 2; }
     function xHalt(mid) { return START + (bandStart[mid] + bandBreite[mid]) * ABST + bandNr[mid] * HALT + 14; }   // Stufenhalt nach dem Band
@@ -633,6 +633,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
 
   // Größe des Plans: kleiner, um mehr auf einmal zu sehen – in Stufen zwischen 60 und 120 Prozent, je Gerät gemerkt.
   var STUFEN = [60, 70, 80, 90, 100, 110, 120], groesse = 100;
+  var WEIT = false;   // volle Bildschirmbreite (Daniel, 30.10.2026)
   try { var gm = +localStorage.getItem("sv-plan-groesse"); if (STUFEN.indexOf(gm) > -1) groesse = gm; } catch (e) {}
   var karte = planEl.parentNode;
   var zoomEl = document.createElement("div");
@@ -641,6 +642,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   zoomEl.className = "ub-zoom";
   zoomEl.innerHTML = '<button type="button" data-z="-1" aria-label="Plan kleiner">&minus;</button><output aria-live="polite"></output>' +
     '<button type="button" data-z="1" aria-label="Plan größer">+</button>' +
+    '<span class="ub-zoom-trenner" aria-hidden="true"></span><button type="button" class="ub-weit-knopf" data-weit aria-pressed="false" aria-label="Plan in voller Breite" title="Plan in voller Breite"></button>' +
     (quelle ? '<span class="ub-zoom-trenner" aria-hidden="true"></span><button type="button" class="ub-leg-knopf" data-leg aria-expanded="false">Legende</button>' : "");
   platz.appendChild(zoomEl);
   if (quelle) {
@@ -654,6 +656,27 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     document.addEventListener("click", function (e) { if (!legPop.hidden && !e.target.closest(".ub-pop--legende")) legZu(); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") legZu(); });
   }
+  // Volle Breite: der Plan legt sich über die ganze Seite; die Leiste wandert mit nach oben rechts, Escape schließt
+  var weitEl = OPT.weitEl || wurzel, zoomHeim = null;
+  var ICON_AUF = '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 5V1h4M9 1h4v4M13 9v4H9M5 13H1V9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var ICON_ZU = '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M5 1v4H1M13 5H9V1M9 13V9h4M1 9h4v4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var weitKnopf = zoomEl.querySelector("[data-weit]");
+  weitKnopf.innerHTML = ICON_AUF;
+  function weit(an) {
+    if (an === WEIT) return;
+    WEIT = an;
+    weitEl.classList.toggle("ub-weit", an);
+    document.documentElement.classList.toggle("ub-weit-offen", an);
+    if (an) { zoomHeim = [zoomEl.parentNode, zoomEl.nextSibling]; weitEl.insertBefore(zoomEl, weitEl.firstChild); zoomEl.classList.add("ub-zoom--weit"); }
+    else if (zoomHeim) { zoomHeim[0].insertBefore(zoomEl, zoomHeim[1]); zoomEl.classList.remove("ub-zoom--weit"); }
+    weitKnopf.innerHTML = an ? ICON_ZU : ICON_AUF;
+    weitKnopf.setAttribute("aria-pressed", an ? "true" : "false");
+    weitKnopf.setAttribute("aria-label", an ? "Volle Breite schließen" : "Plan in voller Breite");
+    weitKnopf.title = weitKnopf.getAttribute("aria-label");
+    plan(); detail();
+  }
+  weitKnopf.addEventListener("click", function (e) { e.stopPropagation(); weit(!WEIT); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && WEIT) weit(false); });
   function setzeGroesse(g) {
     groesse = g;
     MASS = g / 100;
