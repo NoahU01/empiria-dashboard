@@ -316,6 +316,11 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     function freiStart(v) {   // ohne Zuführung: keine Stufe, keine frühere Vorarbeit, kein Vorgänger auf der eigenen Linie
       return !(v.braucht || []).some(function (b) { return MS[b] || !imPlan[b] || gleich(S[b], v); });
     }
+    // Wo eine gestrichelte Vorarbeit waagerecht ankommt: am Anfang der kurzen Strecke eines Halts ohne eigene Linie
+    function eingang(s, x2) {
+      var eigeneLinie = (s.braucht || []).some(function (b) { return MS[b] || (S[b] && gleich(S[b], s)); });
+      return eigeneLinie ? -Infinity : x2 - ABST * 0.42;   // mit eigener Linie (z. B. GoLive): von oben in den Halt wie bisher
+    }
     // Woher kommt eine Strecke in den Halt? aus der eigenen Linie, aus einem Stufenhalt – oder frei
     liste.forEach(function (s) {
       var f = STR[s.strang].farbe, x2 = xStart(s), y2 = yVon(s), linieRein = false, abHier = null;
@@ -347,6 +352,9 @@ window.UBahnPlan = function (wurzel, D, OPT) {
           linieRein = true;
         } else {
           var dir = y2 > y1 ? 1 : -1, yk = y2 - dir * 26, pq = [[x1, y1], [x1, yk], [x2, yk], [x2, y2]];
+          // endet die Vorarbeit vor dem Beginn: senkrecht bis auf die Höhe der neuen Linie, dann waagerecht in ihren Anfang (Daniel, 30.10.2026)
+          var ein = eingang(s, x2);
+          if (x1 + 12 < ein) { quer += '<path d="' + rund([[x1, y1], [x1, y2], [ein, y2]]) + '" stroke="' + (blass(s.id) ? "#dedad4" : "#8a857d") + '" stroke-width="2" fill="none" stroke-dasharray="3 5"/>'; return; }
           // steht ein anderer Halt genau auf der senkrechten Strecke, weicht die Abhängigkeit in die Lücke davor aus
           var imWeg = liste.some(function (n) { var nx = xVon(n), ny = yVon(n); return n.id !== s.id && n.id !== b && Math.abs(nx - x1) < 2 && (ny - y1) * dir > 0 && (yk - ny) * dir > 0; });
           if (imWeg && x2 - x1 > ABST / 2) { var xm = x2 - ABST / 2, ya = y1 + dir * 13; pq = [[x1, y1], [x1, ya], [xm, ya], [xm, yk], [x2, yk], [x2, y2]]; }
@@ -359,6 +367,8 @@ window.UBahnPlan = function (wurzel, D, OPT) {
         if (!imPlan[b]) return;
         var v = S[b], x1 = xVon(v), y1 = yVon(v), xz = Math.max(x2, Math.min(xVon(s), x1)), ym = (y1 + y2) / 2;
         var pq = Math.abs(xz - x1) < 1 ? [[x1, y1], [x1, y2]] : [[x1, y1], [x1, ym], [xz, ym], [xz, y2]];
+        var ein = eingang(s, x2);
+        if (x1 + 12 < ein) pq = Math.abs(y1 - y2) < 1 ? [[x1, y1], [ein, y2]] : [[x1, y1], [x1, y2], [ein, y2]];   // endet vorher: waagerecht in den Anfang
         quer += '<path d="' + rund(pq) + '" stroke="' + (blass(s.id) ? "#dedad4" : "#8a857d") + '" stroke-width="2" fill="none" stroke-dasharray="3 5"/>';
       });
       // frei startend: eigene kurze Strecke mit Kopfbahnhof (Querstrich) – „kann sofort los“
