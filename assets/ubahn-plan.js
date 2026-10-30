@@ -102,6 +102,11 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   var MASS = 1;   // Größe des Plans (1 = 100 %), skaliert Linien und Schrift gemeinsam
   var ENDE = 132;   // Platz rechts für Endhalt und Namen der Stufe (Name zweizeilig, 90 px)
   var ABST = 136, ZH = 112, UEBER = 64, UNTER = 58, LUECKE = 40, EINLAUF = 26, SPALTE = 200;
+  // Stoßrichtung verdichten (Daniel, 30.10.2026): „−“ blendet die Bezeichnungen aus und rückt die Linien eng zusammen,
+  // Halte und Zeiträume bleiben (Klick zeigt die Details), „+“ zeigt wieder alles – je Stoßrichtung, je Gerät gemerkt
+  var KOMPAKT = {};
+  try { (JSON.parse(localStorage.getItem("ub-kompakt") || "[]") || []).forEach(function (id) { KOMPAKT[id] = true; }); } catch (e) {}
+  function zh(id) { return KOMPAKT[id] ? 30 : ZH; }
   function hell(hex, t) {   // Farbe mit Weiß mischen, t = Anteil Weiß
     var n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
     function m(c) { return Math.round(c + (255 - c) * t); }
@@ -263,13 +268,16 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     // Termine (Klausur, Workshops): eigene Zeile unter den Monaten; Termine, die zugleich ein Schritt sind, stehen dort als Halt
     var termineImPlan = (D.termine || []).filter(function (t) { return !t.schritt && monatsBloecke.some(function (b) { return b.monat === t.monat; }); });
     var linieY = {}, y0 = (nr > 1 ? 70 : 16) + (monatsBloecke.length ? 44 : 0) + (termineImPlan.length ? 30 : 0);   // oben eine Zeile für die Namen der Stufenhalte (nur im Gesamtplan)
-    bahnen.forEach(function (st) { var ext = (st.unter || []).length ? 28 : 0; linieY[st.id] = y0 + UEBER + ext; y0 += ext + UEBER + tiefsteZeile[st.id] * ZH + (tiefsteZeile[st.id] ? UNTER + 56 : UNTER); });
+    bahnen.forEach(function (st) {
+      var k = KOMPAKT[st.id], ext = (st.unter || []).length ? 28 : 0, ue = k ? 22 : UEBER, un = k ? 30 : UNTER;
+      linieY[st.id] = y0 + ue + ext; y0 += ext + ue + tiefsteZeile[st.id] * zh(st.id) + (tiefsteZeile[st.id] && !k ? un + 56 : un);
+    });
     var hoehe = y0 + 6 + (vorStufe ? 22 : 0);   // unten Platz für „Voraussetzung: …“
-    function yVon(s) { return linieY[s.strang] + unter[s.id] * ZH; }
+    function yVon(s) { return linieY[s.strang] + unter[s.id] * zh(s.strang); }
     var letzte = stufenImBlick[stufenImBlick.length - 1];
     var breite = xHalt(letzte.id) + ENDE;
     var obenAlle = Math.min.apply(null, bahnen.map(function (st) { return linieY[st.id]; })) - 18;
-    var untenAlle = Math.max.apply(null, bahnen.map(function (st) { return linieY[st.id] + (tiefsteZeile[st.id] || 0) * ZH; })) + 18;   // auch die Nebenzeilen der letzten Bahn
+    var untenAlle = Math.max.apply(null, bahnen.map(function (st) { return linieY[st.id] + (tiefsteZeile[st.id] || 0) * zh(st.id); })) + 18;   // auch die Nebenzeilen der letzten Bahn
 
     var svg = '<svg width="' + breite + '" height="' + hoehe + '" class="ub-svg" aria-hidden="true">';
     var monatsNamen = "";
@@ -315,7 +323,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
         }
         if (!imPlan[b]) {                                        // Vorarbeit aus einer früheren Stufe: kommt aus dem Starthalt
           // auf der Linie des eigenen Strangs (z. B. Marketing), nicht quer durch die Bahn von der obersten Linie
-          if (!linieRein) strecke(weg(vorStufe ? 34 : 0, linieY[s.strang] + (zOff[s.strang] ? zOff[s.strang][s.zeile || 0] || 0 : 0) * ZH, x2, y2, false), f, s.status !== "offen", blass(s.id));
+          if (!linieRein) strecke(weg(vorStufe ? 34 : 0, linieY[s.strang] + (zOff[s.strang] ? zOff[s.strang][s.zeile || 0] || 0 : 0) * zh(s.strang), x2, y2, false), f, s.status !== "offen", blass(s.id));
           linieRein = true; return;
         }
         var v = S[b], x1 = xVon(v), y1 = yVon(v);
@@ -390,10 +398,10 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var dauerLinien = "";
     D.dauer.forEach(function (d) {
       if (unter[d.id] == null) return;
-      var y = linieY[d.strang] + unter[d.id] * ZH, xa = vorStufe ? 40 : START, xe = xHalt(letzte.id) + 13, f = STR[d.strang].farbe;
+      var y = linieY[d.strang] + unter[d.id] * zh(d.strang), xa = vorStufe ? 40 : START, xe = xHalt(letzte.id) + 13, f = STR[d.strang].farbe;
       var schwach = !!zustandUI.station && zustandUI.station !== d.id;
       dauerLinien += '<path d="M' + xa + " " + y + "H" + xe + '" stroke="' + hell(f, schwach ? 0.85 : 0.45) + '" stroke-width="4" stroke-linecap="round" fill="none"/>';
-      namen += '<button type="button" class="ub-dauer' + (schwach ? " ub-name--blass" : "") + '" data-station="' + d.id + '" style="left:' + xa + "px;top:" + (y - 26) + 'px">' + esc(d.titel) + "<small>Dauerthema</small></button>";
+      if (!KOMPAKT[d.strang]) namen += '<button type="button" class="ub-dauer' + (schwach ? " ub-name--blass" : "") + '" data-station="' + d.id + '" style="left:' + xa + "px;top:" + (y - 26) + 'px">' + esc(d.titel) + "<small>Dauerthema</small></button>";
       namen += '<button type="button" class="ub-treffer ub-treffer--dauer" data-station="' + d.id + '" aria-label="' + esc(d.titel) + '" style="left:' + xa + "px;top:" + (y - 16) + 'px"></button>';
     });
     svg += dauerLinien + quer + duenn + dick;
@@ -429,7 +437,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       // letzter Halt der Linie mit engem linken Nachbarn: der Name darf nach rechts in den freien Raum reichen (links weiter nur bis zur Hälfte)
       var nl = mitte - bn / 2, rechtsBuendig = false;
       if (re == null && li != null && links < 105 && rechts > links) { var bw = Math.min(210, links + rechts - 12); if (bw > bn) { bn = bw; nl = mitte - links + 4; rechtsBuendig = true; } }
-      namen += '<button type="button" class="ub-name ub-name--' + z + (obenL ? " ub-name--oben" : "") + (schwach ? " ub-name--blass" : "") +
+      if (!KOMPAKT[s.strang]) namen += '<button type="button" class="ub-name ub-name--' + z + (obenL ? " ub-name--oben" : "") + (schwach ? " ub-name--blass" : "") +
         '" data-station="' + s.id + '" style="left:' + nl + "px;" + (rechtsBuendig ? "text-align:left;" : "") + "top:" + (obenL ? cy - r - 8 : cy + r + 8) + "px;width:" + bn + 'px">' + esc(s.titel) + "</button>";
       namen += '<button type="button" class="ub-treffer" data-station="' + s.id + '" aria-label="' + esc(s.titel) + '" style="left:' + (mitte - 16) + "px;top:" + (cy - 16) + "px" + (lang > 1 ? ";width:" + (lang + 32) + "px;margin-left:" + (-lang / 2) + "px" : "") + '"></button>';
     });
@@ -445,7 +453,9 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var spalte = bahnen.map(function (st) {
       var mitU = (st.unter || []).length;
       // mit Strängen: Titel der Stoßrichtung über der ersten Linie (wächst nach oben), Strangnamen auf Höhe ihrer Linie
-      return (mitU ? st.unter.map(function (u, i) { return '<button type="button" class="ub-unterstrang" data-unter="' + st.id + "|" + i + '" style="top:' + (linieY[st.id] + zOff[st.id][i] * ZH) + 'px">' + esc(u) + "</button>"; }).join("") : "") +
+      var k = !!KOMPAKT[st.id];
+      return '<button type="button" class="ub-kompakt-knopf" data-kompakt="' + st.id + '" aria-pressed="' + k + '" aria-label="' + (k ? "Mehr zeigen: " : "Weniger zeigen: ") + esc(st.label) + '" title="' + (k ? "Mehr zeigen" : "Weniger zeigen") + '" style="top:' + (linieY[st.id] + (mitU ? -16 : 18)) + 'px">' + (k ? "+" : "&minus;") + "</button>" +
+        (mitU && !k ? st.unter.map(function (u, i) { return '<button type="button" class="ub-unterstrang" data-unter="' + st.id + "|" + i + '" style="top:' + (linieY[st.id] + zOff[st.id][i] * ZH) + 'px">' + esc(u) + "</button>"; }).join("") : "") +
         '<button type="button" class="ub-bahn' + (mitU ? " ub-bahn--oben" : "") + '" data-strang="' + st.id + '" aria-label="' + esc(st.label) + ': worum es in dieser Stoßrichtung geht" style="top:' + (linieY[st.id] - (mitU ? 22 : 15)) + 'px"><span class="ub-linie" style="background:' + st.farbe + '">' + esc(st.kurz) + "</span><span><b>" + esc(st.label) + '</b><small>' + esc(st.verantwortung) + "</small></span></button>";
     }).join("");
     // Scrollstand merken: Klick auf einen Halt zeichnet neu – der Plan bleibt dort stehen, wo man hingeschoben hat
@@ -466,6 +476,15 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     terminInfo(terminOffen);
     planEl.querySelectorAll("[data-strang]").forEach(function (b) {
       b.addEventListener("click", function (e) { e.stopPropagation(); strangInfo(b.getAttribute("data-strang") === strangOffen ? null : b.getAttribute("data-strang")); });
+    });
+    planEl.querySelectorAll("[data-kompakt]").forEach(function (b) {
+      b.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var id = b.getAttribute("data-kompakt");
+        if (KOMPAKT[id]) delete KOMPAKT[id]; else KOMPAKT[id] = true;
+        try { localStorage.setItem("ub-kompakt", JSON.stringify(Object.keys(KOMPAKT))); } catch (x) {}
+        plan(); detail();
+      });
     });
     planEl.querySelectorAll(".ub-unterstrang").forEach(function (b) {
       b.addEventListener("click", function (e) { e.stopPropagation(); strangInfo(b.getAttribute("data-unter") === strangOffen ? null : b.getAttribute("data-unter")); });
