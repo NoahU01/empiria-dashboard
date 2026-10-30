@@ -234,14 +234,16 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     // Zeile je Halt: die oberste Zeile seiner Linie, in der er keinen anderen Halt überdeckt – so rücken
     // Schritte in derselben Spalte und eigenständig startende Zeiträume (z. B. Webseite neben Lea) eine Zeile tiefer
     var belegt = {}, bedarf = {}, zOff = {};
+    // innerhalb jeder Gruppe nach Beginn: wer früher beginnt, bekommt die obere Zeile (Markensichtbarkeit vor Besuch von Messen)
+    function nachBeginn(l) { return l.map(function (s, i) { return [s, i]; }).sort(function (x, y) { var ax = tiefeA[x[0].id] != null ? tiefeA[x[0].id] : tiefe[x[0].id], ay = tiefeA[y[0].id] != null ? tiefeA[y[0].id] : tiefe[y[0].id]; return ax - ay || x[1] - y[1]; }).map(function (x) { return x[0]; }); }
     function freiZ(s) { return (s.braucht || []).every(function (b) { return !imPlan[b] || !gleich(S[b], s); }); }
     // erst die Halte der durchgehenden Linie, dann die frei startenden – so bleibt die Hauptlinie oben
-    liste.filter(function (s) { return !freiZ(s); }).concat(liste.filter(freiZ)).forEach(function (s) {
+    nachBeginn(liste.filter(function (s) { return !freiZ(s); })).concat(nachBeginn(liste.filter(freiZ))).forEach(function (s) {
       // Zeilen zählen je Strang der Stoßrichtung (zi); welche Zeile der Bahn das ist, ergibt sich danach aus dem Bedarf der Stränge davor
       var zi = s.zeile || 0, k = s.strang + "|" + s.meilenstein + "|" + zi, a = tiefeA[s.id] != null ? tiefeA[s.id] : tiefe[s.id], e = tiefe[s.id], z = 0;
       var frei = (s.braucht || []).every(function (b) { return !imPlan[b] || !gleich(S[b], s); });
       belegt[k] = belegt[k] || [];
-      while (belegt[k].some(function (x) { return x.z === z && x.a <= e && a <= x.e && (frei || x.a === a || x.e === e || a === e); })) z++;
+      while (belegt[k].some(function (x) { return x.z === z && x.a <= e && a <= x.e && (frei || x.a === a || x.e === e || a === e || x.a === x.e); })) z++;
       belegt[k].push({ z: z, a: a, e: e }); unter[s.id] = z;
       bedarf[s.strang] = bedarf[s.strang] || {}; bedarf[s.strang][zi] = Math.max(bedarf[s.strang][zi] || 1, z + 1);
     });
