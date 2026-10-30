@@ -234,8 +234,9 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     // Zeile je Halt: die oberste Zeile seiner Linie, in der er keinen anderen Halt überdeckt – so rücken
     // Schritte in derselben Spalte und eigenständig startende Zeiträume (z. B. Webseite neben Lea) eine Zeile tiefer
     var belegt = {}, bedarf = {}, zOff = {};
-    // innerhalb jeder Gruppe nach Beginn: wer früher beginnt, bekommt die obere Zeile (Markensichtbarkeit vor Besuch von Messen)
-    function nachBeginn(l) { return l.map(function (s, i) { return [s, i]; }).sort(function (x, y) { var ax = tiefeA[x[0].id] != null ? tiefeA[x[0].id] : tiefe[x[0].id], ay = tiefeA[y[0].id] != null ? tiefeA[y[0].id] : tiefe[y[0].id]; return ax - ay || x[1] - y[1]; }).map(function (x) { return x[0]; }); }
+    // innerhalb jeder Gruppe nach Beginn: wer früher beginnt, bekommt die obere Zeile (Markensichtbarkeit vor Besuch von Messen);
+    // bei gleichem Beginn der länger laufende (Auf- und Ausbau der Vertriebssystematik vor Integration der Vertriebsrisiken)
+    function nachBeginn(l) { return l.map(function (s, i) { return [s, i]; }).sort(function (x, y) { var ax = tiefeA[x[0].id] != null ? tiefeA[x[0].id] : tiefe[x[0].id], ay = tiefeA[y[0].id] != null ? tiefeA[y[0].id] : tiefe[y[0].id]; return ax - ay || (tiefe[y[0].id] || 0) - (tiefe[x[0].id] || 0) || x[1] - y[1]; }).map(function (x) { return x[0]; }); }
     function freiZ(s) { return (s.braucht || []).every(function (b) { return !imPlan[b] || !gleich(S[b], s); }); }
     // erst die Halte der durchgehenden Linie, dann die frei startenden – so bleibt die Hauptlinie oben
     nachBeginn(liste.filter(function (s) { return !freiZ(s); })).concat(nachBeginn(liste.filter(freiZ))).forEach(function (s) {
