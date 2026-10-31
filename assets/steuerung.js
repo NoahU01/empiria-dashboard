@@ -181,8 +181,8 @@
       return '<section class="an-tag"><h4>' + d.toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" }) + "</h4><ul>" + tage[k].map(function (t) {
         var p = projekt(t.projekt_id), zeit = t.ganztags ? "ganztags" : new Date(t.start).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
         var mit = (t.teilnehmer || []).slice(0, 3).join(", ") + ((t.teilnehmer || []).length > 3 ? " …" : "");
-        // Gelb nur, wenn die Vorbereitung offen ist und der Termin bis übermorgen ansteht (Daniel: nicht blind markieren)
-        var dringend = t.vorbereitung === "offen" && new Date(t.start) < new Date(+HEUTE + 3 * 864e5);
+        // Gelb für jeden Termin mit offener Vorbereitung in den 14 Tagen (Daniel, 31.10.2026: durchgängig)
+        var dringend = t.vorbereitung === "offen";
         return '<li class="an-t an-t--' + t.vorbereitung + (dringend ? " an-t--dringend" : "") + '" data-t="' + t.id + '"><span class="an-zeit">' + zeit + "</span>" +
           '<span class="an-was"><b>' + esc(t.betreff || "(ohne Titel)") + "</b><small>" + [p ? esc(p.name) : "", esc(mit), esc(t.postfach)].filter(Boolean).join(" · ") + "</small>" +
             // In Outlook verschoben (Prüfmechanismus termine_abgleich.py) – Hinweis eine Woche lang
