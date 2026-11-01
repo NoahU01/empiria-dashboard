@@ -518,6 +518,10 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       if (re == null && li != null && links < 105 && rechts > links) { var bw = Math.min(210, links + rechts - 12); if (bw > bn) { bn = bw; nl = mitte - links + 4; rechtsBuendig = true; } }
       if (vorTeil && nl < vorTeil.x1 + 6) { bn -= vorTeil.x1 + 6 - nl; nl = vorTeil.x1 + 6; }   // Name nie über dem Meilenstein-Balken
       if (vonVorher && nl < 40) { bn -= 40 - nl; nl = 40; }   // Name nie über dem Starthalt links
+      stufenImBlick.forEach(function (x) {   // Name endet vor einem Meilenstein-Balken, der rechts von seiner Mitte steht
+        var bx = xHalt(x.id);
+        if (bx > mitte && nl + bn > bx - 4 && nl < bx) { var neu = bx - 4 - nl; if (neu >= 60) bn = neu; }
+      });
       if (!KOMPAKT[s.strang]) namen += '<button type="button" class="ub-name ub-name--' + z + (obenL ? " ub-name--oben" : "") + (schwach ? " ub-name--blass" : "") +
         '" data-station="' + s.id + '" style="left:' + nl + "px;" + (rechtsBuendig ? "text-align:left;" : "") + "top:" + (obenL ? cy - r - 8 : cy + r + 8) + "px;width:" + bn + 'px">' + trenn(s.titel) + "</button>";
       namen += '<button type="button" class="ub-treffer" data-station="' + s.id + '" aria-label="' + esc(s.titel) + '" style="left:' + (mitte - 16) + "px;top:" + (cy - 16) + "px" + (lang > 1 ? ";width:" + (lang + 32) + "px;margin-left:" + (-lang / 2) + "px" : "") + '"></button>';
