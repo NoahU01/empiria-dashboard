@@ -40,17 +40,26 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   var ZTEXT = { erreicht: "erledigt", aktiv: "in Arbeit", frei: "kann starten", wartet: "wartet auf Vorarbeit" };
   // dieselbe Linie: gleiche Bahn und – bei Strängen innerhalb einer Stoßrichtung – derselbe Strang (sonst gestrichelte Abhängigkeit)
   function gleich(a, b) { return a.strang === b.strang && (a.sub == null || b.sub == null || a.sub === b.sub); }
-  // Text im Fenster: Zeilen mit „•“ oder „-“ am Anfang werden zur Liste, übrige Zeilen zu Absätzen
+  // Text im Fenster: Zeilen mit „•“ oder „-“ am Anfang werden zur Liste, kurze Zeilen ohne Satzzeichen zu Zwischenüberschriften, übrige zu Absätzen
   function textHtml(t) {
-    var h = "", liste = [];
+    var h = "", liste = [], z0 = String(t).split("\n").map(function (z) { return z.trim(); });
+    var abschnitte = z0.some(function (z, i) { return !z && i > 0 && i < z0.length - 1; });
     function zu() { if (liste.length) { h += "<ul>" + liste.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"; liste = []; } }
-    String(t).split("\n").forEach(function (z) {
-      z = z.trim(); if (!z) return;
-      if (/^[•\-–]\s*/.test(z)) liste.push(z.replace(/^[•\-–]\s*/, "")); else { zu(); h += "<p>" + esc(z) + "</p>"; }
+    var luecke = false;   // Leerzeile im Text = sichtbarer Abstand (Daniel, 01.11.2026)
+    z0.forEach(function (z, i) {
+      if (!z) { if (h || liste.length) luecke = true; return; }
+      if (luecke) { zu(); h += '<div class="ub-pop-luecke"></div>'; luecke = false; }
+      if (/^[•\-–]\s*/.test(z)) { liste.push(z.replace(/^[•\-–]\s*/, "")); return; }
+      zu();
+      // Zwischenüberschrift (Daniel, 01.11.2026): nur in Texten mit Leerzeilen-Abschnitten – kurze Zeile ohne Satzzeichen
+      // am Anfang eines Abschnitts, darunter folgt ein Absatz (z. B. „Tragfähigkeit“)
+      var zw = abschnitte && z.length <= 40 && !/[.,;:!?)…“"]$/.test(z) && (i === 0 || !z0[i - 1]) && z0[i + 1] && !/^[•\-–]/.test(z0[i + 1]);
+      h += (zw ? '<p class="ub-pop-zw">' : "<p>") + esc(z) + "</p>";
     });
     zu();
     return h;
   }
+
   function vorlauf(ids) {               // alles, was in diese Schritte einfließt – inklusive der Schritte selbst
     var drin = {}, st = ids.slice();
     while (st.length) {
@@ -588,7 +597,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       if (!b || !k || !sp) return;
       var pu = document.createElement("div");
       pu.className = "ub-pop ub-pop--strang";
-      pu.innerHTML = '<p class="ub-pop-titel">' + esc(b.unter[+t[1]]) + '</p><p class="ub-pop-meta">Strang in ' + esc(b.label) + "</p><p>" + (b.unterText && b.unterText[+t[1]] ? esc(b.unterText[+t[1]]) : "Die Erläuterung folgt.") + "</p>";
+      pu.innerHTML = '<p class="ub-pop-titel">' + esc(b.unter[+t[1]]) + '</p><p class="ub-pop-meta">Strang in ' + esc(b.label) + "</p>" + (b.unterText && b.unterText[+t[1]] ? textHtml(b.unterText[+t[1]]) : "<p>Die Erläuterung folgt.</p>");
       sp.appendChild(pu);
       pu.style.top = (parseFloat(k.style.top) + 14) + "px";
       return;
@@ -600,7 +609,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     pop.className = "ub-pop ub-pop--strang";
     // ohne Verantwortliche kein leeres „verantwortlich:“; die Erklärung steht für sich (Daniel, 29.10.2026)
     pop.innerHTML = '<p class="ub-pop-titel">' + esc(st.label) + '</p><p class="ub-pop-meta">' + (/projektmanagement|innovation/i.test(st.label) ? "Linie" : "Stoßrichtung") + (st.verantwortung ? " &middot; verantwortlich: " + esc(st.verantwortung) : "") + "</p>" +
-      "<p>" + (text ? esc(text) : "Die Beschreibung folgt.") + "</p>";
+      (text ? textHtml(text) : "<p>Die Beschreibung folgt.</p>");
     sp.appendChild(pop);
     pop.style.top = (parseFloat(knopf.style.top) - 6) + "px";
   }

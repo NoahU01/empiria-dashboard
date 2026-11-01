@@ -32,6 +32,11 @@
 .ub-pop{position:absolute;z-index:20;width:300px;box-sizing:border-box;padding:14px 16px;background:#fff;border:1px solid #e8e5e0;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.08);font-size:.74rem;line-height:1.5;color:#111;cursor:default;text-align:left}
 .ub-pop p{margin:0}
 .ub-pop p + p{margin-top:6px}
+.ub-pop p.ub-pop-zw{font-weight:600;color:#111;margin-top:14px}
+.ub-pop p.ub-pop-zw:first-child{margin-top:0}
+.ub-pop p.ub-pop-zw + p{margin-top:2px}
+.ub-pop-luecke{height:10px}
+.ub-pop .ub-pop-luecke + p, .ub-pop .ub-pop-luecke + ul{margin-top:0}
 .ub-pop-titel{font-size:.84rem;font-weight:600}
 .ub-pop-meta{color:var(--grey-50,#8a8a8a)}
 .ub-pop .ub-pop-auf-kopf{margin-top:10px}
