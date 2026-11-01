@@ -20,7 +20,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   D.meilensteine.forEach(function (m, i) { m.bis = msMonat(m); m.ab = i && msMonat(D.meilensteine[i - 1]) ? naechsterMonat(msMonat(D.meilensteine[i - 1])) : null; });
   D.schritte.forEach(function (s) {
     var m = MS[s.meilenstein];
-    if (m && m.ab && s.von && s.von < m.ab && (!s.monat || s.monat >= m.ab)) { s.von = m.ab; s.tagVon = 1; }
+    if (m && m.ab && s.von && s.von < m.ab && (!s.monat || s.monat >= m.ab)) { s.vonEcht = s.von; s.tagVonEcht = s.tagVon; s.von = m.ab; s.tagVon = 1; }
   });
 
   function esc(t) { return String(t == null ? "" : t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
@@ -149,6 +149,19 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var stufenImBlick = D.meilensteine.filter(function (x) { return m.gesamt || x.id === m.id; });
     var imBlick = {}; stufenImBlick.forEach(function (x) { imBlick[x.id] = true; });
     var liste = D.schritte.filter(function (s) { return imBlick[s.meilenstein]; });
+    // Ausschnitt eines Meilensteins mit ausdrücklicher Zuordnung (Daniel, 01.11.2026): Pakete ohne Zuordnung, die in diesem Zeitraum
+    // laufen, aber erst später enden, stehen blass mit im Bild – sie laufen parallel, zahlen aber nicht auf den Meilenstein ein
+    if (!m.gesamt && m.zugeordnet) D.schritte.forEach(function (s) {
+      var von = s.vonEcht || s.von;   // echter Beginn – im eigenen Level ist er auf den Level-Beginn gekürzt
+      if (imBlick[s.meilenstein] || !s.frei || !von || !s.monat || s.monat < (m.ab || "0000") || von > m.bis) return;
+      var id = s.id + "~" + m.id;
+      if (!S[id]) {
+        var k = S[id] = Object.assign({}, s, { id: id, meilenstein: m.id, braucht: [], einfluss: [], parallel: true, von: von, tagVon: s.vonEcht ? s.tagVonEcht : s.tagVon });
+        if (m.ab && k.von < m.ab) { k.von = m.ab; k.tagVon = 1; }
+        if (k.monat > m.bis) { k.monat = m.bis; k.tag = 28; }
+      }
+      liste.push(S[id]);
+    });
     if (!liste.length) {   // Level ohne geplante Schritte (z. B. spätere Ergebnislevel)
       planEl.style.height = "";
       planEl.innerHTML = '<p class="ub-leer">Für dieses Level sind noch keine Schritte geplant.</p>';
