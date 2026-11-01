@@ -120,6 +120,11 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   // Halte und Zeiträume bleiben (Klick zeigt die Details), „+“ zeigt wieder alles – je Stoßrichtung, je Gerät gemerkt
   var KOMPAKT = {};
   try { (JSON.parse(localStorage.getItem("ub-kompakt") || "[]") || []).forEach(function (id) { KOMPAKT[id] = true; }); } catch (e) {}
+  // Grundansicht zugeklappt (OPT.kompakt, Daniel 01.11.2026 für VVDE): alle Stoßrichtungen zeigen das Plus,
+  // bis man eine aufklappt – aufgeklappte merkt sich der Browser (ub-offen)
+  var OFFEN = {};
+  try { (JSON.parse(localStorage.getItem("ub-offen") || "[]") || []).forEach(function (id) { OFFEN[id] = true; }); } catch (e) {}
+  if (OPT.kompakt) D.straenge.forEach(function (st) { if (!OFFEN[st.id]) KOMPAKT[st.id] = true; });
   function zh(id) { return KOMPAKT[id] ? 30 : ZH; }
   function hell(hex, t) {   // Farbe mit Weiß mischen, t = Anteil Weiß
     var n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
@@ -576,8 +581,8 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       b.addEventListener("click", function (e) {
         e.stopPropagation();
         var id = b.getAttribute("data-kompakt");
-        if (KOMPAKT[id]) delete KOMPAKT[id]; else KOMPAKT[id] = true;
-        try { localStorage.setItem("ub-kompakt", JSON.stringify(Object.keys(KOMPAKT))); } catch (x) {}
+        if (KOMPAKT[id]) { delete KOMPAKT[id]; OFFEN[id] = true; } else { KOMPAKT[id] = true; delete OFFEN[id]; }
+        try { localStorage.setItem("ub-kompakt", JSON.stringify(Object.keys(KOMPAKT))); localStorage.setItem("ub-offen", JSON.stringify(Object.keys(OFFEN))); } catch (x) {}
         plan(); detail();
       });
     });
