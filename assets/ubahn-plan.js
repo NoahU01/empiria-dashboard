@@ -484,11 +484,15 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       // erledigt wie in Sicht 1.1: klein und vollflächig in der Linienfarbe, mit weißem Rand
       var fuell = "#fff";
       if (z === "erreicht") { fuell = schwach ? hell(f, 0.8) : f; rand = ["#fff", 2]; }
+      // EIN Balken (Daniel, 01.11.2026): eine Rundung am Anfang, eine am Ende; der Rand wechselt unter dem Meilenstein-Balken
+      // von hellgrau auf die normale Farbe – Name und Mitte nur rechts vom Meilenstein
       if (vorTeil) {
-        punkte += '<rect x="' + (vorTeil.x0 - r) + '" y="' + (cy - r) + '" width="' + (vorTeil.x1 - vorTeil.x0 + r) + '" height="' + (2 * r) + '" rx="' + r + '" fill="#fff" stroke="#e8e5e0" stroke-width="3"/>';
-        xs = vorTeil.x1 + r; lang = cx - xs;   // ab hier der eigentliche Zeitraum – Name und Mitte nur rechts
+        var gid = "ubv-" + String(s.id).replace(/[^\w-]/g, "_"), xa0 = vorTeil.x0 - r, xe0 = cx + r, wech = Math.max(0, Math.min(1, (vorTeil.x1 - 13 - xa0) / (xe0 - xa0)));
+        punkte += '<defs><linearGradient id="' + gid + '" gradientUnits="userSpaceOnUse" x1="' + xa0 + '" y1="0" x2="' + xe0 + '" y2="0"><stop offset="' + wech + '" stop-color="#e8e5e0"/><stop offset="' + wech + '" stop-color="' + rand[0] + '"/></linearGradient></defs>' +
+          '<rect x="' + xa0 + '" y="' + (cy - r) + '" width="' + (xe0 - xa0) + '" height="' + (2 * r) + '" rx="' + r + '" fill="' + fuell + '" stroke="url(#' + gid + ')" stroke-width="' + rand[1] + '"/>';
+        xs = vorTeil.x1 + r; lang = cx - xs;
       }
-      punkte += lang > 1
+      if (!vorTeil) punkte += lang > 1
         ? '<rect x="' + (xs - r) + '" y="' + (cy - r) + '" width="' + (lang + 2 * r) + '" height="' + (2 * r) + '" rx="' + r + '" fill="' + fuell + '" stroke="' + rand[0] + '" stroke-width="' + rand[1] + '"/>'
         : '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + fuell + '" stroke="' + rand[0] + '" stroke-width="' + rand[1] + '"/>';
       if (s.kritisch) punkte += '<circle cx="' + (cx + r + 3) + '" cy="' + (cy - r - 3) + '" r="7" fill="' + (schwach ? "#f6c9bf" : "#E8553A") + '"/><text x="' + (cx + r + 3) + '" y="' + (cy - r + 0.6) + '" text-anchor="middle" class="ub-ausruf">!</text>';
