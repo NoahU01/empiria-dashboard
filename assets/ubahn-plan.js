@@ -24,6 +24,11 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   });
 
   function esc(t) { return String(t == null ? "" : t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  // Namen trennen nur an Leerzeichen und an Wortfugen (Personal-strategie, Prozess-dokumentation) statt per Silbentrennung
+  // mitten im Wort – die Browser-Trennung ließ oft nur zwei Buchstaben in der Zeile (Daniel, 01.11.2026). CSS: hyphens: manual;
+  // Läuft ein Name trotzdem über den Rand (enge Monate), wird nur er nach dem Zeichnen angepasst (siehe eng()).
+  var FUGE = /([a-zäöüß]{4,}?)(?=(strategie|dokumentation|befragung|maßnahmen|systematik|system|sichtbarkeit|positionierung|management|rahmen|verfahren|produkt|organisation|entwicklung|bildung|portal|messung|kontakt|zufriedenheit|stärkung|freigabe|modell|versicherung|risiken|unternehmen|programm|planung|steuerung|kampagne|konzept|prozess|team))/gi;
+  function trenn(t) { return esc(t).split(" ").map(function (w) { return w.length < 12 ? w : w.replace(FUGE, "$1\u00AD"); }).join(" "); }
   function msName(m) { return m.titel || "Ergebnislevel " + m.nr; }
   function stufeErreicht(mid) { var b = MS[mid].braucht || []; return b.length > 0 && b.every(function (x) { return S[x] && S[x].status === "erreicht"; }); }
   function fertig(id) { return MS[id] ? stufeErreicht(id) : S[id] && S[id].status === "erreicht"; }
@@ -454,7 +459,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       var nl = mitte - bn / 2, rechtsBuendig = false;
       if (re == null && li != null && links < 105 && rechts > links) { var bw = Math.min(210, links + rechts - 12); if (bw > bn) { bn = bw; nl = mitte - links + 4; rechtsBuendig = true; } }
       if (!KOMPAKT[s.strang]) namen += '<button type="button" class="ub-name ub-name--' + z + (obenL ? " ub-name--oben" : "") + (schwach ? " ub-name--blass" : "") +
-        '" data-station="' + s.id + '" style="left:' + nl + "px;" + (rechtsBuendig ? "text-align:left;" : "") + "top:" + (obenL ? cy - r - 8 : cy + r + 8) + "px;width:" + bn + 'px">' + esc(s.titel) + "</button>";
+        '" data-station="' + s.id + '" style="left:' + nl + "px;" + (rechtsBuendig ? "text-align:left;" : "") + "top:" + (obenL ? cy - r - 8 : cy + r + 8) + "px;width:" + bn + 'px">' + trenn(s.titel) + "</button>";
       namen += '<button type="button" class="ub-treffer" data-station="' + s.id + '" aria-label="' + esc(s.titel) + '" style="left:' + (mitte - 16) + "px;top:" + (cy - 16) + "px" + (lang > 1 ? ";width:" + (lang + 32) + "px;margin-left:" + (-lang / 2) + "px" : "") + '"></button>';
     });
     svg += halte + durch + punkte + "</svg>";
@@ -471,13 +476,20 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       // mit Strängen: Titel der Stoßrichtung über der ersten Linie (wächst nach oben), Strangnamen auf Höhe ihrer Linie
       var k = !!KOMPAKT[st.id];
       return '<button type="button" class="ub-kompakt-knopf" data-kompakt="' + st.id + '" aria-pressed="' + k + '" aria-label="' + (k ? "Mehr zeigen: " : "Weniger zeigen: ") + esc(st.label) + '" title="' + (k ? "Mehr zeigen" : "Weniger zeigen") + '" style="top:' + (linieY[st.id] + (mitU ? -36 : 8)) + 'px">' + (k ? "+" : "&minus;") + "</button>" +
-        (mitU && !k ? st.unter.map(function (u, i) { return '<button type="button" class="ub-unterstrang" data-unter="' + st.id + "|" + i + '" style="top:' + (linieY[st.id] + zOff[st.id][i] * ZH) + 'px">' + esc(u) + "</button>"; }).join("") : "") +
+        (mitU && !k ? st.unter.map(function (u, i) { return '<button type="button" class="ub-unterstrang" data-unter="' + st.id + "|" + i + '" style="top:' + (linieY[st.id] + zOff[st.id][i] * ZH) + 'px">' + trenn(u) + "</button>"; }).join("") : "") +
         '<button type="button" class="ub-bahn' + (mitU ? " ub-bahn--oben" : "") + '" data-strang="' + st.id + '" aria-label="' + esc(st.label) + ': worum es in dieser Stoßrichtung geht" style="top:' + (linieY[st.id] - (mitU ? 22 : 15)) + 'px"><span class="ub-linie" style="background:' + st.farbe + '">' + esc(st.kurz) + "</span><span><b>" + esc(st.label) + '</b><small>' + esc(st.verantwortung) + "</small></span></button>";
     }).join("");
     // Scrollstand merken: Klick auf einen Halt zeichnet neu – der Plan bleibt dort stehen, wo man hingeschoben hat
     var altSc = planEl.querySelector(".ub-scroll"), altLinks = altSc && altSc.clientWidth && planEl.ubBlick === zustandUI.ms ? altSc.scrollLeft : null;   // nur, wenn der Plan schon sichtbar war
     planEl.ubBlick = zustandUI.ms;
     planEl.innerHTML = '<div class="ub-rahmen" style="width:' + (planEl.clientWidth / MASS) + "px;transform:scale(" + MASS + ');transform-origin:0 0"><div class="ub-spalte" style="height:' + hoehe + 'px">' + spalte + '</div><div class="ub-scroll"><div class="ub-flaeche" style="width:' + breite + "px;height:" + hoehe + 'px">' + svg + monatsNamen + namen + "</div></div></div>";
+    // Passt ein Name nicht (enge Monate): erst etwas kleinere Schrift, erst danach Silbentrennung mit mindestens fünf Buchstaben je Seite
+    var eng = function () { planEl.querySelectorAll(".ub-name, .ub-unterstrang").forEach(function (b) {
+      var zu = function () { return b.scrollWidth > b.clientWidth + 1; };
+      b.classList.remove("ub-name--klein", "ub-name--eng");
+      if (zu()) { b.classList.add("ub-name--klein"); if (zu()) b.classList.add("ub-name--eng"); }
+    }); };
+    eng(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(eng);   // erst mit geladener Schrift stimmt die Breite
     planEl.style.height = Math.ceil(planEl.firstChild.offsetHeight * MASS) + "px";   // transform nimmt keinen Platz ein: Höhe nachführen
     planEl.querySelectorAll("[data-station]").forEach(function (b) {
       b.addEventListener("click", function () {
