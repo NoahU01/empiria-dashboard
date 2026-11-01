@@ -156,7 +156,8 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       if (imBlick[s.meilenstein] || !s.frei || !von || !s.monat || s.monat < (m.ab || "0000") || von > m.bis) return;
       var id = s.id + "~" + m.id;
       if (!S[id]) {
-        var k = S[id] = Object.assign({}, s, { id: id, meilenstein: m.id, braucht: [], einfluss: [], parallel: true, von: von, tagVon: s.vonEcht ? s.tagVonEcht : s.tagVon });
+        // Vorgänger bleiben: das Paket hängt weiter an seiner Vorarbeit und beginnt nicht eigenständig (kein Startstrich)
+        var k = S[id] = Object.assign({}, s, { id: id, meilenstein: m.id, braucht: (s.braucht || []).slice(), einfluss: (s.einfluss || []).slice(), parallel: true, von: von, tagVon: s.vonEcht ? s.tagVonEcht : s.tagVon });
         if (m.ab && k.von < m.ab) { k.von = m.ab; k.tagVon = 1; }
         if (k.monat > m.bis) { k.monat = m.bis; k.tag = 28; }
       }
@@ -254,7 +255,18 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var verfuegbar = planEl.clientWidth / MASS - SPALTE;   // Breite in Plan-Einheiten (MASS = gewählte Größe)
     ABST = Math.max(73, Math.min(WEIT ? 400 : 140, (verfuegbar - 14 - START - HALT * (nr - 1) - ENDE) / lauf));
     function xVon(s) { var x = MS[s.meilenstein]; return START + (bandStart[x.id] + tiefe[s.id]) * ABST + bandNr[x.id] * HALT + ABST / 2; }
-    function xStart(s) { if (tiefeA[s.id] == null) return xVon(s); var x = MS[s.meilenstein]; return START + (bandStart[x.id] + tiefeA[s.id]) * ABST + bandNr[x.id] * HALT + ABST / 2; }
+    // Gesamtplan (Daniel, 01.11.2026): ein Paket ohne Meilenstein, das vor einem Meilenstein beginnt und danach endet
+    // (Bahn- und Kfz-Produkt April–September 2027), ist EIN Zeitraum ab seinem echten Beginn quer über den Meilenstein
+    var ueberMs = {};
+    if (m.gesamt) liste.forEach(function (s) {
+      if (!s.frei || !s.vonEcht) return;
+      var b = monatsBloecke.filter(function (k) { return k.monat === s.vonEcht && k.ms !== s.meilenstein; })[0];
+      if (!b) return;
+      var tt = s.vonEcht.split("-"), tage = new Date(+tt[0], +tt[1], 0).getDate();
+      ueberMs[s.id] = { ms: b.ms, spalte: b.ab + Math.max(0, ((s.tagVonEcht || 1) - 1) / tage * b.breite - 0.5) };
+    });
+    function xStart(s) { if (ueberMs[s.id]) { var q = ueberMs[s.id]; return START + (bandStart[q.ms] + q.spalte) * ABST + bandNr[q.ms] * HALT + ABST / 2; }
+      if (tiefeA[s.id] == null) return xVon(s); var x = MS[s.meilenstein]; return START + (bandStart[x.id] + tiefeA[s.id]) * ABST + bandNr[x.id] * HALT + ABST / 2; }
     function xHalt(mid) { return START + (bandStart[mid] + bandBreite[mid]) * ABST + bandNr[mid] * HALT + 14; }   // Stufenhalt nach dem Band
 
     var unter = {}, gruppen = {}, tiefsteZeile = {};
@@ -271,8 +283,12 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       var zi = s.zeile || 0, k = s.strang + "|" + s.meilenstein + "|" + zi, a = tiefeA[s.id] != null ? tiefeA[s.id] : tiefe[s.id], e = tiefe[s.id], z = 0;
       var frei = (s.braucht || []).every(function (b) { return !imPlan[b] || !gleich(S[b], s); });
       belegt[k] = belegt[k] || [];
-      while (belegt[k].some(function (x) { return x.z === z && x.a <= e && a <= x.e && (frei || x.a === a || x.e === e || a === e || x.a === x.e); })) z++;
+      var q = ueberMs[s.id], k2 = q ? s.strang + "|" + q.ms + "|" + zi : null;
+      if (q) belegt[k2] = belegt[k2] || [];
+      while (belegt[k].some(function (x) { return x.z === z && x.a <= e && a <= x.e && (frei || x.hart || x.a === a || x.e === e || a === e || x.a === x.e); }) ||
+             (q && belegt[k2].some(function (x) { return x.z === z && x.e >= q.spalte; }))) z++;   // quer über den Meilenstein: auch im Band davor frei
       belegt[k].push({ z: z, a: a, e: e }); unter[s.id] = z;
+      if (q) belegt[k2].push({ z: z, a: q.spalte, e: 1e9, hart: true });   // niemand sonst in diese Zeile
       bedarf[s.strang] = bedarf[s.strang] || {}; bedarf[s.strang][zi] = Math.max(bedarf[s.strang][zi] || 1, z + 1);
     });
     // Dauerthemen (Daniel, 29.10.2026): je eines eine Zeile unter den Halten ihres Strangs
