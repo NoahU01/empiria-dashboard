@@ -467,11 +467,15 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var punkte = "";   // Halte zuletzt, damit keine Linie sie überdeckt
     // Namen dürfen so breit werden, wie links und rechts auf ihrer Linie Platz ist (Daniel, 29.10.2026) – erst dann umbrechen
     var mitten = {};
-    liste.forEach(function (s) { var y = Math.round(yVon(s)); (mitten[y] = mitten[y] || []).push((xStart(s) + xVon(s)) / 2); });
+    // Mitte des sichtbaren Zeitraums – bei Zeiträumen über einen Meilenstein nur der Teil danach (dort steht der Name)
+    function xSicht(s) { return ueberMs[s.id] ? xHalt(ueberMs[s.id].ms) + 34 : xStart(s); }
+    liste.forEach(function (s) { var y = Math.round(yVon(s)); (mitten[y] = mitten[y] || []).push((xSicht(s) + xVon(s)) / 2); });
     var xEnde = xHalt(letzte.id);
     liste.forEach(function (s) {
       var z = zustand(s), f = STR[s.strang].farbe, cx = xVon(s), cy = yVon(s), schwach = blass(s.id), sel = zustandUI.station === s.id;
       var xs = xStart(s), lang = cx - xs;   // Zeitraum: Kapsel vom Beginn bis zum Ende
+      // über einen Meilenstein hinweg (Daniel, 01.11.2026): der Teil vor dem Meilenstein hellgrau, der Teil danach normal mit Namen
+      var vorTeil = ueberMs[s.id] ? { x0: xs, x1: xHalt(ueberMs[s.id].ms) + 26 } : null;
       // alle Halte und Zeiträume gleich dick – die Abhängigkeit zeigt die gestrichelte Linie (Daniel, 30.10.2026)
       var r = z === "aktiv" ? 11 : z === "erreicht" ? 6 : 8;
       if (sel) r += 2;
@@ -480,6 +484,10 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       // erledigt wie in Sicht 1.1: klein und vollflächig in der Linienfarbe, mit weißem Rand
       var fuell = "#fff";
       if (z === "erreicht") { fuell = schwach ? hell(f, 0.8) : f; rand = ["#fff", 2]; }
+      if (vorTeil) {
+        punkte += '<rect x="' + (vorTeil.x0 - r) + '" y="' + (cy - r) + '" width="' + (vorTeil.x1 - vorTeil.x0 + r) + '" height="' + (2 * r) + '" rx="' + r + '" fill="#fff" stroke="#e8e5e0" stroke-width="3"/>';
+        xs = vorTeil.x1 + r; lang = cx - xs;   // ab hier der eigentliche Zeitraum – Name und Mitte nur rechts
+      }
       punkte += lang > 1
         ? '<rect x="' + (xs - r) + '" y="' + (cy - r) + '" width="' + (lang + 2 * r) + '" height="' + (2 * r) + '" rx="' + r + '" fill="' + fuell + '" stroke="' + rand[0] + '" stroke-width="' + rand[1] + '"/>'
         : '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + fuell + '" stroke="' + rand[0] + '" stroke-width="' + rand[1] + '"/>';
@@ -496,11 +504,12 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       // letzter Halt der Linie mit engem linken Nachbarn: der Name darf nach rechts in den freien Raum reichen (links weiter nur bis zur Hälfte)
       var nl = mitte - bn / 2, rechtsBuendig = false;
       if (re == null && li != null && links < 105 && rechts > links) { var bw = Math.min(210, links + rechts - 12); if (bw > bn) { bn = bw; nl = mitte - links + 4; rechtsBuendig = true; } }
+      if (vorTeil && nl < vorTeil.x1 + 6) { bn -= vorTeil.x1 + 6 - nl; nl = vorTeil.x1 + 6; }   // Name nie über dem Meilenstein-Balken
       if (!KOMPAKT[s.strang]) namen += '<button type="button" class="ub-name ub-name--' + z + (obenL ? " ub-name--oben" : "") + (schwach ? " ub-name--blass" : "") +
         '" data-station="' + s.id + '" style="left:' + nl + "px;" + (rechtsBuendig ? "text-align:left;" : "") + "top:" + (obenL ? cy - r - 8 : cy + r + 8) + "px;width:" + bn + 'px">' + trenn(s.titel) + "</button>";
       namen += '<button type="button" class="ub-treffer" data-station="' + s.id + '" aria-label="' + esc(s.titel) + '" style="left:' + (mitte - 16) + "px;top:" + (cy - 16) + "px" + (lang > 1 ? ";width:" + (lang + 32) + "px;margin-left:" + (-lang / 2) + "px" : "") + '"></button>';
     });
-    svg += halte + durch + punkte + "</svg>";
+    svg += durch + punkte + halte + "</svg>";   // Meilenstein-Balken ganz oben – überlagert alles (Daniel, 01.11.2026)
     var treffer = "";
     bahnen.forEach(function (st) {
       var ys = {}; liste.forEach(function (s) { if (s.strang === st.id) ys[yVon(s)] = true; });
