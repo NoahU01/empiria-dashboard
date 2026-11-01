@@ -151,20 +151,6 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var liste = D.schritte.filter(function (s) { return imBlick[s.meilenstein]; });
     // Ausschnitt eines Meilensteins mit ausdrücklicher Zuordnung (Daniel, 01.11.2026): Pakete ohne Zuordnung, die in diesem Zeitraum
     // laufen, aber erst später enden, stehen blass mit im Bild – sie laufen parallel, zahlen aber nicht auf den Meilenstein ein
-    // Gesamtplan (Daniel, 01.11.2026): ein Paket ohne Meilenstein, das vor dem Meilenstein beginnt und danach endet (Bahn- und
-    // Kfz-Produkt April–September 2027), steht zusätzlich im Block davor – ab seinem echten Beginn bis zum Meilenstein-Strich
-    if (m.gesamt) D.schritte.forEach(function (s) {
-      if (!s.frei || !s.vonEcht) return;
-      D.meilensteine.forEach(function (x) {
-        if (x.id === s.meilenstein || !x.bis || x.bis < s.vonEcht || x.i >= MS[s.meilenstein].i) return;
-        var id = s.id + "~" + x.id;
-        if (!S[id]) {
-          var k = S[id] = Object.assign({}, s, { id: id, meilenstein: x.id, braucht: [], einfluss: [], vorlauf: true, monat: x.bis, tag: 28 });
-          if (x.ab && s.vonEcht < x.ab) { k.von = x.ab; k.tagVon = 1; } else { k.von = s.vonEcht; k.tagVon = s.tagVonEcht; }
-        }
-        liste.push(S[id]);
-      });
-    });
     if (!m.gesamt && m.zugeordnet) D.schritte.forEach(function (s) {
       var von = s.vonEcht || s.von;   // echter Beginn – im eigenen Level ist er auf den Level-Beginn gekürzt
       if (imBlick[s.meilenstein] || !s.frei || !von || !s.monat || s.monat < (m.ab || "0000") || von > m.bis) return;
@@ -288,14 +274,6 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       while (belegt[k].some(function (x) { return x.z === z && x.a <= e && a <= x.e && (frei || x.a === a || x.e === e || a === e || x.a === x.e); })) z++;
       belegt[k].push({ z: z, a: a, e: e }); unter[s.id] = z;
       bedarf[s.strang] = bedarf[s.strang] || {}; bedarf[s.strang][zi] = Math.max(bedarf[s.strang][zi] || 1, z + 1);
-    });
-    // Vorlauf-Stück und Fortsetzung eines Pakets über den Meilenstein hinweg liegen in derselben Zeile (Besuch von Messen)
-    liste.forEach(function (c) {
-      if (!c.vorlauf) return;
-      var o = S[c.id.split("~")[0]];
-      if (!o || unter[o.id] == null || unter[o.id] >= unter[c.id]) return;
-      unter[o.id] = unter[c.id]; var zi = o.zeile || 0;
-      bedarf[o.strang] = bedarf[o.strang] || {}; bedarf[o.strang][zi] = Math.max(bedarf[o.strang][zi] || 1, unter[o.id] + 1);
     });
     // Dauerthemen (Daniel, 29.10.2026): je eines eine Zeile unter den Halten ihres Strangs
     var dauerZ = {};
@@ -502,7 +480,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       // letzter Halt der Linie mit engem linken Nachbarn: der Name darf nach rechts in den freien Raum reichen (links weiter nur bis zur Hälfte)
       var nl = mitte - bn / 2, rechtsBuendig = false;
       if (re == null && li != null && links < 105 && rechts > links) { var bw = Math.min(210, links + rechts - 12); if (bw > bn) { bn = bw; nl = mitte - links + 4; rechtsBuendig = true; } }
-      if (!KOMPAKT[s.strang] && !(s.vorlauf && m.gesamt)) namen += '<button type="button" class="ub-name ub-name--' + z + (obenL ? " ub-name--oben" : "") + (schwach ? " ub-name--blass" : "") +
+      if (!KOMPAKT[s.strang]) namen += '<button type="button" class="ub-name ub-name--' + z + (obenL ? " ub-name--oben" : "") + (schwach ? " ub-name--blass" : "") +
         '" data-station="' + s.id + '" style="left:' + nl + "px;" + (rechtsBuendig ? "text-align:left;" : "") + "top:" + (obenL ? cy - r - 8 : cy + r + 8) + "px;width:" + bn + 'px">' + trenn(s.titel) + "</button>";
       namen += '<button type="button" class="ub-treffer" data-station="' + s.id + '" aria-label="' + esc(s.titel) + '" style="left:' + (mitte - 16) + "px;top:" + (cy - 16) + "px" + (lang > 1 ? ";width:" + (lang + 32) + "px;margin-left:" + (-lang / 2) + "px" : "") + '"></button>';
     });
