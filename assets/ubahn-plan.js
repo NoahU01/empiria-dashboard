@@ -666,7 +666,8 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   function detail() {
     var alt = planEl.querySelector(".ub-pop"); if (alt) alt.remove();
     var id = zustandUI.station;
-    if (!id || !S[id]) return;   // Meilenstein gewählt: nur die Hervorhebung, kein Fenster
+    if (id && MS[id]) { msFenster(MS[id]); return; }
+    if (!id || !S[id]) return;
     var s = S[id], st = STR[s.strang], z = zustand(s);
     var punkt = planEl.querySelector('.ub-treffer[data-station="' + id + '"]'), flaeche = planEl.querySelector(".ub-flaeche");
     if (!punkt || !flaeche) return;
@@ -727,6 +728,22 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     });
     pop.style.left = best.x + "px";
     pop.style.top = best.y + "px";
+  }
+  // Meilenstein im Gesamtplan gewählt (Daniel, 01.11.2026): Fenster am Balken mit Name, Level und Erklärung –
+  // der Gesamtplan bleibt stehen, die Hervorhebung zeigt, was zum Meilenstein beiträgt
+  function msFenster(x) {
+    var balken = planEl.querySelector('.ub-ms-treffer[data-station="' + x.id + '"]'), flaeche = planEl.querySelector(".ub-flaeche");
+    if (!balken || !flaeche) return;
+    var pop = document.createElement("div");
+    pop.className = "ub-pop";
+    pop.innerHTML = '<p class="ub-pop-titel">' + esc(msName(x)) + '</p><p class="ub-pop-meta">' + (stufeErreicht(x.id) ? "erreicht" : "Level " + x.nr + " &middot; " + esc(x.termin)) + "</p>" +
+      ((x.ergebnis || []).length ? textHtml(x.ergebnis.join("\n")) : "<p>Die Erklärung folgt.</p>");
+    flaeche.appendChild(pop);
+    var bx = parseFloat(balken.style.left), by = parseFloat(balken.style.top), W = pop.offsetWidth;
+    // sichtbarer Ausschnitt (der Plan scrollt waagerecht): rechts vom Balken, wenn dort Platz ist, sonst links
+    var sc = planEl.querySelector(".ub-scroll"), sl = sc ? sc.scrollLeft / MASS : 0, rechtsSichtbar = sl + (sc ? sc.clientWidth / MASS : flaeche.offsetWidth);
+    pop.style.left = (bx + 40 + W <= rechtsSichtbar - 4 ? bx + 40 : Math.max(sl + 4, bx - 14 - W)) + "px";
+    pop.style.top = (by + 8) + "px";
   }
   // Klick irgendwo daneben löst die Auswahl
   document.addEventListener("click", function (e) {
