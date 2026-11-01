@@ -23,7 +23,7 @@
 .ub-name--aktiv{font-weight:600}
 .ub-name--blass{color:#c9c5bf}
 .ub-treffer{position:absolute;width:32px;height:32px;border:0;background:none;padding:0;cursor:pointer;border-radius:50%}
-.ub-halt-name{position:absolute;transform:translateX(-50%);white-space:nowrap;text-align:center}
+.ub-halt-name{position:absolute;transform:translateX(-50%);white-space:nowrap;text-align:center;border:0;background:none;padding:0;font:inherit;color:inherit;cursor:pointer}
 .ub-halt-name b{display:block;font-size:.74rem;font-weight:600}
 .ub-halt-name small{display:block;font-size:.74rem;color:var(--grey-50,#8a8a8a)}
 .ub-halt-name--ende{transform:translateY(-50%);text-align:left;white-space:normal;width:130px}
@@ -123,3 +123,4 @@ html.ub-weit-offen{overflow:hidden}
 .ub-dash .ub-kompakt-knopf{left:21px}   /* an der unteren rechten Ecke des Kürzels – gehört sichtbar zur Stoßrichtung */
 .ub-name--klein{font-size:.66rem}
 .ub-name--eng{hyphens:auto;-webkit-hyphens:auto;hyphenate-limit-chars:10 5 5;-webkit-hyphenate-limit-before:5;-webkit-hyphenate-limit-after:5}
+.ub-ms-treffer{position:absolute;width:26px;border:0;padding:0;background:transparent;cursor:pointer;z-index:1}

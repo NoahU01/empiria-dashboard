@@ -159,7 +159,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
         // Vorgänger bleiben: das Paket hängt weiter an seiner Vorarbeit und beginnt nicht eigenständig (kein Startstrich)
         var k = S[id] = Object.assign({}, s, { id: id, meilenstein: m.id, braucht: (s.braucht || []).slice(), einfluss: (s.einfluss || []).slice(), parallel: true, von: von, tagVon: s.vonEcht ? s.tagVonEcht : s.tagVon });
         if (m.ab && k.von < m.ab) { k.von = m.ab; k.tagVon = 1; }
-        if (k.monat > m.bis) { k.monat = m.bis; k.tag = 28; }
+        if (k.monat > m.bis) { k.monat = m.bis; k.tag = 28; k.weiter = true; }   // läuft über den Meilenstein hinaus
       }
       liste.push(S[id]);
     });
@@ -439,9 +439,12 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     }
     stufenImBlick.forEach(function (x) {
       var hx = xHalt(x.id), letzter = x.id === letzte.id;
-      halte += balken(hx, letzter, false);
-      namen += '<div class="ub-halt-name' + (letzter ? " ub-halt-name--ende" : "") + '" style="left:' + (letzter ? hx + 36 : hx + 13) + "px;top:" + (letzter ? (obenAlle + untenAlle) / 2 : 4) + 'px"><b>' +
-        esc(msName(x)) + "</b><small>" + (stufeErreicht(x.id) ? "erreicht" : "Level " + x.nr + " &middot; " + esc(x.termin)) + "</small></div>";
+      // Meilenstein anklickbar wie ein Handlungsfeld (Daniel, 01.11.2026): kräftig bleibt, was zu ihm beiträgt, samt Vorarbeit
+      var msSel = zustandUI.station === x.id;
+      halte += balken(hx, letzter || msSel, false);
+      namen += '<button type="button" class="ub-ms-treffer" data-station="' + x.id + '" aria-label="' + esc(msName(x)) + '" style="left:' + hx + "px;top:" + obenAlle + "px;height:" + (untenAlle - obenAlle) + 'px"></button>';
+      namen += '<button type="button" data-station="' + x.id + '" class="ub-halt-name' + (letzter ? " ub-halt-name--ende" : "") + '" style="left:' + (letzter ? hx + 36 : hx + 13) + "px;top:" + (letzter ? (obenAlle + untenAlle) / 2 : 4) + 'px"><b>' +
+        esc(msName(x)) + "</b><small>" + (stufeErreicht(x.id) ? "erreicht" : "Level " + x.nr + " &middot; " + esc(x.termin)) + "</small></button>";
     });
     if (vorStufe) {
       halte += balken(8, false, true);
@@ -469,10 +472,13 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var mitten = {};
     // Mitte des sichtbaren Zeitraums – bei Zeiträumen über einen Meilenstein nur der Teil danach (dort steht der Name)
     function xSicht(s) { return ueberMs[s.id] ? xHalt(ueberMs[s.id].ms) + 34 : xStart(s); }
-    liste.forEach(function (s) { var y = Math.round(yVon(s)); (mitten[y] = mitten[y] || []).push((xSicht(s) + xVon(s)) / 2); });
+    function xBis(s) { return s.weiter ? xHalt(s.meilenstein) + 13 : xVon(s); }   // läuft weiter: Ende unter dem Meilenstein-Balken
+    liste.forEach(function (s) { var y = Math.round(yVon(s)); (mitten[y] = mitten[y] || []).push((xSicht(s) + xBis(s)) / 2); });
     var xEnde = xHalt(letzte.id);
     liste.forEach(function (s) {
       var z = zustand(s), f = STR[s.strang].farbe, cx = xVon(s), cy = yVon(s), schwach = blass(s.id), sel = zustandUI.station === s.id;
+      // läuft über den Meilenstein hinaus (Daniel, 01.11.2026): kein rundes Ende vor dem Balken – die Pill läuft unter ihn hinein
+      if (s.weiter) cx = xHalt(s.meilenstein) + 13;
       var xs = xStart(s), lang = cx - xs;   // Zeitraum: Kapsel vom Beginn bis zum Ende
       // über einen Meilenstein hinweg (Daniel, 01.11.2026): der Teil vor dem Meilenstein hellgrau, der Teil danach normal mit Namen
       var vorTeil = ueberMs[s.id] ? { x0: xs, x1: xHalt(ueberMs[s.id].ms) + 26 } : null;
@@ -484,11 +490,11 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       // erledigt wie in Sicht 1.1: klein und vollflächig in der Linienfarbe, mit weißem Rand
       var fuell = "#fff";
       if (z === "erreicht") { fuell = schwach ? hell(f, 0.8) : f; rand = ["#fff", 2]; }
-      // EIN Balken (Daniel, 01.11.2026): eine Rundung am Anfang, eine am Ende; der Rand wechselt unter dem Meilenstein-Balken
-      // von hellgrau auf die normale Farbe – Name und Mitte nur rechts vom Meilenstein
+      // EIN Balken in einer Farbe (Daniel, 01.11.2026): eine Rundung am Anfang, eine am Ende, quer unter dem Meilenstein-Balken
+      // hindurch – der Name steht rechts vom Meilenstein
       if (vorTeil) {
         var gid = "ubv-" + String(s.id).replace(/[^\w-]/g, "_"), xa0 = vorTeil.x0 - r, xe0 = cx + r, wech = Math.max(0, Math.min(1, (vorTeil.x1 - 13 - xa0) / (xe0 - xa0)));
-        punkte += '<defs><linearGradient id="' + gid + '" gradientUnits="userSpaceOnUse" x1="' + xa0 + '" y1="0" x2="' + xe0 + '" y2="0"><stop offset="' + wech + '" stop-color="#e8e5e0"/><stop offset="' + wech + '" stop-color="' + rand[0] + '"/></linearGradient></defs>' +
+        punkte += '<defs><linearGradient id="' + gid + '" gradientUnits="userSpaceOnUse" x1="' + xa0 + '" y1="0" x2="' + xe0 + '" y2="0"><stop offset="0" stop-color="' + rand[0] + '"/><stop offset="1" stop-color="' + rand[0] + '"/></linearGradient></defs>' +
           '<rect x="' + xa0 + '" y="' + (cy - r) + '" width="' + (xe0 - xa0) + '" height="' + (2 * r) + '" rx="' + r + '" fill="' + fuell + '" stroke="url(#' + gid + ')" stroke-width="' + rand[1] + '"/>';
         xs = vorTeil.x1 + r; lang = cx - xs;
       }
@@ -660,7 +666,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   function detail() {
     var alt = planEl.querySelector(".ub-pop"); if (alt) alt.remove();
     var id = zustandUI.station;
-    if (!id) return;
+    if (!id || !S[id]) return;   // Meilenstein gewählt: nur die Hervorhebung, kein Fenster
     var s = S[id], st = STR[s.strang], z = zustand(s);
     var punkt = planEl.querySelector('.ub-treffer[data-station="' + id + '"]'), flaeche = planEl.querySelector(".ub-flaeche");
     if (!punkt || !flaeche) return;
