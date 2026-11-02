@@ -342,7 +342,10 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       while (reiheEnde[r] != null && reiheEnde[r] + 14 > t._x - 9) r++;
       reiheEnde[r] = t._x - 9 + breit; t._reihe = r; terminReihen = Math.max(terminReihen, r + 1);
     });
-    var linieY = {}, y0 = (nr > 1 ? 70 : 16) + (monatsBloecke.length ? 44 : 0) + (terminReihen ? 30 + (terminReihen - 1) * 24 : 0);   // oben eine Zeile für die Namen der Stufenhalte (nur im Gesamtplan)
+    // Platz für die Marke „Heute“ unter den Monatsnamen – Termine und Linien rücken dafür etwas nach unten (Daniel, 02.11.2026)
+    var HEUTE_MO = new Date().getFullYear() + "-" + ("0" + (new Date().getMonth() + 1)).slice(-2);
+    var HZ = monatsBloecke.some(function (b) { return b.monat === HEUTE_MO; }) ? 12 : 0;
+    var linieY = {}, y0 = (nr > 1 ? 70 : 16) + (monatsBloecke.length ? 44 : 0) + (terminReihen ? 30 + (terminReihen - 1) * 24 : 0) + HZ;   // oben eine Zeile für die Namen der Stufenhalte (nur im Gesamtplan)
     bahnen.forEach(function (st) {
       var k = KOMPAKT[st.id], ext = (st.unter || []).length ? 28 : 0, ue = k ? 22 : UEBER, un = k ? 30 : UNTER;
       linieY[st.id] = y0 + ue + ext; y0 += ext + ue + tiefsteZeile[st.id] * zh(st.id) + (tiefsteZeile[st.id] && !k ? un + 56 : un);
@@ -366,7 +369,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       svg += '<line x1="' + xa + '" y1="' + (yo + 26) + '" x2="' + xa + '" y2="' + hoehe + '" stroke="#ebe7e1" stroke-width="1"/>';
     });
     termineImPlan.forEach(function (t) {
-      var tx = t._x, ty = (nr > 1 ? 70 : 8) + 44 + t._reihe * 24;
+      var tx = t._x, ty = (nr > 1 ? 70 : 8) + 44 + HZ + t._reihe * 24;
       svg += '<rect x="' + (tx - 5) + '" y="' + (ty - 5) + '" width="10" height="10" fill="#111" transform="rotate(45 ' + tx + " " + ty + ')"/>';
       monatsNamen += '<button type="button" class="ub-termin" data-termin="' + esc(t.id) + '" style="left:' + (tx - 9) + "px;top:" + (ty - 11) + 'px"><span>' + esc(t.titel) + " &middot; " + esc(t.wann.replace(/\.20\d\d$/, ".")) + "</span></button>";
     });
@@ -376,7 +379,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       var b = monatsBloecke.filter(function (x) { return x.monat === mo; })[0];
       if (!b) return;
       var xa = START + (bandStart[b.ms] + b.ab) * ABST + bandNr[b.ms] * HALT, bw = b.breite * ABST;
-      var tage = new Date(h.getFullYear(), h.getMonth() + 1, 0).getDate(), hx = xa + bw * (h.getDate() - 0.5) / tage, yo = (nr > 1 ? 70 : 8) + 22;
+      var tage = new Date(h.getFullYear(), h.getMonth() + 1, 0).getDate(), hx = xa + bw * (h.getDate() - 0.5) / tage, yo = (nr > 1 ? 70 : 8) + 32;
       svg += '<line x1="' + hx + '" y1="' + (yo + 8) + '" x2="' + hx + '" y2="' + hoehe + '" stroke="#111" stroke-width="1.5" stroke-dasharray="4 4"/>';
       monatsNamen += '<div class="ub-heute" style="left:' + hx + "px;top:" + yo + 'px">Heute</div>';
     })();
