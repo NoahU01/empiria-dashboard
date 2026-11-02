@@ -149,7 +149,8 @@
   }
   // Gremientermine des Kunden (Vorstand, Aufsichtsrat, Klausur, Führungskreis, AL-Runde …) stehen im Plan als Raute
   // unter den Monaten – wie in der Kundenansicht der SV Akademie und des VVDE –, nicht als Halt auf der Terminlinie (Daniel, 02.11.2026)
-  var GREMIUM = /vorstand|aufsichtsrat|\bAR\b|gremi|klausur|mitgliederversammlung|führungskreis|\bAL-Runde/i;
+  // Der Titel beginnt mit dem Gremium – „Orga Führungskreis“ oder „Vorabstimmung … Klausur“ sind unsere Vorbereitung, kein Gremientermin
+  var GREMIUM = /^(sitzung\b|strategieklausur|klausur|führungskreis|al-runde|vorstand|aufsichtsrat|mitgliederversammlung|gremi)/i;
   function gremium(e) { return (e.art === "Termin" || e.art === "Workshop") && GREMIUM.test(e.titel || ""); }
   function gremienTermine(ere) {
     var aus = [];
