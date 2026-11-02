@@ -18,6 +18,15 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   function msMonat(m) { var t = /(\d{2})\.(\d{2})\.(\d{4})/.exec((m && m.termin) || ""); return t ? t[3] + "-" + t[2] : null; }
   function naechsterMonat(mo) { var t = mo.split("-"), mm = +t[1] + 1, jj = +t[0]; if (mm > 12) { mm = 1; jj++; } return jj + "-" + ("0" + mm).slice(-2); }
   D.meilensteine.forEach(function (m, i) { m.bis = msMonat(m); m.ab = i && msMonat(D.meilensteine[i - 1]) ? naechsterMonat(msMonat(D.meilensteine[i - 1])) : null; });
+  // Gremientermine öffnen die Zeitachse ihres Levels (Daniel, 02.11.2026): auch Monate ohne Pakete, in denen ein Termin liegt,
+  // stehen im Plan – so bleiben vergangene Termine sichtbar (z. B. Führungskreis im Juli)
+  (D.termine || []).forEach(function (t) {
+    if (t.schritt || !t.monat) return;
+    var m = D.meilensteine.filter(function (x) { return x.bis && x.bis >= t.monat; })[0] || D.meilensteine[D.meilensteine.length - 1];
+    if (!m) return;
+    if (!m.terminAb || t.monat < m.terminAb) m.terminAb = t.monat;
+    if (!m.terminBis || t.monat > m.terminBis) m.terminBis = t.monat;
+  });
   D.schritte.forEach(function (s) {
     var m = MS[s.meilenstein];
     if (m && m.ab && s.von && s.von < m.ab && (!s.monat || s.monat >= m.ab)) { s.vonEcht = s.von; s.tagVonEcht = s.tagVon; s.von = m.ab; s.tagVon = 1; }
@@ -213,6 +222,8 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       // wie Mai bis September seine wirkliche Länge zeigt
       if (monate.length) {
         var voll = [], m0 = x.ab && x.ab < monate[0] ? x.ab : monate[0], m1 = x.bis && x.bis > monate[monate.length - 1] ? x.bis : monate[monate.length - 1];
+        if (x.terminAb && x.terminAb < m0) m0 = x.terminAb;
+        if (x.terminBis && x.terminBis > m1) m1 = x.terminBis;
         while (m0 <= m1 && voll.length < 120) { voll.push(m0); var tt = m0.split("-"), mm = +tt[1] + 1, jj = +tt[0]; if (mm > 12) { mm = 1; jj++; } m0 = jj + "-" + ("0" + mm).slice(-2); }
         voll.forEach(function (mo) { if (!breite[mo]) breite[mo] = 1; });   // jeder Monat mindestens eine Spalte – gleichmäßige Monatslinien bis zum Meilenstein
         monate = voll;
@@ -320,7 +331,18 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     D.dauer.forEach(function (d) { if (dauerZ[d.id] != null && zOff[d.strang]) unter[d.id] = (zOff[d.strang][d.zeile || 0] || 0) + dauerZ[d.id]; });
     // Termine (Klausur, Workshops): eigene Zeile unter den Monaten; Termine, die zugleich ein Schritt sind, stehen dort als Halt
     var termineImPlan = (D.termine || []).filter(function (t) { return !t.schritt && monatsBloecke.some(function (b) { return b.monat === t.monat; }); });
-    var linieY = {}, y0 = (nr > 1 ? 70 : 16) + (monatsBloecke.length ? 44 : 0) + (termineImPlan.length ? 30 : 0);   // oben eine Zeile für die Namen der Stufenhalte (nur im Gesamtplan)
+    // Lage der Termine vorab: liegen sie eng (z. B. AL-Runde und Führungskreis im selben Monat), weicht der Name in eine
+    // weitere Zeile aus, statt den Nachbarn zu überdecken (Daniel, 02.11.2026)
+    var terminReihen = 0, reiheEnde = [];
+    termineImPlan.sort(function (a, b) { return a.monat < b.monat ? -1 : a.monat > b.monat ? 1 : (a.tag || 15) - (b.tag || 15); }).forEach(function (t) {
+      var b = monatsBloecke.filter(function (x) { return x.monat === t.monat; })[0];
+      var xa = START + (bandStart[b.ms] + b.ab) * ABST + bandNr[b.ms] * HALT, bw = b.breite * ABST;
+      t._x = xa + Math.max(10, Math.min(bw - 10, bw * ((t.tag || 15) - 0.5) / 31));
+      var breit = 22 + (String(t.titel).length + String(t.wann).replace(/\.20\d\d$/, ".").length + 3) * 6.6, r = 0;
+      while (reiheEnde[r] != null && reiheEnde[r] + 14 > t._x - 9) r++;
+      reiheEnde[r] = t._x - 9 + breit; t._reihe = r; terminReihen = Math.max(terminReihen, r + 1);
+    });
+    var linieY = {}, y0 = (nr > 1 ? 70 : 16) + (monatsBloecke.length ? 44 : 0) + (terminReihen ? 30 + (terminReihen - 1) * 24 : 0);   // oben eine Zeile für die Namen der Stufenhalte (nur im Gesamtplan)
     bahnen.forEach(function (st) {
       var k = KOMPAKT[st.id], ext = (st.unter || []).length ? 28 : 0, ue = k ? 22 : UEBER, un = k ? 30 : UNTER;
       linieY[st.id] = y0 + ue + ext; y0 += ext + ue + tiefsteZeile[st.id] * zh(st.id) + (tiefsteZeile[st.id] && !k ? un + 56 : un);
@@ -344,9 +366,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       svg += '<line x1="' + xa + '" y1="' + (yo + 26) + '" x2="' + xa + '" y2="' + hoehe + '" stroke="#ebe7e1" stroke-width="1"/>';
     });
     termineImPlan.forEach(function (t) {
-      var b = monatsBloecke.filter(function (x) { return x.monat === t.monat; })[0];
-      var xa = START + (bandStart[b.ms] + b.ab) * ABST + bandNr[b.ms] * HALT, bw = b.breite * ABST;
-      var tx = xa + Math.max(10, Math.min(bw - 10, bw * ((t.tag || 15) - 0.5) / 31)), ty = (nr > 1 ? 70 : 8) + 44;
+      var tx = t._x, ty = (nr > 1 ? 70 : 8) + 44 + t._reihe * 24;
       svg += '<rect x="' + (tx - 5) + '" y="' + (ty - 5) + '" width="10" height="10" fill="#111" transform="rotate(45 ' + tx + " " + ty + ')"/>';
       monatsNamen += '<button type="button" class="ub-termin" data-termin="' + esc(t.id) + '" style="left:' + (tx - 9) + "px;top:" + (ty - 11) + 'px"><span>' + esc(t.titel) + " &middot; " + esc(t.wann.replace(/\.20\d\d$/, ".")) + "</span></button>";
     });
