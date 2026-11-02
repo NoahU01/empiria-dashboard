@@ -162,7 +162,7 @@
       // mehrtägig („Führungskreis SH, Tag 1“ und „Tag 2“): eine Raute über beide Tage
       if (vor && vor._basis === basis && (d - vor._d) < 3 * 864e5) { vor.wann = vor.wann.slice(0, 3) + "/" + wann; vor._d = d; return; }
       aus.push({ id: "t" + e.id, titel: basis, monat: d.getFullYear() + "-" + zwei(d.getMonth() + 1), tag: d.getDate(), wann: spanne ? spanne[1] : wann,
-        zusatz: e.format === "vor Ort" ? "vor Ort" + (e.ort ? ": " + e.ort : "") : e.format || "", info: "", schritt: null, _basis: basis, _d: d });
+        zusatz: e.format === "vor Ort" ? "vor Ort" + (e.ort ? ": " + e.ort : "") : e.format === "nachrichtlich" ? "" : e.format || "", info: "", schritt: null, _basis: basis, _d: d });
     });
     return aus.map(function (x) { delete x._basis; delete x._d; return x; });
   }
