@@ -124,3 +124,5 @@ html.ub-weit-offen{overflow:hidden}
 .ub-name--klein{font-size:.66rem}
 .ub-name--eng{hyphens:auto;-webkit-hyphens:auto;hyphenate-limit-chars:10 5 5;-webkit-hyphenate-limit-before:5;-webkit-hyphenate-limit-after:5}
 .ub-ms-treffer{position:absolute;width:26px;border:0;padding:0;background:transparent;cursor:pointer;z-index:1}
+.ub-heute{position:absolute;transform:translate(-50%,-50%);padding:2px 7px;border-radius:999px;background:#111;color:#fff;font:600 .62rem/1.2 Poppins,sans-serif;letter-spacing:.04em;white-space:nowrap;pointer-events:none;z-index:3}   /* Marke über der Heute-Linie */
+.ub-termin span{background:#fff;padding:1px 3px;margin-left:-3px;border-radius:3px}   /* Name deckt die Heute-Linie ab */

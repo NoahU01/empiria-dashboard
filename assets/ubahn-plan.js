@@ -370,6 +370,16 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       svg += '<rect x="' + (tx - 5) + '" y="' + (ty - 5) + '" width="10" height="10" fill="#111" transform="rotate(45 ' + tx + " " + ty + ')"/>';
       monatsNamen += '<button type="button" class="ub-termin" data-termin="' + esc(t.id) + '" style="left:' + (tx - 9) + "px;top:" + (ty - 11) + 'px"><span>' + esc(t.titel) + " &middot; " + esc(t.wann.replace(/\.20\d\d$/, ".")) + "</span></button>";
     });
+    // Heute-Linie (Daniel, 02.11.2026): senkrecht durch den Plan, oben die Marke „Heute“ – sofort sichtbar, wo das Projekt steht
+    (function () {
+      var h = new Date(), mo = h.getFullYear() + "-" + ("0" + (h.getMonth() + 1)).slice(-2);
+      var b = monatsBloecke.filter(function (x) { return x.monat === mo; })[0];
+      if (!b) return;
+      var xa = START + (bandStart[b.ms] + b.ab) * ABST + bandNr[b.ms] * HALT, bw = b.breite * ABST;
+      var tage = new Date(h.getFullYear(), h.getMonth() + 1, 0).getDate(), hx = xa + bw * (h.getDate() - 0.5) / tage, yo = (nr > 1 ? 70 : 8) + 22;
+      svg += '<line x1="' + hx + '" y1="' + (yo + 8) + '" x2="' + hx + '" y2="' + hoehe + '" stroke="#111" stroke-width="1.5" stroke-dasharray="4 4"/>';
+      monatsNamen += '<div class="ub-heute" style="left:' + hx + "px;top:" + yo + 'px">Heute</div>';
+    })();
     var duenn = "", dick = "", quer = "", halte = "", namen = "", durch = "";
     function strecke(pkte, farbe, gegangen, schwach) {
       // gleiche Dicke: gefahren in Linienfarbe, noch nicht gefahren hellgrau (blass: noch heller)
