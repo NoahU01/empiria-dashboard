@@ -307,7 +307,8 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     });
     // Stoßrichtungen mit Strängen stehen immer im Plan, auch wenn noch nichts darin geplant ist (Daniel, 29.10.2026):
     // jeder Strang ist eine eigene, beschriftete Linie; leere Linien bleiben hellgrau
-    var bahnen = D.straenge.filter(function (st) { return (st.unter || []).length || liste.some(function (s) { return s.strang === st.id; }); });
+    // OPT.alleStraenge (projekte.projektseite.alle_straenge): auch Stoßrichtungen ohne Pakete stehen im Plan – das Gerüst ist sichtbar (Daniel, 02.11.2026)
+    var bahnen = D.straenge.filter(function (st) { return OPT.alleStraenge || (st.unter || []).length || liste.some(function (s) { return s.strang === st.id; }); });
     // je Strang so viele Zeilen, wie er braucht (z. B. Abzweigung Kfz-Produkt neben Weiterentwicklung) – die nächsten Stränge rücken nach unten
     bahnen.forEach(function (st) {
       var b = bedarf[st.id] || {}, n = Math.max((st.unter || []).length, Object.keys(b).length ? 1 + Math.max.apply(null, Object.keys(b).map(Number)) : 1), off = 0;
