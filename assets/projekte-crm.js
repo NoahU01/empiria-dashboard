@@ -127,7 +127,7 @@
     '<div data-ub-stufen></div><div data-ub-plan></div></div>';
   function ubKurz(t) {
     if (/projektmanagement/i.test(t)) return "PM";
-    var w = t.replace(/&/g, " ").split(/\s+/).filter(Boolean), rom = { I: "1", II: "2", III: "3", IV: "4", V: "5" };
+    var w = t.replace(/&|\bund\b/g, " ").split(/\s+/).filter(Boolean), rom = { I: "1", II: "2", III: "3", IV: "4", V: "5" };
     if (w.length > 1 && rom[w[w.length - 1]]) return w[0][0].toUpperCase() + rom[w[w.length - 1]];
     if (w.length > 1) return (w[0][0] + w[1][0]).toUpperCase();
     return w[0].slice(0, 2).toUpperCase();
@@ -146,6 +146,25 @@
     if (tn.length) return "Austausch " + tn.slice(0, 2).join(", ");
     var kern = t.indexOf(" / ") > -1 ? t.split(" / ").pop() : t.split(" – ")[0];   // „M&S / Mapfre Re“ → Mapfre Re
     return kern.split(/\s+/).slice(0, 3).join(" ");
+  }
+  // Gremientermine des Kunden (Vorstand, Aufsichtsrat, Klausur, Führungskreis, AL-Runde …) stehen im Plan als Raute
+  // unter den Monaten – wie in der Kundenansicht der SV Akademie und des VVDE –, nicht als Halt auf der Terminlinie (Daniel, 02.11.2026)
+  var GREMIUM = /vorstand|aufsichtsrat|\bAR\b|gremi|klausur|mitgliederversammlung|führungskreis|\bAL-Runde/i;
+  function gremium(e) { return (e.art === "Termin" || e.art === "Workshop") && GREMIUM.test(e.titel || ""); }
+  function gremienTermine(ere) {
+    var aus = [];
+    ere.filter(gremium).sort(function (a, b) { return new Date(a.datum) - new Date(b.datum); }).forEach(function (e) {
+      var d = new Date(e.datum), zwei = function (n) { return ("0" + n).slice(-2); };
+      var wann = zwei(d.getDate()) + "." + zwei(d.getMonth() + 1) + "." + d.getFullYear();
+      var spanne = /\((\d{2}\.\/\d{2}\.\d{2}\.\d{4})\)/.exec(e.titel || "");   // „Strategieklausur (08./09.12.2026)“
+      var titel = String(e.titel || "").replace(/\s*\(.*?\)\s*/g, " ").trim(), basis = titel.replace(/,?\s*Tag \d+.*$/i, "").trim();
+      var vor = aus[aus.length - 1];
+      // mehrtägig („Führungskreis SH, Tag 1“ und „Tag 2“): eine Raute über beide Tage
+      if (vor && vor._basis === basis && (d - vor._d) < 3 * 864e5) { vor.wann = vor.wann.slice(0, 3) + "/" + wann; vor._d = d; return; }
+      aus.push({ id: "t" + e.id, titel: basis, monat: d.getFullYear() + "-" + zwei(d.getMonth() + 1), tag: d.getDate(), wann: spanne ? spanne[1] : wann,
+        zusatz: e.format === "vor Ort" ? "vor Ort" + (e.ort ? ": " + e.ort : "") : e.format || "", info: "", schritt: null, _basis: basis, _d: d });
+    });
+    return aus.map(function (x) { delete x._basis; delete x._d; return x; });
   }
   function ohneText(n) { return n === 1 ? "1 weitere Aufgabe ohne Termin" : n + " weitere Aufgaben ohne Termin"; }
   function ubahnDaten(straenge, auf, opt) {
@@ -185,7 +204,7 @@
     var imStrang = {}; blaetter.forEach(function (s) { imStrang[s.id] = true; });
     var pm = opt.termine ? blaetter.filter(function (s) { return /projektmanagement/i.test(s.titel || ""); })[0] : null;
     if (opt.termine) auf = auf.filter(function (a) { return a.strang_id && imStrang[a.strang_id] && !(pm && a.strang_id === pm.id) || a.art === "projektgate"; });
-    if (opt.termine && !pm && opt.termine.some(function (e) { return new Date(e.datum).getTime() >= Date.now() - 14 * 864e5 && (e.art === "Termin" || e.art === "Workshop"); }))   // eigene Terminlinie nur, wenn es Termine im Blick gibt
+    if (opt.termine && !pm && opt.termine.some(function (e) { return new Date(e.datum).getTime() >= Date.now() - 14 * 864e5 && (e.art === "Termin" || e.art === "Workshop") && !gremium(e); }))   // eigene Terminlinie nur, wenn es Termine im Blick gibt
       { pm = { id: -1, titel: "Termine", erklaerung: "", verantwortlich: [] }; blaetter.push(pm); imStrang[-1] = true; }
     // Aufgaben ohne (bekannten) Strang laufen auf einer eigenen Linie „Weitere Aufgaben“
     var ohne = auf.filter(function (a) { return a.art !== "projektgate" && !(a.strang_id && imStrang[a.strang_id]); });
@@ -241,7 +260,7 @@
     var termHalte = [];
     if (pm && opt.termine) {
       var grenze = Date.now() - 14 * 864e5, jetzt = Date.now();
-      var tl = opt.termine.filter(function (e) { return new Date(e.datum).getTime() >= grenze && (e.art === "Termin" || e.art === "Workshop"); }).sort(function (a, b) { return new Date(a.datum) - new Date(b.datum); });
+      var tl = opt.termine.filter(function (e) { return new Date(e.datum).getTime() >= grenze && (e.art === "Termin" || e.art === "Workshop") && !gremium(e); }).sort(function (a, b) { return new Date(a.datum) - new Date(b.datum); });
       function nachr(e) { return e.format === "nachrichtlich"; }   // nur zur Information, ohne unsere Teilnahme – nie „in Arbeit“
       var naechster = tl.filter(function (e) { return !nachr(e) && new Date(e.datum).getTime() >= jetzt; })[0];
       tl.forEach(function (e, i) {
@@ -317,6 +336,7 @@
         x.monat = im[0] || jetztMo;
       });
     }
+    if (opt.termine) erg.termine = gremienTermine(opt.termine);
     // Der letzte Termin eines Levels gehört zu dessen Weg – sonst stünde die Terminlinie im Level-Ausschnitt blass
     erg.meilensteine.forEach(function (m) {
       var im = termHalte.filter(function (t) { return t.meilenstein === m.id; });
