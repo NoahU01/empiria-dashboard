@@ -254,6 +254,9 @@
     }
     function fliesstEin(a, v) {
       var b = liste.filter(function (x) { return String(x.id) === String(v); })[0];
+      // Stränge einer Stoßrichtung laufen getrennt durch: Verbindungen zwischen ihnen immer gestrichelt (Daniel, 03.11.2026),
+      // z. B. MAK-Planung (Struktur und Organisation) → LEOS 2.0 (Prozesse und Digitalisierung)
+      if (b && opt.termine && b.strang_id === a.strang_id && (b._strang || b.strang_id) !== (a._strang || a.strang_id)) return true;
       if (b && b.strang_id === a.strang_id && opt.termine && a.beginnt_am && b.beginnt_am && level(a) !== level(b)) return true;   // über einen Meilenstein hinweg: gestrichelt (z. B. Klärung Tragfähigkeit → Detaillierung)
       return !!(b && b.strang_id === a.strang_id && a.beginnt_am && b.beginnt_am && b.faellig_am && a.beginnt_am < b.faellig_am);   // nur ein Zeitraum fließt ein
     }
