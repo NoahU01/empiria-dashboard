@@ -149,8 +149,9 @@
   }
   // Gremientermine des Kunden (Vorstand, Aufsichtsrat, Klausur, Führungskreis, AL-Runde …) stehen im Plan als Raute
   // unter den Monaten – wie in der Kundenansicht der SV Akademie und des VVDE –, nicht als Halt auf der Terminlinie (Daniel, 02.11.2026)
+  // AL/GL-Runde und Abteilungsbesprechung der SV Akademie gehören dazu (Daniel, 03.11.2026); die Abteilungsbesprechung bleibt zusätzlich als Paket in ihrer Stoßrichtung
   // Der Titel beginnt mit dem Gremium – „Orga Führungskreis“ oder „Vorabstimmung … Klausur“ sind unsere Vorbereitung, kein Gremientermin
-  var GREMIUM = /^(sitzung\b|strategieklausur|klausur|führungskreis|al-runde|vorstand|aufsichtsrat|mitgliederversammlung|gremi)/i;
+  var GREMIUM = /^(sitzung\b|strategieklausur|klausur|führungskreis|al-runde|al\/gl-runde|abteilungsbesprechung|vorstand|aufsichtsrat|mitgliederversammlung|gremi)/i;
   function gremium(e) { return (e.art === "Termin" || e.art === "Workshop") && GREMIUM.test(e.titel || ""); }
   function gremienTermine(ere) {
     var aus = [];
@@ -158,7 +159,7 @@
       var d = new Date(e.datum), zwei = function (n) { return ("0" + n).slice(-2); };
       var wann = zwei(d.getDate()) + "." + zwei(d.getMonth() + 1) + "." + d.getFullYear();
       var spanne = /\((\d{2}\.\/\d{2}\.\d{2}\.\d{4})\)/.exec(e.titel || "");   // „Strategieklausur (08./09.12.2026)“
-      var titel = String(e.titel || "").replace(/\s*\(.*?\)\s*/g, " ").trim(), basis = titel.replace(/,?\s*Tag \d+.*$/i, "").trim();
+      var titel = String(e.titel || "").replace(/\s*\(.*?\)\s*/g, " ").replace(/\s+der\s+SV[\s-]Akademie\b/i, "").trim(), basis = titel.replace(/,?\s*Tag \d+.*$/i, "").trim();
       var vor = aus[aus.length - 1];
       // mehrtägig („Führungskreis SH, Tag 1“ und „Tag 2“): eine Raute über beide Tage
       if (vor && vor._basis === basis && (d - vor._d) < 3 * 864e5) { vor.wann = vor.wann.slice(0, 3) + "/" + wann; vor._d = d; return; }
