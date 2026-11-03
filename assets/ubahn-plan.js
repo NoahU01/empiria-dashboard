@@ -706,6 +706,10 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       (text ? textHtml(text) : "<p>Die Beschreibung folgt.</p>");
     sp.appendChild(pop);
     pop.style.top = (parseFloat(knopf.style.top) - 6) + "px";
+    // langes Fenster (z. B. Beschreibung einer Stoßrichtung): nach oben ausweichen, notfalls im Fenster scrollen – nie abgeschnitten (Daniel, 03.11.2026)
+    (function () { var H = pop.offsetParent ? pop.offsetParent.clientHeight : 0, t = parseFloat(pop.style.top) || 0;
+      if (H && t + pop.offsetHeight > H - 8) { pop.style.top = Math.max(4, H - 8 - pop.offsetHeight) + "px";
+        if (pop.offsetHeight > H - 12) { pop.style.top = "4px"; pop.style.maxHeight = (H - 12) + "px"; pop.style.overflowY = "auto"; } } })();
   }
 
   /* ---------- Fenster an der Station: knapp, eine Schrift, zwei Größen, zwei Farben ---------- */
