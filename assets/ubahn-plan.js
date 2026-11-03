@@ -167,7 +167,8 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     // laufen, aber erst später enden, stehen blass mit im Bild – sie laufen parallel, zahlen aber nicht auf den Meilenstein ein
     if (!m.gesamt && m.zugeordnet) D.schritte.forEach(function (s) {
       var von = s.vonEcht || s.von;   // echter Beginn – im eigenen Level ist er auf den Level-Beginn gekürzt
-      if (imBlick[s.meilenstein] || !s.frei || !von || !s.monat || s.monat < (m.ab || "0000") || von > m.bis) return;
+      // auch zugeordnete Pakete, die vor ihrem Level beginnen (SV-Pulskanal ab 12.10., Level 2 – Daniel, 03.11.2026), laufen im Level davor blass mit
+      if (imBlick[s.meilenstein] || !(s.frei || s.vonEcht) || !von || !s.monat || s.monat < (m.ab || "0000") || von > m.bis) return;
       var id = s.id + "~" + m.id;
       if (!S[id]) {
         // Vorgänger bleiben: das Paket hängt weiter an seiner Vorarbeit und beginnt nicht eigenständig (kein Startstrich)
@@ -276,7 +277,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     // (Bahn- und Kfz-Produkt April–September 2027), ist EIN Zeitraum ab seinem echten Beginn quer über den Meilenstein
     var ueberMs = {};
     if (m.gesamt) liste.forEach(function (s) {
-      if (!s.frei || !s.vonEcht) return;
+      if (!s.vonEcht) return;   // auch zugeordnete Pakete mit Beginn vor ihrem Level (Daniel, 03.11.2026)
       var b = monatsBloecke.filter(function (k) { return k.monat === s.vonEcht && k.ms !== s.meilenstein; })[0];
       if (!b) return;
       var tt = s.vonEcht.split("-"), tage = new Date(+tt[0], +tt[1], 0).getDate();
@@ -556,6 +557,8 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       var nl = mitte - bn / 2, rechtsBuendig = false;
       if (re == null && li != null && links < 105 && rechts > links) { var bw = Math.min(210, links + rechts - 12); if (bw > bn) { bn = bw; nl = mitte - links + 4; rechtsBuendig = true; } }
       if (vorTeil && nl < vorTeil.x1 + 6) { bn -= vorTeil.x1 + 6 - nl; nl = vorTeil.x1 + 6; }   // Name nie über dem Meilenstein-Balken
+      // ist das Stück nach dem Meilenstein zu kurz für den Namen (SV-Pulskanal: Oktober bis Januar), steht er unter dem Teil davor (Daniel, 03.11.2026)
+      if (vorTeil && bn < 110 && vorTeil.x1 - 6 - (vorTeil.x0 - r) > bn) { nl = vorTeil.x0 - r; bn = Math.min(210, vorTeil.x1 - 6 - nl); nl = Math.max(nl, (vorTeil.x0 + vorTeil.x1) / 2 - bn / 2); }
       if (vonVorher && nl < 40) { bn -= 40 - nl; nl = 40; }   // Name nie über dem Starthalt links
       stufenImBlick.forEach(function (x) {   // Name endet vor einem Meilenstein-Balken, der rechts von seiner Mitte steht
         var bx = xHalt(x.id);
