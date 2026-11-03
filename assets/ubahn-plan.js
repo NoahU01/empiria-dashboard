@@ -832,9 +832,14 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   var ICON_ZU = '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M5 1v4H1M13 5H9V1M9 13V9h4M1 9h4v4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   var weitKnopf = zoomEl.querySelector("[data-weit]");
   weitKnopf.innerHTML = ICON_AUF;
+  var msVorWeit = null;
   function weit(an) {
     if (an === WEIT) return;
     WEIT = an;
+    // Volle Breite zeigt immer den Gesamtplan, nicht nur ein Level (Daniel, 03.11.2026);
+    // beim Schließen kehrt die vorher gewählte Ansicht zurück, sofern in der vollen Breite nichts anderes gewählt wurde
+    if (an) { msVorWeit = zustandUI.ms; zustandUI.ms = "ziel"; zustandUI.station = null; }
+    else { if (msVorWeit && zustandUI.ms === "ziel") { zustandUI.ms = msVorWeit; zustandUI.station = null; } msVorWeit = null; }
     weitEl.classList.toggle("ub-weit", an);
     document.documentElement.classList.toggle("ub-weit-offen", an);
     if (an) { zoomHeim = [zoomEl.parentNode, zoomEl.nextSibling]; weitEl.insertBefore(zoomEl, weitEl.firstChild); zoomEl.classList.add("ub-zoom--weit"); }
@@ -847,7 +852,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     weitKnopf.setAttribute("aria-pressed", an ? "true" : "false");
     weitKnopf.setAttribute("aria-label", an ? "Volle Breite schließen" : "Plan in voller Breite");
     weitKnopf.title = weitKnopf.getAttribute("aria-label");
-    plan(); detail();
+    stufen(); plan(); detail();
   }
   weitKnopf.addEventListener("click", function (e) { e.stopPropagation(); weit(!WEIT); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && WEIT) weit(false); });
