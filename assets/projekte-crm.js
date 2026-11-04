@@ -258,6 +258,9 @@
       // z. B. MAK-Planung (Struktur und Organisation) → LEOS 2.0 (Prozesse und Digitalisierung)
       if (b && opt.termine && b.strang_id === a.strang_id && (b._strang || b.strang_id) !== (a._strang || a.strang_id)) return true;
       if (b && b.strang_id === a.strang_id && opt.termine && a.beginnt_am && b.beginnt_am && level(a) !== level(b)) return true;   // über einen Meilenstein hinweg: gestrichelt (z. B. Klärung Tragfähigkeit → Detaillierung)
+      // auch aus einer anderen Stoßrichtung (Daniel, 04.11.2026): beginnt ein Paket, während seine Vorarbeit noch läuft,
+      // fällt die gestrichelte Linie senkrecht hinein, statt zurück an seinen Anfang zu laufen (z. B. Grundgerüst → Skizze Homepage)
+      if (b && opt.termine && b.strang_id !== a.strang_id && a.beginnt_am && b.beginnt_am && b.faellig_am && a.beginnt_am < b.faellig_am) return true;
       return !!(b && b.strang_id === a.strang_id && a.beginnt_am && b.beginnt_am && b.faellig_am && a.beginnt_am < b.faellig_am);   // nur ein Zeitraum fließt ein
     }
     function datum(d) { var t = String(d || "").slice(0, 10).split("-"); return t.length === 3 ? t[2] + "." + t[1] + "." + t[0] : "offen"; }

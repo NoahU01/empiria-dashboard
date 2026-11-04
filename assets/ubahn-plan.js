@@ -547,7 +547,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
         ? '<rect x="' + (xs - r) + '" y="' + (cy - r) + '" width="' + (lang + 2 * r) + '" height="' + (2 * r) + '" rx="' + r + '" fill="' + fuell + '" stroke="' + rand[0] + '" stroke-width="' + rand[1] + '"/>'
         : '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + fuell + '" stroke="' + rand[0] + '" stroke-width="' + rand[1] + '"/>';
       if (s.kritisch) punkte += '<circle cx="' + (cx + r + 3) + '" cy="' + (cy - r - 3) + '" r="7" fill="' + (schwach ? "#f6c9bf" : "#E8553A") + '"/><text x="' + (cx + r + 3) + '" y="' + (cy - r + 0.6) + '" text-anchor="middle" class="ub-ausruf">!</text>';
-      var vonOben = (s.braucht || []).some(function (b) { return imPlan[b] && !gleich(S[b], s) && yVon(S[b]) < cy; });
+      var vonOben = (s.braucht || []).concat(s.einfluss || []).some(function (b) { return imPlan[b] && !gleich(S[b], s) && yVon(S[b]) < cy; });   // kommt eine Linie von oben, steht der Name darunter
       var obenL = unter[s.id] === 0 && !vonOben;
       var mitte = (xs + cx) / 2, bn = Math.max(ABST - 6, lang + 2 * r);   // Namen fast spaltenbreit – bei engen Monaten bleiben sie lesbar
       // zum Nachbarn auf derselben Linie höchstens die halbe Strecke (er braucht die andere Hälfte), zum Rand die ganze
