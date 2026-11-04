@@ -202,7 +202,8 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var monatsBloecke = [], tiefeA = {}, bandMin = {};
     stufenImBlick.forEach(function (x) {
       var ss = liste.filter(function (s) { return s.meilenstein === x.id; });
-      if (!ss.length || !ss.every(function (s) { return s.monat; })) return;
+      // Level ohne Pakete zeigen trotzdem ihre Monate bis zum Meilenstein (Daniel, 04.11.2026) – sonst endet die Zeitachse vorzeitig
+      if (!ss.length ? !(x.ab && x.bis) : !ss.every(function (s) { return s.monat; })) return;
       var lt = {}, la = {};
       function anfang(s) { return zeitraum(s) ? s.von : s.monat; }
       function la_(id) {   // Spalte des Beginns innerhalb seines Monats
@@ -220,6 +221,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       function nimm(mo, sp) { if (monate.indexOf(mo) < 0) monate.push(mo); breite[mo] = Math.max(breite[mo] || 1, sp + 1); }
       ss.forEach(function (s) { nimm(s.monat, l(s.id)); if (zeitraum(s)) nimm(s.von, la_(s.id)); });
       monate.sort();
+      if (!monate.length) monate = [x.ab];
       // lückenlose Monate (Daniel, 29.10.2026): auch Monate ohne Halt stehen in der Zeitachse – schmal, damit ein Zeitraum
       // wie Mai bis September seine wirkliche Länge zeigt
       if (monate.length) {
