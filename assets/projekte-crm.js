@@ -287,7 +287,7 @@
         return { id: "s" + s.id, unter: un, unterText: uk ? uk.map(function (k) { return k.erklaerung || ""; }) : null, kurz: ubKurz(label), label: label, frage: s.erklaerung || "", beschreibung: "", verantwortung: (s.verantwortlich || []).length === 2 ? s.verantwortlich.join(" & ") : (s.verantwortlich || []).join(", "), farbe: s.farbe || UB_FARBEN[i % UB_FARBEN.length] };   // eigene Farbe der Stoßrichtung (projekt_straenge.farbe), sonst die Reihe
       }),
       meilensteine: gates.map(function (g, i) {
-        return { id: "g" + g.id, nr: i + 1, termin: datum(g.faellig_am), titel: g.titel, ergebnis: g.beschreibung ? [g.beschreibung] : [],
+        return { id: "g" + g.id, nr: i + 1, termin: datum(g.faellig_am), titel: g.titel, ergebnis: g.beschreibung ? [g.beschreibung] : [], kurz: g.zusammenfassung || "",   // Kurzfassung für den Kopf, voller Text im Fenster am Meilenstein
           // Beitrag zum Meilenstein (Daniel, 01.11.2026): sind Pakete ausdrücklich zugeordnet (projektgate_id), zählen nur sie –
           // was im selben Zeitraum ohne Zuordnung läuft, steht im Ausschnitt blass. Ohne Zuordnung zählt wie bisher das Datum.
           braucht: (function () { var im = liste.filter(function (a) { return level(a) === g.id; }), zu = im.filter(function (a) { return a.projektgate_id === g.id; });
@@ -356,7 +356,7 @@
       db.from("projekt_beteiligte").select("id, seite, rolle, name, kontakte(id, vorname, nachname, position)").eq("projekt_id", id),
       db.from("projekt_ereignisse").select("id, datum, art, titel, quelle, format, ort, teilnehmer, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("datum", { ascending: false }),
       db.from("projekt_punkte").select("id, ereignis_id, art, text, angelegt_am, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am", { ascending: false }),
-      db.from("aufgaben").select("id, paket_id, strang_id, reihenfolge, art, projektgate_id, titel, beschreibung, prompt, status, spalte, faellig_am, beginnt_am, erledigt_am, ereignis_id, weg, vorgaenger, warten_auf, hinweis, zeitblock_vorschlag, mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, unterlagen, person:kontakt_id(id, vorname, nachname), organisationen(id, name), zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
+      db.from("aufgaben").select("id, paket_id, strang_id, reihenfolge, art, projektgate_id, titel, beschreibung, zusammenfassung, prompt, status, spalte, faellig_am, beginnt_am, erledigt_am, ereignis_id, weg, vorgaenger, warten_auf, hinweis, zeitblock_vorschlag, mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, unterlagen, person:kontakt_id(id, vorname, nachname), organisationen(id, name), zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
       ,db.from("projekt_pakete").select("id, nr, titel, ziel, stand, status, strang_id, beginnt_am, faellig_am, vorgaenger, projektgate_id, reihenfolge").eq("projekt_id", id).order("nr")
       ,db.from("projekt_straenge").select("id, titel, reihenfolge, eltern_id, erklaerung, verantwortlich, verantwortlich_kontakte, farbe").eq("projekt_id", id).order("reihenfolge")
       ,db.from("projekt_verlauf").select("id, datum, art, titel, inhalt").eq("projekt_id", id).order("datum", { ascending: false })

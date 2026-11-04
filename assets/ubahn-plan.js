@@ -94,7 +94,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   // Kopf mit den Ergebnisleveln als Route: Haltepunkte auf einer Linie, darunter das Ergebnis des gewählten Levels
   function stufenText(id) {
     if (id === "ziel") return "Alle Stoßrichtungen über alle Level bis zum Zielbild.";
-    return (MS[id].ergebnis || []).join(" ");
+    return MS[id].kurz || (MS[id].ergebnis || []).join(" ");   // Kopf: Zusammenfassung, wenn vorhanden (Daniel, 04.11.2026)
   }
   function stufen() {
     // so viele Spalten wie Halte (mindestens sechs) – bei sechs Leveln plus Gesamtplan bleibt alles in einer Zeile (VVDE)
@@ -797,6 +797,10 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     var sc = planEl.querySelector(".ub-scroll"), sl = sc ? sc.scrollLeft / MASS : 0, rechtsSichtbar = sl + (sc ? sc.clientWidth / MASS : flaeche.offsetWidth);
     pop.style.left = (bx + 40 + W <= rechtsSichtbar - 4 ? bx + 40 : Math.max(sl + 4, bx - 14 - W)) + "px";
     pop.style.top = (by + 8) + "px";
+    // langer Text am Meilenstein: nach oben ausweichen, notfalls im Fenster scrollen – nie abgeschnitten (wie bei den Stoßrichtungen)
+    (function () { var H = flaeche.clientHeight, t = parseFloat(pop.style.top) || 0;
+      if (H && t + pop.offsetHeight > H - 8) { pop.style.top = Math.max(4, H - 8 - pop.offsetHeight) + "px";
+        if (pop.offsetHeight > H - 12) { pop.style.top = "4px"; pop.style.maxHeight = (H - 12) + "px"; pop.style.overflowY = "auto"; } } })();
   }
   // Klick irgendwo daneben löst die Auswahl
   document.addEventListener("click", function (e) {
