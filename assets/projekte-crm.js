@@ -616,7 +616,7 @@
   }
 
   /* ---------- Neuer Aufbau der Projektseite (Daniel, 28.10.2026) – zuerst bei der SV Akademie ----------
-     Reihenfolge wie auf der Kundenseite: 1 Weg zum Ergebnis (Linienplan) · 2 Was jetzt ansteht (nur intern: Lagebericht,
+     Reihenfolge wie auf der Kundenseite: 1 Fahrplan (Linienplan) · 2 Was jetzt ansteht (nur intern: Lagebericht,
      Aufgaben als Liste oder Kanban, nächste Termine) · 3 Hintergrund, zugeklappt (Ziel, Stoßrichtung, Arbeitspakete, Team,
      Termine mit Protokollen, Verlauf). Die fertig gezeichneten Kästen werden umgehängt – ihre Knöpfe behalten die Funktion. */
   function neuOrdnen(p, ere) {
@@ -647,8 +647,8 @@
       return b;
     }
     var neuR = document.createElement("div"); neuR.className = "pr-n-raster";
-    // 1 Weg zum Ergebnis
-    var weg = bereich("pr-n-weg", "n-weg", "Weg zum Ergebnis", "", "", false);   // Startsicht: alle drei Kästen zu (Daniel, 29.10.2026)
+    // 1 Fahrplan (bis 04.11.2026 „Weg zum Ergebnis“)
+    var weg = bereich("pr-n-weg", "n-weg", "Fahrplan", "", "", false);   // Startsicht: alle drei Kästen zu (Daniel, 29.10.2026)
     var ub = document.createElement("div"); ub.innerHTML = UB_GERUEST; weg.inhalt.appendChild(ub.firstChild);
     // „Operative Aufgaben“ sammelt Einzelaufgaben ohne gemeinsames Ziel – dort kein Weg zum Ergebnis (Daniel, 29.10.2026)
     var ohneWeg = p.name === "Operative Aufgaben";
@@ -699,7 +699,7 @@
     });
     if (ubd && window.UBahnPlan) UBahnPlan(ubw, ubd, { hash: false, bearbeiten: true, kompakt: !!(p.projektseite && p.projektseite.kompakt), alleStraenge: !!(p.projektseite && p.projektseite.alle_straenge), weitOffen: !!(p.projektseite && p.projektseite.weit_offen) });   // Stoßrichtungen zugeklappt, wenn im Projekt so eingestellt
     else ubw.innerHTML = '<p class="pr-offen">Noch keine Aufgaben für den Plan.</p>';
-    // Größe und Legende in die Kopfzeile von „Weg zum Ergebnis“ – bleiben auch zugeklappt erreichbar
+    // Größe und Legende in die Kopfzeile von „Fahrplan“ – bleiben auch zugeklappt erreichbar
     var leiste = ubw.querySelector(".ub-dash-kopf"); if (leiste) weg.rechts.appendChild(leiste);
   }
 

@@ -91,7 +91,8 @@
 .ub-dash [data-ub-stufen]{margin-bottom:36px}
 .ub-dash .ub-name{background:#fff;border-radius:4px;-webkit-line-clamp:5}   /* Namen decken kreuzende Abhängigkeitslinien ab */
 .ub-dash .ub-bahn{left:0}
-.ub-dash .ub-halt-name:not(.ub-halt-name--ende):not(.ub-halt-name--start){white-space:normal;width:150px}   /* Level-Namen im Gesamtplan umbrechen statt überlappen */
+.ub-dash .ub-halt-name:not(.ub-halt-name--ende):not(.ub-halt-name--start){white-space:normal;width:190px;text-wrap:balance}
+.ub-dash .ub-halt-name:not(.ub-halt-name--ende):not(.ub-halt-name--start) b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}   /* höchstens zwei Zeilen – sonst läuft der Name in die Monatszeile (VVDE, 04.11.2026) */   /* Level-Namen im Gesamtplan umbrechen statt überlappen */
 .ub-unterstrang{border:0;background:none;padding:0;font-family:inherit;text-align:left;cursor:pointer;position:absolute;left:42px;right:10px;font-size:.74rem;line-height:1.3;color:var(--grey-50,#8a8a8a);transform:translateY(-50%);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;hyphens:manual;-webkit-hyphens:manual;overflow-wrap:break-word}
 .ub-bahn--oben{transform:translateY(-100%);align-items:flex-end}   /* Strang einer Stoßrichtung, auf Höhe seiner Linie – Klick zeigt seine Erläuterung */
 .ub-unterstrang:hover{color:var(--ink,#111);text-decoration:underline;text-underline-offset:3px}
