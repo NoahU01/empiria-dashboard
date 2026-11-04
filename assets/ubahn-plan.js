@@ -62,7 +62,8 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       zu();
       // Zwischenüberschrift (Daniel, 01.11.2026): nur in Texten mit Leerzeilen-Abschnitten – kurze Zeile ohne Satzzeichen
       // am Anfang eines Abschnitts, darunter folgt ein Absatz (z. B. „Tragfähigkeit“)
-      var zw = abschnitte && z.length <= 40 && !/[.,;:!?)…“"]$/.test(z) && (i === 0 || !z0[i - 1]) && z0[i + 1] && !/^[•\-–]/.test(z0[i + 1]);
+      // Fragen wie „01 Wofür stehen wir?“ zählen ebenfalls als Zwischenüberschrift (Daniel, 04.11.2026)
+      var zw = abschnitte && z.length <= 40 && !/[.,;:!)…“"]$/.test(z) && (i === 0 || !z0[i - 1]) && z0[i + 1] && !/^[•\-–]/.test(z0[i + 1]);
       h += (zw ? '<p class="ub-pop-zw">' : "<p>") + esc(z) + "</p>";
     });
     zu();
