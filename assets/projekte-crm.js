@@ -151,7 +151,7 @@
   // unter den Monaten – wie in der Kundenansicht der SV Akademie und des VVDE –, nicht als Halt auf der Terminlinie (Daniel, 02.11.2026)
   // AL/GL-Runde und Abteilungsbesprechung der SV Akademie gehören dazu (Daniel, 03.11.2026); die Abteilungsbesprechung bleibt zusätzlich als Paket in ihrer Stoßrichtung
   // Der Titel beginnt mit dem Gremium – „Orga Führungskreis“ oder „Vorabstimmung … Klausur“ sind unsere Vorbereitung, kein Gremientermin
-  var GREMIUM = /^(sitzung\b|strategieklausur|klausur|führungskreis|al-runde|al\/gl-runde|abteilungsbesprechung|vorstand|aufsichtsrat|mitgliederversammlung|gremi)/i;
+  var GREMIUM = /^(sitzung\b|strategieklausur|klausur|führungskreis|al-runde|al-klausur|al\/gl-runde|abteilungsbesprechung|vorstand|aufsichtsrat|mitgliederversammlung|gremi)/i;
   function gremium(e) { return (e.art === "Termin" || e.art === "Workshop") && GREMIUM.test(e.titel || ""); }
   function gremienTermine(ere) {
     var aus = [];
