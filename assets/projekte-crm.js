@@ -697,7 +697,7 @@
       db.from("projekt_pakete").update({ ziel: d.text || null }).eq("id", d.id)
         .then(function (x) { if (x.error) alert("Nicht gespeichert: " + x.error.message); projekt(p.id); });
     });
-    if (ubd && window.UBahnPlan) UBahnPlan(ubw, ubd, { hash: false, bearbeiten: true, kompakt: !!(p.projektseite && p.projektseite.kompakt), alleStraenge: !!(p.projektseite && p.projektseite.alle_straenge) });   // Stoßrichtungen zugeklappt, wenn im Projekt so eingestellt
+    if (ubd && window.UBahnPlan) UBahnPlan(ubw, ubd, { hash: false, bearbeiten: true, kompakt: !!(p.projektseite && p.projektseite.kompakt), alleStraenge: !!(p.projektseite && p.projektseite.alle_straenge), weitOffen: !!(p.projektseite && p.projektseite.weit_offen) });   // Stoßrichtungen zugeklappt, wenn im Projekt so eingestellt
     else ubw.innerHTML = '<p class="pr-offen">Noch keine Aufgaben für den Plan.</p>';
     // Größe und Legende in die Kopfzeile von „Weg zum Ergebnis“ – bleiben auch zugeklappt erreichbar
     var leiste = ubw.querySelector(".ub-dash-kopf"); if (leiste) weg.rechts.appendChild(leiste);
@@ -813,7 +813,7 @@
     });
     if (STRAENGE.length && window.ProjektPlan) ProjektPlan.verdrahten(wurzel, db, STRAENGE, STAND.auf, function () { projekt(p.id); });
     var ub = wurzel.querySelector("[data-ub-wurzel]"), ubd = ub && window.UBahnPlan ? ubahnDaten(STRAENGE, STAND.auf) : null;
-    if (ubd) UBahnPlan(ub, ubd, { hash: false, kompakt: !!(p.projektseite && p.projektseite.kompakt), alleStraenge: !!(p.projektseite && p.projektseite.alle_straenge) });
+    if (ubd) UBahnPlan(ub, ubd, { hash: false, kompakt: !!(p.projektseite && p.projektseite.kompakt), alleStraenge: !!(p.projektseite && p.projektseite.alle_straenge), weitOffen: !!(p.projektseite && p.projektseite.weit_offen) });
     wurzel.querySelectorAll("[data-pz-feld]").forEach(function (gr) {
       var feld = gr.getAttribute("data-pz-feld");
       gr.querySelectorAll("button").forEach(function (b) { b.onclick = function () {

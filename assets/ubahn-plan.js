@@ -853,7 +853,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   var ICON_ZU = '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M5 1v4H1M13 5H9V1M9 13V9h4M1 9h4v4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   var weitKnopf = zoomEl.querySelector("[data-weit]");
   weitKnopf.innerHTML = ICON_AUF;
-  var msVorWeit = null;
+  var msVorWeit = null; var kompaktVorWeit = null;
   function weit(an) {
     if (an === WEIT) return;
     WEIT = an;
@@ -861,6 +861,9 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     // beim Schließen kehrt die vorher gewählte Ansicht zurück, sofern in der vollen Breite nichts anderes gewählt wurde
     if (an) { msVorWeit = zustandUI.ms; zustandUI.ms = "ziel"; zustandUI.station = null; }
     else { if (msVorWeit && zustandUI.ms === "ziel") { zustandUI.ms = msVorWeit; zustandUI.station = null; } msVorWeit = null; }
+    // volle Breite klappt alle Stoßrichtungen auf, beim Schließen gilt wieder der vorige Stand (OPT.weitOffen, Daniel 04.11.2026 für SV Owen)
+    if (OPT.weitOffen) { if (an) { kompaktVorWeit = Object.assign({}, KOMPAKT); Object.keys(KOMPAKT).forEach(function (k) { delete KOMPAKT[k]; }); }
+      else if (kompaktVorWeit) { Object.keys(KOMPAKT).forEach(function (k) { delete KOMPAKT[k]; }); Object.assign(KOMPAKT, kompaktVorWeit); kompaktVorWeit = null; } }
     weitEl.classList.toggle("ub-weit", an);
     document.documentElement.classList.toggle("ub-weit-offen", an);
     if (an) { zoomHeim = [zoomEl.parentNode, zoomEl.nextSibling]; weitEl.insertBefore(zoomEl, weitEl.firstChild); zoomEl.classList.add("ub-zoom--weit"); }
