@@ -37,6 +37,11 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   // mitten im Wort – die Browser-Trennung ließ oft nur zwei Buchstaben in der Zeile (Daniel, 01.11.2026). CSS: hyphens: manual;
   // Läuft ein Name trotzdem über den Rand (enge Monate), wird nur er nach dem Zeichnen angepasst (siehe eng()).
   var FUGE = /([a-zäöüß]{4,}?)(?=(strategie|dokumentation|befragung|maßnahmen|systematik|system|sichtbarkeit|positionierung|management|rahmen|verfahren|produkt|organisation|entwicklung|bildung|portal|messung|kontakt|zufriedenheit|stärkung|freigabe|modell|versicherung|risiken|unternehmen|programm|planung|steuerung|kampagne|konzept|prozess|team))/gi;
+  var MESS = null;   // Breite eines Namens in einer Zeile (Schrift wie .ub-name)
+  function textBreite(t) {
+    try { if (!MESS) { MESS = document.createElement("canvas").getContext("2d"); MESS.font = "500 " + (0.74 * parseFloat(getComputedStyle(document.documentElement).fontSize || 16)) + "px " + getComputedStyle(wurzel).fontFamily; }
+      return MESS.measureText(String(t || "")).width; } catch (e) { return String(t || "").length * 7; }
+  }
   function trenn(t) { return esc(t).split(" ").map(function (w) { return w.length < 12 ? w : w.replace(FUGE, "$1\u00AD"); }).join(" "); }
   function msName(m) { return m.titel || "Ergebnislevel " + m.nr; }
   function stufeErreicht(mid) { var b = MS[mid].braucht || []; return b.length > 0 && b.every(function (x) { return S[x] && S[x].status === "erreicht"; }); }
@@ -557,8 +562,9 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       var grenze = 2 * Math.min(links, rechts) - 8;   // nie über die Hälfte zum Nachbarn – auch nicht bei langen Kapseln
       bn = Math.max(40, Math.min(Math.max(bn, Math.min(grenze, 210)), grenze));
       // letzter Halt der Linie mit engem linken Nachbarn: der Name darf nach rechts in den freien Raum reichen (links weiter nur bis zur Hälfte)
+      // – nur, wenn er sonst nicht passt; kurze Namen bleiben mittig unter dem Halt (Teamklausur, Daniel, 04.11.2026)
       var nl = mitte - bn / 2, rechtsBuendig = false;
-      if (re == null && li != null && links < 105 && rechts > links) { var bw = Math.min(210, links + rechts - 12); if (bw > bn) { bn = bw; nl = mitte - links + 4; rechtsBuendig = true; } }
+      if (re == null && li != null && links < 105 && rechts > links && textBreite(s.titel) > bn) { var bw = Math.min(210, links + rechts - 12); if (bw > bn) { bn = bw; nl = mitte - links + 4; rechtsBuendig = true; } }
       if (vorTeil && nl < vorTeil.x1 + 6) { bn -= vorTeil.x1 + 6 - nl; nl = vorTeil.x1 + 6; }   // Name nie über dem Meilenstein-Balken
       // ist das Stück nach dem Meilenstein zu kurz für den Namen (SV-Pulskanal: Oktober bis Januar), steht er unter dem Teil davor (Daniel, 03.11.2026)
       if (vorTeil && bn < 110 && vorTeil.x1 - 6 - (vorTeil.x0 - r) > bn) { nl = vorTeil.x0 - r; bn = Math.min(210, vorTeil.x1 - 6 - nl); nl = Math.max(nl, (vorTeil.x0 + vorTeil.x1) / 2 - bn / 2); }
@@ -641,7 +647,8 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     if (sc && dauerN.length) sc.addEventListener("scroll", mit);
     if (sc && altLinks != null) sc.scrollLeft = altLinks;
     else if (sc && !zustandUI.station && sc.scrollWidth > sc.clientWidth) {
-      var offen = liste.filter(function (s) { return fokus[s.id] && s.status !== "erreicht"; }).map(xVon);
+      // am Anfang der offenen Pakete ausrichten, nicht an ihrem Ende – laufende Pakete bleiben samt Beginn im Bild (Daniel, 04.11.2026)
+      var offen = liste.filter(function (s) { return fokus[s.id] && s.status !== "erreicht"; }).map(xStart);
       sc.scrollLeft = offen.length ? Math.max(0, Math.min.apply(null, offen) - 2 * ABST) : 0;
     }
     if (sc && dauerN.length) mit();
