@@ -19,6 +19,12 @@
 <link rel="stylesheet" href="/assets/dashboard-nav.css?v=202610151100">
 <link rel="stylesheet" href="/assets/beta.css?v=202611011800">
 <link rel="stylesheet" href="/assets/ubahn-plan.css?v=202611042310">
+<style>
+/* Methodenkoffer rechts neben „Jetzt prüfen“, gleiche Pill */
+.db-kopf .mk-knopf{margin-left:auto;margin-bottom:6px;align-self:flex-end;text-decoration:none;color:var(--ink)}
+.db-kopf .mk-knopf + .ans{margin-left:0}
+@media (max-width:700px){.db-kopf .mk-knopf{margin-left:0}}
+</style>
 </head>
 <body>
 
@@ -68,7 +74,7 @@
         <p class="kicker">Alle Marken</p>
         <h1 class="h-serif">Projekte.</h1>
       </div>
-      <a class="btn btn--ghost btn--sm mk-knopf" href="/strategie/methoden.html">Methodenkoffer</a>
+      <a class="ans-knopf mk-knopf" href="/strategie/methoden.html">Methodenkoffer</a>
     </div>
     <div data-projekte><div class="kb-laedt"><span></span><span></span></div></div>
   </div></section>
