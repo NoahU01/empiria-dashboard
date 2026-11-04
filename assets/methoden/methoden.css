@@ -1,0 +1,127 @@
+/* Methodenkoffer – Gestaltung der Methoden (empiria-CD). EINE Quelle: Dashboard und Kundenseiten binden diese Datei ein. */
+
+/* Grundlagen der Fenster (auf den Kundenseiten schon vorhanden, im Dashboard nicht) */
+.pj-hinweis{font-size:.82rem;color:var(--grey-50,#8a8783)}
+.pj-modal-text p{color:var(--grey-70,#58564f);line-height:1.72;margin:0 0 1rem}
+.pj-modal-text ul{margin:0 0 1rem;padding-left:20px;display:grid;gap:8px}
+.pj-modal-text li{color:var(--grey-70,#58564f);line-height:1.7}
+.modal.modal--structure{display:flex;flex-direction:column;overflow:hidden}
+.modal--structure .modal-structure-head{flex:0 0 auto}
+
+/* Kacheln */
+.u3-methoden{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.u3-methode{width:100%;height:100%;display:flex;flex-direction:column;gap:4px;align-items:flex-start;text-align:left;background:#fff;border:1px solid #e8e5e0;border-radius:14px;padding:14px 16px;font:inherit;color:#111;cursor:pointer;transition:border-color .15s}
+.u3-methode:hover{border-color:#111}
+.u3-m-ic{margin-bottom:8px;width:38px;height:38px;border-radius:11px;background:#111;color:var(--hl,#ffed00);display:flex;align-items:center;justify-content:center}
+.u3-m-ic svg{width:19px;height:19px}
+.u3-methode b{font-weight:600;font-size:.95rem;line-height:1.3}
+.u3-methode small{font-size:.88rem;color:#8a857d;line-height:1.45}
+ul.u3-methoden{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:1000px){ul.u3-methoden{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){ul.u3-methoden{grid-template-columns:1fr}}
+
+/* Inhalte der Methoden */
+/* Zielgruppenanalyse: Stakeholder-Matrix im empiria-CD (Schwarz, Weiß, Gelb; Farbe nur für die Klebepunkte) */
+.modal-wrap.zg-wrap{max-width:900px}
+.modal.zg-modal{max-width:none;width:100%}
+.modal.zg-modal .modal-structure-head{max-width:none}
+.zg-achsen{list-style:none;padding-left:0!important}
+.zg-matrix{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:8px 0 28px;padding:44px 74px 44px 74px}
+.zg-achse{position:absolute;background:#1a1817}
+.zg-achse--y{left:50%;top:22px;bottom:22px;width:2px;margin-left:-1px}
+.zg-achse--x{top:50%;left:62px;right:62px;height:2px;margin-top:-1px}
+.zg-etikett{position:absolute;z-index:1;padding:4px 10px;border-radius:4px;background:#e8e5e0;color:#1a1817;font:700 .7rem/1.2 Poppins,sans-serif;letter-spacing:.08em;text-transform:uppercase}
+.zg-etikett--hoch{background:#1a1817;color:#ffed00}
+.zg-oben{top:6px;left:50%;transform:translateX(-50%)}
+.zg-unten{bottom:6px;left:50%;transform:translateX(-50%)}
+.zg-links{left:0;top:50%;transform:translateY(-50%)}
+.zg-rechts{right:0;top:50%;transform:translateY(-50%)}
+.zg-achsname{position:absolute;z-index:1;font:600 .72rem/1.2 Poppins,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#6b665f}
+.zg-achsname--y{top:10px;left:calc(50% + 46px)}
+.zg-achsname--x{right:0;bottom:10px}
+.zg-feld{position:relative;z-index:1;display:flex;flex-direction:column;gap:8px;padding:20px 22px;border-radius:12px;background:#f3f1ed;text-align:center}
+.zg-feld b{font-family:var(--font-serif,Lora,serif);font-weight:700;font-size:1.08rem;line-height:1.25;color:#1a1817}
+.zg-feld span{font-size:.86rem;line-height:1.55;color:#555;text-wrap:balance}
+.zg-runden{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:0 0 24px}
+.zg-runde{border:1px solid #e8e5e0;border-radius:14px;padding:20px 22px}
+.zg-runde p{margin:0 0 10px;font-size:.92rem;line-height:1.6;color:#555}
+.zg-runde .zg-runde__nr{margin:0 0 4px;font:700 .72rem/1.2 Poppins,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#1a1817}
+.zg-runde .zg-runde__titel{margin:0 0 10px;font-family:var(--font-serif,Lora,serif);font-weight:700;font-size:1.12rem;color:#1a1817}
+.zg-punkte{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.zg-punkte li{display:grid;grid-template-columns:18px 1fr;gap:10px;align-items:start;font-size:.9rem;line-height:1.55;color:#555}
+.zg-punkte b{color:#1a1817}
+.zg-punkt{width:14px;height:14px;border-radius:50%;margin-top:4px}
+.zg-punkt--gruen{background:#059669}.zg-punkt--blau{background:#0B9FBD}.zg-punkt--rot{background:#C51F5D}
+/* Reverse Brainstorming: drei Schritte nebeneinander, Leitfrage als Zitat */
+.zg-runden.rb-schritte{grid-template-columns:repeat(3,minmax(0,1fr))}
+.pj-modal-text .rb-frage{margin:0 0 24px;font-family:var(--font-serif,Lora,serif);font-weight:700;font-size:1.25rem;line-height:1.35;color:#1a1817}
+@media (max-width:700px){.zg-runden.rb-schritte{grid-template-columns:1fr}}
+/* Gedankliche Neugründung: Pitch in zehn Feldern (empiria-CD: Schwarz, Weiß, Gelb) */
+.pj-modal-text .pi-raster{list-style:none;margin:6px 0 22px;padding:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(5,auto);grid-auto-flow:column;gap:10px 14px}
+.pj-modal-text .pi-raster li{display:flex;align-items:flex-start;gap:12px;margin:0;padding:14px 16px;border:1px solid #e8e5e0;border-radius:12px;background:#fff;line-height:1.4}
+.pi-nr{flex:none;display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:7px;background:#1a1817;color:#ffed00;font:700 .85rem/1 Poppins,sans-serif}
+.pi-raster b{display:block;padding-top:5px;font-size:.92rem;font-weight:600;color:#1a1817}
+.pi-unter{display:block;margin-top:6px;font-size:.82rem;font-weight:400;line-height:1.5;color:#6b665f}
+@media (max-width:700px){.pj-modal-text .pi-raster{grid-template-columns:1fr;grid-template-rows:none;grid-auto-flow:row}}
+/* SWOT-Methode: Matrix im empiria-CD – Schritt 1 in den Grundfeldern, Schritt 2 in den Kombinationen */
+.sw-matrix{display:grid;grid-template-columns:28px 150px minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto auto auto;gap:8px;margin:6px 0 18px}
+.sw-sicht{font:700 .68rem/1.3 Poppins,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#6b665f}
+.sw-sicht--aussen{grid-column:3 / 5;grid-row:1;padding:0 0 6px;border-bottom:2px solid #1a1817;text-align:center}
+.sw-sicht--innen{grid-column:1;grid-row:3 / 5;writing-mode:vertical-rl;transform:rotate(180deg);text-align:center;padding:0 6px 0 0;border-left:2px solid #1a1817}
+.sw-leer{grid-column:2;grid-row:2}
+.sw-kopf{position:relative;display:flex;flex-direction:column;justify-content:center;gap:2px;padding:14px 16px;border-radius:10px;background:#f3f1ed}
+.sw-kopf b{font-size:.95rem;font-weight:700;color:#1a1817}
+.sw-kopf small,.sw-feld small{font-size:.74rem;color:#6b665f}
+.sw-feld{position:relative;display:flex;flex-direction:column;gap:3px;padding:14px 16px;border:1.5px solid #1a1817;border-radius:10px;background:#fff}
+.sw-feld b{font-family:var(--font-serif,Lora,serif);font-weight:700;font-size:1.05rem;color:#1a1817}
+.sw-feld span{font-size:.84rem;line-height:1.45;color:#555}
+.sw-schritt{position:absolute;top:-8px;right:-8px;display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#1a1817;color:#ffed00;font:700 .72rem/1 Poppins,sans-serif;font-style:normal}
+.sw-matrix > :nth-child(4),.sw-matrix > :nth-child(5){grid-row:2}
+.sw-matrix > :nth-child(4){grid-column:3}.sw-matrix > :nth-child(5){grid-column:4}
+.sw-matrix > :nth-child(6){grid-column:2;grid-row:3}.sw-matrix > :nth-child(7){grid-column:3;grid-row:3}.sw-matrix > :nth-child(8){grid-column:4;grid-row:3}
+.sw-matrix > :nth-child(9){grid-column:2;grid-row:4}.sw-matrix > :nth-child(10){grid-column:3;grid-row:4}.sw-matrix > :nth-child(11){grid-column:4;grid-row:4}
+.sw-regel{margin:0 0 22px;padding:14px 18px;border-radius:10px;background:#1a1817;color:#fff;font-size:.95rem;font-weight:600;line-height:1.5}
+@media (max-width:700px){
+  .sw-matrix{grid-template-columns:18px 76px minmax(0,1fr) minmax(0,1fr);gap:6px}
+  .sw-kopf,.sw-feld{padding:10px 8px}
+  .sw-kopf b{font-size:.74rem}.sw-feld b{font-size:.84rem}
+  .sw-matrix{grid-template-columns:18px 82px minmax(0,1fr) minmax(0,1fr)}
+  .sw-feld span{display:none}
+  .sw-kopf small,.sw-feld small{font-size:.66rem;hyphens:auto;-webkit-hyphens:auto}
+  .sw-sicht{font-size:.6rem}
+}
+.zg-x-mobil{display:none}
+@media (max-width:700px){
+  .zg-matrix{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;padding:40px 0 40px;margin-bottom:10px}
+  .zg-achse--x{left:0;right:0}
+  .zg-links,.zg-rechts,.zg-achsname--x{display:none}
+  .zg-feld{padding:14px 10px;hyphens:auto;-webkit-hyphens:auto}
+  .zg-feld b{font-size:.95rem}
+  .zg-feld span{font-size:.78rem}
+  .zg-x-mobil{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 26px;font:600 .68rem/1.2 Poppins,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#6b665f}
+  .zg-x-mobil .zg-etikett{position:static}
+  .zg-runden{grid-template-columns:1fr}
+}
+.modal:not(.modal--structure) .modal-structure-head h3{color:var(--ink,#111)}
+.modal:not(.modal--structure) .modal-structure-head p{color:#6b665f}
+
+/* helle Fenster: Überschrift dunkel (die Grundgestaltung ist für dunkle Fenster) */
+.zg-modal .modal-structure-head h3{color:#1a1817}
+.zg-modal .modal-structure-head p{color:#6b665f}
+
+/* Arbeitsblätter: Dokumente zur Methode – nach und nach ergänzen */
+.mk-blaetter{margin-top:26px;padding-top:22px;border-top:1px solid #e8e5e0}
+.mk-blaetter__titel{margin:0 0 14px;font:700 .72rem/1.2 Poppins,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#1a1817}
+.mk-blaetter__liste{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.mk-blatt{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;padding:16px;border:1px solid #e8e5e0;border-radius:14px;background:#fff}
+.mk-blatt__bild{display:block;width:78px;line-height:0;border-radius:6px;overflow:hidden;border:1px solid #e8e5e0}
+.mk-blatt__bild img{display:block;width:100%;height:auto}
+.mk-blatt__ohne{display:flex;align-items:center;justify-content:center;width:44px;height:56px;border:1.5px solid #1a1817;border-radius:6px;font:700 .62rem/1 Poppins,sans-serif;color:#1a1817}
+.mk-blatt__art{display:block;margin:0 0 2px;font:600 .68rem/1.2 Poppins,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#8a857d}
+.mk-blatt b{display:block;font-family:var(--font-serif,Lora,serif);font-weight:700;font-size:1.02rem;line-height:1.3;color:#1a1817}
+.mk-blatt small{display:block;margin-top:4px;font-size:.84rem;line-height:1.5;color:#555}
+.mk-blatt__intern{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:4px;background:#1a1817;color:#ffed00;font:700 .6rem/1.5 Poppins,sans-serif;letter-spacing:.06em;vertical-align:middle}
+.mk-blatt__knoepfe{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px}
+.mk-blatt__knoepfe a{font-size:.84rem;font-weight:600;color:#1a1817;text-decoration:none;border-bottom:2px solid #ffed00}
+.mk-blatt__knoepfe a:hover{border-bottom-color:#1a1817}
+@media (max-width:700px){.mk-blaetter__liste{grid-template-columns:1fr}}
