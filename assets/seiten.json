@@ -179,7 +179,16 @@
    "kurz": "",
    "im_diagramm": true,
    "pos": 999
+  },
+  {
+   "datei": "methoden.html",
+   "titel": "Methodenkoffer",
+   "gruppe": "ohne Menü",
+   "eltern": null,
+   "kurz": "",
+   "im_diagramm": false,
+   "pos": 999
   }
  ],
- "stand": "15.10.2026, 09:08 Uhr"
+ "stand": "05.11.2026, 06:30 Uhr"
 }
