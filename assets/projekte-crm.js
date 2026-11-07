@@ -56,7 +56,7 @@
   function liste() {
     wurzel.innerHTML = '<div class="kb-laedt"><span></span><span></span></div>';
     Promise.all([
-      db.from("projekte").select("id, name, typ, marke, status, prioritaet, naechstes_gate, gate_datum, ende, organisationen(id, name)").order("reihenfolge", { nullsFirst: false }).order("name"),
+      db.from("projekte").select("id, name, typ, marke, status, prioritaet, reihenfolge, naechstes_gate, gate_datum, ende, organisationen(id, name)").order("reihenfolge", { nullsFirst: false }).order("name"),
       db.from("projekt_ereignisse").select("projekt_id, datum, titel").gte("datum", new Date().toISOString()).order("datum")
     ]).then(function (r) {
       // Strategie je Marke ist kein Projekt – sie steht im Bereich Strategie (Daniel, 20.10.2026)
@@ -83,7 +83,7 @@
       }
       if (ansicht === "prio") {
         function sortiert(l) { return l.slice().sort(function (a, b) {
-          return (STATUS_RANG[a.status] || 0) - (STATUS_RANG[b.status] || 0) || (a.prioritaet ? PRIO_RANG[a.prioritaet] : 3) - (b.prioritaet ? PRIO_RANG[b.prioritaet] : 3) || a.name.localeCompare(b.name, "de"); }); }
+          return (STATUS_RANG[a.status] || 0) - (STATUS_RANG[b.status] || 0) || (a.prioritaet ? PRIO_RANG[a.prioritaet] : 3) - (b.prioritaet ? PRIO_RANG[b.prioritaet] : 3) || (a.reihenfolge == null ? 999 : a.reihenfolge) - (b.reihenfolge == null ? 999 : b.reihenfolge) || a.name.localeCompare(b.name, "de"); }); }
         function spalte(titel, l, mitKunde) {
           return '<section class="pz-spalte"><h2 class="pz-h">' + titel + '</h2><ul class="pz-liste">' + (l.length ? sortiert(l).map(function (x) {
             return '<li class="pz-z' + (x.status === "abgeschlossen" ? " pz-z--fertig" : "") + '"><a href="#p=' + x.id + '">' + prioMarker(x.prioritaet) +
