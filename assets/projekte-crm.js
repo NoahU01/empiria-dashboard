@@ -98,7 +98,8 @@
       // Je Marke eine Sektion: links Kundenprojekte, rechts interne Projekte
       wurzel.innerHTML = wahl + MARKEN.map(function (m) {
         function von(l) { return l.filter(function (x) { return (x.marke || "empiria") === m; }); }
-        var k = von(kunde), i = von(intern);
+        // Interne Projekte nach Priorität: hoch oben, niedrig unten, ohne Priorität zuletzt (Daniel, 07.11.2026)
+        var k = von(kunde), i = von(intern).sort(function (a, b) { return (a.prioritaet ? PRIO_RANG[a.prioritaet] : 3) - (b.prioritaet ? PRIO_RANG[b.prioritaet] : 3); });
         return '<section class="pr-marke-sek"><h2 class="pr-h2">' + esc(m) + '</h2><div class="pr-zwei">' +
           '<table class="kt3-tab pr-tab"><colgroup><col style="width:34%"><col style="width:48%"><col style="width:18%"></colgroup>' +
           "<thead><tr><th>Kundenprojekt</th><th>Kunde</th><th>Nächster Termin</th></tr></thead><tbody>" + (k.length ? k.map(function (x) {
