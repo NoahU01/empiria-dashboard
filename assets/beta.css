@@ -2337,34 +2337,30 @@ body.kt3-detail .db-kopf > :not(:first-child) { flex: none; }
 .pr-n-naechster-vorb[hidden] { display: none; }
 .pr-n-naechster-auf[aria-expanded="true"] .kb-k-pfeil { margin-top: 3px; transform: rotate(-135deg); }
 
-/* Workshop-Ansicht im Projekt (Daniel, 09.11.2026): eine Schrift, zwei Größen, Text dunkel und Nebeninfo grau; Gelb nur als Fläche des Denkbilds */
-.ws-denkbild { margin: 22px 0 0; padding: 22px 26px; background: var(--hl); color: var(--ink); border-radius: 14px; font-size: 1.05rem; font-weight: 600; line-height: 1.5; max-width: 860px; }
-.ws-rahmen { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 8px 18px; margin: 22px 0 0; font-size: var(--fs-m); line-height: 1.5; }
-.ws-rahmen dt { color: var(--grey-50); }
-.ws-rahmen dd { margin: 0; }
-.ws-teil { margin: 26px 0 0; padding: 22px 0 0; border-top: 1px solid #efece7; font-size: var(--fs-m); line-height: 1.6; max-width: 900px; }
+/* Workshop-Ansicht im Projekt (Daniel, 09.11.2026): Daniels Gliederung 1:1 – eine Schrift, zwei Größen, Text dunkel, Nebeninfo grau */
+.ws-teil { margin: 24px 0 0; padding: 22px 0 0; border-top: 1px solid #efece7; font-size: var(--fs-m); line-height: 1.6; max-width: 900px; }
+.pr-n-inhalt > .ws-teil:first-child { border-top: 0; padding-top: 0; }
 .ws-teil p { margin: 0 0 10px; }
-.ws-teil p:last-child { margin-bottom: 0; }
+.ws-teil > :last-child { margin-bottom: 0; }
+.ws-teil b { font-weight: 600; }
 .ws-h { margin: 0 0 12px; font-size: var(--fs-m); font-weight: 600; }
-.ws-unter { margin: 18px 0 6px !important; font-weight: 600; }
-.ws-agenda { list-style: none; margin: 0; padding: 0; }
-.ws-agenda li { display: grid; grid-template-columns: 110px minmax(0, 1fr) minmax(0, 1fr); gap: 18px; padding: 9px 0; border-top: 1px solid #efece7; }
-.ws-agenda li:first-child { border-top: 0; padding-top: 0; }
-.ws-zeit, .ws-methode, .ws-pause { color: var(--grey-50); }
-.ws-punkte, .ws-liste, .ws-vorb { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
-.ws-punkte li { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 10px; align-items: baseline; }
-.ws-punkt { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-.ws-punkt--gruen { background: #059669; } .ws-punkt--blau { background: #2563eb; } .ws-punkt--rot { background: #dc2626; }   /* Farben der Klebepunkte */
+.ws-liste { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 6px; }
 .ws-liste li { position: relative; padding-left: 16px; }
 .ws-liste li::before { content: "–"; position: absolute; left: 0; color: var(--grey-50); }
-.ws-spalten, .ws-fragen { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
-.ws-spalten li, .ws-fragen li { padding-left: 4px; }
-.ws-spalten li::marker, .ws-fragen li::marker { color: var(--grey-50); }
-.ws-vorb li { display: grid; gap: 2px; }
-.ws-vorb span { color: var(--grey-50); }
-.ws-mail:first-child { border-top: 0; margin-top: 18px; padding-top: 0; }
-.ws-mailtext { margin-top: 14px; padding: 18px 20px; background: #f7f6f3; border-radius: 12px; white-space: pre-wrap; user-select: text; }
+.ws-nummern { margin: 0 0 12px; padding-left: 1.3em; display: grid; gap: 6px; }
+.ws-nummern li { padding-left: 4px; }
+.ws-nummern li::marker { color: var(--grey-50); }
+.ws-tabelle { width: 100%; border-collapse: collapse; }
+.ws-tabelle th { text-align: left; font-weight: 600; padding: 0 16px 8px 0; border-bottom: 1px solid var(--ink); }
+.ws-tabelle td { padding: 9px 16px 9px 0; border-bottom: 1px solid #efece7; vertical-align: top; }
+.ws-tabelle td:first-child { white-space: nowrap; color: var(--grey-50); }
+.ws-tabelle td:last-child { color: var(--grey-50); }
+.ws-mail:first-child { border-top: 0; padding-top: 0; }
+.ws-rahmen { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 8px 18px; margin: 0; }
+.ws-rahmen dt { color: var(--grey-50); }
+.ws-rahmen dd { margin: 0; }
+.ws-mailtext { margin-top: 14px; padding: 18px 20px; background: #f7f6f3; border-radius: 12px; white-space: pre-wrap; }
 @media (max-width: 700px) {
   .ws-rahmen { grid-template-columns: 1fr; gap: 0; } .ws-rahmen dd { margin-bottom: 8px; }
-  .ws-agenda li { grid-template-columns: 1fr; gap: 2px; }
+  .ws-tabelle td:first-child { white-space: normal; }
 }

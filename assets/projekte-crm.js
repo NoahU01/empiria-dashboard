@@ -662,7 +662,7 @@
     // Workshop-Projekte (Daniel, 09.11.2026): statt Fahrplan oben gleich Hintergrund, Rahmen, Ziel, Agenda, Methodik und Vorbereitung;
     // darunter die Mail-Vorschläge. Inhalt aus projekte.workshop (jsonb).
     if (p.workshop) {
-      var ws = bereich("pr-n-ws", "n-ws", "Workshop", "Rahmen, Ziel, Agenda, Methodik und Vorbereitung", "", true);
+      var ws = bereich("pr-n-ws", "n-ws", p.workshop.titel || "Workshop", "", "", true);
       ws.inhalt.innerHTML = workshopHtml(p.workshop);
       neuR.appendChild(ws);
       if ((p.workshop.mails || []).length) {
@@ -739,34 +739,21 @@
     var leiste = ubw.querySelector(".ub-dash-kopf"); if (leiste) weg.rechts.appendChild(leiste);
   }
 
-  /* Workshop-Ansicht (Daniel, 09.11.2026): projekte.workshop = { titel, art, rahmen[[label, text]], ausgangssituation[], ziel, denkbild,
-     agenda[[zeit, block, methode]], methodik{grundprinzip, stakeholder[[farbe, name, frage]], medienbruch, spalten[], aufbau, aufbau_fragen[], logik},
-     ergebnis, vorbereitung[[titel, text]], impulsfragen[], mails[{titel, an, betreff, text}], unterlagen[{titel, url}] } */
+  /* Workshop-Ansicht (Daniel, 09.11.2026): Daniels Gliederung 1:1, nichts umformuliert, nichts ergänzt.
+     projekte.workshop = { titel, abschnitte[{titel, inhalt[{p} | {liste[]} | {nummern[]} | {tabelle{kopf[], zeilen[[]]}}]}], mails[{titel, an, betreff, text}] }
+     **fett** im Text wird fett dargestellt. */
+  function wsText(t) { return esc(t).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>"); }
   function workshopHtml(w) {
-    var m = w.methodik || {}, h = "";
-    function teil(titel, inhalt) { return inhalt ? '<section class="ws-teil"><h3 class="ws-h">' + titel + "</h3>" + inhalt + "</section>" : ""; }
-    function absaetze(l) { return (l || []).map(function (x) { return "<p>" + esc(x) + "</p>"; }).join(""); }
-    if (w.denkbild) h += '<p class="ws-denkbild">' + esc(w.denkbild) + "</p>";
-    if ((w.rahmen || []).length) h += '<dl class="ws-rahmen">' + w.rahmen.map(function (r) { return "<dt>" + esc(r[0]) + "</dt><dd>" + esc(r[1]) + "</dd>"; }).join("") + "</dl>";
-    h += teil("Ausgangssituation", absaetze(w.ausgangssituation));
-    h += teil("Zielsetzung", w.ziel ? "<p>" + esc(w.ziel) + "</p>" : "");
-    h += teil("Agenda", (w.agenda || []).length ? '<ul class="ws-agenda">' + w.agenda.map(function (a) {
-      var pause = /pause/i.test(a[1]) && !a[2];
-      return '<li' + (pause ? ' class="ws-pause"' : "") + '><span class="ws-zeit">' + esc(a[0]) + "</span><span>" + esc(a[1]) + "</span><span class=\"ws-methode\">" + esc(a[2] || "") + "</span></li>"; }).join("") + "</ul>" : "");
-    var mh = "";
-    if (m.grundprinzip) mh += "<p><b>Grundprinzip:</b> " + esc(m.grundprinzip) + "</p>";
-    if ((m.stakeholder || []).length) mh += '<p class="ws-unter">Schritt 1 · Stakeholder Map</p><ul class="ws-punkte">' + m.stakeholder.map(function (x) {
-      return '<li><span class="ws-punkt ws-punkt--' + esc(x[0]) + '" aria-hidden="true"></span><span><b>' + esc(x[1]) + ":</b> " + esc(x[2]) + "</span></li>"; }).join("") + "</ul>";
-    if (m.medienbruch) mh += '<p class="ws-unter">Der eine Medienbruch</p><p>' + esc(m.medienbruch) + "</p>";
-    if ((m.spalten || []).length) mh += '<p class="ws-unter">Die Tabelle · Spalten von links nach rechts</p><ol class="ws-spalten">' + m.spalten.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ol>";
-    if (m.aufbau) mh += '<p class="ws-unter">Aufbauorganisation</p><p>' + esc(m.aufbau) + "</p>" + ((m.aufbau_fragen || []).length ? '<ul class="ws-liste">' + m.aufbau_fragen.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "");
-    if (m.logik) mh += '<p class="ws-unter">Logik</p><p>' + esc(m.logik) + "</p>";
-    h += teil("Ablauf und Methodik", mh);
-    h += teil("Ergebnis und Nachbereitung", w.ergebnis ? "<p>" + esc(w.ergebnis) + "</p>" : "");
-    h += teil("Vorbereitung", (w.vorbereitung || []).length ? '<ul class="ws-vorb">' + w.vorbereitung.map(function (v) { return "<li><b>" + esc(v[0]) + "</b><span>" + esc(v[1]) + "</span></li>"; }).join("") + "</ul>" : "");
-    h += teil("Impulsfragen für die Teilnehmer", (w.impulsfragen || []).length ? '<ol class="ws-fragen">' + w.impulsfragen.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ol>" : "");
-    h += teil("Unterlagen", (w.unterlagen || []).length ? '<ul class="ws-liste">' + w.unterlagen.map(function (u) { return '<li><a href="' + esc(u.url) + '" target="_blank" rel="noopener">' + esc(u.titel) + "</a></li>"; }).join("") + "</ul>" : "");
-    return h;
+    return (w.abschnitte || []).map(function (a) {
+      return '<section class="ws-teil"><h3 class="ws-h">' + esc(a.titel) + "</h3>" + (a.inhalt || []).map(function (x) {
+        if (x.p) return "<p>" + wsText(x.p) + "</p>";
+        if (x.liste) return '<ul class="ws-liste">' + x.liste.map(function (y) { return "<li>" + wsText(y) + "</li>"; }).join("") + "</ul>";
+        if (x.nummern) return '<ol class="ws-nummern">' + x.nummern.map(function (y) { return "<li>" + wsText(y) + "</li>"; }).join("") + "</ol>";
+        if (x.tabelle) return '<table class="ws-tabelle"><thead><tr>' + x.tabelle.kopf.map(function (k) { return "<th>" + esc(k) + "</th>"; }).join("") + "</tr></thead><tbody>" +
+          x.tabelle.zeilen.map(function (z) { return "<tr>" + z.map(function (c) { return "<td>" + esc(c) + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table>";
+        return "";
+      }).join("") + "</section>";
+    }).join("");
   }
   function workshopMails(l) {
     return l.map(function (x) {
