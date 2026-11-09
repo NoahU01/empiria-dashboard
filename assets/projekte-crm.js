@@ -721,24 +721,7 @@
       hk.appendChild(el);
     });
     neuR.appendChild(hin);
-    // Nächster Termin sichtbar über allen Kästen (Daniel, 09.11.2026: „wenn ich im Projekt etwas mache, gehe ich ins Projekt“) –
-    // mit Vorbereitung (Agenda) zum Aufklappen und den Unterlagen direkt als Links. Nur Termine der nächsten 14 Tage.
-    var naechster = komm.filter(function (e) { return new Date(e.datum) - jetztZeit < 14 * 864e5; })[0];
-    if (naechster) {
-      var vp = STAND.pkt.filter(function (x) { return x.ereignis_id === naechster.id && x.art === "Vorbereitung"; });
-      var texte = vp.filter(function (x) { return !x.datei; }), dateien = vp.filter(function (x) { return x.datei; });
-      var nt = document.createElement("section"); nt.className = "pr-n-naechster";
-      nt.innerHTML = '<p class="pr-n-naechster-tag">Nächster Termin</p>' +
-        '<p class="pr-n-naechster-zeit">' + new Date(naechster.datum).toLocaleDateString("de-DE", { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" }) + zeit(naechster.datum, " · ") + " Uhr</p>" +
-        "<h3>" + esc(naechster.titel) + "</h3>" +
-        '<p class="pr-n-naechster-meta">' + esc(format(naechster)) + (teiln(naechster) ? " · " + esc(teiln(naechster)) : "") + "</p>" +
-        (dateien.length ? '<p class="pr-n-naechster-dateien">' + dateien.map(function (x) { return '<a href="#" class="pr-unterlage" data-datei="' + esc(x.datei) + '">' + esc(x.text) + "</a>"; }).join("") + "</p>" : "") +
-        (texte.length ? '<button type="button" class="pr-n-naechster-auf" aria-expanded="false">Vorbereitung und Agenda<span class="kb-k-pfeil" aria-hidden="true"></span></button><ul class="pr-n-naechster-vorb" hidden>' + window.EmpiriaVorbereitung.zeilen(texte) + "</ul>"
-          : '<p class="pr-n-naechster-meta">Noch keine Vorbereitung hinterlegt.</p>');
-      var na = nt.querySelector(".pr-n-naechster-auf");
-      if (na) na.onclick = function () { var u = nt.querySelector(".pr-n-naechster-vorb"), auf = u.hidden; u.hidden = !auf; na.setAttribute("aria-expanded", String(auf)); };
-      neuR.insertBefore(nt, neuR.firstChild);
-    }
+    // Kein „Nächster Termin“ über den Kästen (Daniel, 09.11.2026: macht es unübersichtlich) – die Vorbereitung steht im jeweiligen Termin.
     r.replaceWith(neuR);
     if (ohneWeg) return;
     var ubw = weg.querySelector("[data-ub-wurzel]"), ubd = ubahnDaten(STRAENGE, STAND.auf, { termine: ere, pakete: PAKETE });
