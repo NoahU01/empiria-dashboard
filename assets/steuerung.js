@@ -34,13 +34,15 @@
       db.from("belege_eingang").select("id, postfach, absender, absender_name, betreff, pdf_link, status, zuordnung, begruendung, titel, lieferant, belegdatum, betrag, kategorie, ust, pk_belegnr, fehler, hochgeladen_am, anweisung")
         .in("status", ["vorschlag", "fehler", "anweisung"]).order("belegdatum"),
       db.from("geburtstage_privat").select("vorname, nachname, tag, monat, gratuliert_jahr").eq("aktiv", true).eq("tag", new Date().getDate()).eq("monat", new Date().getMonth() + 1),
-      db.from("termine").select("id, start, ende, ganztags, betreff, ort, teilnehmer, extern, postfach, projekt_id, vorbereitung, vorbereitung_notiz, abgesagt, verschoben_von, verschoben_am").eq("im_kalender", true)
+      db.from("termine").select("id, start, ende, ganztags, betreff, ort, teilnehmer, extern, postfach, projekt_id, vorbereitung, vorbereitung_notiz, abgesagt, verschoben_von, verschoben_am, graph_id").eq("im_kalender", true)
         .gte("ende", new Date().toISOString()).lte("start", new Date(+HEUTE + 15 * 864e5).toISOString()).order("start")
     ]).then(function (r) {
       // Strategieumsetzung (art umsetzung/schritt) steht auf der Strategie-Seite, nicht auf dem Tisch
       D = { vorlagen: (r[0].data || []).filter(function (v) { return v.art !== "umsetzung" && v.art !== "schritt"; }), projekte: r[1].data || [], aufgaben: r[2].data || [], ereignisse: r[3].data || [], belege: r[4].data || [],
-            geburtstage: r[5].data || [], termine: (r[6].data || []).filter(function (t) { return !t.abgesagt; }) };
+            geburtstage: r[5].data || [], termine: (r[6].data || []).filter(function (t) { return !t.abgesagt; }), vorb: {} };
       zeichnen();
+      // Vorbereitung aus dem Projekt-Termin (Agenda, Unterlagen) nachladen – vorbereitung.js
+      if (window.EmpiriaVorbereitung) window.EmpiriaVorbereitung.fuerTermine(D.termine).then(function (m) { D.vorb = m; if (Object.keys(m).length) zeichnen(); });
     });
   }
   function projekt(id) { return D.projekte.filter(function (p) { return p.id === id; })[0]; }
@@ -188,7 +190,9 @@
             // In Outlook verschoben (Prüfmechanismus termine_abgleich.py) – Hinweis eine Woche lang
             (t.verschoben_von && t.verschoben_am && Date.now() - new Date(t.verschoben_am) < 7 * 864e5 ? '<small class="an-verschoben">verschoben von ' +
               new Date(t.verschoben_von).toLocaleString("de-DE", { weekday: "short", day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" }) + " Uhr</small>" : "") +
-            (t.vorbereitung_notiz ? '<button type="button" class="an-notiz-auf" data-notiz aria-expanded="false">Vorbereitung<span class="kb-k-pfeil" aria-hidden="true"></span></button><ul class="an-notiz" hidden>' + t.vorbereitung_notiz.split("\n").filter(Boolean).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "") + "</span>" +
+            // Vorbereitung aus dem Projekt-Termin hat Vorrang (mit Unterlagen), sonst die Notiz am Kalendertermin
+            ((D.vorb || {})[t.graph_id] ? '<button type="button" class="an-notiz-auf" data-notiz aria-expanded="false">Vorbereitung<span class="kb-k-pfeil" aria-hidden="true"></span></button><ul class="an-notiz" hidden>' + window.EmpiriaVorbereitung.zeilen(D.vorb[t.graph_id]) + "</ul>"
+            : t.vorbereitung_notiz ? '<button type="button" class="an-notiz-auf" data-notiz aria-expanded="false">Vorbereitung<span class="kb-k-pfeil" aria-hidden="true"></span></button><ul class="an-notiz" hidden>' + t.vorbereitung_notiz.split("\n").filter(Boolean).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "") + "</span>" +
           '<span class="an-vorb" role="group" aria-label="Vorbereitung">' +
             [["offen", "offen"], ["laeuft", "läuft"], ["vorbereitet", "vorbereitet"], ["nicht_noetig", "nicht nötig"]].map(function (v) {
               return '<button type="button" data-v="' + v[0] + '" aria-pressed="' + (t.vorbereitung === v[0]) + '">' + v[1] + "</button>"; }).join("") + "</span></li>";
