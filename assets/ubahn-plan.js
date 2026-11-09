@@ -868,9 +868,9 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     document.documentElement.classList.toggle("ub-weit-offen", an);
     if (an) { zoomHeim = [zoomEl.parentNode, zoomEl.nextSibling]; weitEl.insertBefore(zoomEl, weitEl.firstChild); zoomEl.classList.add("ub-zoom--weit"); }
     else if (zoomHeim) { zoomHeim[0].insertBefore(zoomEl, zoomHeim[1]); zoomEl.classList.remove("ub-zoom--weit"); }
-    // Überschrift „Fahrplan“ oben links, wie in der Kundenansicht (Daniel, 30.10.2026)
+    // Überschrift „Fahrplan · Projekt“ oben links, wie in der Kundenansicht (Daniel, 30.10.2026; Projekttitel 09.11.2026)
     var tEl = weitEl.querySelector(":scope > .ub-weit-titel");
-    if (an && !tEl) { tEl = document.createElement("h2"); tEl.className = "ub-weit-titel"; tEl.textContent = OPT.titel || "Fahrplan"; weitEl.insertBefore(tEl, weitEl.firstChild); }
+    if (an && !tEl) { tEl = document.createElement("h2"); tEl.className = "ub-weit-titel"; tEl.textContent = (OPT.titel || "Fahrplan") + (OPT.projekt ? " \u00b7 " + OPT.projekt : ""); weitEl.insertBefore(tEl, weitEl.firstChild); }
     else if (!an && tEl) tEl.remove();
     weitKnopf.innerHTML = an ? ICON_ZU : ICON_AUF;
     weitKnopf.setAttribute("aria-pressed", an ? "true" : "false");
