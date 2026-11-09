@@ -2368,6 +2368,12 @@ body.kt3-detail .db-kopf > :not(:first-child) { flex: none; }
 .ws-agenda .ws-ag-text .ws-liste { margin: 0 0 6px; gap: 4px; }
 .ws-agenda .ws-ag-text .ws-liste:last-child { margin-bottom: 0; }
 .ws-agenda .ws-ag-pause td, .ws-agenda .ws-ag-pause td:last-child { color: var(--grey-50); }
+/* Skizze rechts im Agenda-Block */
+.ws-teil:has(.ws-agenda) { max-width: 1120px; }
+.ws-agenda .ws-ag-bild { width: 200px; padding: 10px 0 14px 24px; vertical-align: top; }
+.ws-agenda .ws-ag-bild svg { display: block; width: 176px; height: auto; }
+.ws-agenda tbody > tr:first-child > td:not(.ws-ag-bild) { height: 1px; }   /* Titelzeile bleibt knapp, Platz geht an die Erklärung */
+@media (max-width: 900px) { .ws-agenda .ws-ag-bild { display: none; } }
 /* Link zur Methode im Methodenkoffer: Pfeil + unterstrichener Name, deutlich, aber ohne Kachel */
 .ws-ag-links { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 10px !important; }
 .ws-methode-link { display: inline-flex; align-items: center; gap: 8px; padding: 0; border: 0; background: none; cursor: pointer;
