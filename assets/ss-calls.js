@@ -245,7 +245,7 @@
       var t = Z.termine.filter(function (x) { return x.booking_uid === b.getAttribute("data-termin"); })[0]; if (!t) return;
       Z.form.booking_uid = t.booking_uid;
       Z.form.stattgefunden_am = lokal(t.termin_start);
-      if (!Z.form.titel) Z.form.titel = [t.titel ? t.titel.split(/ (zwischen|between) /)[0] : "Gespräch", t.name].filter(Boolean).join(" – ");
+      if (!Z.form.titel) Z.form.titel = [t.titel ? t.titel.split(/ (?:zwischen|between|mit|sofort sichtbar|&) /i)[0] : "Gespräch", t.name].filter(Boolean).join(" – ");
       return zeichnen();
     }
     if (b.hasAttribute("data-kontakt")) { Z.form.contact_id = b.getAttribute("data-kontakt"); Z.form.kontaktName = b.getAttribute("data-name"); return zeichnen(); }
