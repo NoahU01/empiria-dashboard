@@ -184,7 +184,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
       }
       liste.push(S[id]);
     });
-    if (!liste.length) {   // Level ohne geplante Schritte (z. B. spätere Ergebnislevel)
+    if (!liste.length && !OPT.alleStraenge) {   // Level ohne geplante Schritte (z. B. spätere Ergebnislevel); mit alleStraenge steht das Gerüst trotzdem (Daniel, 09.11.2026)
       planEl.style.height = "";
       planEl.innerHTML = '<p class="ub-leer">Für dieses Level sind noch keine Schritte geplant.</p>';
       return;
