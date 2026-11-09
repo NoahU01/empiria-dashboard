@@ -654,8 +654,20 @@
     var weg = bereich("pr-n-weg", "n-weg", "Fahrplan", "", "", false);   // Startsicht: alle drei Kästen zu (Daniel, 29.10.2026)
     var ub = document.createElement("div"); ub.innerHTML = UB_GERUEST; weg.inhalt.appendChild(ub.firstChild);
     // „Operative Aufgaben“ sammelt Einzelaufgaben ohne gemeinsames Ziel – dort kein Weg zum Ergebnis (Daniel, 29.10.2026)
-    var ohneWeg = p.name === "Operative Aufgaben";
+    var ohneWeg = p.name === "Operative Aufgaben" || !!p.workshop;
     if (!ohneWeg) neuR.appendChild(weg);
+    // Workshop-Projekte (Daniel, 09.11.2026): statt Fahrplan oben gleich Hintergrund, Rahmen, Ziel, Agenda, Methodik und Vorbereitung;
+    // darunter die Mail-Vorschläge. Inhalt aus projekte.workshop (jsonb).
+    if (p.workshop) {
+      var ws = bereich("pr-n-ws", "n-ws", "Workshop", "Rahmen, Ziel, Agenda, Methodik und Vorbereitung", "", true);
+      ws.inhalt.innerHTML = workshopHtml(p.workshop);
+      neuR.appendChild(ws);
+      if ((p.workshop.mails || []).length) {
+        var wm = bereich("pr-n-ws", "n-ws-mails", "Mail-Vorschläge", "Texte zum Übernehmen in Outlook – Platzhalter in eckigen Klammern ergänzen.", "", false);
+        wm.inhalt.innerHTML = workshopMails(p.workshop.mails);
+        neuR.appendChild(wm);
+      }
+    }
     // 2 Was jetzt ansteht – nur intern
     // Abgeschlossenes Projekt (Daniel, 29.10.2026): statt „Was jetzt ansteht“ der Abschluss – was erreicht wurde, was offen blieb
     var zu = p.status === "abgeschlossen";
@@ -722,6 +734,42 @@
     else ubw.innerHTML = '<p class="pr-offen">Noch keine Aufgaben für den Plan.</p>';
     // Größe und Legende in die Kopfzeile von „Fahrplan“ – bleiben auch zugeklappt erreichbar
     var leiste = ubw.querySelector(".ub-dash-kopf"); if (leiste) weg.rechts.appendChild(leiste);
+  }
+
+  /* Workshop-Ansicht (Daniel, 09.11.2026): projekte.workshop = { titel, art, rahmen[[label, text]], ausgangssituation[], ziel, denkbild,
+     agenda[[zeit, block, methode]], methodik{grundprinzip, stakeholder[[farbe, name, frage]], medienbruch, spalten[], aufbau, aufbau_fragen[], logik},
+     ergebnis, vorbereitung[[titel, text]], impulsfragen[], mails[{titel, an, betreff, text}], unterlagen[{titel, url}] } */
+  function workshopHtml(w) {
+    var m = w.methodik || {}, h = "";
+    function teil(titel, inhalt) { return inhalt ? '<section class="ws-teil"><h3 class="ws-h">' + titel + "</h3>" + inhalt + "</section>" : ""; }
+    function absaetze(l) { return (l || []).map(function (x) { return "<p>" + esc(x) + "</p>"; }).join(""); }
+    if (w.denkbild) h += '<p class="ws-denkbild">' + esc(w.denkbild) + "</p>";
+    if ((w.rahmen || []).length) h += '<dl class="ws-rahmen">' + w.rahmen.map(function (r) { return "<dt>" + esc(r[0]) + "</dt><dd>" + esc(r[1]) + "</dd>"; }).join("") + "</dl>";
+    h += teil("Ausgangssituation", absaetze(w.ausgangssituation));
+    h += teil("Zielsetzung", w.ziel ? "<p>" + esc(w.ziel) + "</p>" : "");
+    h += teil("Agenda", (w.agenda || []).length ? '<ul class="ws-agenda">' + w.agenda.map(function (a) {
+      var pause = /pause/i.test(a[1]) && !a[2];
+      return '<li' + (pause ? ' class="ws-pause"' : "") + '><span class="ws-zeit">' + esc(a[0]) + "</span><span>" + esc(a[1]) + "</span><span class=\"ws-methode\">" + esc(a[2] || "") + "</span></li>"; }).join("") + "</ul>" : "");
+    var mh = "";
+    if (m.grundprinzip) mh += "<p><b>Grundprinzip:</b> " + esc(m.grundprinzip) + "</p>";
+    if ((m.stakeholder || []).length) mh += '<p class="ws-unter">Schritt 1 · Stakeholder Map</p><ul class="ws-punkte">' + m.stakeholder.map(function (x) {
+      return '<li><span class="ws-punkt ws-punkt--' + esc(x[0]) + '" aria-hidden="true"></span><span><b>' + esc(x[1]) + ":</b> " + esc(x[2]) + "</span></li>"; }).join("") + "</ul>";
+    if (m.medienbruch) mh += '<p class="ws-unter">Der eine Medienbruch</p><p>' + esc(m.medienbruch) + "</p>";
+    if ((m.spalten || []).length) mh += '<p class="ws-unter">Die Tabelle · Spalten von links nach rechts</p><ol class="ws-spalten">' + m.spalten.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ol>";
+    if (m.aufbau) mh += '<p class="ws-unter">Aufbauorganisation</p><p>' + esc(m.aufbau) + "</p>" + ((m.aufbau_fragen || []).length ? '<ul class="ws-liste">' + m.aufbau_fragen.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "");
+    if (m.logik) mh += '<p class="ws-unter">Logik</p><p>' + esc(m.logik) + "</p>";
+    h += teil("Ablauf und Methodik", mh);
+    h += teil("Ergebnis und Nachbereitung", w.ergebnis ? "<p>" + esc(w.ergebnis) + "</p>" : "");
+    h += teil("Vorbereitung", (w.vorbereitung || []).length ? '<ul class="ws-vorb">' + w.vorbereitung.map(function (v) { return "<li><b>" + esc(v[0]) + "</b><span>" + esc(v[1]) + "</span></li>"; }).join("") + "</ul>" : "");
+    h += teil("Impulsfragen für die Teilnehmer", (w.impulsfragen || []).length ? '<ol class="ws-fragen">' + w.impulsfragen.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ol>" : "");
+    h += teil("Unterlagen", (w.unterlagen || []).length ? '<ul class="ws-liste">' + w.unterlagen.map(function (u) { return '<li><a href="' + esc(u.url) + '" target="_blank" rel="noopener">' + esc(u.titel) + "</a></li>"; }).join("") + "</ul>" : "");
+    return h;
+  }
+  function workshopMails(l) {
+    return l.map(function (x) {
+      return '<section class="ws-teil ws-mail"><h3 class="ws-h">' + esc(x.titel) + '</h3><dl class="ws-rahmen"><dt>An</dt><dd>' + esc(x.an || "") + "</dd><dt>Betreff</dt><dd>" + esc(x.betreff || "") + "</dd></dl>" +
+        '<div class="ws-mailtext">' + esc(x.text || "") + "</div></section>";
+    }).join("");
   }
 
   /* Darstellung „SV Akademie“: aufklappbare Module 01–05 wie auf der Seite Projekt SV Akademie.
