@@ -359,7 +359,7 @@
       db.from("projekte").select("*, organisationen(id, name)").eq("id", id).single(),
       db.from("projekt_beteiligte").select("id, seite, rolle, name, kontakte(id, vorname, nachname, position)").eq("projekt_id", id),
       db.from("projekt_ereignisse").select("id, datum, art, titel, quelle, format, ort, teilnehmer, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("datum", { ascending: false }),
-      db.from("projekt_punkte").select("id, ereignis_id, art, text, angelegt_am, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am", { ascending: false }),
+      db.from("projekt_punkte").select("id, ereignis_id, art, text, datei, angelegt_am, kontakte(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am", { ascending: false }),
       db.from("aufgaben").select("id, paket_id, strang_id, reihenfolge, art, projektgate_id, titel, beschreibung, zusammenfassung, prompt, status, spalte, faellig_am, beginnt_am, erledigt_am, ereignis_id, weg, vorgaenger, warten_auf, hinweis, zeitblock_vorschlag, mail_entwurf_id, mail_gesendet_am, antwort_am, antwort_von, unterlagen, person:kontakt_id(id, vorname, nachname), organisationen(id, name), zustaendig_name, kontakte:zustaendig_kontakt_id(id, vorname, nachname)").eq("projekt_id", id).order("angelegt_am")
       ,db.from("projekt_pakete").select("id, nr, titel, ziel, stand, status, strang_id, beginnt_am, faellig_am, vorgaenger, projektgate_id, reihenfolge").eq("projekt_id", id).order("nr")
       ,db.from("projekt_straenge").select("id, titel, reihenfolge, eltern_id, erklaerung, verantwortlich, verantwortlich_kontakte, farbe").eq("projekt_id", id).order("reihenfolge")
@@ -398,13 +398,25 @@
     ziel.innerHTML = '<p class="pr-d">' + datum(e.datum) + zeit(e.datum, " · ") + '</p><h3 class="pr-det-titel">' + esc(e.titel) + "</h3>" +
       '<p class="pr-det-meta">' + esc(format(e)) + (teiln(e) ? "<br>" + esc(teiln(e)) : "") + "</p>" +
       // Vorbereitung (Agenda, Ziel, Unterlagen) steht vor dem Protokoll – auch bei Terminen, die noch kommen
-      block("Vorbereitung", p2.filter(function (x) { return x.art === "Vorbereitung"; }).map(function (x) { return "<li>" + esc(x.text) + "</li>"; })) +
+      block("Vorbereitung", p2.filter(function (x) { return x.art === "Vorbereitung"; }).sort(function (a, b) { return (a.datei ? 1 : 0) - (b.datei ? 1 : 0) || a.id - b.id; }).map(function (x) {
+        // Unterlagen liegen im geschützten Speicher (Bucket „unterlagen“) und öffnen sich nur angemeldet über einen kurzlebigen Link
+        return x.datei ? '<li><a href="#" class="pr-unterlage" data-datei="' + esc(x.datei) + '">' + esc(x.text) + "</a></li>" : "<li>" + esc(x.text) + "</li>"; })) +
       (p2.some(function (x) { return x.art !== "Vorbereitung"; }) || a2.length ?
         block("Notizen", p2.filter(function (x) { return x.art === "Protokoll"; }).map(function (x) { return "<li>" + esc(x.text) + "</li>"; })) +
         block("Entscheidungen", p2.filter(function (x) { return x.art === "Entscheidung"; }).map(function (x) { return "<li>" + esc(x.text) + "</li>"; })) +
         block("Aufgaben", a2.map(function (x) { return "<li>" + esc(x.titel) + ' <span class="kt3-leise">· ' + esc(wer(x)) + (x.faellig_am ? ", bis " + kurz(x.faellig_am) : "") + "</span>" + (x.status === "erledigt" ? " ✓" : "") + "</li>"; }))
         : '<p class="kt3-leise">Noch kein Protokoll. Diktiere mir einfach, was besprochen wurde.</p>');
   }
+  document.addEventListener("click", function (ev) {
+    var a = ev.target.closest && ev.target.closest(".pr-unterlage");
+    if (!a) return;
+    ev.preventDefault();
+    var fenster = window.open("", "_blank");
+    db.storage.from("unterlagen").createSignedUrl(a.getAttribute("data-datei"), 600).then(function (r) {
+      if (r.error || !r.data) { if (fenster) fenster.close(); alert("Die Unterlage ließ sich nicht öffnen."); return; }
+      if (fenster) fenster.location = r.data.signedUrl; else location.href = r.data.signedUrl;
+    });
+  });
   /* Absprung zur eigenen Projekt-Website (Tabelle projekte.projektseite: titel, url, repo, zweig, teile[]) –
      schmale Leiste direkt unter dem Kopf: sichtbar, aber nicht dominant */
   function projektseite(s) {
