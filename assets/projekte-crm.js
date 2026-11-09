@@ -664,6 +664,16 @@
     if (p.workshop) {
       var ws = bereich("pr-n-ws", "n-ws", p.workshop.titel || "Workshop", "", "", true);
       ws.inhalt.innerHTML = workshopHtml(p.workshop);
+      // Terminablauf (Daniel, 09.11.2026): die Projekttermine in zeitlicher Folge – Quelle projekt_ereignisse, nichts doppelt
+      var ta = ere.slice().sort(function (a, b) { return new Date(a.datum) - new Date(b.datum); });
+      if (ta.length) {
+        var tz = document.createElement("section"); tz.className = "ws-teil";
+        tz.innerHTML = '<h3 class="ws-h">Terminablauf</h3><table class="ws-tabelle ws-termine"><tbody>' + ta.map(function (e) {
+          var d = new Date(e.datum), vorbei = d.getTime() < Date.now() - 864e5 / 2;
+          return '<tr' + (vorbei ? ' class="ws-vorbei"' : "") + "><td>" + d.toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit", year: "numeric" }) + zeit(e.datum, " · ") + (zeit(e.datum, "") ? " Uhr" : "") +
+            "</td><td>" + esc(e.titel) + "</td><td>" + esc(e.format === "vor Ort" ? "vor Ort" + (e.ort ? ", " + e.ort : "") : (e.format || "")) + "</td></tr>"; }).join("") + "</tbody></table>";
+        ws.inhalt.appendChild(tz);
+      }
       // Methoden aus dem Methodenkoffer als Kacheln unter dem Text (Daniel, 09.11.2026) – Klick öffnet das Methoden-Fenster
       if ((p.workshop.methoden || []).length && window.MethodenKoffer) {
         var mk = document.createElement("section"); mk.className = "ws-teil ws-methoden";
