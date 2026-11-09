@@ -52,10 +52,8 @@
       '<ellipse cx="24" cy="30" rx="15" ry="13" stroke-dasharray="3 4"/><ellipse cx="57" cy="32" rx="15" ry="13" stroke-dasharray="3 4"/><ellipse cx="40" cy="61" rx="17" ry="11" stroke-dasharray="3 4"/>' +
       karte(14, 22, 14, 8) + karte(20, 32, 14, 8) + karte(47, 24, 14, 8) + karte(53, 33, 14, 8) + karte(28, 56, 14, 8) + karte(40, 61, 14, 8) +
       '<path d="M82 43H92M88 39l4 4-4 4"/>' + tabelle(96, 14, 60, 64, 3), "Metaplanwand mit Clustern und Tabelle"),
-    // Wrap-up: Sprechen
-    sprechen: svg('<path d="M14 18a8 8 0 0 1 8-8h56a8 8 0 0 1 8 8v28a8 8 0 0 1-8 8H38l-14 12V54h-2a8 8 0 0 1-8-8z"/>' +
-      '<path d="M28 26H72M28 38H58"/>' +
-      '<path d="M146 54a8 8 0 0 0-8-8H94a8 8 0 0 0-8 8v24a8 8 0 0 0 8 8h30l14 12V86a8 8 0 0 0 8-8z"/>' +
-      '<path d="M100 62H132M100 72H120"/>', "Gespräch: Feedback und weiteres Vorgehen")
+    // Wrap-up: Sprechen – eine Sprechblase
+    sprechen: svg('<g transform="translate(0 -12)"><path d="M44 26a8 8 0 0 1 8-8h56a8 8 0 0 1 8 8v32a8 8 0 0 1-8 8H72l-16 14V66h-4a8 8 0 0 1-8-8z"/>' +
+      '<path d="M58 36H102M58 48H88"/></g>', "Gespräch: Feedback und weiteres Vorgehen")
   };
 })();

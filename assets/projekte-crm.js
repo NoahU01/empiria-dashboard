@@ -753,21 +753,22 @@
         if (x.p) return "<p>" + wsText(x.p) + "</p>";
         if (x.liste) return '<ul class="ws-liste">' + x.liste.map(function (y) { return "<li>" + wsText(y) + "</li>"; }).join("") + "</ul>";
         if (x.nummern) return '<ol class="ws-nummern">' + x.nummern.map(function (y) { return "<li>" + wsText(y) + "</li>"; }).join("") + "</ol>";
-        // Agenda mit Erklärung (Daniel, 09.11.2026): von–bis, Block, Methode; darunter die Erklärung; Pausen als eigene Zeilen
-        if (x.agenda) return '<table class="ws-tabelle ws-agenda"><thead><tr><th>Zeit</th><th>Block</th><th>Methode</th><th class="ws-ag-bild"></th></tr></thead>' + x.agenda.map(function (a) {
-          var zeit = esc(a.von) + "–" + esc(a.bis);
-          if (a.pause) return '<tbody class="ws-ag-pause"><tr><td>' + zeit + '</td><td colspan="3">' + esc(a.block) + "</td></tr></tbody>";
+        // Agenda (Daniel, 09.11.2026): jeder Block gleich aufgebaut – links die Zeit, daneben Titel, Methode und darunter
+        // die Erklärung mit der Skizze direkt daneben; Pausen als schmale graue Zeilen
+        if (x.agenda) return '<div class="ws-ag">' + x.agenda.map(function (a) {
+          var zeit = '<p class="ws-ag-zeit">' + esc(a.von) + "–" + esc(a.bis) + "</p>";
+          if (a.pause) return '<div class="ws-ag-block ws-ag-pause">' + zeit + "<p>" + esc(a.block) + "</p></div>";
           var text = [].concat(a.text || []).map(function (t) {   // Aufzählungen als Spiegelstriche, nie als Fließtext
             return t && t.liste ? '<ul class="ws-liste">' + t.liste.map(function (y) { return "<li>" + wsText(y) + "</li>"; }).join("") + "</ul>" : "<p>" + wsText(t) + "</p>"; }).join("");
           // Methoden aus dem Methodenkoffer als deutlicher Link unter der Erklärung – öffnet das Methoden-Fenster
-          var mk = (a.methoden || []).map(function (id) { var m = (window.METHODEN || []).filter(function (x) { return x.id === id; })[0];
+          var mk = (a.methoden || []).map(function (id) { var m = (window.METHODEN || []).filter(function (y) { return y.id === id; })[0];
             return m ? '<button type="button" class="ws-methode-link" data-modal-target="methode-' + esc(id) + '">Methode ' + esc(m.titel) + "</button>" : ""; }).join("");
           if (mk) text += '<p class="ws-ag-links">' + mk + "</p>";
-          // rechts die Skizze, wie die Methode angewendet wird (assets/workshop-bilder.js)
-          var bild = a.bild && window.WorkshopBilder && WorkshopBilder[a.bild] ? '<td class="ws-ag-bild" rowspan="' + (text ? 2 : 1) + '">' + WorkshopBilder[a.bild] + "</td>" : '<td class="ws-ag-bild" rowspan="' + (text ? 2 : 1) + '"></td>';
-          return "<tbody><tr><td>" + zeit + "</td><td><b>" + esc(a.block) + "</b></td><td>" + esc(a.methode || "") + "</td>" + bild + "</tr>" +
-            (text ? '<tr class="ws-ag-text"><td></td><td colspan="2">' + text + "</td></tr>" : "") + "</tbody>";
-        }).join("") + "</table>";
+          var bild = a.bild && window.WorkshopBilder && WorkshopBilder[a.bild] ? '<div class="ws-ag-bild">' + WorkshopBilder[a.bild] + "</div>" : "";
+          return '<div class="ws-ag-block">' + zeit + '<div class="ws-ag-inhalt"><p class="ws-ag-titel">' + esc(a.block) + "</p>" +
+            (a.methode && a.methode !== "–" ? '<p class="ws-ag-methode"><span>Methode</span>' + esc(a.methode) + "</p>" : "") +
+            '<div class="ws-ag-koerper"><div class="ws-ag-text">' + text + "</div>" + bild + "</div></div></div>";
+        }).join("") + "</div>";
         if (x.tabelle) return '<table class="ws-tabelle"><thead><tr>' + x.tabelle.kopf.map(function (k) { return "<th>" + esc(k) + "</th>"; }).join("") + "</tr></thead><tbody>" +
           x.tabelle.zeilen.map(function (z) { return "<tr>" + z.map(function (c) { return "<td>" + esc(c) + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table>";
         return "";

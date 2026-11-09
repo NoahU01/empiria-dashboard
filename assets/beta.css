@@ -2358,22 +2358,24 @@ body.kt3-detail .db-kopf > :not(:first-child) { flex: none; }
 .ws-termine tr:first-child td { padding-top: 0; }
 .ws-termine td:first-child { color: var(--ink); }
 .ws-vorbei td, .ws-termine .ws-vorbei td:first-child { color: var(--grey-50); }
-/* Agenda mit Erklärung: ein Block = Kopfzeile + Erklärung, Trennlinie nur zwischen den Blöcken */
-.ws-agenda td { border-bottom: 0; }
-.ws-agenda tbody { border-bottom: 1px solid #efece7; }
-.ws-agenda td:last-child { color: var(--ink); }
-.ws-agenda .ws-ag-text td { padding-top: 0; }
-.ws-agenda .ws-ag-text p { margin: 0 0 6px; }
-.ws-agenda .ws-ag-text p:last-child { margin-bottom: 0; }
-.ws-agenda .ws-ag-text .ws-liste { margin: 0 0 6px; gap: 4px; }
-.ws-agenda .ws-ag-text .ws-liste:last-child { margin-bottom: 0; }
-.ws-agenda .ws-ag-pause td, .ws-agenda .ws-ag-pause td:last-child { color: var(--grey-50); }
-/* Skizze rechts im Agenda-Block */
-.ws-teil:has(.ws-agenda) { max-width: 1120px; }
-.ws-agenda .ws-ag-bild { width: 200px; padding: 10px 0 14px 24px; vertical-align: top; }
-.ws-agenda .ws-ag-bild svg { display: block; width: 176px; height: auto; }
-.ws-agenda tbody > tr:first-child > td:not(.ws-ag-bild) { height: 1px; }   /* Titelzeile bleibt knapp, Platz geht an die Erklärung */
-@media (max-width: 900px) { .ws-agenda .ws-ag-bild { display: none; } }
+/* Agenda: jeder Block gleich aufgebaut – Zeit | Titel, Methode, Erklärung mit Skizze daneben. Eine Schrift, eine Größe. */
+.ws-teil:has(.ws-ag) { max-width: 1120px; }
+.ws-ag { border-top: 1px solid var(--ink); }
+.ws-ag-block { display: grid; grid-template-columns: 120px minmax(0, 1fr); column-gap: 18px; padding: 18px 0; border-bottom: 1px solid #efece7; }
+.ws-ag-block p { margin: 0; }
+.ws-ag-zeit { color: var(--grey-50); }
+.ws-ag-titel { font-weight: 600; }
+.ws-ag-methode { color: var(--grey-50); }
+.ws-ag-methode span { margin-right: 8px; color: var(--ink); }
+.ws-ag-koerper { display: grid; grid-template-columns: minmax(0, 1fr) 176px; column-gap: 40px; align-items: start; margin-top: 12px; }
+.ws-ag-text p { margin: 0 0 6px; }
+.ws-ag-text .ws-liste { margin: 0 0 6px; gap: 4px; }
+.ws-ag-text > :last-child { margin-bottom: 0; }
+.ws-ag-bild svg { display: block; width: 176px; height: auto; }
+.ws-ag-pause { padding: 10px 0; }
+.ws-ag-pause p { color: var(--grey-50); }
+@media (max-width: 900px) { .ws-ag-koerper { grid-template-columns: 1fr; } .ws-ag-bild { display: none; } }
+@media (max-width: 600px) { .ws-ag-block { grid-template-columns: 1fr; } }
 /* Link zur Methode im Methodenkoffer: Pfeil + unterstrichener Name, deutlich, aber ohne Kachel */
 .ws-ag-links { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 10px !important; }
 .ws-methode-link { display: inline-flex; align-items: center; gap: 8px; padding: 0; border: 0; background: none; cursor: pointer;
