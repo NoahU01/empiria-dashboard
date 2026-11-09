@@ -397,7 +397,9 @@
     function block(t, l) { return l.length ? '<h4>' + t + '</h4><ul>' + l.join("") + "</ul>" : ""; }
     ziel.innerHTML = '<p class="pr-d">' + datum(e.datum) + zeit(e.datum, " · ") + '</p><h3 class="pr-det-titel">' + esc(e.titel) + "</h3>" +
       '<p class="pr-det-meta">' + esc(format(e)) + (teiln(e) ? "<br>" + esc(teiln(e)) : "") + "</p>" +
-      (p2.length || a2.length ?
+      // Vorbereitung (Agenda, Ziel, Unterlagen) steht vor dem Protokoll – auch bei Terminen, die noch kommen
+      block("Vorbereitung", p2.filter(function (x) { return x.art === "Vorbereitung"; }).map(function (x) { return "<li>" + esc(x.text) + "</li>"; })) +
+      (p2.some(function (x) { return x.art !== "Vorbereitung"; }) || a2.length ?
         block("Notizen", p2.filter(function (x) { return x.art === "Protokoll"; }).map(function (x) { return "<li>" + esc(x.text) + "</li>"; })) +
         block("Entscheidungen", p2.filter(function (x) { return x.art === "Entscheidung"; }).map(function (x) { return "<li>" + esc(x.text) + "</li>"; })) +
         block("Aufgaben", a2.map(function (x) { return "<li>" + esc(x.titel) + ' <span class="kt3-leise">· ' + esc(wer(x)) + (x.faellig_am ? ", bis " + kurz(x.faellig_am) : "") + "</span>" + (x.status === "erledigt" ? " ✓" : "") + "</li>"; }))
@@ -577,7 +579,7 @@
     function eintrag(e, mitPersonen, dreieck) {
       var zuk = new Date(e.datum) > jetzt, hat = pkt.some(function (x) { return x.ereignis_id === e.id; }) || auf.some(function (x) { return x.ereignis_id === e.id; });
       return '<button type="button" data-ev="' + e.id + '" class="' + (zuk ? "pr-zuk " : "") + (start && e.id === start.id ? "an" : "") + '"><span class="pr-d">' + (zuk ? "geplant · " : "") + kurz(e.datum) +
-        zeit(e.datum, " · ") + (hat ? ' <i class="pr-hat-details" title="Protokoll vorhanden"></i>' : "") + "</span><b class=\"mk mk--" + (e.art === "Meilenstein" ? "ziel" : "termin") + "\">" + esc(e.titel) + "</b>" +
+        zeit(e.datum, " · ") + (hat ? ' <i class="pr-hat-details" title="Details vorhanden"></i>' : "") + "</span><b class=\"mk mk--" + (e.art === "Meilenstein" ? "ziel" : "termin") + "\">" + esc(e.titel) + "</b>" +
         '<small>' + esc(format(e)) + (mitPersonen && personen(e) ? " (" + esc(personen(e)) + ")" : "") + "</small>" +
         (dreieck && hat ? '<span class="tl-dreieck" aria-hidden="true"></span>' : "") + "</button>";
     }
