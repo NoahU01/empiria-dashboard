@@ -6,8 +6,8 @@
   var db = window.empiriaDb;
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
 
-  // Punkte nach Ereignis sortiert: Text zuerst, Unterlagen am Ende
-  function ordnen(l) { return l.slice().sort(function (a, b) { return (a.datei ? 1 : 0) - (b.datei ? 1 : 0) || a.id - b.id; }); }
+  // Unterlagen (PDFs) zuerst, dann der Text – sonst verschwinden sie unten in der Detailspalte (Daniel, 09.11.2026)
+  function ordnen(l) { return l.slice().sort(function (a, b) { return (b.datei ? 1 : 0) - (a.datei ? 1 : 0) || a.id - b.id; }); }
 
   function zeilen(punkte) {
     return ordnen(punkte).map(function (x) {

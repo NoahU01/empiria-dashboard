@@ -2367,3 +2367,8 @@ body.kt3-detail .db-kopf > :not(:first-child) { flex: none; }
   .ws-rahmen { grid-template-columns: 1fr; gap: 0; } .ws-rahmen dd { margin-bottom: 8px; }
   .ws-tabelle td:first-child { white-space: normal; }
 }
+
+/* Unterlagen eines Termins (PDFs) als erkennbarer Link – stehen oben in der Vorbereitung (Daniel, 09.11.2026) */
+a.pr-unterlage { color: var(--ink); font-weight: 600; text-decoration: underline; text-decoration-color: #cfcac2; text-underline-offset: 4px; }
+a.pr-unterlage:hover { text-decoration-color: var(--ink); }
+a.pr-unterlage::after { content: " · PDF"; font-weight: 400; color: var(--grey-50); }
