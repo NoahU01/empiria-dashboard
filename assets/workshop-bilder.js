@@ -13,7 +13,7 @@
       '<path d="M' + l1 + " " + u + "V" + f + "M" + (l1 - 7) + " " + f + "H" + (l1 + 7) + "M" + l2 + " " + u + "V" + f + "M" + (l2 - 7) + " " + f + "H" + (l2 + 7) + '"/>';
   }
   // Tabelle mit drei Spalten (Daniel, 09.11.2026): vorne die Kategorien nach unten, Ecke oben links leer, zwei Spalten nach rechts
-  function tabelle(x, y, b, h, zeilen) {
+  function tabelle(x, y, b, h, zeilen, gruen) {
     var k = b * 0.34, s = (b - k) / 2, kopf = h * 0.18, z = (h - kopf) / zeilen, d = "";
     d += '<rect x="' + x + '" y="' + y + '" width="' + b + '" height="' + h + '" rx="3"/>';
     var lin = "M" + (x + k) + " " + y + "V" + (y + h);
@@ -24,7 +24,11 @@
     var kp = "";   // Spaltenköpfe als kurze Striche, Ecke oben links bleibt leer
     for (var c = 0; c < 2; c++) { var cx = x + k + s * c + s / 2; kp += "M" + (cx - s * 0.28) + " " + (y + kopf / 2) + "H" + (cx + s * 0.28); }
     d += '<path d="' + kp + '" stroke-width="3"/>';
-    for (var r = 0; r < zeilen; r++) d += karte(x + k * 0.16, y + kopf + z * r + z * 0.22, k * 0.68, z * 0.56);
+    for (var r = 0; r < zeilen; r++) {
+      var kx = x + k * 0.16, ky = y + kopf + z * r + z * 0.22, kb = k * 0.68;
+      d += karte(kx, ky, kb, z * 0.56);
+      if (gruen) d += punkt(kx + kb, ky, "#059669");   // nur die grün markierten Stakeholder kommen in die Tabelle
+    }
     return d;
   }
   window.WorkshopBilder = {
@@ -41,7 +45,7 @@
       "Stakeholder Map mit Achsenkreuz und Klebepunkten").replace("</g></svg>",
       "</g>" + punkt(48, 21, "#059669") + punkt(120, 19, "#059669") + punkt(134, 59, "#2563eb") + punkt(52, 61, "#dc2626") + punkt(74, 31, "#2563eb") + punkt(106, 65, "#059669") + "</svg>"),
     // Problem und Lösung: Tabelle 1
-    tabelle: svg(tabelle(8, 10, 144, 92, 3), "Tabelle mit drei Spalten: Kategorien nach unten, zwei Spalten nach rechts"),
+    tabelle: svg(tabelle(8, 10, 144, 92, 3, true), "Tabelle mit drei Spalten: Kategorien nach unten, zwei Spalten nach rechts"),
     // Aufbauorganisation: Wand mit Organigramm
     organigramm: svg(wand(8, 6, 144, 80) +
       karte(66, 14, 28, 12) + '<path d="M80 26V34M34 34H126M34 34V42M80 34V42M126 34V42M34 54V62M126 54V62"/>' +
