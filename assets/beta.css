@@ -2358,6 +2358,14 @@ body.kt3-detail .db-kopf > :not(:first-child) { flex: none; }
 .ws-termine tr:first-child td { padding-top: 0; }
 .ws-termine td:first-child { color: var(--ink); }
 .ws-vorbei td, .ws-termine .ws-vorbei td:first-child { color: var(--grey-50); }
+/* Agenda mit Erklärung: ein Block = Kopfzeile + Erklärung, Trennlinie nur zwischen den Blöcken */
+.ws-agenda td { border-bottom: 0; }
+.ws-agenda tbody { border-bottom: 1px solid #efece7; }
+.ws-agenda td:last-child { color: var(--ink); }
+.ws-agenda .ws-ag-text td { padding-top: 0; }
+.ws-agenda .ws-ag-text p { margin: 0 0 6px; }
+.ws-agenda .ws-ag-text p:last-child { margin-bottom: 0; }
+.ws-agenda .ws-ag-pause td, .ws-agenda .ws-ag-pause td:last-child { color: var(--grey-50); }
 .ws-mail:first-child { border-top: 0; padding-top: 0; }
 .ws-rahmen { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 8px 18px; margin: 0; }
 .ws-rahmen dt { color: var(--grey-50); }

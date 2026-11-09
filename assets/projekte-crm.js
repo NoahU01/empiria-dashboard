@@ -752,6 +752,14 @@
         if (x.p) return "<p>" + wsText(x.p) + "</p>";
         if (x.liste) return '<ul class="ws-liste">' + x.liste.map(function (y) { return "<li>" + wsText(y) + "</li>"; }).join("") + "</ul>";
         if (x.nummern) return '<ol class="ws-nummern">' + x.nummern.map(function (y) { return "<li>" + wsText(y) + "</li>"; }).join("") + "</ol>";
+        // Agenda mit Erklärung (Daniel, 09.11.2026): von–bis, Block, Methode; darunter die Erklärung; Pausen als eigene Zeilen
+        if (x.agenda) return '<table class="ws-tabelle ws-agenda"><thead><tr><th>Zeit</th><th>Block</th><th>Methode</th></tr></thead>' + x.agenda.map(function (a) {
+          var zeit = esc(a.von) + "–" + esc(a.bis);
+          if (a.pause) return '<tbody class="ws-ag-pause"><tr><td>' + zeit + '</td><td colspan="2">' + esc(a.block) + "</td></tr></tbody>";
+          var text = [].concat(a.text || []).map(function (t) { return "<p>" + wsText(t) + "</p>"; }).join("");
+          return "<tbody><tr><td>" + zeit + "</td><td><b>" + esc(a.block) + "</b></td><td>" + esc(a.methode || "") + "</td></tr>" +
+            (text ? '<tr class="ws-ag-text"><td></td><td colspan="2">' + text + "</td></tr>" : "") + "</tbody>";
+        }).join("") + "</table>";
         if (x.tabelle) return '<table class="ws-tabelle"><thead><tr>' + x.tabelle.kopf.map(function (k) { return "<th>" + esc(k) + "</th>"; }).join("") + "</tr></thead><tbody>" +
           x.tabelle.zeilen.map(function (z) { return "<tr>" + z.map(function (c) { return "<td>" + esc(c) + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table>";
         return "";
