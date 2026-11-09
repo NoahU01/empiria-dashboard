@@ -49,7 +49,7 @@
     if (!/^p=\d+$/.test(h)) kopf(null);
     look(/^p=\d+$/.test(h));
     if (/^p=\d+$/.test(h)) { if (+h.slice(2) !== KLAPP.id) KLAPP = { id: null, z: {} }; projekt(+h.slice(2)); }
-    else { KLAPP = { id: null, z: {} }; liste(); }
+    else { KLAPP = { id: null, z: {} }; document.documentElement.classList.remove("ub-weit-offen"); liste(); }
   }
 
   /* ---------- Übersicht ---------- */
@@ -354,6 +354,9 @@
     return erg;
   }   // Planungsmodus: Stränge des Projekts (assets/projekt-plan.js)
   function projekt(id) {
+    // Volle Breite des Fahrplans sperrt das Scrollen der Seite (html.ub-weit-offen). Beim Wechsel in ein anderes Projekt verschwindet der Plan,
+    // die Sperre blieb aber stehen – im Workshop-Projekt ohne Fahrplan ließ sich danach nicht mehr scrollen (Daniel, 09.11.2026).
+    document.documentElement.classList.remove("ub-weit-offen");
     wurzel.innerHTML = '<div class="kb-laedt"><span></span><span></span></div>';
     Promise.all([
       db.from("projekte").select("*, organisationen(id, name)").eq("id", id).single(),
