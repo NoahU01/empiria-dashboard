@@ -1,0 +1,63 @@
+/* sofort sichtbar · Calls – baut auf beta.css (tr-*, kb-*) und den Variablen aus dashboard-nav.css auf */
+
+.sc-leiste { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
+.sc-haupt { padding: 10px 18px; border: 0; border-radius: 999px; background: var(--ink); color: #fff; font: inherit; font-size: var(--fs-m); font-weight: 500; cursor: pointer; }
+.sc-suche { flex: 1 1 280px; min-width: 0; padding: 10px 14px; border: 1px solid var(--linie); border-radius: 999px; font: inherit; font-size: var(--fs-m); background: #fff; }
+.sc-zahl { margin: 0 0 6px; font-size: var(--fs-s); color: var(--grey-50); }
+
+.sc-liste { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--linie); }
+.sc-z { border-bottom: 1px solid var(--linie); }
+.sc-z--auf { background: #faf9f7; }
+.sc-kopf { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 12px; width: 100%; padding: 14px 4px; border: 0; background: none; font: inherit; text-align: left; color: inherit; cursor: pointer; }
+.sc-datum { font-weight: 600; font-variant-numeric: tabular-nums; font-size: var(--fs-s); padding-top: 2px; }
+.sc-wer b { display: block; font-size: var(--fs-m); }
+.sc-wer small { display: block; margin-top: 2px; font-size: var(--fs-s); color: var(--grey-70); }
+.sc-wer .sc-ausschnitt { margin-top: 6px; color: var(--grey-50); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.sc-wer mark, .sc-det mark { background: var(--hl); color: inherit; padding: 0 1px; }
+
+.sc-det { display: grid; gap: 12px; padding: 0 4px 18px 126px; }
+.sc-block { padding: 14px 16px; border-radius: 12px; background: #fff; box-shadow: inset 0 0 0 1px var(--linie); }
+.sc-block__titel, .sc-schritt__titel { display: block; margin-bottom: 6px; font-size: var(--fs-xs); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-50); }
+.sc-block p, .sc-transkript p { margin: 0 0 8px; font-size: var(--fs-m); line-height: 1.55; }
+.sc-transkript summary { cursor: pointer; font-size: var(--fs-s); font-weight: 600; }
+.sc-transkript[open] summary { margin-bottom: 10px; }
+.sc-transkript { max-width: 72ch; }
+.tr-knoepfe .sc-loeschen { color: #a33; }
+
+/* Formular */
+.sc-form { padding: 20px; margin: 28px 0 18px; border-radius: 16px; background: #faf9f7; box-shadow: inset 0 0 0 1px var(--linie); }
+.sc-form__kopf { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.sc-form__kopf h2 { margin: 0; font-size: 1.15rem; }
+.sc-form__kopf button { border: 0; background: none; font: inherit; font-size: var(--fs-s); color: var(--grey-50); text-decoration: underline; cursor: pointer; }
+.sc-schritt { display: grid; gap: 10px; }
+.sc-modus { display: flex; flex-wrap: wrap; gap: 6px; }
+.sc-modus button { padding: 7px 14px; border: 1px solid var(--linie); border-radius: 999px; background: #fff; font: inherit; font-size: var(--fs-s); cursor: pointer; }
+.sc-modus button[aria-selected="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+.sc-termine, .sc-treffer { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; max-height: 320px; overflow: auto; }
+.sc-termin { display: grid; grid-template-columns: 150px minmax(0, 1fr) auto; grid-template-areas: "zeit name status" "zeit info status"; column-gap: 12px; width: 100%; padding: 10px 12px; border: 1px solid var(--linie); border-radius: 10px; background: #fff; font: inherit; text-align: left; cursor: pointer; }
+.sc-termin__zeit { grid-area: zeit; font-size: var(--fs-s); font-weight: 600; font-variant-numeric: tabular-nums; }
+.sc-termin b { grid-area: name; font-size: var(--fs-m); }
+.sc-termin small { grid-area: info; font-size: var(--fs-s); color: var(--grey-70); }
+.sc-termin .tr-status { grid-area: status; align-self: center; }
+.sc-termin--gew { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.sc-termin:disabled { opacity: .5; cursor: default; }
+.sc-treffer button { width: 100%; padding: 8px 12px; border: 1px solid var(--linie); border-radius: 10px; background: #fff; font: inherit; font-size: var(--fs-m); text-align: left; cursor: pointer; }
+.sc-treffer small { color: var(--grey-50); font-size: var(--fs-s); }
+.sc-gewaehlt { margin: 0; font-weight: 600; }
+.sc-gewaehlt button { margin-left: 8px; border: 0; background: none; font: inherit; font-weight: 400; font-size: var(--fs-s); color: var(--grey-50); text-decoration: underline; cursor: pointer; }
+
+.sc-reihe { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.sc-datei { justify-self: start; display: inline-block !important; margin-top: -4px; cursor: pointer; }
+.sc-datei input { position: absolute; width: 1px !important; height: 1px; opacity: 0; pointer-events: none; }
+.sc-datei span { display: inline-block; padding: 7px 14px; border: 1px solid var(--linie); border-radius: 999px; background: #fff; font-size: var(--fs-s); font-weight: 400; }
+.sc-datei:focus-within span { outline: 2px solid var(--ink); outline-offset: 2px; }
+.sc-zustimmung { display: flex !important; align-items: center; gap: 10px; font-weight: 500 !important; }
+.sc-zustimmung input { width: 18px !important; height: 18px; padding: 0 !important; }
+
+@media (max-width: 720px) {
+  .sc-kopf { grid-template-columns: 1fr; gap: 2px; }
+  .sc-det { padding: 0 4px 18px; }
+  .sc-reihe { grid-template-columns: 1fr; }
+  .sc-termin { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "zeit status" "name status" "info status"; }
+}
