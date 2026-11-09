@@ -679,11 +679,12 @@
         var mk = document.createElement("section"); mk.className = "ws-teil ws-methoden";
         mk.innerHTML = '<h3 class="ws-h">Methoden</h3><ul class="u3-methoden"></ul>';
         MethodenKoffer.einsetzen({ kacheln: mk.querySelector("ul"), auswahl: p.workshop.methoden });
-        mk.querySelectorAll("[data-modal-target]").forEach(function (b) {
-          b.onclick = function () { var o = document.getElementById(b.getAttribute("data-modal-target")); if (!o) return; o.classList.add("open"); document.body.style.overflow = "hidden"; var c = o.querySelector(".modal-close"); if (c) c.focus(); };
-        });
         ws.inhalt.appendChild(mk);
       }
+      // Methoden-Fenster öffnen – Kacheln und Links in der Agenda
+      ws.inhalt.querySelectorAll("[data-modal-target]").forEach(function (b) {
+        b.onclick = function () { var o = document.getElementById(b.getAttribute("data-modal-target")); if (!o) return; o.classList.add("open"); document.body.style.overflow = "hidden"; var c = o.querySelector(".modal-close"); if (c) c.focus(); };
+      });
       neuR.appendChild(ws);
       if ((p.workshop.mails || []).length) {
         var wm = bereich("pr-n-ws", "n-ws-mails", "Mail-Vorschläge", "Texte zum Übernehmen in Outlook – Platzhalter in eckigen Klammern ergänzen.", "", false);
@@ -757,6 +758,10 @@
           var zeit = esc(a.von) + "–" + esc(a.bis);
           if (a.pause) return '<tbody class="ws-ag-pause"><tr><td>' + zeit + '</td><td colspan="2">' + esc(a.block) + "</td></tr></tbody>";
           var text = [].concat(a.text || []).map(function (t) { return "<p>" + wsText(t) + "</p>"; }).join("");
+          // Methoden aus dem Methodenkoffer als deutlicher Link unter der Erklärung – öffnet das Methoden-Fenster
+          var mk = (a.methoden || []).map(function (id) { var m = (window.METHODEN || []).filter(function (x) { return x.id === id; })[0];
+            return m ? '<button type="button" class="ws-methode-link" data-modal-target="methode-' + esc(id) + '">Methode ' + esc(m.titel) + "</button>" : ""; }).join("");
+          if (mk) text += '<p class="ws-ag-links">' + mk + "</p>";
           return "<tbody><tr><td>" + zeit + "</td><td><b>" + esc(a.block) + "</b></td><td>" + esc(a.methode || "") + "</td></tr>" +
             (text ? '<tr class="ws-ag-text"><td></td><td colspan="2">' + text + "</td></tr>" : "") + "</tbody>";
         }).join("") + "</table>";

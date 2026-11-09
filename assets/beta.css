@@ -2366,6 +2366,12 @@ body.kt3-detail .db-kopf > :not(:first-child) { flex: none; }
 .ws-agenda .ws-ag-text p { margin: 0 0 6px; }
 .ws-agenda .ws-ag-text p:last-child { margin-bottom: 0; }
 .ws-agenda .ws-ag-pause td, .ws-agenda .ws-ag-pause td:last-child { color: var(--grey-50); }
+/* Link zur Methode im Methodenkoffer: Pfeil + unterstrichener Name, deutlich, aber ohne Kachel */
+.ws-ag-links { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 10px !important; }
+.ws-methode-link { display: inline-flex; align-items: center; gap: 8px; padding: 0; border: 0; background: none; cursor: pointer;
+  font: 600 var(--fs-m)/1.4 'Poppins', sans-serif; color: var(--ink); text-decoration: underline; text-decoration-color: #cfcac2; text-underline-offset: 4px; }
+.ws-methode-link::before { content: ""; flex: none; width: 0; height: 0; border-left: 7px solid var(--ink); border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+.ws-methode-link:hover { text-decoration-color: var(--ink); }
 .ws-mail:first-child { border-top: 0; padding-top: 0; }
 .ws-rahmen { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 8px 18px; margin: 0; }
 .ws-rahmen dt { color: var(--grey-50); }
