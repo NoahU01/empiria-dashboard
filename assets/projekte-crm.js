@@ -664,6 +664,16 @@
     if (p.workshop) {
       var ws = bereich("pr-n-ws", "n-ws", p.workshop.titel || "Workshop", "", "", true);
       ws.inhalt.innerHTML = workshopHtml(p.workshop);
+      // Methoden aus dem Methodenkoffer als Kacheln unter dem Text (Daniel, 09.11.2026) – Klick öffnet das Methoden-Fenster
+      if ((p.workshop.methoden || []).length && window.MethodenKoffer) {
+        var mk = document.createElement("section"); mk.className = "ws-teil ws-methoden";
+        mk.innerHTML = '<h3 class="ws-h">Methoden</h3><ul class="u3-methoden"></ul>';
+        MethodenKoffer.einsetzen({ kacheln: mk.querySelector("ul"), auswahl: p.workshop.methoden });
+        mk.querySelectorAll("[data-modal-target]").forEach(function (b) {
+          b.onclick = function () { var o = document.getElementById(b.getAttribute("data-modal-target")); if (!o) return; o.classList.add("open"); document.body.style.overflow = "hidden"; var c = o.querySelector(".modal-close"); if (c) c.focus(); };
+        });
+        ws.inhalt.appendChild(mk);
+      }
       neuR.appendChild(ws);
       if ((p.workshop.mails || []).length) {
         var wm = bereich("pr-n-ws", "n-ws-mails", "Mail-Vorschläge", "Texte zum Übernehmen in Outlook – Platzhalter in eckigen Klammern ergänzen.", "", false);

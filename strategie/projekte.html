@@ -19,6 +19,7 @@
 <link rel="stylesheet" href="/assets/dashboard-nav.css?v=202610151100">
 <link rel="stylesheet" href="/assets/beta.css?v=202611092100">
 <link rel="stylesheet" href="/assets/ubahn-plan.css?v=202611042310">
+<link rel="stylesheet" href="/assets/methoden/methoden.css?v=202611050000">
 <style>
 /* Methodenkoffer rechts neben „Jetzt prüfen“, gleiche Pill */
 .db-kopf .mk-knopf{margin-left:auto;margin-bottom:6px;align-self:flex-end;text-decoration:none;color:var(--ink)}
@@ -88,6 +89,11 @@
   </div>
 </footer>
 
+<!-- Methoden-Fenster (Methodenkoffer) – vor script.js, damit Schließen und Escape verdrahtet sind; geöffnet werden sie aus Projekten, z. B. im Workshop-Kasten -->
+<div data-mk-fenster></div>
+<script src="/assets/methoden/methoden.js?v=202611092200"></script>
+<script src="/assets/methoden/methoden-render.js?v=202611050000"></script>
+<script>MethodenKoffer.einsetzen({ fenster: document.querySelector("[data-mk-fenster]"), intern: true, dateien: "/assets/methoden/dateien/" });</script>
 <script src="/script.js"></script>
 <script src="/assets/vendor/supabase.js?v=202610082218"></script>
 <script src="/assets/db.js?v=202610082218"></script>
@@ -95,7 +101,7 @@
 <script src="/assets/projekt-plan.js?v=202610201200"></script>
 <script src="/assets/ubahn-plan.js?v=202611091500"></script>
 <script src="/assets/vorbereitung.js?v=202611091600"></script>
-<script src="/assets/projekte-crm.js?v=202611092100"></script>
+<script src="/assets/projekte-crm.js?v=202611092300"></script>
 <script src="/assets/treffen.js?v=202610121400"></script>
 <script src="/assets/dashboard-nav.js?v=202610151110"></script>
 <script src="/assets/anstoss.js?v=202610082218"></script>
