@@ -757,7 +757,8 @@
         if (x.agenda) return '<table class="ws-tabelle ws-agenda"><thead><tr><th>Zeit</th><th>Block</th><th>Methode</th></tr></thead>' + x.agenda.map(function (a) {
           var zeit = esc(a.von) + "–" + esc(a.bis);
           if (a.pause) return '<tbody class="ws-ag-pause"><tr><td>' + zeit + '</td><td colspan="2">' + esc(a.block) + "</td></tr></tbody>";
-          var text = [].concat(a.text || []).map(function (t) { return "<p>" + wsText(t) + "</p>"; }).join("");
+          var text = [].concat(a.text || []).map(function (t) {   // Aufzählungen als Spiegelstriche, nie als Fließtext
+            return t && t.liste ? '<ul class="ws-liste">' + t.liste.map(function (y) { return "<li>" + wsText(y) + "</li>"; }).join("") + "</ul>" : "<p>" + wsText(t) + "</p>"; }).join("");
           // Methoden aus dem Methodenkoffer als deutlicher Link unter der Erklärung – öffnet das Methoden-Fenster
           var mk = (a.methoden || []).map(function (id) { var m = (window.METHODEN || []).filter(function (x) { return x.id === id; })[0];
             return m ? '<button type="button" class="ws-methode-link" data-modal-target="methode-' + esc(id) + '">Methode ' + esc(m.titel) + "</button>" : ""; }).join("");
