@@ -665,7 +665,7 @@
       var ws = bereich("pr-n-ws", "n-ws", p.workshop.titel || "Workshop", "", "", true);
       ws.inhalt.innerHTML = workshopHtml(p.workshop);
       // Terminablauf (Daniel, 09.11.2026): die Projekttermine in zeitlicher Folge – Quelle projekt_ereignisse, nichts doppelt
-      var ta = ere.slice().sort(function (a, b) { return new Date(a.datum) - new Date(b.datum); });
+      var ta = ere.slice().sort(function (a, b) { return new Date(b.datum) - new Date(a.datum); });   // neuester Termin oben (Daniel, 09.11.2026)
       if (ta.length) {
         var tz = document.createElement("section"); tz.className = "ws-teil";
         tz.innerHTML = '<h3 class="ws-h">Terminablauf</h3><table class="ws-tabelle ws-termine"><tbody>' + ta.map(function (e) {
