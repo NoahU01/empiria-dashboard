@@ -791,6 +791,8 @@ window.UBahnPlan = function (wurzel, D, OPT) {
     });
     pop.style.left = best.x + "px";
     pop.style.top = best.y + "px";
+    // langer Text am Punkt: höher als der Plan → oben anlegen und im Fenster scrollen – nie abgeschnitten (wie am Meilenstein, Daniel, 10.11.2026)
+    if (H > FH - 8) { pop.style.top = "4px"; pop.style.maxHeight = (FH - 8) + "px"; pop.style.overflowY = "auto"; }
   }
   // Meilenstein im Gesamtplan gewählt (Daniel, 01.11.2026): Fenster am Balken mit Name, Level und Erklärung –
   // der Gesamtplan bleibt stehen, die Hervorhebung zeigt, was zum Meilenstein beiträgt
