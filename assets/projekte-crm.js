@@ -207,7 +207,7 @@
     var imStrang = {}; blaetter.forEach(function (s) { imStrang[s.id] = true; });
     var pm = opt.termine ? blaetter.filter(function (s) { return /projektmanagement/i.test(s.titel || ""); })[0] : null;
     if (opt.termine) auf = auf.filter(function (a) { return a.strang_id && imStrang[a.strang_id] && !(pm && a.strang_id === pm.id) || a.art === "projektgate"; });
-    if (opt.termine && !pm && opt.termine.some(function (e) { return new Date(e.datum).getTime() >= Date.now() - 14 * 864e5 && (e.art === "Termin" || e.art === "Workshop") && !gremium(e); }))   // eigene Terminlinie nur, wenn es Termine im Blick gibt
+    if (opt.termine && !pm && !opt.ohneTerminlinie && opt.termine.some(function (e) { return new Date(e.datum).getTime() >= Date.now() - 14 * 864e5 && (e.art === "Termin" || e.art === "Workshop") && !gremium(e); }))   // eigene Terminlinie nur, wenn es Termine im Blick gibt
       { pm = { id: -1, titel: "Termine", erklaerung: "", verantwortlich: [] }; blaetter.push(pm); imStrang[-1] = true; }
     // Aufgaben ohne (bekannten) Strang laufen auf einer eigenen Linie „Weitere Aufgaben“
     var ohne = auf.filter(function (a) { return a.art !== "projektgate" && !(a.strang_id && imStrang[a.strang_id]); });
@@ -725,7 +725,7 @@
     // Kein „Nächster Termin“ über den Kästen (Daniel, 09.11.2026: macht es unübersichtlich) – die Vorbereitung steht im jeweiligen Termin.
     r.replaceWith(neuR);
     if (ohneWeg) return;
-    var ubw = weg.querySelector("[data-ub-wurzel]"), ubd = ubahnDaten(STRAENGE, STAND.auf, { termine: ere, pakete: PAKETE });
+    var ubw = weg.querySelector("[data-ub-wurzel]"), ubd = ubahnDaten(STRAENGE, STAND.auf, { termine: ere, pakete: PAKETE, ohneTerminlinie: !!(p.projektseite && p.projektseite.ohne_terminlinie) });   // goldene Linie „Termine“ je Projekt abschaltbar (Daniel, 10.11.2026: SV Schadenmanagement)
     // Aufgaben im Fenster eines Arbeitspakets abhaken: speichern und die Projektseite neu laden (Plan, Liste und Status ziehen nach)
     ubw.addEventListener("ub-abhaken", function (e) {
       var d = e.detail || {};
