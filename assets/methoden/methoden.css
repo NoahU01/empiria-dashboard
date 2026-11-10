@@ -125,3 +125,21 @@ ul.u3-methoden{grid-template-columns:repeat(3,minmax(0,1fr))}
 .mk-blatt__knoepfe a{font-size:.84rem;font-weight:600;color:#1a1817;text-decoration:none;border-bottom:2px solid #ffed00}
 .mk-blatt__knoepfe a:hover{border-bottom-color:#1a1817}
 @media (max-width:700px){.mk-blaetter__liste{grid-template-columns:1fr}}
+/* Homepage deiner Abteilung: Perspektivwechsel wie im Pop-up „Positionierung & Pitch“ (empiria, Schadenmanagement Variante 4) */
+.hp-oben{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;align-items:start;margin:4px 0 26px}
+.hp-tag{margin:0 0 8px;font:700 .72rem/1.2 Poppins,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#1a1817}
+.hp-schritt{padding-top:14px;border-top:2px solid #1a1817}
+.hp-schritt p:not(.hp-tag){margin:0;font-size:.98rem;line-height:1.6;color:#1a1817}
+.perspektive-browser.hp-browser{width:100%;max-width:none;margin:0;box-shadow:none;border:2px solid #1a1817}
+.hp-browser .pb-mark{background:#1a1817;color:#ffed00}
+.hp-kanaele{margin:0 0 22px}
+.hp-kanaele ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:12px 28px}
+.hp-kanaele li{display:flex;align-items:center;gap:10px;font-size:.9rem;color:#555}
+.hp-kanal{display:flex;align-items:center;height:30px}
+.hp-kanal svg{height:30px;width:auto;fill:none;stroke:#1a1817;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.hp-kanal svg .b{fill:#ffed00}
+.hp-kanal svg .f{fill:#1a1817;stroke:none}
+.hp-band{display:grid;grid-template-columns:auto minmax(0,1fr);gap:24px;align-items:center;padding:20px 24px;border-radius:14px;background:#f3f1ed}
+.hp-band .hp-tag{margin:0}
+.hp-band__satz{margin:0;font-size:1rem;font-weight:600;line-height:1.55;color:#1a1817}
+@media (max-width:700px){.hp-oben{grid-template-columns:1fr;gap:22px}.hp-band{grid-template-columns:1fr;gap:8px;padding:16px 18px}}
