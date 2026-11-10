@@ -269,6 +269,14 @@ window.UBahnPlan = function (wurzel, D, OPT) {
         (s.braucht || []).forEach(function (b) { if (imPlan[b] && gleich(S[b], s) && S[b].meilenstein === s.meilenstein && tiefe[b] != null) tiefeA[s.id] = Math.max(tiefeA[s.id], tiefe[b] + 0.7); });
         tiefe[s.id] = Math.max(ab[s.monat] + lage(s.monat, s.tag), tiefeA[s.id] + 0.8);
       });
+      // gleicher Zeitraum = gleich breiter Balken (Daniel, 10.11.2026): rückt ein Zeitraum hinter seinen Vorgänger,
+      // rücken alle mit demselben Beginn mit – und alle mit demselben Ende enden gleich
+      var gleichA = {}, gleichE = {};
+      ss.forEach(function (s) { if (!zeitraum(s) || !s.tag || !s.tagVon) return;
+        var ka = s.von + "|" + s.tagVon, ke = s.monat + "|" + s.tag;
+        gleichA[ka] = Math.max(gleichA[ka] != null ? gleichA[ka] : -1e9, tiefeA[s.id]); gleichE[ke] = Math.max(gleichE[ke] != null ? gleichE[ke] : -1e9, tiefe[s.id]); });
+      ss.forEach(function (s) { if (!zeitraum(s) || !s.tag || !s.tagVon) return;
+        tiefeA[s.id] = gleichA[s.von + "|" + s.tagVon]; tiefe[s.id] = Math.max(gleichE[s.monat + "|" + s.tag], tiefeA[s.id] + 0.8); });
       bandMin[x.id] = off;
     });
     var bandStart = {}, bandBreite = {}, lauf = 0, nr = 0, bandNr = {};
