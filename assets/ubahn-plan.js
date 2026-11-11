@@ -100,7 +100,7 @@ window.UBahnPlan = function (wurzel, D, OPT) {
   // Kopf mit den Ergebnisleveln als Route: Haltepunkte auf einer Linie, darunter das Ergebnis des gewählten Levels
   function stufenText(id) {
     if (id === "ziel") return "Alle Stoßrichtungen über alle Level bis zum Zielbild.";
-    return MS[id].kurz || (MS[id].ergebnis || []).join(" ");   // Kopf: Zusammenfassung, wenn vorhanden (Daniel, 04.11.2026)
+    return MS[id].kurz || (MS[id].ergebnis || []).join("\n");   // Kopf: Zusammenfassung, wenn vorhanden (Daniel, 04.11.2026)
   }
   function stufen() {
     // so viele Spalten wie Halte (mindestens sechs) – bei sechs Leveln plus Gesamtplan bleibt alles in einer Zeile (VVDE)
@@ -112,7 +112,9 @@ window.UBahnPlan = function (wurzel, D, OPT) {
         '<span class="ub-route-datum">' + esc(z ? "Ziel" : "Level " + x.nr + " · " + x.termin) + "</span>" +
         (id === AKTUELL && !stufeErreicht(id) ? '<span class="ub-route-aktuell">aktuell</span>' : "") + "</button>";   // alles erreicht (abgeschlossen): kein „aktuell“
     });
-    stufenEl.innerHTML = h + '</div><p class="ub-kopf-wenn">' + esc(stufenText(sel)) + "</p>";
+    // Kopf: Zeilen mit „•“ werden wie im Fenster zur Liste (LEA go-live JAT, Daniel, 11.11.2026)
+    var kt = stufenText(sel);
+    stufenEl.innerHTML = h + "</div>" + (/\n\s*[•\-–]/.test(kt) ? '<div class="ub-kopf-wenn">' + textHtml(kt) + "</div>" : '<p class="ub-kopf-wenn">' + esc(kt) + "</p>");
     stufenEl.querySelectorAll("[data-ms]").forEach(function (k) {
       k.addEventListener("click", function () {
         zustandUI.ms = k.getAttribute("data-ms"); zustandUI.station = null;
