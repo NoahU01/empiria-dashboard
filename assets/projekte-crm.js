@@ -206,7 +206,7 @@
       .sort(function (a, b) { return String(a.faellig_am || "9999").localeCompare(String(b.faellig_am || "9999")) || (a.reihenfolge || 0) - (b.reihenfolge || 0); });
     var imStrang = {}; blaetter.forEach(function (s) { imStrang[s.id] = true; });
     var pm = opt.termine ? blaetter.filter(function (s) { return /projektmanagement/i.test(s.titel || ""); })[0] : null;
-    if (opt.termine) auf = auf.filter(function (a) { return a.strang_id && imStrang[a.strang_id] && !(pm && a.strang_id === pm.id) || a.art === "projektgate"; });
+    if (opt.termine) auf = auf.filter(function (a) { return a.strang_id && imStrang[a.strang_id] && !(pm && a.strang_id === pm.id && a.art !== "paket") || a.art === "projektgate"; });   // Arbeitspakete laufen auch auf der Linie Projektmanagement (Konkretisierung Strategie, Daniel, 11.11.2026)
     if (opt.termine && !pm && !opt.ohneTerminlinie && opt.termine.some(function (e) { return new Date(e.datum).getTime() >= Date.now() - 14 * 864e5 && (e.art === "Termin" || e.art === "Workshop") && !gremium(e); }))   // eigene Terminlinie nur, wenn es Termine im Blick gibt
       { pm = { id: -1, titel: "Termine", erklaerung: "", verantwortlich: [] }; blaetter.push(pm); imStrang[-1] = true; }
     // Aufgaben ohne (bekannten) Strang laufen auf einer eigenen Linie „Weitere Aufgaben“
@@ -267,7 +267,7 @@
     function datum(d) { var t = String(d || "").slice(0, 10).split("-"); return t.length === 3 ? t[2] + "." + t[1] + "." + t[0] : "offen"; }
     // Termine als Halte auf der Linie Projektmanagement (nur Termine und Workshops, keine Meilensteine wie der Schulungsinfotag): vergangene erledigt, in zeitlicher Folge
     var termHalte = [];
-    if (pm && opt.termine) {
+    if (pm && opt.termine && !opt.ohneTerminlinie) {   // ohne Terminlinie: auch keine Termine auf der Linie Projektmanagement (SV Akademie, Daniel, 11.11.2026)
       var grenze = Date.now() - 14 * 864e5, jetzt = Date.now();
       var tl = opt.termine.filter(function (e) { return new Date(e.datum).getTime() >= grenze && (e.art === "Termin" || e.art === "Workshop") && !gremium(e); }).sort(function (a, b) { return new Date(a.datum) - new Date(b.datum); });
       function nachr(e) { return e.format === "nachrichtlich"; }   // nur zur Information, ohne unsere Teilnahme – nie „in Arbeit“
