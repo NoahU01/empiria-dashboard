@@ -11,7 +11,9 @@
 
   function zeilen(punkte) {
     return ordnen(punkte).map(function (x) {
-      return x.datei ? '<li><a href="#" class="pr-unterlage" data-datei="' + esc(x.datei) + '">' + esc(x.text) + "</a></li>" : "<li>" + esc(x.text) + "</li>";
+      // „## …“ ist eine Zwischenüberschrift (Agenda, Phasen, Material …), damit Daniels Gliederung erhalten bleibt
+      return x.datei ? '<li><a href="#" class="pr-unterlage" data-datei="' + esc(x.datei) + '">' + esc(x.text) + "</a></li>"
+        : /^## /.test(x.text) ? '<li class="vb-kopf">' + esc(x.text.slice(3)) + "</li>" : "<li>" + esc(x.text) + "</li>";
     }).join("");
   }
 

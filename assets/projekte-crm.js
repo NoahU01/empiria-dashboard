@@ -708,8 +708,15 @@
     var jetztZeit = Date.now(), komm = zu ? [] : ere.filter(function (e) { return new Date(e.datum) > jetztZeit; }).sort(function (a, b) { return new Date(a.datum) - new Date(b.datum); }).slice(0, 4);
     if (komm.length) {
       var te = document.createElement("section"); te.className = "kt3-box kt3-breit pr-n-termine";
+      // Jeder Termin klappt auf und zeigt seine Vorbereitung mit Unterlagen (Daniel, 12.11.2026: „ich kann hier nirgends etwas anklicken“)
       te.innerHTML = "<h3>Nächste Termine</h3><ul>" + komm.map(function (e) {
-        return '<li><span class="pr-n-datum">' + kurz(e.datum) + zeit(e.datum, " · ") + "</span><b>" + esc(e.titel) + "</b><small>" + esc(format(e)) + "</small></li>"; }).join("") + "</ul>";
+        var vp = STAND.pkt.filter(function (x) { return x.ereignis_id === e.id && x.art === "Vorbereitung"; });
+        return '<li><span class="pr-n-datum">' + kurz(e.datum) + zeit(e.datum, " · ") + "</span><b>" + esc(e.titel) + "</b><small>" + esc(format(e)) + "</small>" +
+          (vp.length ? '<button type="button" class="an-notiz-auf pr-n-vorb-auf" aria-expanded="false">Vorbereitung<span class="kb-k-pfeil" aria-hidden="true"></span></button><ul class="an-notiz pr-n-vorb" hidden>' + window.EmpiriaVorbereitung.zeilen(vp) + "</ul>"
+            : '<small class="pr-n-vorb-leer">Noch keine Vorbereitung hinterlegt.</small>') + "</li>"; }).join("") + "</ul>";
+      te.querySelectorAll(".pr-n-vorb-auf").forEach(function (b) {
+        b.onclick = function () { var u = b.nextElementSibling, auf = u.hidden; u.hidden = !auf; b.setAttribute("aria-expanded", String(auf)); };
+      });
       jetzt.inhalt.appendChild(te);
     }
     neuR.appendChild(jetzt);

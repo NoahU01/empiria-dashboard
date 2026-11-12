@@ -2396,3 +2396,17 @@ body.kt3-detail .db-kopf > :not(:first-child) { flex: none; }
 a.pr-unterlage { color: var(--ink); font-weight: 600; text-decoration: underline; text-decoration-color: #cfcac2; text-underline-offset: 4px; }
 a.pr-unterlage:hover { text-decoration-color: var(--ink); }
 a.pr-unterlage::after { content: " · PDF"; font-weight: 400; color: var(--grey-50); }
+
+/* Nächste Termine im Projekt: Vorbereitung zum Aufklappen (12.11.2026) */
+.pr-n-termine li > .pr-n-vorb-auf, .pr-n-termine li > .pr-n-vorb, .pr-n-termine li > .pr-n-vorb-leer { grid-column: 2; }
+.pr-n-termine .pr-n-vorb { margin: 8px 0 4px; }
+.pr-n-vorb-leer { font-style: italic; }
+/* Zwischenüberschrift in einer Vorbereitung („## …“) */
+.an-notiz li.vb-kopf, .tl-seite-det li.vb-kopf, .tl-auf-det li.vb-kopf, li.vb-kopf { list-style: none; margin: 12px 0 2px -1.05em; font-weight: 600; color: var(--ink); }
+.an-notiz li.vb-kopf:first-child, li.vb-kopf:first-child { margin-top: 0; }
+@media (max-width: 700px) { .pr-n-termine li > .pr-n-vorb-auf, .pr-n-termine li > .pr-n-vorb, .pr-n-termine li > .pr-n-vorb-leer { grid-column: 1; } }
+/* Zeilen der Vorbereitung nicht wie Terminzeilen setzen (das Raster 170 px | Rest gilt nur für den Termin selbst) */
+.pr-n-termine .pr-n-vorb { display: block; padding-left: 1.05em; max-width: 70ch; }
+.pr-n-termine .pr-n-vorb li { display: list-item; grid-template-columns: none; font-size: var(--fs-s); line-height: 1.5; margin: 0 0 4px; }
+.pr-n-termine .pr-n-vorb li.vb-kopf { list-style: none; margin: 14px 0 4px -1.05em; font-size: var(--fs-s); }
+.pr-n-termine .pr-n-vorb li.vb-kopf:first-child { margin-top: 0; }
