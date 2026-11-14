@@ -188,6 +188,15 @@
    "kurz": "",
    "im_diagramm": true,
    "pos": 999
+  },
+  {
+   "datei": "ticketsystem.html",
+   "titel": "Ticketsystem",
+   "gruppe": "Überblick",
+   "eltern": null,
+   "kurz": "Visualisierung: wie aus Strategie Tickets werden",
+   "pos": 10.5,
+   "im_diagramm": false
   }
  ],
  "stand": "05.11.2026, 10:08 Uhr"

@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="empiria">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="/favicon.ico?v=202610191115" sizes="32x32">
+<link rel="icon" href="/favicon.svg?v=202610191115" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/app-icon-180.png?v=202610191115">
+<title>Ticketsystem &middot; Visualisierung &ndash; empiria</title>
+<meta name="description" content="Visualisierung des Ticketsystems: Grundregeln, Ablauf eines Tickets und Aufbau eines Tickets.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="/styles.css?v=202611042330">
+<link rel="stylesheet" href="/assets/projekte/projekte.css?v=202610082218">
+<link rel="stylesheet" href="/assets/projekte/dashboard.css?v=202610082218">
+<link rel="stylesheet" href="/assets/dashboard-nav.css?v=202610151100">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container nav nav--hn">
+    <div class="sn">
+      <a class="brand" href="/strategie/analyse.html" aria-label="empiria &ndash; zur Strategie">
+        <img src="/assets/empiria-logo.svg" alt="empiria">
+      </a>
+      <div class="sn-dd" data-sn-dd>
+        <button class="sn-toggle" type="button" aria-expanded="false" aria-controls="snPanel" aria-label="Seiten anzeigen">
+          <svg class="sn-chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <nav class="sn-panel" id="snPanel" aria-label="Seiten">
+        <p class="sn-group">Dashboard</p>
+        <a href="/strategie/analyse.html" class="sn-link"><span class="sn-tag">SG</span><span class="sn-txt"><b>Strategie</b><small>Status, Strategie, Sparring</small></span></a>
+        <a href="/strategie/steuerung.html" class="sn-link"><span class="sn-tag">ST</span><span class="sn-txt"><b>Steuerung</b><small>Entscheiden und Termine</small></span></a>
+        <a href="/strategie/marketing.html" class="sn-link"><span class="sn-tag">MK</span><span class="sn-txt"><b>Marketing</b><small>Zielgruppen, Au&szlig;enwirkung, Kennzahlen, Aktionen</small></span></a>
+        <a href="/strategie/projekte.html" class="sn-link"><span class="sn-tag">PR</span><span class="sn-txt"><b>Projekte</b><small>Steckbrief, Timeline, Protokoll</small></span></a>
+        <a href="/strategie/aufgaben.html" class="sn-link"><span class="sn-tag">AU</span><span class="sn-txt"><b>Aufgaben</b><small>Kanban &uuml;ber alle Projekte</small></span></a>
+        <div class="sn-sub"><a href="/strategie/korrespondenz-beta.html" class="sn-link"><span class="sn-tag">KO</span><span class="sn-txt"><b>Korrespondenz</b><small>Alle Konten, nach Handlungsbedarf</small></span></a><button class="sn-sub-toggle" type="button" aria-expanded="false" aria-controls="snKinderKO" aria-label="Unterseiten anzeigen"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+        <div class="sn-kinder" id="snKinderKO">
+          <a href="/strategie/korrespondenz-variante-c.html" class="sn-link"><span class="sn-tag">VC</span><span class="sn-txt"><b>Variante C: Entscheidungs-Sprint</b><small>Eine Mail nach der anderen &ndash; f&uuml;rs iPhone</small></span></a>
+          <a href="/strategie/korrespondenz-variante-e.html" class="sn-link"><span class="sn-tag">VE</span><span class="sn-txt"><b>Variante E: Liste und Detail</b><small>Zwei Spalten &ndash; f&uuml;r MacBook und iPad</small></span></a>
+        </div>
+        <a href="/strategie/kontakte.html" class="sn-link"><span class="sn-tag">KT</span><span class="sn-txt"><b>Kontakte</b><small>Kontaktdatenbank (CRM)</small></span></a>
+        <p class="sn-group">&Uuml;berblick</p>
+        <a href="/strategie/oekosystem.html" class="sn-link"><span class="sn-tag">&Ouml;S</span><span class="sn-txt"><b>&Ouml;kosystem</b><small>Schaltplan der Steuerungszentrale</small></span></a>
+        <a href="/strategie/sitemap-dashboard.html" class="sn-link"><span class="sn-tag">SM</span><span class="sn-txt"><b>Sitemap Dashboard</b><small>Wie die Seiten zusammenh&auml;ngen</small></span></a>
+        <a href="/strategie/ticketsystem.html" class="sn-link" aria-current="page"><span class="sn-tag">TS</span><span class="sn-txt"><b>Ticketsystem</b><small>Visualisierung: wie aus Strategie Tickets werden</small></span></a>
+        <p class="sn-group">Noch zuzuordnen</p>
+        <a href="/strategie/cockpit.html" class="sn-link"><span class="sn-tag">GD</span><span class="sn-txt"><b>Gesamtdashboard (Entwurf)</b><small>Analyse und Steuerung auf einer Seite</small></span></a>
+        <a href="/strategie/zielbild.html" class="sn-link"><span class="sn-tag">ZB</span><span class="sn-txt"><b>Strategie und Zielbild</b><small>Wohin empiria will</small></span></a>
+        <a href="/strategie/meilensteine.html" class="sn-link"><span class="sn-tag">MS</span><span class="sn-txt"><b>Meilensteine</b><small>Etappen auf dem Weg</small></span></a>
+        <a href="/strategie/dashboard-korrespondenz.html" class="sn-link"><span class="sn-tag">KE</span><span class="sn-txt"><b>Korrespondenz (erster Entwurf)</b><small>Sieben Vorg&auml;nge in drei Gruppen</small></span></a>
+        <a href="/strategie/leasing-fahrzeug.html" class="sn-link"><span class="sn-tag">LF</span><span class="sn-txt"><b>Leasing Fahrzeug</b><small>Logik f&uuml;r das passende Zweitfahrzeug</small></span></a>
+        </nav>
+      </div>
+    </div>
+    <nav class="hn" aria-label="Hauptseiten"><a href="/strategie/analyse.html">Strategie</a><a href="/strategie/steuerung.html">Steuerung</a><a href="/strategie/marketing.html">Marketing</a><a href="/strategie/projekte.html">Projekte</a><a href="/strategie/aufgaben.html">Aufgaben</a><a href="/strategie/korrespondenz-beta.html">Korrespondenz</a><a href="/strategie/kontakte.html">Kontakte</a></nav>
+  </div>
+</header>
+
+<main>
+<!--
+  Schriftsystem dieser Seite (vor dem Bauen festgelegt):
+  Lora 500   – Hauptüberschrift (eine Größe), Lora 600 – Abschnittsüberschriften (eine Größe)
+  Poppins    – Text und Kastentitel in --fs-m (Regular/SemiBold), Nebeninfos in --fs-s (Grau)
+  Farben     – Tinte, ein Grau, Gelb nur als Fläche (Claude-Seite, Grundregeln-Marker)
+  Linien     – durchgezogen = besteht schon, gestrichelt = geplant oder noch zu klären
+-->
+<style>
+  .ts { --ts-linie: #e4e1dd; --ts-flaeche: #faf9f7; }
+  .ts-titel { font-family: var(--font-serif); font-weight: 500; line-height: 1.3;
+              letter-spacing: -.015em; font-size: clamp(1.7rem, 2.8vw, 2.3rem); margin: .3rem 0 0; }
+  .ts-intro { font-size: var(--fs-m); color: var(--grey-50); max-width: 62ch; margin: 12px 0 0; text-wrap: pretty; }
+  .ts-legende { display: flex; gap: 20px; flex-wrap: wrap; margin: 18px 0 0; font-size: var(--fs-s); color: var(--grey-50); }
+  .ts-legende span { display: inline-flex; align-items: center; gap: 8px; }
+  .ts-legende i { display: inline-block; width: 26px; height: 14px; border-radius: 5px; border: 1.5px solid var(--ink); }
+  .ts-legende i.ts-gestrichelt { border-style: dashed; border-color: var(--grey-50); }
+
+  .ts-plan { margin-top: clamp(40px, 5vw, 64px); }
+  .ts-plan h2 { font-family: var(--font-serif); font-weight: 600; font-size: clamp(1.3rem, 1.9vw, 1.55rem);
+                line-height: 1.3; margin: 0; }
+  .ts-plan > .ts-unter { font-size: var(--fs-m); color: var(--grey-50); margin: 6px 0 0; max-width: 64ch; text-wrap: pretty; }
+  .ts-flaeche { margin-top: 18px; border: 1px solid var(--ts-linie); border-radius: var(--radius-card);
+                background: #fff; padding: clamp(16px, 2.4vw, 28px); }
+
+  .ts-tag { font-size: var(--fs-s); color: var(--grey-50); margin: 0 0 6px 2px; }
+  .ts-reihe { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+  .ts-k { display: grid; gap: 2px; align-content: start; padding: 10px 12px; min-width: 0;
+          background: var(--ts-flaeche); border: 1.5px solid var(--ink); border-radius: 12px; }
+  .ts-k b { font-size: var(--fs-m); font-weight: 600; line-height: 1.3; }
+  .ts-k span { font-size: var(--fs-s); color: var(--grey-50); line-height: 1.4; text-wrap: pretty; }
+  .ts-k--offen { border-style: dashed; border-color: var(--grey-50); }
+  .ts-k--gelb { background: var(--hl); }
+  .ts-k--gelb span { color: var(--ink-2); }
+  .ts-k--dunkel { background: var(--ink); color: #fff; }
+  .ts-k--dunkel span { color: rgba(255,255,255,.66); }
+  .ts-k ul { margin: 4px 0 0; padding-left: 1.1em; font-size: var(--fs-s); color: var(--grey-50); line-height: 1.5; }
+  .ts-k--gelb ul { color: var(--ink-2); }
+
+  .ts-pfeil { display: flex; align-items: center; gap: 10px; height: 34px; padding-left: 22px;
+              font-size: var(--fs-s); color: var(--grey-50); }
+  .ts-pfeil::before { content: ""; width: 0; height: 100%; border-left: 1.5px solid var(--ink);
+                      flex: none; position: relative; }
+  .ts-pfeil--offen::before { border-left-style: dashed; border-color: var(--grey-50); }
+
+  .ts-zwei { display: grid; gap: 14px; grid-template-columns: 1fr 1fr; }
+  .ts-weiche { display: grid; gap: 14px; grid-template-columns: 3fr 2fr; }
+  .ts-spur { display: grid; gap: 8px; align-content: start; }
+
+  .ts-regeln { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; margin-bottom: 26px; }
+  .ts-regel { padding: 14px 16px; border-radius: 14px; background: var(--ts-flaeche); border: 1px solid var(--ts-linie); }
+  .ts-regel b { display: block; font-size: var(--fs-m); font-weight: 600; }
+  .ts-regel b em { font-style: normal; background: var(--hl); padding: 0 4px; }
+  .ts-regel p { margin: 4px 0 0; font-size: var(--fs-m); line-height: 1.5; text-wrap: pretty; }
+
+  .ts-skala { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 8px;
+              border: 1.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+  .ts-skala div { padding: 10px 12px; border-left: 1px solid var(--ts-linie); }
+  .ts-skala div:first-child { border-left: 0; }
+  .ts-skala b { display: block; font-size: var(--fs-m); font-weight: 600; line-height: 1.3; }
+  .ts-skala span { font-size: var(--fs-s); color: var(--grey-50); }
+  .ts-skala div:last-child { background: var(--hl); }
+  .ts-skala div:last-child span { color: var(--ink-2); }
+  .ts-skala-fuss { display: flex; justify-content: space-between; margin-top: 6px; font-size: var(--fs-s); color: var(--grey-50); }
+
+  .ts-ablauf { display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr) minmax(240px, 300px); align-items: start; }
+  .ts-seite { display: grid; gap: 10px; }
+  .ts-schleife { margin-top: 8px; display: grid; gap: 8px; grid-template-columns: 1fr 1fr; }
+
+  .ts-ticket { border: 1.5px solid var(--ink); border-radius: 14px; overflow: hidden; }
+  .ts-ticket-kopf { padding: 12px 16px; background: var(--ts-flaeche); border-bottom: 1px solid var(--ts-linie); }
+  .ts-ticket-kopf b { display: block; font-size: var(--fs-m); font-weight: 600; }
+  .ts-ticket-kopf span { font-size: var(--fs-s); color: var(--grey-50); }
+  .ts-punkt { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: baseline;
+              padding: 9px 16px; border-top: 1px solid var(--ts-linie); font-size: var(--fs-m); }
+  .ts-punkt:first-of-type { border-top: 0; }
+  .ts-punkt small { font-size: var(--fs-s); color: var(--grey-50); white-space: nowrap; }
+  .ts-punkt small.ts-dran { color: var(--ink); font-weight: 600; }
+  .ts-ticket-fuss { padding: 10px 16px; border-top: 1px solid var(--ts-linie); font-size: var(--fs-s); color: var(--grey-50); }
+
+  .ts-offen { margin-top: clamp(40px, 5vw, 64px); }
+  .ts-offen h2 { font-family: var(--font-serif); font-weight: 600; font-size: clamp(1.3rem, 1.9vw, 1.55rem); margin: 0 0 10px; }
+  .ts-offen ol { margin: 0; padding-left: 1.3em; font-size: var(--fs-m); line-height: 1.6; max-width: 70ch; }
+  .ts-offen li { margin-bottom: 6px; }
+  .ts-offen li span { color: var(--grey-50); }
+
+  @media (max-width: 860px) {
+    .ts-ablauf, .ts-weiche, .ts-zwei, .ts-regeln { grid-template-columns: 1fr; }
+    .ts-skala { grid-template-columns: 1fr 1fr; }
+    .ts-skala div:nth-child(3) { border-left: 0; }
+    .ts-skala div:nth-child(n+3) { border-top: 1px solid var(--ts-linie); }
+  }
+  @media (max-width: 480px) {
+    .ts-skala, .ts-schleife { grid-template-columns: 1fr; }
+    .ts-skala div { border-left: 0; border-top: 1px solid var(--ts-linie); }
+    .ts-skala div:first-child { border-top: 0; }
+  }
+</style>
+
+  <section class="section section--eng ts">
+    <div class="container">
+
+      <p class="kicker">&Uuml;berblick &middot; Entwicklung</p>
+      <h1 class="ts-titel">Wie aus Strategie Tickets werden.</h1>
+      <p class="ts-intro">Arbeitsstand zur Diskussion vom 14.11.2026: Grundlogik, Ablauf und Aufbau des Ticketsystems. Noch nichts davon ist gebaut, außer dem, was durchgezogen umrandet ist.</p>
+      <div class="ts-legende" aria-label="Legende">
+        <span><i></i>besteht schon</span>
+        <span><i class="ts-gestrichelt"></i>geplant oder noch zu klären</span>
+      </div>
+
+      <!-- ============ Plan 1: Grundregeln ============ -->
+      <div class="ts-plan">
+        <h2>1 &middot; Die Grundregeln</h2>
+        <p class="ts-unter">Alles leitet sich aus der Strategie der drei Marken ab. Am Ende jeder Kette steht entweder ein Ticket für Claude oder eine Aufgabe für Daniel.</p>
+
+        <div class="ts-flaeche">
+          <div class="ts-regeln">
+            <div class="ts-regel">
+              <b><em>Grundregel 1</em> &middot; Durchgängigkeit</b>
+              <p>Keine Aufgabe ohne Projekt, kein Projekt ohne Marke und Strategie. Laufendes hängt am operativen Projekt der Marke.</p>
+            </div>
+            <div class="ts-regel">
+              <b><em>Grundregel 2</em> &middot; Daniel entlasten</b>
+              <p>So viele Aufgaben wie möglich werden zu Tickets, die Claude abarbeitet. Bei Daniel bleibt nur, was nur Daniel kann.</p>
+            </div>
+          </div>
+
+          <p class="ts-tag">Marken</p>
+          <div class="ts-reihe">
+            <div class="ts-k"><b>empiria</b><span>inklusive Kundenprojekte und Dashboard</span></div>
+            <div class="ts-k"><b>Müller&amp;Ströbel.</b><span>Partnerschaft mit Tobias Müller</span></div>
+            <div class="ts-k"><b>sofortsichtbar</b><span>mit Noah Hermanns</span></div>
+          </div>
+          <div class="ts-pfeil">je Marke</div>
+
+          <p class="ts-tag">Strategie</p>
+          <div class="ts-reihe">
+            <div class="ts-k"><b>Vision und Zielbild</b><span>Wie das Unternehmen funktionieren soll</span></div>
+            <div class="ts-k"><b>Stoßrichtungen</b><span>Wie wir dorthin kommen, je Marke sechs</span></div>
+          </div>
+          <div class="ts-pfeil">jedes Projekt zahlt auf eine Stoßrichtung ein</div>
+
+          <p class="ts-tag">Projekte</p>
+          <div class="ts-reihe">
+            <div class="ts-k"><b>Strategische Projekte</b><span>z. B. Business Story und Homepage</span></div>
+            <div class="ts-k"><b>Kundenprojekte</b><span>z. B. SV Schadenmanagement, VVDE</span></div>
+            <div class="ts-k"><b>Operatives Projekt</b><span>sammelt alles Laufende, damit keine Aufgabe lose bleibt</span></div>
+          </div>
+          <div class="ts-pfeil">darin</div>
+
+          <p class="ts-tag">Arbeitspakete und Aufgaben</p>
+          <div class="ts-reihe">
+            <div class="ts-k"><b>Arbeitspakete</b><span>Halte auf dem Weg zum Projektergebnis</span></div>
+            <div class="ts-k"><b>Aufgaben</b><span>der einzelne Schritt im Paket</span></div>
+          </div>
+          <div class="ts-pfeil ts-pfeil--offen">jede Aufgabe wird zugeordnet – Grundregel 2 schiebt nach links</div>
+
+          <div class="ts-weiche">
+            <div class="ts-k ts-k--gelb ts-k--offen"><b>Ticket – Claude arbeitet ab</b><span>Klar beschrieben, mit Ergebnis, Maßstab und Ablage. Läuft im Sprint oder nachts.</span></div>
+            <div class="ts-k ts-k--offen"><b>Aufgabe an Daniel</b><span>Entscheiden, freigeben, Input geben, Menschen treffen</span></div>
+          </div>
+
+          <p class="ts-tag" style="margin-top:22px">Grad der Abarbeitung – je Thema festlegen</p>
+          <div class="ts-skala">
+            <div><b>Daniel allein</b><span>Claude hält nur nach</span></div>
+            <div><b>Claude bereitet vor</b><span>Recherche, Entwurf, Mail-Entwurf</span></div>
+            <div><b>Claude setzt um</b><span>Daniel nimmt das Ergebnis ab</span></div>
+            <div><b>Vollautomatisch</b><span>ohne Abnahme, nur bei freigegebenen Themen</span></div>
+          </div>
+          <div class="ts-skala-fuss"><span>heute meist hier</span><span>Ziel: so weit rechts wie möglich</span></div>
+        </div>
+      </div>
+
+      <!-- ============ Plan 2: Ablauf ============ -->
+      <div class="ts-plan">
+        <h2>2 &middot; So läuft ein Ticket</h2>
+        <p class="ts-unter">Vom Eingang bis zur Abnahme. Sprint und Nachtschicht arbeiten am selben Ticket, deshalb geht nichts verloren, wenn ein Chat endet.</p>
+
+        <div class="ts-flaeche">
+          <div class="ts-ablauf">
+            <div>
+              <p class="ts-tag">Eingang</p>
+              <div class="ts-reihe">
+                <div class="ts-k"><b>Diktat und Feedback</b><span>im Chat oder per Sprache</span></div>
+                <div class="ts-k"><b>Mails und Transkripte</b><span>aus der Korrespondenz</span></div>
+                <div class="ts-k"><b>Aufgaben</b><span>aus den Projekten</span></div>
+              </div>
+              <div class="ts-pfeil ts-pfeil--offen">Claude zerlegt</div>
+
+              <div class="ts-k ts-k--offen"><b>Ein Ticket, darin einzelne Punkte</b><span>Eine Aussage je Punkt. Was zusammengehört, kommt in ein gemeinsames Ticket.</span></div>
+              <div class="ts-pfeil ts-pfeil--offen">Claude zeigt die Liste</div>
+
+              <div class="ts-k ts-k--offen"><b>Klären</b><span>Was verstanden ist, wo sich Punkte widersprechen, was sofort und was nachts läuft. Bei Widersprüchen entscheidet Daniel.</span></div>
+              <div class="ts-pfeil ts-pfeil--offen">erst wenn alles da ist</div>
+
+              <div class="ts-k ts-k--offen"><b>Bereit</b>
+                <ul><li>Ergebnis: was danach vorliegt</li><li>Maßstab: woran es gemessen wird</li><li>Ablage: wo es landet</li><li>Grenzen: was Claude darf und was nicht</li><li>Priorität</li></ul>
+              </div>
+              <div class="ts-pfeil ts-pfeil--offen">eine von zwei Spuren</div>
+
+              <div class="ts-zwei">
+                <div class="ts-k ts-k--offen"><b>Sofort-Spur</b><span>Arbeitsname. Sprint im Chat, Daniel und Claude live. Was offen bleibt, wandert in die Warteschlange.</span></div>
+                <div class="ts-k ts-k--offen"><b>Warteschlange nach Priorität</b><span>Der Always-on-Mac arbeitet nachts und in Leerzeiten ab, ein Ticket nach dem anderen.</span></div>
+              </div>
+              <div class="ts-pfeil">beide Spuren</div>
+
+              <div class="ts-k"><b>Umsetzung mit Selbstprüfung</b><span>Gegen den Maßstab prüfen, Screenshots ansehen, Schwaches verwerfen. Die Prüfregeln gelten heute schon für jede Arbeit.</span></div>
+              <div class="ts-pfeil ts-pfeil--offen">auf der Steuerung</div>
+
+              <div class="ts-k ts-k--offen"><b>Abnahme durch Daniel, je Punkt</b><span>Ein Klick je Punkt.</span></div>
+              <div class="ts-schleife">
+                <div class="ts-k ts-k--gelb ts-k--offen"><b>Passt</b><span>Punkt erledigt. Sind alle erledigt, ist das Ticket zu.</span></div>
+                <div class="ts-k ts-k--offen"><b>Zurück mit Hinweis</b><span>geht mit dem Hinweis wieder in die Umsetzung</span></div>
+              </div>
+            </div>
+
+            <div class="ts-seite">
+              <p class="ts-tag">Eingriff jederzeit</p>
+              <div class="ts-k ts-k--dunkel"><b>Stopp</b><span>Alles hält sofort an, auch die Nachtschicht. Nichts läuft weiter, bis Daniel freigibt.</span></div>
+              <div class="ts-k ts-k--offen"><b>Vorziehen</b><span>Ein Ticket springt aus der Warteschlange in die Sofort-Spur.</span></div>
+              <div class="ts-k ts-k--offen"><b>Überschreiben</b><span>Punkte ändern oder streichen, Priorität neu setzen.</span></div>
+
+              <p class="ts-tag" style="margin-top:14px">Nie ohne Abnahme</p>
+              <div class="ts-k">
+                <ul style="margin-top:0"><li>Mails senden, nur Entwürfe</li><li>etwas auf main bringen, außer im Dashboard</li><li>löschen</li><li>Geld ausgeben</li></ul>
+              </div>
+
+              <p class="ts-tag" style="margin-top:14px">Läuft heute schon</p>
+              <div class="ts-k"><b>Stündliche Prüfung</b><span>Der Always-on-Mac arbeitet entschiedene Karten der Steuerung ab, Aufgaben bisher nicht.</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ Plan 3: Aufbau ============ -->
+      <div class="ts-plan">
+        <h2>3 &middot; So ist ein Ticket aufgebaut</h2>
+        <p class="ts-unter">Ein großes Ticket bündelt die vielen kleinen Punkte eines Themas. So kommen sich Punkte aus einem langen Feedback nicht ins Gehege, und jeder wird einzeln abgenommen.</p>
+
+        <div class="ts-flaeche">
+          <div class="ts-ticket">
+            <div class="ts-ticket-kopf">
+              <b>Business Story als Homepage umsetzen</b>
+              <span>sofortsichtbar &middot; Projekt Business Story und Homepage &middot; Priorität hoch &middot; Sofort-Spur</span>
+            </div>
+            <div class="ts-punkt">Kopfbereich: Headline und Unterzeile aus der Business Story übernehmen<small>abgenommen</small></div>
+            <div class="ts-punkt">Abschnitt Leistungen: Reihenfolge an die Story anpassen<small class="ts-dran">zur Abnahme</small></div>
+            <div class="ts-punkt">Zwei Punkte widersprechen sich beim Bildstil<small class="ts-dran">Rückfrage an Daniel</small></div>
+            <div class="ts-punkt">Mobilansicht aller Abschnitte prüfen<small>Warteschlange, nachts</small></div>
+            <div class="ts-ticket-fuss">Beispiel zur Veranschaulichung, keine echten Punkte.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ Offene Fragen ============ -->
+      <div class="ts-offen">
+        <h2>Offen zur Diskussion</h2>
+        <ol>
+          <li>Name für die Sofort-Spur. <span>„Vorfahrtsstraße“ passt noch nicht.</span></li>
+          <li>Ansicht der Tickets, damit wir über Prioritäten sprechen können. <span>Liste nach Priorität, Spalten nach Stand oder beides?</span></li>
+          <li>Größe eines Tickets. <span>Wann bündeln wir Punkte in ein Ticket, wann bekommt ein Punkt ein eigenes?</span></li>
+          <li>Wer setzt die Prioritäten? <span>Vorschlag: Claude schlägt vor, Daniel verschiebt.</span></li>
+          <li>Stopp und Überschreiben. <span>Ein Knopf auf der Steuerung, ein Wort im Chat oder beides?</span></li>
+        </ol>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-row">
+    <span>empiria GmbH 2026</span>
+    <span class="footer-links"><a href="https://www.empiria.de/impressum.html">Impressum</a> <span>|</span> <a href="https://www.empiria.de/datenschutz.html">Datenschutz</a> <span>|</span> <button type="button" data-cookie-settings>Cookie-Einstellungen</button></span>
+  </div>
+</footer>
+
+<script src="/script.js"></script>
+<script src="/assets/dashboard-nav.js?v=202610151110"></script>
+</body>
+</html>
