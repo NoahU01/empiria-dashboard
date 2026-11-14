@@ -631,3 +631,10 @@ body .section--eng:has(.oe-plan) { padding-top: clamp(20px, 2.4vw, 34px); }
   .oe-plan { width: 1080px; min-width: 1080px; transform-origin: 0 0; }
 }
 
+
+/* iPhone: seitlich wischen statt verkleinern (Daniel, 14.11.2026). Der Plan
+   behaelt seine volle Breite, der Raum darum wird waagerecht scrollbar. */
+@media (max-width: 600px) {
+  .oe-raum { grid-template-columns: minmax(0, 1fr); overflow-x: auto; overflow-y: hidden;
+             -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+}
