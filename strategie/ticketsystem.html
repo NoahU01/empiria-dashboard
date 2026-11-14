@@ -164,6 +164,12 @@
   .ts-rand-tag { font-size: var(--fs-s); color: var(--grey-50); margin: 18px 0 0; }
   .ts-k ul { margin: 2px 0 0; padding-left: 1.05em; font-size: var(--fs-s); color: var(--grey-50); line-height: 1.5; }
 
+  .ts-rollen { display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ts-rollen .ts-k { gap: 6px; padding: 14px 16px; }
+  .ts-rolle-wo { font-size: var(--fs-s); }
+  .ts-k p.ts-rolle-erg { color: var(--ink); padding-top: 8px; border-top: 1px solid var(--ts-linie); }
+  .ts-k p.ts-rolle-erg b { font-size: var(--fs-s); }
+  .ts-k--gelb p.ts-rolle-erg { border-top-color: rgba(26,24,23,.2); }
   .ts-offen { margin-top: clamp(44px, 5.5vw, 72px); }
   .ts-offen h2 { font-family: var(--font-serif); font-weight: 600; font-size: clamp(1.3rem, 1.9vw, 1.55rem); margin: 0 0 10px; }
   .ts-offen ol { margin: 0; padding-left: 1.3em; font-size: var(--fs-m); line-height: 1.6; max-width: 70ch; }
@@ -172,6 +178,7 @@
 
   /* iPad mini hochkant und schmaler: Beispiel rückt unter die Ebene */
   @media (max-width: 900px) {
+    .ts-rollen { grid-template-columns: 1fr; }
     .ts-kette { grid-template-columns: 30px minmax(0, 1fr); }
     .ts-kette-kopf { display: none; }
     .ts-stufe .ts-bsp { grid-column: 2; margin: 2px 0 6px; }
@@ -201,7 +208,7 @@
 
       <p class="kicker">&Uuml;berblick &middot; Entwicklung</p>
       <h1 class="ts-titel">Wie aus Strategie Tickets werden.</h1>
-      <p class="ts-intro">Arbeitsstand zur Diskussion. Drei Bilder: die Kette von der Marke bis zur Weiche, was in was steckt und wer in einem Ticket wann handelt.</p>
+      <p class="ts-intro">Arbeitsstand zur Diskussion. Vier Bilder: die Kette von der Marke bis zur Weiche, was in was steckt, wer in einem Ticket wann handelt und Claudes drei Rollen.</p>
       <div class="ts-legende" aria-label="Legende">
         <span><i></i>besteht schon</span>
         <span><i class="ts-gestrichelt"></i>geplant</span>
@@ -361,6 +368,35 @@
             <div class="ts-k ts-k--geplant"><b>Vorziehen</b><span>Ein Ticket springt aus der Warteschlange in die Sofort-Spur.</span></div>
             <div class="ts-k ts-k--geplant"><b>Überschreiben</b><span>Punkte ändern oder streichen, Priorität neu setzen.</span></div>
             <div class="ts-k"><b>Nie ohne Abnahme</b><span>Mails senden, etwas auf main bringen außer im Dashboard, löschen, Geld ausgeben</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 4 Rollen ============ -->
+      <div class="ts-plan">
+        <h2>4 &middot; Claudes drei Rollen</h2>
+        <p>Claude arbeitet an drei Stellen der Kette, jede Rolle mit einem eigenen Ergebnis im Dashboard. Marketing-Wissen steckt in allen drei und ist keine eigene Rolle.</p>
+
+        <div class="ts-flaeche">
+          <div class="ts-rollen">
+            <div class="ts-k">
+              <span class="ts-rolle-wo">Setzt an bei: Strategie und Stoßrichtungen</span>
+              <b>Stabschef</b>
+              <p>Analyst und Vorstandsassistent. Bereitet Entscheidungen vor und treibt sie voran.</p>
+              <p class="ts-rolle-erg"><b>Ergebnis:</b> das CEO-Briefing, also Empfehlungen auf der Steuerung, abgeleitet aus den Stoßrichtungen</p>
+            </div>
+            <div class="ts-k">
+              <span class="ts-rolle-wo">Setzt an bei: Projekten, Paketen und Aufgaben</span>
+              <b>Controller</b>
+              <p>Multiprojektmanager. Hält Fristen nach, verfolgt, was bei Dritten liegt, und ordnet die Warteschlange.</p>
+              <p class="ts-rolle-erg"><b>Ergebnis:</b> die Lage, also was überfällig ist, was hängt und welches Ticket als Nächstes läuft</p>
+            </div>
+            <div class="ts-k ts-k--gelb">
+              <span class="ts-rolle-wo">Setzt an bei: Tickets</span>
+              <b>Umsetzer</b>
+              <p>Arbeitet Tickets ab, auch als Marketing-Manager mit Postings und Kampagnen.</p>
+              <p class="ts-rolle-erg"><b>Ergebnis:</b> fertige Arbeiten zur Abnahme durch Daniel</p>
+            </div>
           </div>
         </div>
       </div>
