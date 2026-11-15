@@ -127,53 +127,53 @@
    "im_diagramm": true
   },
   {
-   "datei": "cockpit.html",
-   "titel": "Gesamtdashboard (Entwurf)",
-   "gruppe": "Noch zuzuordnen",
+   "datei": "ticketsystem.html",
+   "titel": "Ticketsystem",
+   "gruppe": "Überblick",
    "eltern": null,
-   "kurz": "Analyse und Steuerung auf einer Seite",
+   "kurz": "Visualisierung: wie aus Strategie Tickets werden",
    "pos": 11,
-   "im_diagramm": true
+   "im_diagramm": false
   },
   {
-   "datei": "zielbild.html",
-   "titel": "Strategie und Zielbild",
-   "gruppe": "Noch zuzuordnen",
+   "datei": "cockpit.html",
+   "titel": "Gesamtdashboard",
+   "gruppe": "ohne Menü",
    "eltern": null,
-   "kurz": "Wohin empiria will",
-   "pos": 12,
-   "im_diagramm": true
-  },
-  {
-   "datei": "meilensteine.html",
-   "titel": "Meilensteine",
-   "gruppe": "Noch zuzuordnen",
-   "eltern": null,
-   "kurz": "Etappen auf dem Weg",
-   "pos": 13,
-   "im_diagramm": true
+   "kurz": "",
+   "im_diagramm": true,
+   "pos": 999
   },
   {
    "datei": "dashboard-korrespondenz.html",
-   "titel": "Korrespondenz (erster Entwurf)",
-   "gruppe": "Noch zuzuordnen",
+   "titel": "Korrespondenz · Dashboard",
+   "gruppe": "ohne Menü",
    "eltern": null,
-   "kurz": "Sieben Vorgänge in drei Gruppen",
-   "pos": 14,
-   "im_diagramm": true
+   "kurz": "",
+   "im_diagramm": true,
+   "pos": 999
   },
   {
    "datei": "leasing-fahrzeug.html",
    "titel": "Leasing Fahrzeug",
-   "gruppe": "Noch zuzuordnen",
+   "gruppe": "ohne Menü",
    "eltern": null,
-   "kurz": "Logik für das passende Zweitfahrzeug",
-   "pos": 15,
-   "im_diagramm": true
+   "kurz": "",
+   "im_diagramm": true,
+   "pos": 999
   },
   {
    "datei": "linkedin-antworten.html",
    "titel": "LinkedIn-Antworten",
+   "gruppe": "ohne Menü",
+   "eltern": null,
+   "kurz": "",
+   "im_diagramm": true,
+   "pos": 999
+  },
+  {
+   "datei": "meilensteine.html",
+   "titel": "Meilensteine",
    "gruppe": "ohne Menü",
    "eltern": null,
    "kurz": "",
@@ -190,14 +190,14 @@
    "pos": 999
   },
   {
-   "datei": "ticketsystem.html",
-   "titel": "Ticketsystem",
-   "gruppe": "Überblick",
+   "datei": "zielbild.html",
+   "titel": "Strategie und Zielbild",
+   "gruppe": "ohne Menü",
    "eltern": null,
-   "kurz": "Visualisierung: wie aus Strategie Tickets werden",
-   "pos": 10.5,
-   "im_diagramm": false
+   "kurz": "",
+   "im_diagramm": true,
+   "pos": 999
   }
  ],
- "stand": "05.11.2026, 10:08 Uhr"
+ "stand": "15.11.2026, 06:30 Uhr"
 }
