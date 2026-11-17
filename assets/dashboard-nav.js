@@ -34,7 +34,10 @@
   var paare = [];
 
   function zu() {
-    paare.forEach(function (p) { p.kinder.classList.remove("is-open"); p.sub.classList.remove("is-open"); p.b.setAttribute("aria-expanded", "false"); });
+    paare.forEach(function (p) {
+      p.kinder.classList.remove("is-open"); p.sub.classList.remove("is-open"); p.b.setAttribute("aria-expanded", "false");
+      if (p.platz && p.platz.parentNode) p.platz.parentNode.insertBefore(p.kinder, p.platz);   // zurück an den alten Platz in der Liste
+    });
     panel.classList.remove("zeigt-kinder");
   }
   // Zweite Ebene fest am Fenster neben die Zeile setzen – bleibt sichtbar, auch wenn die Liste scrollt
@@ -50,6 +53,13 @@
   panel.addEventListener("scroll", function () { paare.forEach(function (p) { if (p.kinder.classList.contains("is-open") && !schmal.matches) setzen(p); }); });
   function auf(p) {
     zu();
+    /* Großer Bildschirm: die zweite Ebene hängt beim Öffnen direkt an der Seite statt im Kopfbereich.
+       Der Kopfbereich ist weichgezeichnet (backdrop-filter); Safari schneidet feste Fenster darin ab
+       (Daniel, 17.11.2026: nur die oberen drei Einträge sichtbar). */
+    if (!schmal.matches && p.kinder.parentNode !== document.body) {
+      if (!p.platz) { p.platz = document.createComment("sn-kinder"); p.kinder.parentNode.insertBefore(p.platz, p.kinder); }
+      document.body.appendChild(p.kinder);
+    }
     p.kinder.classList.add("is-open"); p.sub.classList.add("is-open"); p.b.setAttribute("aria-expanded", "true");
     if (!schmal.matches) { setzen(p); requestAnimationFrame(function () { requestAnimationFrame(function () { setzen(p); }); }); }
     if (schmal.matches) { panel.classList.add("zeigt-kinder"); panel.scrollTop = 0; }
