@@ -9,9 +9,9 @@
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
   var tickets = [], projekte = [], stopp = false, spur = "sofort", meldung = "";
   var GRUPPEN = [
-    ["dir", "Bei dir: Abnahme und Rückfragen", function (t) { return t.ticket_stand === "zur_abnahme" || t.ticket_stand === "rueckfrage"; }],
+    ["dir", "Wartet auf dich", function (t) { return t.ticket_stand === "zur_abnahme" || t.ticket_stand === "rueckfrage"; }],
     ["laeuft", "Läuft gerade", function (t) { return t.ticket_stand === "in_arbeit"; }],
-    ["naechstes", "Als Nächstes", function (t) { return t.ticket_stand === "bereit"; }],
+    ["naechstes", "Als Nächstes bei Claude", function (t) { return t.ticket_stand === "bereit"; }],
     ["wartet", "Wartet auf Vorgänger oder Anlass", function (t) { return t.ticket_stand === "wartet"; }],
     ["neu", "Noch zu beschreiben", function (t) { return !t.ticket_stand; }]
   ];
@@ -47,11 +47,11 @@
   function zeile(t, gruppe) {
     var aktionen = "", info = "";
     if (t.ticket_stand === "zur_abnahme") {
-      info = '<p class="tk-info"><b>Ergebnis:</b> ' + esc(t.ticket_rueckmeldung || "liegt vor") + "</p>" +
-        (t.ticket_ablage ? '<p class="tk-ablage">Ablage: ' + esc(t.ticket_ablage) + "</p>" : "");
-      aktionen = '<button type="button" class="tk-ja" data-aktion="passt">Passt – abnehmen</button><button type="button" data-aktion="zurueck">Zurück mit Hinweis</button>';
+      info = '<p class="tk-info" data-auf><span class="tk-marke">Ergebnis</span>' + esc(t.ticket_rueckmeldung || "liegt vor") + "</p>" +
+        (t.ticket_ablage ? '<p class="tk-ablage">' + esc(t.ticket_ablage) + "</p>" : "");
+      aktionen = '<button type="button" class="tk-ja" data-aktion="passt">Passt</button><button type="button" data-aktion="zurueck">Überarbeiten</button>';
     } else if (t.ticket_stand === "rueckfrage") {
-      info = '<p class="tk-info"><b>Rückfrage:</b> ' + esc(t.ticket_rueckmeldung || "") + "</p>";
+      info = '<p class="tk-info" data-auf><span class="tk-marke tk-marke--frage">Rückfrage</span>' + esc(t.ticket_rueckmeldung || "Die Frage fehlt im Ticket. Claude ergänzt sie, oder du schreibst direkt, wie es weitergehen soll.") + "</p>";
       aktionen = '<button type="button" class="tk-ja" data-aktion="antworten">Antworten</button>';
     } else if (t.ticket_stand === "bereit" && t.ticket_spur !== "sofort") {
       aktionen = '<button type="button" data-aktion="vorziehen">Vorziehen</button>';
@@ -60,7 +60,7 @@
       '<div class="tk-zeile"><div class="tk-titel"><b>' + esc(t.titel) + '</b><span>' + esc(projektName(t.projekt_id)) + "</span></div>" +
       '<div class="tk-chips">' + chips(t) + "</div></div>" + info +
       (aktionen ? '<div class="tk-aktionen">' + aktionen + "</div>" : "") +
-      '<form class="tk-text" hidden><textarea rows="3"></textarea><div><button type="submit" class="tk-ja">Abschicken</button><button type="button" data-zu>Abbrechen</button></div></form>' +
+      '<form class="tk-text" hidden><textarea rows="3"></textarea><button type="submit" class="tk-ja"></button></form>' +
       "</li>";
   }
   function zeichnen() {
@@ -88,6 +88,7 @@
   function bestaetigen(text) { meldung = text; laden(); }
 
   wurzel.addEventListener("click", function (e) {
+    var auf = e.target.closest("[data-auf]"); if (auf) { auf.classList.toggle("is-offen"); return; }
     var b = e.target.closest("button"); if (!b) return;
     if (b.hasAttribute("data-ok")) { meldung = ""; zeichnen(); return; }
     if (b.dataset.spur) { spur = b.dataset.spur; wurzel.querySelectorAll("[data-spur]").forEach(function (x) { x.setAttribute("aria-checked", String(x === b)); }); return; }
@@ -100,7 +101,6 @@
     }
     var li = b.closest(".tk-ticket"); if (!li) return;
     var id = +li.dataset.id, t = tickets.filter(function (x) { return x.id === id; })[0], form = li.querySelector(".tk-text");
-    if (b.hasAttribute("data-zu")) { form.hidden = true; return; }
     if (b.dataset.aktion === "passt") {
       b.disabled = true;
       db.from("aufgaben").update({ status: "erledigt", erledigt_am: new Date().toISOString() }).eq("id", id).then(function (r) {
@@ -112,9 +112,12 @@
       return;
     }
     if (b.dataset.aktion === "zurueck" || b.dataset.aktion === "antworten") {
-      form.hidden = false; form.dataset.art = b.dataset.aktion;
+      // ein zweiter Klick auf denselben Knopf schließt das Feld wieder – kein eigener Abbrechen-Knopf
+      if (!form.hidden && form.dataset.art === b.dataset.aktion) { form.hidden = true; b.setAttribute("aria-expanded", "false"); return; }
+      form.hidden = false; form.dataset.art = b.dataset.aktion; b.setAttribute("aria-expanded", "true");
       var ta = form.querySelector("textarea");
-      ta.placeholder = b.dataset.aktion === "zurueck" ? "Was fehlt oder soll anders sein?" : "Deine Antwort auf die Rückfrage";
+      ta.placeholder = b.dataset.aktion === "zurueck" ? "Was fehlt oder soll anders sein?" : "Deine Antwort";
+      form.querySelector("[type=submit]").textContent = b.dataset.aktion === "zurueck" ? "An Claude zurückgeben" : "Antwort an Claude";
       ta.focus(); return;
     }
     if (b.dataset.aktion === "vorziehen") {
