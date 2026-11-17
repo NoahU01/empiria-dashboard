@@ -132,3 +132,58 @@
 .e-a-zeile b { display: block; font-weight: 600; font-size: 14px; }
 .e-a-zeile small { display: block; font-size: 13px; color: var(--text2); margin-top: 2px; }
 .e-a-fuss { position: sticky; bottom: 0; padding: 14px 0; background: linear-gradient(transparent, #fff 30%); }
+
+/* =============== 4 · Klar – Stil sofortsichtbar Story 7 („Apple-klar“, Farbe Cyan → Violett) ===============
+   Übernommen aus sofortsichtbar src/entwicklung/storyboard/story7 (.s7-stil--apple + .s7-farbe--cyanviolett):
+   Inter Tight 700 eng für Überschriften, Inter für Text · Weiß und #f5f5f7 · Tinte #1d1d1f, Text #424245, Grau #86868b
+   Verlauf #0b9fbd → #8613a1 nur als Akzent: im Wort der Überschrift und vollflächig mit weißer Schrift, wo Daniel handeln muss.
+   Knöpfe schwarze Pillen, Karten 24 px rund, keine Schatten. */
+@font-face { font-family: "Inter"; font-weight: 400; font-display: swap; src: url("/assets/fonts/inter-latin-400-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC; }
+@font-face { font-family: "Inter"; font-weight: 400; font-display: swap; src: url("/assets/fonts/inter-latin-ext-400-normal.woff2") format("woff2"); unicode-range: U+0100-02AF, U+1E00-1EFF; }
+@font-face { font-family: "Inter"; font-weight: 500; font-display: swap; src: url("/assets/fonts/inter-latin-500-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC; }
+@font-face { font-family: "Inter"; font-weight: 600; font-display: swap; src: url("/assets/fonts/inter-latin-600-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC; }
+@font-face { font-family: "Inter"; font-weight: 600; font-display: swap; src: url("/assets/fonts/inter-latin-ext-600-normal.woff2") format("woff2"); unicode-range: U+0100-02AF, U+1E00-1EFF; }
+@font-face { font-family: "Inter Tight"; font-weight: 700; font-display: swap; src: url("/assets/fonts/inter-tight-latin-700-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC; }
+@font-face { font-family: "Inter Tight"; font-weight: 700; font-display: swap; src: url("/assets/fonts/inter-tight-latin-ext-700-normal.woff2") format("woff2"); unicode-range: U+0100-02AF, U+1E00-1EFF; }
+[data-ein="klar"] { --k7-verlauf: linear-gradient(100deg, #0b9fbd 0%, #8613a1 100%); --tinte: #1d1d1f; --text2: #86868b; --linie: #e5e5ea;
+  font-family: "Inter", system-ui, sans-serif; color: #424245; font-size: 16px; line-height: 1.55; }
+.k7-held { max-width: 1240px; margin: 0 auto; padding: clamp(40px, 6vw, 80px) clamp(16px, 3vw, 40px) clamp(28px, 4vw, 44px); text-align: center; }
+.k7-kicker { margin: 0 0 14px; font-size: 16px; font-weight: 600; color: #6e6e73; }
+.k7-held h1 { margin: 0 auto; max-width: 18ch; font: 700 clamp(2.4rem, 5.6vw, 4.6rem)/1.02 "Inter Tight", "Inter", system-ui, sans-serif; letter-spacing: -0.03em; color: var(--tinte); text-wrap: balance; }
+.k7-wort { color: transparent; background-image: var(--k7-verlauf); -webkit-background-clip: text; background-clip: text; }
+.k7-pillen { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 32px; }
+.k7-pillen button { height: 44px; padding: 0 20px; border-radius: 999px; border: 1.5px solid var(--tinte); background: #fff; color: var(--tinte); cursor: pointer; font-weight: 600; font-size: 15px; }
+.k7-pillen button span { font-weight: 500; color: #86868b; margin-left: 4px; }
+.k7-pillen button[aria-pressed="true"] { background: var(--tinte); color: #fff; }
+.k7-pillen button[aria-pressed="true"] span { color: #a1a1a6; }
+.k7-band { background: #f5f5f7; padding: clamp(28px, 4vw, 56px) clamp(16px, 3vw, 40px) 80px; }
+.k7-raster { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: minmax(300px, 420px) minmax(0, 1fr); gap: 20px; align-items: start; }
+.k7-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.k7-liste li { display: grid; gap: 6px; justify-items: start; padding: 16px 18px; border-radius: 18px; background: #fff; cursor: pointer; border: 1.5px solid transparent; transition: border-color .12s ease; }
+.k7-liste li:hover { border-color: #d2d2d7; }
+.k7-liste li[aria-current="true"] { border-color: var(--tinte); }
+.k7-liste b { font-weight: 600; font-size: 15px; line-height: 1.35; color: var(--tinte); }
+.k7-liste small { display: flex; gap: 10px; flex-wrap: wrap; font-size: 13px; color: #86868b; }
+.k7-frist .e-spaet { color: var(--tinte); }
+.k7-etikett { display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 600; color: #6e6e73; background: #f5f5f7; }
+.k7-etikett--tinte { background: var(--tinte); color: #fff; }
+.k7-etikett--dran { background-image: var(--k7-verlauf); color: #fff; }
+.k7-detail { position: sticky; top: 90px; padding: clamp(24px, 3vw, 40px); border-radius: 24px; background: #fff; min-width: 0; }
+[data-ein="klar"] .e-detail h2 { font: 700 clamp(1.6rem, 2.6vw, 2.2rem)/1.1 "Inter Tight", "Inter", system-ui, sans-serif; letter-spacing: -0.025em; color: var(--tinte); }
+[data-ein="klar"] .e-typ { border-radius: 999px; height: 24px; padding: 0 10px; }
+[data-ein="klar"] .e-cl, [data-ein="klar"] .e-or { background-image: var(--k7-verlauf); color: #fff; }
+[data-ein="klar"] .e-bl, [data-ein="klar"] .e-gr, [data-ein="klar"] .e-gy { background: #f5f5f7; color: #6e6e73; }
+[data-ein="klar"] .e-block { background: #f5f5f7; border-radius: 16px; }
+[data-ein="klar"] .e-frage, [data-ein="klar"] .e-vorschlag { background: #f5f5f7; box-shadow: inset 3px 0 0 #8613a1; }
+[data-ein="klar"] .e-frage h3, [data-ein="klar"] .e-vorschlag h3 { color: #6e6e73; }
+[data-ein="klar"] .e-k { height: 48px; padding: 0 24px; border-radius: 999px; border: 1.5px solid var(--tinte); font-size: 15px; }
+[data-ein="klar"] .e-k-voll { background: var(--tinte); color: #fff; }
+[data-ein="klar"] .e-ok { background: #f5f5f7; color: var(--tinte); box-shadow: inset 3px 0 0 #0b9fbd; }
+[data-ein="klar"] .e-link { color: #8613a1; }
+@media (max-width: 900px) {
+  .k7-raster { grid-template-columns: minmax(0, 1fr); }
+  .k7-raster.hat-detail .k7-liste { display: none; }
+  .k7-raster:not(.hat-detail) .k7-detail { display: none; }
+  .k7-detail { position: static; padding: 20px; }
+  [data-ein="klar"] .e-zurueck { display: inline-flex; margin: 0 0 14px; padding: 0; border: 0; background: none; color: #8613a1; font-weight: 600; cursor: pointer; }
+}

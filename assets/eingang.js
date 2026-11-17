@@ -161,7 +161,7 @@
   function reiterVerdrahten(fn) {
     el.querySelectorAll("[data-g]").forEach(function (b) { b.onclick = function () { gruppe = b.getAttribute("data-g"); auswahl = null; fn(); }; });
   }
-  function zeichnen() { if (art === "liste") liste(); else if (art === "fokus") fokus(); else if (art === "plan") plan(); }
+  function zeichnen() { if (art === "liste") liste(); else if (art === "fokus") fokus(); else if (art === "plan") plan(); else if (art === "klar") klar(); }
   var verdrahtet = false;
 
   /* =============== Variante 1 · Posteingang (Liste links, Detail rechts) =============== */
@@ -224,6 +224,34 @@
     });
     el.querySelectorAll("[data-zu]").forEach(function (z) { z.onclick = zu; });
     if (!verdrahtet) { verdrahtet = true; verdrahten(el, function () { plan(); }); document.addEventListener("keydown", function (ev) { if (ev.key === "Escape") { var x = el.querySelector(".e-fenster"); if (x) { x.hidden = true; el.querySelector(".e-schleier").hidden = true; } } }); }
+  }
+
+
+  /* =============== Variante 4 · Klar (Stil sofortsichtbar Story 7: Apple-Basis, Verlauf Cyan → Violett nur als Akzent) =============== */
+  function k7Etikett(e) {
+    var t = TYP[e.typ] || ["", ""], dran = e.typ === "abnahme" || e.typ === "rueckfrage" || e.typ === "freigabe";
+    return '<span class="k7-etikett' + (dran ? " k7-etikett--dran" : e.typ === "aufgabe" ? " k7-etikett--tinte" : "") + '">' + t[0] + "</span>";
+  }
+  function klar() {
+    var l = inGruppe(gruppe);
+    if (!auswahl || l.indexOf(auswahl) < 0) auswahl = window.innerWidth > 900 ? l[0] || null : null;
+    var h = new Date().getHours(), gruss = h < 11 ? "Guten Morgen" : h < 18 ? "Guten Tag" : "Guten Abend";
+    var dran = E.filter(function (e) { return e.typ === "abnahme" || e.typ === "rueckfrage" || e.typ === "freigabe" || (e.typ === "aufgabe" && e.frist && e.frist <= HEUTE); }).length;
+    var datumLang = new Date().toLocaleDateString("de-DE", { weekday: "long", day: "2-digit", month: "long", timeZone: "Europe/Berlin" });
+    el.innerHTML = '<div class="k7"><header class="k7-held"><p class="k7-kicker">' + esc(datumLang) + "</p><h1>" + gruss + ', Daniel.<br><span class="k7-wort">' +
+      (dran ? dran + (dran === 1 ? " Sache wartet" : " Dinge warten") + " auf dich." : "Nichts wartet auf dich.") + "</span></h1>" +
+      '<nav class="k7-pillen">' + GRUPPEN.map(function (g) {
+        return '<button type="button" data-g="' + g[0] + '" aria-pressed="' + (g[0] === gruppe) + '">' + g[1] + " <span>" + inGruppe(g[0]).length + "</span></button>";
+      }).join("") + "</nav></header>" +
+      '<section class="k7-band"><div class="k7-raster' + (auswahl ? " hat-detail" : "") + '"><ul class="k7-liste">' + (l.length ? l.map(function (e) {
+        return '<li data-s="' + esc(schluessel(e)) + '"' + (e === auswahl ? ' aria-current="true"' : "") + ">" + k7Etikett(e) +
+          '<b>' + esc(e.titel) + "</b><small>" + esc(projekt(e)) + (frist(e) ? '<span class="k7-frist">' + frist(e) + "</span>" : "") + "</small></li>";
+      }).join("") : '<li class="e-leer">Nichts in dieser Gruppe.</li>') + "</ul>" +
+      '<div class="k7-detail">' + (auswahl ? '<button type="button" class="e-zurueck" data-zurueck>‹ Eingang</button>' + detail(auswahl) : '<p class="e-leer">Wähle links einen Eintrag.</p>') + "</div></div></section></div>";
+    reiterVerdrahten(klar);
+    el.querySelectorAll(".k7-liste [data-s]").forEach(function (li) { li.onclick = function () { auswahl = E.filter(function (x) { return schluessel(x) === li.getAttribute("data-s"); })[0]; klar(); if (window.innerWidth <= 900) window.scrollTo(0, el.querySelector(".k7-band").offsetTop - 70); }; });
+    var z = el.querySelector("[data-zurueck]"); if (z) z.onclick = function () { auswahl = null; klar(); };
+    if (!verdrahtet) { verdrahtet = true; verdrahten(el, function () { var l2 = inGruppe(gruppe); auswahl = window.innerWidth > 900 ? l2[0] || null : null; klar(); }); }
   }
 
   /* =============== Aufräumen: Vorschlag bestätigen =============== */
