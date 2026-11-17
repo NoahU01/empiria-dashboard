@@ -38,16 +38,20 @@
     panel.classList.remove("zeigt-kinder");
   }
   // Zweite Ebene fest am Fenster neben die Zeile setzen – bleibt sichtbar, auch wenn die Liste scrollt
+  // Höhe erst nach dem Aufbau messen und nie über den Fensterrand hinaus (Daniel, 17.11.2026: Fenster ab Eintrag C abgeschnitten)
   function setzen(p) {
-    var z = p.sub.getBoundingClientRect(), r = panel.getBoundingClientRect(), h = p.kinder.offsetHeight;
+    var hoch = window.innerHeight;
+    p.kinder.style.maxHeight = (hoch - 16) + "px";
+    var z = p.sub.getBoundingClientRect(), r = panel.getBoundingClientRect(), h = Math.min(p.kinder.scrollHeight, hoch - 16);
     p.kinder.style.left = Math.round(r.right + 8) + "px";
-    p.kinder.style.top = Math.round(Math.max(8, Math.min(z.top - 11, window.innerHeight - h - 8))) + "px";
+    p.kinder.style.top = Math.round(Math.max(8, Math.min(z.top - 11, hoch - h - 8))) + "px";
   }
+  window.addEventListener("resize", function () { paare.forEach(function (p) { if (p.kinder.classList.contains("is-open") && !schmal.matches) setzen(p); }); });
   panel.addEventListener("scroll", function () { paare.forEach(function (p) { if (p.kinder.classList.contains("is-open") && !schmal.matches) setzen(p); }); });
   function auf(p) {
     zu();
     p.kinder.classList.add("is-open"); p.sub.classList.add("is-open"); p.b.setAttribute("aria-expanded", "true");
-    if (!schmal.matches) setzen(p);
+    if (!schmal.matches) { setzen(p); requestAnimationFrame(function () { requestAnimationFrame(function () { setzen(p); }); }); }
     if (schmal.matches) { panel.classList.add("zeigt-kinder"); panel.scrollTop = 0; }
   }
 

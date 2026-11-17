@@ -102,7 +102,7 @@
   function zeichnen() {
   /* ---------- A: Tagesblatt ---------- */
   if (art === "a") {
-    el.innerHTML = briefing(false) + dran() + tag() + claude() +
+    el.innerHTML = briefing(false) + dran() + claude() +
       liste("Überfällig bei dir", "Neu terminieren, abgeben oder streichen", ueberfaelligDir) +
       liste("Überfällig bei anderen", "Nachhaken: Claude schreibt den Entwurf, du gibst frei", ueberfaelligAndere);
   }
