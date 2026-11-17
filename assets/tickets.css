@@ -1,0 +1,55 @@
+/* Tickets bei Claude – oben auf der Seite „Aufgaben“ (Daniel, 17.11.2026)
+   Schriftsystem: Lora nur für die Überschrift (h-serif), Poppins in --fs-m (Text, Bedienung) und --fs-s (Nebeninfo).
+   Farben: Tinte, ein Grau, Gelb nur als Fläche für die Sofort-Spur. Jede Aktion hat eine sichtbare Bestätigung. */
+.tk { margin: 0 0 40px; }
+.tk-kopf { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin: 0 0 14px; }
+.tk-kopf h2 { margin: 0; font-size: clamp(1.35rem, 2vw, 1.6rem); }
+.tk-stopp { height: 36px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--ink); background: #fff; color: var(--ink);
+            font: 600 var(--fs-s)/1 var(--font-sans); cursor: pointer; }
+.tk-stopp.is-an { background: var(--ink); color: #fff; }
+
+.tk-eingang { display: grid; gap: 10px; padding: 16px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px #e6e3df; }
+.tk-eingang label { font: 600 var(--fs-m)/1.3 var(--font-sans); }
+.tk-eingang textarea { width: 100%; padding: 12px 14px; border: 1px solid #e6e3df; border-radius: 12px; font: 400 var(--fs-m)/1.5 var(--font-sans); resize: vertical; }
+.tk-eingang-unten { display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch; }
+.tk-spur { display: flex; gap: 6px; flex-wrap: wrap; }
+.tk-spur button { display: grid; gap: 1px; text-align: left; padding: 7px 14px; border-radius: 12px; border: 1px solid #e6e3df; background: #faf9f7; cursor: pointer; font-family: var(--font-sans); color: var(--ink); }
+.tk-spur button b { font-size: var(--fs-s); font-weight: 600; }
+.tk-spur button span { font-size: var(--fs-s); color: var(--grey-50); }
+.tk-spur button[aria-checked="true"] { border: 1.5px solid var(--ink); background: #fff; }
+.tk-spur button[data-spur="sofort"][aria-checked="true"] { background: var(--hl); }
+.tk-spur button[data-spur="sofort"][aria-checked="true"] span { color: var(--ink-2); }
+.tk-eingang select { min-width: 0; flex: 1 1 200px; padding: 0 12px; border: 1px solid #e6e3df; border-radius: 12px; background: #fff; font: 400 var(--fs-s)/1 var(--font-sans); color: var(--ink); }
+.tk-ja, .tk-aktionen button, .tk-text button, .tk-hinweis button { height: 38px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--ink);
+            background: #fff; color: var(--ink); font: 600 var(--fs-s)/1 var(--font-sans); cursor: pointer; }
+.tk-ja { background: var(--ink); color: #fff; }
+button:disabled { opacity: .5; cursor: default; }
+
+.tk-hinweis { display: flex; gap: 12px; align-items: center; justify-content: space-between; margin: 12px 0 0; padding: 12px 16px; border-radius: 12px; font: 400 var(--fs-m)/1.5 var(--font-sans); }
+.tk-hinweis p { margin: 0; }
+.tk-hinweis--ok { background: var(--ink); color: #fff; }
+.tk-hinweis--ok button { border-color: #fff; background: #fff; color: var(--ink); flex: none; }
+.tk-hinweis--stopp { background: var(--grey-bg); color: var(--ink); }
+
+.tk-gruppe { margin-top: 18px; }
+.tk-gruppe summary { cursor: pointer; font: 600 var(--fs-m)/1.4 var(--font-sans); padding: 6px 0; list-style-position: inside; }
+.tk-gruppe summary span { font-weight: 400; color: var(--grey-50); }
+.tk-liste { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 8px; }
+.tk-ticket { padding: 12px 16px; border-radius: 14px; background: #fff; box-shadow: 0 0 0 1px #e6e3df; }
+.tk-gruppe--dir .tk-ticket { box-shadow: 0 0 0 1.5px var(--ink); }
+.tk-zeile { display: flex; gap: 12px; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; }
+.tk-titel { display: grid; gap: 2px; min-width: 0; flex: 1 1 280px; }
+.tk-titel b { font: 600 var(--fs-m)/1.4 var(--font-sans); }
+.tk-titel span { font: 400 var(--fs-s)/1.3 var(--font-sans); color: var(--grey-50); }
+.tk-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.tk-chip { font: 400 var(--fs-s)/1 var(--font-sans); padding: 5px 10px; border-radius: 999px; background: var(--grey-bg); color: var(--ink-2); white-space: nowrap; }
+.tk-chip--sofort { background: var(--hl); color: var(--ink); font-weight: 600; }
+.tk-info { margin: 8px 0 0; font: 400 var(--fs-m)/1.5 var(--font-sans); }
+.tk-info b { font-weight: 600; }
+.tk-ablage { margin: 4px 0 0; font: 400 var(--fs-s)/1.4 var(--font-sans); color: var(--grey-50); overflow-wrap: anywhere; }
+.tk-aktionen { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.tk-text { margin-top: 10px; display: grid; gap: 8px; }
+.tk-text textarea { width: 100%; padding: 10px 12px; border: 1px solid #e6e3df; border-radius: 12px; font: 400 var(--fs-m)/1.5 var(--font-sans); }
+.tk-text div { display: flex; gap: 8px; }
+.tk-fehler { color: var(--ink); font: 400 var(--fs-m)/1.5 var(--font-sans); }
+@media (max-width: 600px) { .tk-hinweis { flex-direction: column; align-items: flex-start; } .tk-ja[type=submit] { width: 100%; } }
