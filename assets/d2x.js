@@ -186,9 +186,7 @@
       }).join("") + "</ul>" : '<p class="x-klein">Für heute liegt noch kein Briefing vor.</p>') + "</section>" +
       '<section class="x-karte x-s5"><h2>' + ikon("hand", "#ff9500") + 'Du bist am Zug<span class="x-klein">diese Woche</span></h2><ul class="x-zeilen" data-dran>' +
       dran.slice(0, 6).map(dranZeile).join("") + "</ul>" + (dran.length > 6 ? '<button type="button" class="x-mehr" data-mehr>Alle anzeigen</button>' : "") + "</section>" +
-      '<section class="x-karte"><h2>' + ikon("kal", "#007aff") + 'Diese und nächste Woche<span class="x-klein">Fristen, Meilensteine und Termine</span></h2>' +
-      '<div class="x-legende"><span><i class="x-punkt x-p-du"></i>Du</span><span><i class="x-punkt x-p-claude"></i>Claude</span><span><i class="x-punkt x-p-andere"></i>Andere</span><span><i class="x-punkt" style="background:#1d1d1f"></i>Meilenstein</span><span>Uhrzeit = Termin</span></div>' +
-      '<div class="x-tage">' + tage.join("") + "</div></section>" +
+
       '<section class="x-karte x-s6"><h2>' + ikon("blitz", "#af52de") + "Claude arbeitet</h2>" + (claudeZ ? '<ul class="x-zeilen">' + claudeZ + "</ul>" : '<p class="x-klein">Gerade kein Ticket bereit.</p>') + "</section>" +
       '<section class="x-karte x-s6"><h2>' + ikon("leute", "#007aff") + 'Nachhaken<span class="x-klein">überfällig bei anderen</span></h2>' + (nach ? '<ul class="x-zeilen">' + nach + "</ul>" : '<p class="x-klein">Nichts überfällig.</p>') + "</section>" +
       '<section class="x-karte"><h2>' + ikon("raster", "#1d1d1f") + "Alle Projekte</h2>" +
