@@ -295,9 +295,10 @@
 
 
   /* =============== Variante 4 · Klar (Stil sofortsichtbar Story 7: Apple-Basis, Verlauf Cyan → Violett nur als Akzent) =============== */
+  function k7Farbe(e) { return { impuls: "cl", abnahme: "cl", rueckfrage: "cl", freigabe: "ma", aufgabe: "tinte", termin: "cy", nachbereitung: "cy" }[e.typ] || "grau"; }
   function k7Etikett(e) {
-    var t = TYP[e.typ] || ["", ""], f = { impuls: "cl", abnahme: "cl", rueckfrage: "cl", freigabe: "ma", aufgabe: "tinte", termin: "cy", nachbereitung: "cy" }[e.typ] || "grau";
-    return '<span class="k7-etikett k7-e-' + f + '">' + t[0] + "</span>";
+    var t = TYP[e.typ] || ["", ""];
+    return '<span class="k7-etikett k7-e-' + k7Farbe(e) + '">' + t[0] + "</span>";
   }
   function klar() {
     var l = inGruppe(gruppe);
@@ -311,10 +312,10 @@
       }).join("") + "</nav>" +
       '<p class="k7-legende"><i class="k7-f-cl"></i>Claude braucht dich<i class="k7-f-ma"></i>geht nach außen<i class="k7-f-tinte"></i>deine Aufgabe<i class="k7-f-cy"></i>Termin<i class="k7-f-grau"></i>ansehen oder warten<i class="k7-f-rot"></i>überfällig</p></header>' +
       '<section class="k7-band"><div class="k7-raster' + (auswahl ? " hat-detail" : "") + '"><ul class="k7-liste">' + (l.length ? l.map(function (e) {
-        // Zeile wie Eingang 1 (Daniel, 18.11.2026: links mehr auf einen Blick): Etikett · Titel und Projekt · Frist rechts
-        return '<li data-s="' + esc(schluessel(e)) + '"' + (e === auswahl ? ' aria-current="true"' : "") + ">" + k7Etikett(e) +
-          '<div class="k7-z"><b>' + esc(e.titel) + "</b>" + (projekt(e) ? "<small>" + esc(projekt(e)) + "</small>" : "") + "</div>" +
-          (frist(e) ? '<span class="k7-frist">' + frist(e) + "</span>" : "") + "</li>";
+        // Zeile (Daniel, 18.11.2026): oben klein Art · Projekt · Frist, darunter der volle Titel – beim Durchscrollen sehen, worum es geht
+        var f = k7Farbe(e);
+        return '<li data-s="' + esc(schluessel(e)) + '"' + (e === auswahl ? ' aria-current="true"' : "") + '><div class="k7-z-kopf"><i class="k7-f-' + f + '"></i><span class="k7-art">' + (TYP[e.typ] || [""])[0] + "</span>" +
+          (projekt(e) ? '<span class="k7-proj">· ' + esc(projekt(e)) + "</span>" : "") + (frist(e) ? '<span class="k7-frist">' + frist(e) + "</span>" : "") + "</div><b>" + esc(e.titel) + "</b></li>";
       }).join("") : '<li class="e-leer">Nichts in dieser Gruppe.</li>') + "</ul>" +
       '<div class="k7-detail">' + (auswahl ? '<button type="button" class="e-zurueck" data-zurueck>‹ Eingang</button>' + detail(auswahl) : '<p class="e-leer">Wähle links einen Eintrag.</p>') + "</div></div></section></div>";
     reiterVerdrahten(klar);
@@ -337,7 +338,7 @@
   var L = null, ST = [];
   function lageLaden() {
     Promise.all([
-      db.from("eingang").select("*"), db.from("projekte").select("id, name, marke, typ").eq("status", "läuft"),
+      db.from("eingang").select("*"), db.from("projekte").select("id, name, marke, typ, organisationen(name, gruppe)").eq("status", "läuft"),
       db.from("lage").select("*").not("gilt_fuer", "is", null).order("gilt_fuer", { ascending: false }).limit(1),
       db.from("projekt_status").select("*").gte("gilt_fuer", plus(-3)).order("gilt_fuer", { ascending: false }),
       db.from("briefing").select("id, begruendung, art, projekt_id").is("entscheidung", null)
@@ -356,6 +357,20 @@
   function liste2(t) { try { var l = typeof t === "string" ? JSON.parse(t) : t; return Array.isArray(l) ? l : []; } catch (x) { return t ? [t] : []; } }
   var AMPEL = { kritisch: ["Kritisch", 0], achtung: ["Achtung", 1], im_plan: ["Im Plan", 2], ruht: ["Ruht", 3] };
   var ARTE = { entscheidung: "Entscheidung", risiko: "Risiko", chance: "Chance" };
+  /* Projektzeile, zugeklappt (Daniel, 18.11.2026): „im ersten Moment sehen, um welches Projekt es sich handelt … aufklappen, erstes Summary,
+     dann ins Detail springen“. Genutzt auf Lage und Projekte. */
+  function projektZeilen(liste, stati, mitMarke) {
+    return '<ul class="pz-zeilen">' + liste.map(function (x) {
+      var s = stati[x.id] || {}, org = x.organisationen ? (x.organisationen.gruppe || x.organisationen.name) : "";
+      var neben = [mitMarke ? x.marke : "", x.typ === "Kunde" ? (org || "Kunde") : ""].filter(Boolean).join(" · ");
+      return '<li><details><summary><i class="lg-a-' + (s.ampel || "ruht") + '" title="' + (s.ampel ? AMPEL[s.ampel][0] : "kein Stand") + '"></i><b>' + esc(x.name) + "</b>" +
+        (neben ? "<span>" + esc(neben) + "</span>" : "") + '<em aria-hidden="true"></em></summary><div class="pz-auf">' +
+        (s.satz ? "<p>" + esc(s.satz) + "</p>" : '<p class="e-leer">Noch kein Stand.</p>') +
+        (s.naechster_schritt ? '<p class="pz-naechst"><span>Nächster Schritt</span>' + esc(s.naechster_schritt) + (s.bei ? " · " + esc(s.bei) : "") +
+          (s.faellig ? " · " + (s.faellig < HEUTE ? '<span class="e-spaet">seit ' + datum(s.faellig) + "</span>" : "bis " + datum(s.faellig)) : "") + "</p>" : "") +
+        '<a class="e-k" href="/strategie/projekt.html#p=' + x.id + '">Zum Projekt</a></div></details></li>';
+    }).join("") + "</ul>";
+  }
   function lage() {
     zahlImMenue();
     var datumLang = new Date().toLocaleDateString("de-DE", { weekday: "long", day: "2-digit", month: "long", timeZone: "Europe/Berlin" });
@@ -368,12 +383,11 @@
     ].filter(function (x) { return x[1]; });
     var stand = L && L.gilt_fuer ? (L.gilt_fuer === HEUTE ? "Briefing von heute" : "Briefing vom " + datum(L.gilt_fuer) + ", das heutige fehlt noch") : "Noch kein Briefing";
     var st = ST.slice().sort(function (a, b) { return AMPEL[a.ampel][1] - AMPEL[b.ampel][1] || String(P[a.projekt_id].name).localeCompare(P[b.projekt_id].name); });
-    el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>Lage</h1><span>' + esc(datumLang) + '</span></div><p class="k7-stand">' + esc(stand) + "</p></header>" +
+    el.innerHTML = '<div class="k7 lage lage-start"><header class="k7-kopf"><div class="k7-titel"><h1>Lage</h1><span>' + esc(datumLang) + '</span></div><p class="k7-stand">' + esc(stand) + "</p></header>" +
       '<section class="k7-band"><div class="lg-raster">' +
       '<div class="lg-kern"><h2 class="lg-kern-titel">Was heute zählt</h2>' + (L ? '<ul class="lg-kern-liste">' + saetze(L.text).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "<p>Der Stabschef hat heute noch kein Briefing geschrieben.</p>") + "</div>" +
       '<div class="lg-links"><h2>Meine Empfehlungen</h2>' + (emp.length ? emp.map(function (e) {
-        return '<article class="e-detail lg-emp" data-s="' + esc(schluessel(e)) + '"><div class="lg-emp-kopf"><span class="k7-etikett ' + (e.art === "risiko" ? "k7-e-rot" : e.art === "chance" ? "k7-e-cy" : "k7-e-cl") + '">' + (ARTE[e.art] || "Empfehlung") + "</span>" +
-          (P[e.projekt_id] ? '<span class="lg-proj">' + esc(P[e.projekt_id].name) + "</span>" : "") + "</div><h3>" + esc(e.titel) + "</h3>" + (e.kern ? "<p>" + esc(e.kern) + "</p>" : "") +
+        return '<article class="e-detail lg-emp" data-s="' + esc(schluessel(e)) + '"><div class="lg-emp-kopf">' + esc([ARTE[e.art] || "Empfehlung", P[e.projekt_id] && P[e.projekt_id].name].filter(Boolean).join(" · ")) + "</div><h3>" + esc(e.titel) + "</h3>" + (e.kern ? "<p>" + esc(e.kern) + "</p>" : "") +
           (e.begruendung ? '<details class="lg-warum"><summary>Warum jetzt</summary><p>' + esc(e.begruendung) + "</p></details>" : "") +
           '<div class="e-knoepfe"><button class="e-k e-k-voll" data-a="ja">' + esc(e.extra.knopf || "Passt, umsetzen") + '</button><button class="e-k" data-a="text" data-modus="anders">Anders</button></div>' +
           '<form class="e-text" hidden><textarea rows="3" placeholder="Was soll ich stattdessen tun?"></textarea><button class="e-k e-k-voll" type="submit">Senden</button></form><p class="e-ok" hidden></p></article>';
@@ -383,12 +397,8 @@
       '<a class="e-k e-k-voll lg-zum-eingang" href="/strategie/eingang-klar.html">Zum Eingang</a></div>' +
       '<div class="lg-kasten"><h2>Seit gestern</h2>' + (L && liste2(L.fortschritt).length ? "<ul>" + liste2(L.fortschritt).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Keine Angaben.</p>') + "</div>" +
       '<div class="lg-kasten"><h2>Diese Woche</h2>' + (L && liste2(L.woche).length ? "<ul>" + liste2(L.woche).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Keine Angaben.</p>') + "</div></aside>" +
-      '<div class="lg-projekte"><h2>Projekte</h2><div class="lg-legende"><span><i class="lg-a-kritisch"></i>kritisch</span><span><i class="lg-a-achtung"></i>Achtung</span><span><i class="lg-a-im_plan"></i>im Plan</span><span><i class="lg-a-ruht"></i>ruht</span></div>' +
-      (st.length ? '<ul class="lg-pliste">' + st.map(function (s) {
-        var p = P[s.projekt_id];
-        return '<li><a href="/strategie/projekt.html#p=' + s.projekt_id + '"><i class="lg-a-' + s.ampel + '" title="' + AMPEL[s.ampel][0] + '"></i><div class="lg-p-text"><b>' + esc(p.name) + "</b><span>" + esc(p.marke) + (p.typ === "Kunde" ? " · Kunde" : "") + "</span><p>" + esc(s.satz) + "</p>" +
-          (s.naechster_schritt ? '<p class="lg-naechst">Nächster Schritt: ' + esc(s.naechster_schritt) + (s.bei ? " · " + esc(s.bei) : "") + (s.faellig ? " · " + (s.faellig < HEUTE ? '<span class="e-spaet">seit ' + datum(s.faellig) + "</span>" : "bis " + datum(s.faellig)) : "") + "</p>" : "") + "</div></a></li>";
-      }).join("") + "</ul>" : '<p class="e-leer">Noch keine Projektstände.</p>') + "</div>" +
+      '<div class="lg-projekte"><h2>Projektstände</h2><p class="lg-p-hinweis">Alle laufenden Projekte, die dringlichsten zuerst: kritisch, Achtung, im Plan, ruht. Aufklappen zeigt den Stand vom Stabschef.</p>' +
+      (st.length ? '<div class="pz-kasten">' + projektZeilen(st.map(function (s) { return P[s.projekt_id]; }), (function () { var m = {}; st.forEach(function (s) { m[s.projekt_id] = s; }); return m; })(), true) + "</div>" : '<p class="e-leer">Noch keine Projektstände.</p>') + "</div>" +
       "</div></section></div>";
     if (!verdrahtet) { verdrahtet = true; verdrahten(el, function () { lage(); }); nachschubVerdrahten(); }
   }
@@ -472,17 +482,11 @@
         MARKEN.map(function (mk) {
           // Je Marke: Kundenprojekte und interne Projekte nebeneinander, alphabetisch zum Finden (Daniel, 18.11.2026)
           var l = PJ.projekte.filter(function (x) { return x.marke === mk; }).sort(function (a, b) { return a.name.localeCompare(b.name, "de"); });
-          var gruppe = function (titel, liste, mitKunde) {
-            return '<div class="pj-gruppe"><h3>' + titel + " <span>" + liste.length + "</span></h3>" + (liste.length ? '<ul class="pj-ueb">' + liste.map(function (x) {
-              var s = PJ.status[x.id] || {}, org = x.organisationen ? (x.organisationen.gruppe || x.organisationen.name) : "";
-              return '<li><a href="#p=' + x.id + '"><i class="lg-a-' + (s.ampel || "ruht") + '" title="' + (s.ampel ? AMPEL[s.ampel][0] : "kein Stand") + '"></i><div><p class="pj-ueb-kopf"><b>' + esc(x.name) + "</b>" +
-                (mitKunde && org ? "<span>" + esc(org) + "</span>" : "") + "</p>" + (s.satz ? '<p class="pj-ueb-satz">' + esc(s.satz) + "</p>" : "") +
-                (s.naechster_schritt ? '<p class="pj-ueb-naechst">Nächster Schritt: ' + esc(s.naechster_schritt) + (s.bei ? " · " + esc(s.bei) : "") +
-                  (s.faellig ? " · " + (s.faellig < HEUTE ? '<span class="e-spaet">seit ' + datum(s.faellig) + "</span>" : "bis " + datum(s.faellig)) : "") + "</p>" : "") + "</div></a></li>";
-            }).join("") + "</ul>" : '<p class="e-leer">Keine.</p>') + "</div>";
+          var gruppe = function (titel, liste) {
+            return '<div class="pj-gruppe"><h3>' + titel + " <span>" + liste.length + "</span></h3>" + (liste.length ? projektZeilen(liste, PJ.status, false) : '<p class="e-leer">Keine.</p>') + "</div>";
           };
-          return '<section class="pj-marke"><h2>' + esc(mk) + '</h2><div class="pj-zwei">' + gruppe("Kundenprojekte", l.filter(function (x) { return x.typ === "Kunde"; }), true) +
-            gruppe("Interne Projekte", l.filter(function (x) { return x.typ !== "Kunde"; }), false) + "</div></section>";
+          return '<section class="pj-marke"><h2>' + esc(mk) + '</h2><div class="pj-zwei">' + gruppe("Kundenprojekte", l.filter(function (x) { return x.typ === "Kunde"; })) +
+            gruppe("Interne Projekte", l.filter(function (x) { return x.typ !== "Kunde"; })) + "</div></section>";
         }).join("") + "</div></section></div>";
     } else {
       var s = PJ.status[pid] || null;

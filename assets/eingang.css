@@ -233,7 +233,7 @@
 .k7-etikett.k7-e-rot { background: #e3000f; color: #fff; }
 .lg-rechts { display: grid; gap: 12px; min-width: 0; }
 /* Oberkante wie der erste Empfehlungskasten links (Überschrift steht links über, rechts im Kasten) */
-@media (min-width: 1001px) { .lg-rechts { padding-top: calc(18px * 1.2 + 24px); } }
+@media (min-width: 1001px) { .lage-start .lg-rechts { padding-top: calc(18px * 1.2 + 24px); } }
 .lg-kasten { padding: 18px 20px; border-radius: 20px; background: #fff; }
 .lg-kasten ul { margin: 0; padding: 0 0 0 18px; display: grid; gap: 6px; }
 .lg-wartet { list-style: none; padding: 0 !important; }
@@ -386,22 +386,23 @@
 .pj-ueb-naechst { margin-top: 3px !important; font-size: 12px; line-height: 1.45; color: #86868b; }
 @media (max-width: 800px) { .pj-zwei { grid-template-columns: minmax(0, 1fr); } }
 
-/* Eingang 4 als Arbeitsfläche (Daniel, 18.11.2026): links dichte Zeilen wie Eingang 1, rechts kleinere Schrift – weg vom Homepage-Maßstab */
-.k7-raster { grid-template-columns: minmax(320px, 440px) minmax(0, 1fr); gap: 16px; }
-.k7-liste { gap: 0; padding: 6px; border-radius: 18px; background: #fff; }
-.k7-liste li { display: grid; grid-template-columns: 88px minmax(0, 1fr) auto; align-items: start; gap: 10px; justify-items: stretch; padding: 9px 10px; border-radius: 10px; border: 0; }
-.k7-liste li + li { box-shadow: 0 -1px 0 #f0f0f2; }
-.k7-liste li:hover { background: #f5f5f7; }
-.k7-liste li[aria-current="true"] { background: #f5f5f7; box-shadow: inset 3px 0 0 var(--tinte); }
-.k7-liste li[aria-current="true"] + li { box-shadow: none; }
-.k7-liste .k7-etikett { height: 20px; padding: 0 6px; font-size: 11px; margin-top: 1px; width: 88px; justify-content: center; }
-.k7-z { min-width: 0; }
-.k7-z b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13.5px; font-weight: 500; line-height: 1.35; }
-.k7-z small { display: block; margin-top: 1px; font-size: 12px; color: #86868b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.k7-liste .k7-frist { font-size: 12px; color: #86868b; white-space: nowrap; margin-top: 2px; }
-.k7-liste .e-leer { display: block; padding: 12px; }
-.k7-detail { top: 72px; padding: 24px 28px; border-radius: 18px; }
-[data-ein="klar"] .k7-detail { font-size: 14.5px; line-height: 1.55; }
+/* Eingang als Arbeitsfläche (Daniel, 18.11.2026): links beim Durchscrollen sofort sehen, worum es geht – voller Titel,
+   Art nur als kleiner Farbpunkt mit Wort; rechts kleinere Schrift. Gilt nur für den Eingang (Termine haben eigene Liste). */
+[data-ein="klar"] .k7-raster { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 16px; }
+[data-ein="klar"] .k7-liste { gap: 0; padding: 6px; border-radius: 18px; background: #fff; }
+[data-ein="klar"] .k7-liste li { display: block; justify-items: normal; padding: 10px 12px; border-radius: 12px; border: 0; }
+[data-ein="klar"] .k7-liste li + li { box-shadow: 0 -1px 0 #f0f0f2; }
+[data-ein="klar"] .k7-liste li:hover { background: #f5f5f7; }
+[data-ein="klar"] .k7-liste li[aria-current="true"] { background: #f5f5f7; box-shadow: inset 3px 0 0 var(--tinte); }
+[data-ein="klar"] .k7-liste li[aria-current="true"] + li { box-shadow: none; }
+[data-ein="klar"] .k7-z-kopf { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #86868b; min-width: 0; }
+[data-ein="klar"] .k7-z-kopf i { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+[data-ein="klar"] .k7-z-kopf .k7-art { font-weight: 600; color: #424245; flex: none; }
+[data-ein="klar"] .k7-z-kopf .k7-proj { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+[data-ein="klar"] .k7-z-kopf .k7-frist { margin-left: auto; flex: none; white-space: nowrap; }
+[data-ein="klar"] .k7-liste li > b { display: block; margin-top: 3px; font-size: 14px; font-weight: 500; line-height: 1.4; color: var(--tinte); }
+[data-ein="klar"] .k7-liste .e-leer { display: block; padding: 12px; }
+[data-ein="klar"] .k7-detail { top: 72px; padding: 24px 28px; border-radius: 18px; font-size: 14.5px; line-height: 1.55; }
 [data-ein="klar"] .e-detail h2 { margin: 0 0 16px; font: 700 19px/1.3 "Inter Tight", "Inter", system-ui, sans-serif; letter-spacing: -0.01em; }
 [data-ein="klar"] .e-d-kopf { margin-bottom: 10px; }
 [data-ein="klar"] .e-inhalt { gap: 12px; }
@@ -409,4 +410,52 @@
 [data-ein="klar"] .e-knoepfe { margin-top: 18px; }
 [data-ein="klar"] .e-k { height: 32px; padding: 0 14px; font-size: 13px; }
 [data-ein="klar"] .k7-detail textarea { font-size: 14px; }
-@media (max-width: 900px) { .k7-raster { grid-template-columns: minmax(0, 1fr); } .k7-detail { padding: 18px; } }
+@media (max-width: 900px) { [data-ein="klar"] .k7-raster { grid-template-columns: minmax(0, 1fr); } [data-ein="klar"] .k7-detail { padding: 18px; } }
+
+
+/* Ruhiger (Daniel, 18.11.2026: „schlecht gelenkt mit dem Blick“): kein lila Rand am Kopfkasten (er wäre immer da),
+   Empfehlungen mit mehr Luft, Art als Wort statt Farbpille, kleinere Knöpfe; Lila bleibt nur am Kern der Empfehlung. */
+.lage .lg-kern { box-shadow: none; padding: 22px 26px; }
+.lage .lg-kern-liste li::marker { color: #86868b; }
+.lage .lg-links { gap: 14px; }
+.lage .lg-emp { padding: 24px 26px; }
+.lage .lg-emp-kopf { display: block; margin: 0 0 6px; font-size: 12px; font-weight: 600; letter-spacing: .01em; color: #86868b; }
+.lage .lg-emp h3 { margin: 0 0 14px; font-size: 17px; line-height: 1.35; }
+.lage .lg-emp > p { padding: 12px 14px; font-size: 14.5px; line-height: 1.55; }
+.lage .lg-warum { margin-top: 10px; padding: 0; background: none; }
+.lage .lg-warum summary { font-size: 13px; }
+.lage .lg-warum p { padding: 10px 14px; border-radius: 12px; background: #f5f5f7; font-size: 14px; }
+.lage .e-knoepfe { margin-top: 18px; gap: 8px; }
+.lage .e-k { height: 30px; padding: 0 14px; font-size: 13px; font-weight: 500; }
+.lage .lg-kasten h2, .lage .lg-links > h2, .lage .lg-projekte > h2 { font-size: 16px; }
+.lg-p-hinweis { margin: -6px 0 12px; font-size: 13px; color: #86868b; }
+
+/* Projektzeile zugeklappt: Ampel · Name · Kunde; aufgeklappt Stand, nächster Schritt, „Zum Projekt“ */
+.pz-kasten { padding: 6px 18px; border-radius: 20px; background: #fff; }
+@media (min-width: 1001px) { .pz-kasten .pz-zeilen { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 40px; align-items: start; } .pz-kasten .pz-zeilen li:nth-child(2) { border-top: 0; } }
+.pz-zeilen { list-style: none; margin: 0; padding: 0; }
+.pz-zeilen li { border-top: 1px solid #f0f0f2; }
+.pz-zeilen li:first-child { border-top: 0; }
+.pz-kasten .pz-zeilen li:first-child { border-top: 0; }
+.pz-zeilen summary { display: flex; align-items: center; gap: 10px; padding: 12px 2px; cursor: pointer; list-style: none; }
+.pz-zeilen summary::-webkit-details-marker { display: none; }
+.pz-zeilen summary i { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.pz-zeilen summary b { font-size: 15px; font-weight: 600; color: var(--tinte); flex: 0 0 auto; max-width: calc(100% - 40px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pz-zeilen summary span { flex: 1 1 0; }
+.pz-zeilen summary span { font-size: 13px; color: #86868b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.pz-zeilen summary em { margin-left: auto; flex: none; width: 8px; height: 8px; border-right: 1.5px solid #86868b; border-bottom: 1.5px solid #86868b; transform: rotate(45deg); margin-top: -4px; transition: transform .15s ease; }
+.pz-zeilen details[open] summary em { transform: rotate(225deg); margin-top: 4px; }
+.pz-zeilen summary:hover b { text-decoration: underline; text-underline-offset: 3px; }
+.pz-auf { padding: 0 2px 14px 20px; }
+.pz-auf p { margin: 0 0 8px; font-size: 14px; line-height: 1.5; color: #424245; }
+.pz-naechst { font-size: 13px !important; color: #6e6e73 !important; }
+.pz-naechst > span:first-child { display: block; font-size: 12px; font-weight: 600; color: #86868b; }
+.pz-auf .e-k { display: inline-flex; align-items: center; height: 30px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--tinte); font-size: 13px; font-weight: 500; color: var(--tinte); text-decoration: none; }
+.pz-auf .e-k:hover { background: var(--tinte); color: #fff; }
+.pj-gruppe { padding: 16px 18px 4px; }
+.pj-gruppe > h3 { margin-bottom: 0; }
+
+/* Projekt-Detail: Kopfkasten ohne lila Rand, kleinerer Text */
+.lage .pj-stand { box-shadow: none; }
+.lage .pj-stand > p:not(.pj-ampel):not(.pj-naechst):not(.pj-ziel) { font: 500 15px/1.55 "Inter", system-ui, sans-serif; }
+.lage .pj-naechst { font-size: 14px !important; }
