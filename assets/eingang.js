@@ -635,6 +635,7 @@
       var jetztMs = Date.now(), heute = TM.liste.filter(function (t) { return iso2(t.start) === HEUTE; });
       var naechster = heute.filter(function (t) { return new Date(t.ende).getTime() > jetztMs; })[0];
       TM.wahl = naechster || TM.liste.filter(function (t) { return new Date(t.ende).getTime() > jetztMs; })[0] || TM.liste[0] || null;
+      TM.ersterSprung = true;   // beim Öffnen: aktueller Termin steht oben in der Liste (Daniel, 18.11.2026)
       termine();
     });
   }
@@ -660,7 +661,7 @@
         letzterTag = d;
         var bezug = [P[b.projekt_id] ? P[b.projekt_id].name : "", tmMarke(t, b)].filter(Boolean).join(" · ");
         return kopf + '<li data-tid="' + t.id + '"' + (t === TM.wahl ? ' aria-current="true"' : "") + (vorbei ? ' class="tm-vorbei"' : "") + '><p class="tm-zeit"><b>' + uhr(t.start) + "–" + uhr(t.ende) + '</b><span class="k7-etikett k7-e-' + a[1] + '">' + a[0] + "</span></p>" +
-          "<b>" + esc(t.betreff) + "</b>" + (b.zusammenfassung ? '<p class="tm-kurz">' + esc(String(b.zusammenfassung).replace(/^[^:\n]{2,40}:\s*/, "")) + "</p>" : "") +
+          "<b>" + esc(t.betreff) + "</b>" + (b.zusammenfassung ? '<p class="tm-kurz">' + esc(String(b.zusammenfassung).replace(/^[^:\n\d]{2,40}:\s+/, "")) + "</p>" : "") +
           (bezug ? "<small>" + esc(bezug) + "</small>" : "") + "</li>";
       }).join("") : '<li class="e-leer">Keine Termine in den nächsten 7 Tagen.</li>') + "</ul>" +
       '<div class="k7-detail tm-detail">' + (TM.wahl ? '<button type="button" class="e-zurueck" data-zurueck>‹ Termine</button>' + tmDetail(TM.wahl) : '<p class="e-leer">Wähle links einen Termin.</p>') + "</div></div></section></div>";
@@ -669,13 +670,22 @@
       var k = el.querySelector('[data-tag-kopf="' + b.getAttribute("data-sprung") + '"]'), li = el.querySelector(".tm-liste");
       if (window.innerWidth <= 900 && TM.wahl) { TM.wahl = null; termine(); k = el.querySelector('[data-tag-kopf="' + b.getAttribute("data-sprung") + '"]'); li = el.querySelector(".tm-liste"); }
       if (!k) return;
-      if (window.innerWidth > 900) li.scrollTo({ top: k.getBoundingClientRect().top - li.getBoundingClientRect().top + li.scrollTop, behavior: "smooth" }); else window.scrollTo({ top: k.getBoundingClientRect().top + window.scrollY - 70, behavior: "smooth" });
+      // Gemessen am ersten Termin des Tages: die Überschrift selbst haftet oben und meldet dann ihre Haftposition statt ihrer Stelle in der Liste
+      var erster = k.nextElementSibling || k;
+      if (window.innerWidth > 900) li.scrollTo({ top: erster.getBoundingClientRect().top - li.getBoundingClientRect().top + li.scrollTop - k.offsetHeight - 4, behavior: "smooth" }); else window.scrollTo({ top: k.getBoundingClientRect().top + window.scrollY - 70, behavior: "smooth" });
     }; });
     el.querySelectorAll(".tm-liste [data-tid]").forEach(function (li) { li.onclick = function () { TM.wahl = TM.liste.filter(function (t) { return t.id === +li.getAttribute("data-tid"); })[0]; termine(); if (window.innerWidth <= 900) window.scrollTo(0, 0); }; });
     var z = el.querySelector("[data-zurueck]"); if (z) z.onclick = function () { TM.wahl = null; termine(); };
     var nl = el.querySelector(".tm-liste"), nd = el.querySelector(".tm-detail");
     if (nl) nl.scrollTop = listePos;
     if (nd) nd.scrollTop = detailPos;
+    // Beim Öffnen der Seite: Liste so weit, dass der aktuelle oder nächste Termin oben steht (unter der Tagesüberschrift);
+    // erledigte Termine von heute bleiben darüber und sind mit einem Zug nach unten sichtbar
+    if (TM.ersterSprung && nl && TM.wahl && window.innerWidth > 900) {
+      var ziel = nl.querySelector('[data-tid="' + TM.wahl.id + '"]'), kopf = nl.querySelector(".tm-tag");
+      if (ziel) nl.scrollTop = ziel.getBoundingClientRect().top - nl.getBoundingClientRect().top + nl.scrollTop - (kopf ? kopf.offsetHeight + 4 : 0);
+    }
+    TM.ersterSprung = false;
     if (TM.gezeigt !== TM.wahl && window.innerWidth > 900 && nd && nd.getBoundingClientRect().top < 60) window.scrollTo(0, 0);   // Kopf des Termins sichtbar
     TM.gezeigt = TM.wahl;
     if (TM.wahl) tmTiefer(TM.wahl);

@@ -1,0 +1,20 @@
+
+/* ---- Nachsteuerung von Hand (werkzeuge/dunkel_nachsteuerung.css) ---- */
+/* Seitengrund schwarz, Karten #1c1c1e, Kästen in Karten #2c2c2e – wie bei Apple */
+html[data-farbe="dunkel"] body, html[data-farbe="dunkel"] body.d3 { background: #000; }
+html[data-farbe="dunkel"] .k7-band, html[data-farbe="dunkel"] main { background: #000; }
+html[data-farbe="dunkel"] .tm-liste .tm-tag { background: #000; }
+html[data-farbe="dunkel"] .brand img { filter: invert(1); }
+html[data-farbe="dunkel"] input, html[data-farbe="dunkel"] textarea, html[data-farbe="dunkel"] select { background: #2c2c2e; color: #f2f2f7; border-color: #48484a; }
+html[data-farbe="dunkel"] ::placeholder { color: #8e8e93; }
+html[data-farbe="dunkel"] .site-footer, html[data-farbe="dunkel"] footer { background: #000; }
+
+/* Schalter hell / dunkel im Menüband */
+.d3-farbe { display: inline-grid; place-items: center; width: 32px; height: 32px; margin-left: 6px; padding: 0; border: 1px solid #d2d2d7; border-radius: 999px; background: none; color: #424245; cursor: pointer; flex: none; }
+.d3-farbe:hover { background: #f5f5f7; }
+.d3-farbe svg { width: 16px; height: 16px; }
+html[data-farbe="dunkel"] .d3-farbe { border-color: #48484a; color: #f2f2f7; }
+html[data-farbe="dunkel"] .d3-farbe:hover { background: #2c2c2e; }
+/* Etiketten mit schwarzer Fläche (Entscheidung, Empfehlung, Aufgabe, Arbeitsblock): Fläche wird hell, Schrift dunkel */
+html[data-farbe="dunkel"] .lg-art-entscheidung, html[data-farbe="dunkel"] .lg-art-empfehlung,
+html[data-farbe="dunkel"] .k7-etikett.k7-e-tinte { color: #1c1c1e; }
