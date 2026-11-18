@@ -55,7 +55,10 @@
     var l = saetze(t);
     return l.length >= 3 ? '<ul class="tm-liste-f">' + l.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "<p>" + esc(t) + "</p>";
   }
-  function absaetze(t) { return String(t || "").split(/\n+/).filter(Boolean).map(function (z) { return "<p>" + esc(z) + "</p>"; }).join(""); }
+  // Technische Zuordnungen (Kalender-ID, Projekt- und Termin-Nummer) sind für Claude, nicht für Daniel – nicht anzeigen
+  function ohneTechnik(t) { return String(t || "").split(/\n/).filter(function (z) { return !/^\s*(graph_id|projekt_id|termin_id|ical_uid|ticket_id)\s*:/i.test(z); }).join("\n")
+    .replace(/\s*\((?:termin|projekt_punkte|projekt_id|aufgabe|ereignis|ticket|id)\b[^)]*\d[^)]*\)/gi, "").trim(); }
+  function absaetze(t) { return ohneTechnik(t).split(/\n+/).filter(Boolean).map(function (z) { return "<p>" + esc(z) + "</p>"; }).join(""); }
   var TYP = {
     impuls: ["Empfehlung", "cl"], nachbereitung: ["Wie lief es?", "bl"], abnahme: ["Abnahme", "cl"], rueckfrage: ["Rückfrage", "cl"], freigabe: ["Freigabe", "or"], termin: ["Termin", "bl"],
     aufgabe: ["Aufgabe", "sw"], entscheidung: ["Entscheiden", "gr"], ansehen: ["Ansehen", "gr"], info: ["Info", "gr"], wartet: ["Wartet", "gy"]
@@ -120,7 +123,7 @@
       knoepfe = '<button class="e-k e-k-voll" data-a="text" data-modus="protokoll">Protokoll diktieren</button><button class="e-k" data-a="nichts">Nichts festzuhalten</button>';
     } else if (e.typ === "abnahme") {
       inhalt = '<div class="e-block"><h3>Ergebnis</h3>' + absaetze(x.ergebnis || e.kern) + "</div>" +
-        (x.ablage ? '<div class="e-block e-ablage"><h3>Ablage</h3><p>' + esc(x.ablage) + "</p></div>" : "") +
+        (x.ablage ? '<div class="e-block e-ablage"><h3>Ablage</h3><p>' + esc(ohneTechnik(x.ablage)) + "</p></div>" : "") +
         (x.link ? '<p><a class="e-link" href="' + esc(x.link) + '" target="_blank" rel="noopener">Ergebnis öffnen</a></p>' : "");
       knoepfe = '<button class="e-k e-k-voll" data-a="passt">Passt</button><button class="e-k" data-a="text" data-modus="zurueck">Überarbeiten</button>';
     } else if (e.typ === "rueckfrage") {
@@ -324,7 +327,10 @@
     var t = TYP[e.typ] || ["", ""];
     return '<span class="k7-etikett k7-e-' + k7Farbe(e) + '">' + t[0] + "</span>";
   }
+  var KL = { gezeigt: null, listeY: 0 };
   function klar() {
+    var altListe = el.querySelector(".k7-liste"), listePos = altListe ? altListe.scrollTop : 0;
+    var altDetail = el.querySelector(".k7-detail"), detailPos = altDetail && KL.gezeigt === auswahl ? altDetail.scrollTop : 0;
     var l = inGruppe(gruppe);
     if (!auswahl || l.indexOf(auswahl) < 0) auswahl = window.innerWidth > 900 ? l[0] || null : null;
         var dran = E.filter(function (e) { return e.typ === "impuls" || e.typ === "abnahme" || e.typ === "rueckfrage" || e.typ === "freigabe" || (e.typ === "aufgabe" && e.frist && e.frist <= HEUTE); }).length;
@@ -343,8 +349,17 @@
       }).join("") : '<li class="e-leer">Nichts in dieser Gruppe.</li>') + "</ul>" +
       '<div class="k7-detail">' + (auswahl ? '<button type="button" class="e-zurueck" data-zurueck>‹ Eingang</button>' + detail(auswahl) : '<p class="e-leer">Wähle links einen Eintrag.</p>') + "</div></div></section></div>";
     reiterVerdrahten(klar);
-    el.querySelectorAll(".k7-liste [data-s]").forEach(function (li) { li.onclick = function () { auswahl = E.filter(function (x) { return schluessel(x) === li.getAttribute("data-s"); })[0]; klar(); if (window.innerWidth <= 900) window.scrollTo(0, el.querySelector(".k7-band").offsetTop - 70); }; });
-    var z = el.querySelector("[data-zurueck]"); if (z) z.onclick = function () { auswahl = null; klar(); };
+    el.querySelectorAll(".k7-liste [data-s]").forEach(function (li) { li.onclick = function () {
+      if (window.innerWidth <= 900) KL.listeY = window.scrollY;   // für „‹ Eingang“ zurück an dieselbe Stelle
+      auswahl = E.filter(function (x) { return schluessel(x) === li.getAttribute("data-s"); })[0]; klar();
+      if (window.innerWidth <= 900) window.scrollTo(0, el.querySelector(".k7-band").offsetTop - 70); }; });
+    var z = el.querySelector("[data-zurueck]"); if (z) z.onclick = function () { auswahl = null; klar(); window.scrollTo(0, KL.listeY); };
+    // Zwei Scrollbereiche: Liste behält ihre Position, ein neu gewählter Eintrag beginnt oben
+    var nl = el.querySelector(".k7-liste"), nd = el.querySelector(".k7-detail");
+    if (nl) nl.scrollTop = listePos;
+    if (nd) nd.scrollTop = detailPos;
+    if (KL.gezeigt !== auswahl && window.innerWidth > 900 && nd && nd.getBoundingClientRect().top < 60) window.scrollTo(0, 0);
+    KL.gezeigt = auswahl;
     if (!verdrahtet) { verdrahtet = true; verdrahten(el, function () { var l2 = inGruppe(gruppe); auswahl = window.innerWidth > 900 ? l2[0] || null : null; klar(); }); }
   }
 

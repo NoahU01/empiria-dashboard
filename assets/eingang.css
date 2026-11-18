@@ -496,3 +496,12 @@
   [data-ein="termine"] .tm-liste, [data-ein="termine"] .tm-detail { position: sticky; top: 72px; max-height: calc(100vh - 96px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
   [data-ein="termine"] .tm-liste { padding-right: 4px; }
 }
+
+/* Lange Wörter (Links, Pfade) dürfen keinen Kasten sprengen – iPad mini, 18.11.2026 */
+[data-ein] .e-detail, [data-ein] .e-block, [data-ein] .k7-detail { overflow-wrap: anywhere; min-width: 0; }
+
+/* Eingang: Liste und Detail scrollen getrennt wie bei den Terminen (ab Tablet quer) */
+@media (min-width: 901px) {
+  [data-ein="klar"] .k7-band { padding-bottom: 24px; }
+  [data-ein="klar"] .k7-liste, [data-ein="klar"] .k7-detail { position: sticky; top: 72px; max-height: calc(100vh - 96px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+}
