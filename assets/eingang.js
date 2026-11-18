@@ -97,6 +97,7 @@
     if (art === "projekt") return projektLaden();
     if (art === "termine") return termineLaden();
     if (art === "strategie") return strategieLaden();
+    if (art === "marketing") return marketingLaden();
     Promise.all([db.from("eingang").select("*"), db.from("projekte").select("id, name, marke")]).then(function (r) {
       if (r[0].error) { el.innerHTML = '<p class="e-hinweis">Eingang konnte nicht geladen werden: ' + esc(r[0].error.message) + "</p>"; return; }
       var jetztMs = Date.now();
@@ -385,7 +386,7 @@
       db.from("briefing").select("id, begruendung, art, projekt_id, ebene").is("entscheidung", null)
     ]).then(function (r) {
       var f = r.filter(function (x) { return x.error; })[0];
-      if (f) { el.innerHTML = '<p class="e-hinweis">Lage konnte nicht geladen werden: ' + esc(f.error.message) + "</p>"; return; }
+      if (f) { el.innerHTML = '<p class="e-hinweis">Briefing konnte nicht geladen werden: ' + esc(f.error.message) + "</p>"; return; }
       E = r[0].data || []; (r[1].data || []).forEach(function (p) { P[p.id] = p; });
       E.forEach(function (e) { e.gruppe = gruppeVon(e); e.extra = e.extra || {}; }); E.sort(sortieren);
       var br = {}; (r[4].data || []).forEach(function (b) { br[b.id] = b; });
@@ -428,7 +429,7 @@
     ].filter(function (x) { return x[1]; });
     var stand = L && L.gilt_fuer ? (L.gilt_fuer === HEUTE ? "Briefing von heute" : "Briefing vom " + datum(L.gilt_fuer) + ", das heutige fehlt noch") : "Noch kein Briefing";
     var st = ST.slice().sort(function (a, b) { return AMPEL[a.ampel][1] - AMPEL[b.ampel][1] || String(P[a.projekt_id].name).localeCompare(P[b.projekt_id].name); });
-    el.innerHTML = '<div class="k7 lage lage-start"><header class="k7-kopf"><div class="k7-titel"><h1>Lage</h1><span>' + esc(datumLang) + '</span></div><p class="k7-stand">' + esc(stand) + "</p></header>" +
+    el.innerHTML = '<div class="k7 lage lage-start"><header class="k7-kopf"><div class="k7-titel"><h1>Briefing</h1><span>' + esc(datumLang) + '</span></div><p class="k7-stand">' + esc(stand) + "</p></header>" +
       '<section class="k7-band"><div class="lg-raster">' +
       '<div class="lg-kern"><h2 class="lg-kern-titel">Was heute zählt</h2>' + (L ? '<ul class="lg-kern-liste">' + saetze(L.text).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "<p>Der Stabschef hat heute noch kein Briefing geschrieben.</p>") + "</div>" +
       '<div class="lg-links"><div class="lg-emp-titel"><h2>Meine Empfehlungen</h2>' + reiter + "</div>" + (emp.length ? emp.map(function (e) {
@@ -588,6 +589,85 @@
           toast("Hinterlegt. Claude arbeitet die Überlegung ein."); strategieLaden(); });
       });
     };
+  }
+
+  /* =============== Marketing – Arbeitsplatz des Marketing- und Vertriebsstrategen ===============
+     Daniel, 18.11.2026: „Der Marketing- und Vertriebsstratege muss übersetzen, wo wir aus der Strategie hinwollen, Signale aus dem Internet
+     ziehen und auf die Analysen schauen … im Reiter Marketing stehen die strategischen Empfehlungen aus seiner Sicht.“
+     Inhalte schreibt ~/AlwaysOn/stabschef/marketing_stratege.py (briefing ebene 'marketing', marketing_lage). */
+  var MK = { marke: (function () { try { return localStorage.getItem("marketing-marke") || "alle"; } catch (x) { return "alle"; } })(), ns: null };
+  function marketingLaden() {
+    Promise.all([
+      db.from("eingang").select("*"),
+      db.from("projekte").select("id, name, marke, typ").eq("status", "läuft"),
+      db.from("briefing").select("id, begruendung, art, projekt_id, ebene, marke").is("entscheidung", null).eq("ebene", "marketing"),
+      db.from("marketing_lage").select("*").order("gilt_fuer", { ascending: false }).limit(1),
+      db.from("beitraege").select("id, marke, geplant_am, status, kernaussage").in("status", ["entwurf", "geplant", "freigegeben"]).gte("geplant_am", new Date(Date.now() - 864e5).toISOString()).lte("geplant_am", new Date(Date.now() + 14 * 864e5).toISOString()).order("geplant_am"),
+      db.from("kampagnen").select("id, name, marke, status, zeitraum, naechster_schritt"),
+      db.from("marketing_massnahmen").select("id, konto, quelle, bereich, titel, massnahme").eq("status", "offen").order("rang", { ascending: true })
+    ]).then(function (r) {
+      var f = r.filter(function (x) { return x.error; })[0];
+      if (f) { el.innerHTML = '<p class="e-hinweis">Marketing konnte nicht geladen werden: ' + esc(f.error.message) + "</p>"; return; }
+      E = r[0].data || []; (r[1].data || []).forEach(function (p) { P[p.id] = p; });
+      var br = {}; (r[2].data || []).forEach(function (b) { br[b.id] = b; });
+      E.forEach(function (e) { e.gruppe = gruppeVon(e); e.extra = e.extra || {}; if (e.quelle === "briefing" && br[e.qid]) { e.begruendung = br[e.qid].begruendung; e.art = br[e.qid].art; e.projekt_id = br[e.qid].projekt_id; e.ebene = br[e.qid].ebene; e.marke = br[e.qid].marke; } });
+      MK.lage = (r[3].data || [])[0] || null; MK.plan = r[4].data || []; MK.kamp = r[5].data || []; MK.mass = r[6].data || [];
+      marketingSeite();
+    });
+  }
+  var KONTO_MARKE = { empiria: "empiria", sofortsichtbar: "sofortsichtbar", "mueller-stroebel": "Müller&Ströbel.", uebergreifend: "" };
+  function marketingSeite() {
+    zahlImMenue();
+    var passt = function (mk) { return MK.marke === "alle" || !mk || mk === MK.marke; };
+    var emp = E.filter(function (e) { return e.typ === "impuls" && e.ebene === "marketing" && passt(e.marke); });
+    var L = MK.lage || {}, wirkung = liste2(L.wirkung).filter(function (w) { return passt(w.marke); }), signale = liste2(L.signale).filter(function (s) { return passt(s.marke); });
+    var plan = MK.plan.filter(function (b) { return passt(b.marke); }), kamp = MK.kamp.filter(function (k) { return passt(k.marke); }), mass = MK.mass.filter(function (m) { return passt(KONTO_MARKE[m.konto]); });
+    var stand = L.gilt_fuer ? (L.gilt_fuer === HEUTE ? "Stand heute" : "Stand " + datum(L.gilt_fuer)) : "Noch keine Auswertung";
+    var reiter = '<nav class="k7-pillen">' + [["alle", "Alle Marken"]].concat(SG_MARKEN.map(function (m) { return [m, m]; })).map(function (m) {
+      return '<button type="button" data-mk-marke="' + esc(m[0]) + '" aria-pressed="' + (m[0] === MK.marke) + '">' + esc(m[1]) + "</button>"; }).join("") + "</nav>";
+    var leer = function (t) { return '<p class="e-leer">' + t + "</p>"; };
+    el.innerHTML = '<div class="k7 lage lage-start"><header class="k7-kopf"><div class="k7-titel"><h1>Marketing</h1><span>Marketing- und Vertriebsstratege · ' + esc(stand) + "</span></div>" + reiter + "</header>" +
+      '<section class="k7-band"><div class="lg-raster">' +
+      // Empfehlungen
+      '<div class="lg-links"><div class="lg-emp-titel"><h2>Empfehlungen des Strategen</h2></div>' + (emp.length ? emp.map(function (e) {
+        return '<article class="e-detail lg-emp" data-s="' + esc(schluessel(e)) + '"><div class="lg-emp-kopf"><span class="lg-art lg-art-' + (ARTE[e.art] ? e.art : "empfehlung") + '">' + (ARTE[e.art] || "Empfehlung") + "</span>" +
+          '<span class="lg-proj">' + esc([e.marke, P[e.projekt_id] && P[e.projekt_id].name].filter(Boolean).join(" · ")) + "</span></div><h3>" + esc(e.titel) + "</h3>" + (e.kern ? "<p>" + esc(e.kern) + "</p>" : "") +
+          (e.begruendung ? '<details class="lg-warum"><summary>Beleg und Stoßrichtung</summary><p>' + esc(e.begruendung) + "</p></details>" : "") +
+          '<div class="e-knoepfe"><button class="e-k e-k-voll" data-a="ja">' + esc(e.extra.knopf || "Passt, umsetzen") + '</button><button class="e-k" data-a="text" data-modus="anders">Anders</button></div>' +
+          '<form class="e-text" hidden><textarea rows="3" placeholder="Was soll ich stattdessen tun?"></textarea><button class="e-k e-k-voll" type="submit">Senden</button></form><p class="e-ok" hidden></p></article>';
+      }).join("") : leer("Keine offenen Marketing-Empfehlungen.")) +
+      '<div class="lg-nachschub">' + (MK.ns ? '<p class="lg-ns-laeuft"><span class="lg-ns-punkt"></span>Der Stratege schreibt drei weitere Empfehlungen. Das dauert etwa drei Minuten, die Seite aktualisiert sich selbst.</p>'
+        : '<button type="button" class="e-k" data-mk-nachschub>Nächste Marketing-Empfehlungen holen</button>') + "</div></div>" +
+      // Wirkung je Marke
+      '<aside class="lg-rechts">' + (wirkung.length ? wirkung.map(function (w) { return '<div class="lg-kasten"><h2>Wirkung · ' + esc(w.marke) + "</h2><ul>" + liste2(w.saetze).map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("") + "</ul></div>"; }).join("")
+        : '<div class="lg-kasten"><h2>Wirkung</h2>' + leer("Noch keine Auswertung.") + "</div>") + "</aside>" +
+      // Signale
+      '<div class="lg-projekte"><h2>Signale aus dem Markt</h2><p class="lg-p-hinweis">Was in der Branche und bei Kunden passiert, und wofür es taugt.</p>' + (signale.length ? '<div class="mk-signale">' + signale.map(function (s) {
+        return '<article class="lg-kasten mk-signal"><p class="mk-wofuer"><span class="mk-tag mk-tag-' + esc(String(s.wofuer || "").toLowerCase()) + '">' + esc(s.wofuer || "") + "</span>" + esc(s.marke || "") + "</p><h3>" + esc(s.titel) + "</h3><p>" + esc(s.satz || "") + "</p>" +
+          (s.link ? '<a class="mk-link" href="' + esc(s.link) + '" target="_blank" rel="noopener">Quelle öffnen</a>' : "") + "</article>"; }).join("") + "</div>" : leer("Keine Signale.")) + "</div>" +
+      // Nach außen: Redaktionsplan, Kampagnen, Maßnahmen
+      '<div class="lg-projekte"><h2>Nach außen</h2><div class="mk-aussen">' +
+        '<div class="lg-kasten"><h3 class="mk-h3">Redaktionsplan · 14 Tage</h3>' + (plan.length ? '<ul class="mk-liste">' + plan.slice(0, 7).map(function (b) {
+          return '<li><span class="mk-d">' + datum(String(b.geplant_am).slice(0, 10)) + '</span><span>' + esc(String(b.kernaussage || "").slice(0, 110)) + '</span><small>' + esc(b.marke) + " · " + esc({ entwurf: "Entwurf, nicht freigegeben", geplant: "geplant", freigegeben: "freigegeben" }[b.status] || b.status) + "</small></li>"; }).join("") + "</ul>" + (plan.length > 7 ? '<p class="mk-mehr">und ' + (plan.length - 7) + " weitere in den nächsten 14 Tagen</p>" : "") : leer("Nichts geplant.")) + "</div>" +
+        '<div class="lg-kasten"><h3 class="mk-h3">Kampagnen</h3>' + (kamp.length ? '<ul class="mk-liste">' + kamp.map(function (k) {
+          return "<li><b>" + esc(k.name) + "</b><small>" + esc([k.marke, k.status, k.zeitraum].filter(Boolean).join(" · ")) + "</small>" + (k.naechster_schritt ? '<span class="mk-naechst">' + esc(k.naechster_schritt) + "</span>" : "") + "</li>"; }).join("") + "</ul>" : leer("Keine Kampagnen.")) + "</div>" +
+        '<div class="lg-kasten"><h3 class="mk-h3">Offene Maßnahmen von Noah und Claude <span>' + mass.length + "</span></h3>" + (mass.length ? '<ul class="mk-liste">' + mass.slice(0, 6).map(function (m) {
+          return "<li><b>" + esc(m.titel) + "</b><small>" + esc([KONTO_MARKE[m.konto] || "übergreifend", m.bereich, m.quelle === "noah" ? "von Noah" : "von Claude"].filter(Boolean).join(" · ")) + "</small></li>"; }).join("") + "</ul>" : leer("Keine offenen Maßnahmen.")) +
+          '<a class="e-k mk-alle" href="/strategie/marketing.html">Alle Maßnahmen entscheiden</a></div>' +
+      "</div></div>" +
+      "</div></section></div>";
+    el.querySelectorAll("[data-mk-marke]").forEach(function (b) { b.onclick = function () { MK.marke = b.getAttribute("data-mk-marke"); try { localStorage.setItem("marketing-marke", MK.marke); } catch (x) {} marketingSeite(); }; });
+    var nb = el.querySelector("[data-mk-nachschub]");
+    if (nb) nb.onclick = function () { nb.disabled = true; db.from("anstoesse").insert({ art: "empfehlungen", quelle: "marketing" }).then(function (r) {
+      if (r && r.error) { nb.disabled = false; toast("Konnte den Strategen nicht anstoßen: " + r.error.message); return; }
+      MK.ns = true; marketingSeite(); setTimeout(mkNachschubPruefen, 15000); }); };
+    if (!verdrahtet) { verdrahtet = true; verdrahten(el, function () { marketingSeite(); }); mkNachschubPruefen(); }
+  }
+  function mkNachschubPruefen() {
+    db.from("anstoesse").select("id, status").eq("art", "empfehlungen").eq("quelle", "marketing").in("status", ["offen", "läuft"]).limit(1).then(function (r) {
+      if ((r.data || []).length) { if (!MK.ns) { MK.ns = true; marketingSeite(); } setTimeout(mkNachschubPruefen, 15000); }
+      else if (MK.ns) { MK.ns = null; marketingLaden(); toast("Neue Marketing-Empfehlungen sind da."); }
+    });
   }
   /* =============== Projekt – Projektleiter-Blick (Kunden- und interne Projekte) =============== */
   var PJ = {};

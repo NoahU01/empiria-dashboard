@@ -2117,6 +2117,22 @@ html[data-farbe="dunkel"] .sg-alt-liste li { border-top: 1px solid #38383a; }
 html[data-farbe="dunkel"] .sg-alt-liste p { color: #c7c7cc; }
 html[data-farbe="dunkel"] .sg .sg-alt-liste .sg-einsortiert { color: #f2f2f7; }
 html[data-farbe="dunkel"] .sg .sg-strang-pr li { background: none; }
+html[data-farbe="dunkel"] [data-ein="marketing"] { --tinte: #f2f2f7; --text2: #a1a1a6; --linie: #38383a; color: #f2f2f7; }
+html[data-farbe="dunkel"] .mk-signal h3 { color: var(--tinte); }
+html[data-farbe="dunkel"] .mk-wofuer { color: #a1a1a6; }
+html[data-farbe="dunkel"] .mk-tag { color: #fff; background: #f2f2f7; color: #1c1c1e; }
+html[data-farbe="dunkel"] .mk-tag-posting { background: #8613a1; }
+html[data-farbe="dunkel"] .mk-tag-gespräch { background: #0b9fbd; }
+html[data-farbe="dunkel"] .mk-tag-kampagne { background: #c51f5d; }
+html[data-farbe="dunkel"] .mk-link { color: var(--tinte); }
+html[data-farbe="dunkel"] .mk-h3 { color: var(--tinte); }
+html[data-farbe="dunkel"] .mk-h3 span { color: #a1a1a6; }
+html[data-farbe="dunkel"] .mk-liste li { border-top: 1px solid #38383a; }
+html[data-farbe="dunkel"] .mk-liste b { color: var(--tinte); }
+html[data-farbe="dunkel"] .mk-liste small { color: #a1a1a6; }
+html[data-farbe="dunkel"] .mk-d { color: #a1a1a6; }
+html[data-farbe="dunkel"] .mk-naechst { color: #f2f2f7; }
+html[data-farbe="dunkel"] .mk-alle { border: 1px solid var(--tinte); color: var(--tinte); }
 
 /* ---- assets/leasing-fahrzeug.css ---- */
 html[data-farbe="dunkel"] .lf-profil div { border-top: 1px solid var(--linie); }

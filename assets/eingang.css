@@ -571,3 +571,27 @@
 @media (max-width: 700px) { .sg .lg-kasten ul.sg-alt-liste { grid-template-columns: minmax(0, 1fr); } }
 .sg .sg-strang-pr li { padding: 0; background: none; }
 .sg .sg-strang-pr { gap: 4px; }
+
+/* =============== Marketing – Marketing- und Vertriebsstratege (18.11.2026) =============== */
+[data-ein="marketing"] { --tinte: #1d1d1f; --text2: #86868b; --linie: #e5e5ea; font-family: "Inter", system-ui, sans-serif; color: #424245; font-size: 15px; line-height: 1.55; }
+.mk-signale { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.mk-signal h3 { margin: 6px 0 6px; font: 600 15px/1.4 "Inter", system-ui, sans-serif; color: var(--tinte); }
+.mk-signal p { margin: 0; font-size: 14px; }
+.mk-wofuer { display: flex; align-items: center; gap: 8px; font-size: 12px !important; color: #86868b; }
+.mk-tag { display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 999px; font-size: 11px; font-weight: 600; color: #fff; background: #1d1d1f; }
+.mk-tag-posting { background: #8613a1; } .mk-tag-gespräch { background: #0b9fbd; } .mk-tag-kampagne { background: #c51f5d; }
+.mk-link { display: inline-block; margin-top: 8px; font-size: 13px; color: var(--tinte); text-underline-offset: 3px; }
+.mk-aussen { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: start; }
+.mk-h3 { margin: 0 0 8px; font: 700 15px/1.3 "Inter Tight", "Inter", system-ui, sans-serif; color: var(--tinte); }
+.mk-h3 span { font-weight: 400; color: #86868b; }
+.lage .lg-kasten ul.mk-liste { list-style: none; margin: 0; padding: 0; display: block; }
+.mk-liste li { display: grid; gap: 1px; padding: 8px 0; border-top: 1px solid #f0f0f2; font-size: 14px; }
+.mk-liste li:first-child { border-top: 0; }
+.mk-liste b { font-weight: 600; color: var(--tinte); }
+.mk-liste small { font-size: 12px; color: #86868b; }
+.mk-d { font-size: 12px; color: #86868b; }
+.mk-naechst { font-size: 13px; color: #424245; }
+.mk-alle { display: inline-flex; align-items: center; margin-top: 10px; height: 30px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--tinte); font-size: 13px; font-weight: 500; color: var(--tinte); text-decoration: none; }
+@media (max-width: 1000px) { .mk-signale, .mk-aussen { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .mk-signale, .mk-aussen { grid-template-columns: minmax(0, 1fr); } }
+.mk-mehr { margin: 6px 0 0 !important; font-size: 12px; color: #86868b; }
