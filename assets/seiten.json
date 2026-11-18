@@ -136,6 +136,105 @@
    "im_diagramm": true
   },
   {
+   "datei": "dashboard-2-0.html",
+   "titel": "Entwürfe und Maßstab",
+   "gruppe": "Dashboard 2.0",
+   "eltern": null,
+   "kurz": "Eingang in vier Varianten, ältere Entwürfe",
+   "pos": 12,
+   "im_diagramm": false
+  },
+  {
+   "datei": "eingang-liste.html",
+   "titel": "Eingang 1: Posteingang",
+   "gruppe": "Dashboard 2.0",
+   "eltern": "dashboard-2-0.html",
+   "kurz": "Liste links, Detail rechts",
+   "pos": 13,
+   "im_diagramm": false
+  },
+  {
+   "datei": "eingang-fokus.html",
+   "titel": "Eingang 2: Fokus",
+   "gruppe": "Dashboard 2.0",
+   "eltern": "dashboard-2-0.html",
+   "kurz": "Eine Sache nach der anderen",
+   "pos": 14,
+   "im_diagramm": false
+  },
+  {
+   "datei": "eingang-plan.html",
+   "titel": "Eingang 3: Plan",
+   "gruppe": "Dashboard 2.0",
+   "eltern": "dashboard-2-0.html",
+   "kurz": "Spalten nach Zeit",
+   "pos": 15,
+   "im_diagramm": false
+  },
+  {
+   "datei": "eingang-klar.html",
+   "titel": "Eingang 4: Klar",
+   "gruppe": "Dashboard 2.0",
+   "eltern": "dashboard-2-0.html",
+   "kurz": "Stil sofortsichtbar Story 7",
+   "pos": 16,
+   "im_diagramm": false
+  },
+  {
+   "datei": "aufraeumen.html",
+   "titel": "Aufräumen",
+   "gruppe": "Dashboard 2.0",
+   "eltern": "dashboard-2-0.html",
+   "kurz": "Vorschlag zu den alten Steuerungs-Karten",
+   "pos": 17,
+   "im_diagramm": false
+  },
+  {
+   "datei": "d2-tagesblatt.html",
+   "titel": "Entwurf A: Tagesblatt",
+   "gruppe": "Dashboard 2.0",
+   "eltern": "dashboard-2-0.html",
+   "kurz": "Eine Spalte, von oben nach unten",
+   "pos": 18,
+   "im_diagramm": false
+  },
+  {
+   "datei": "d2-lagezentrum.html",
+   "titel": "Entwurf B: Lagezentrum",
+   "gruppe": "Dashboard 2.0",
+   "eltern": "dashboard-2-0.html",
+   "kurz": "Briefing und Projektlage auf einen Blick",
+   "pos": 19,
+   "im_diagramm": false
+  },
+  {
+   "datei": "d2-projektraum.html",
+   "titel": "Entwurf C: Projektraum",
+   "gruppe": "Dashboard 2.0",
+   "eltern": "dashboard-2-0.html",
+   "kurz": "Arbeiten im Projekt, Seitenleiste mit allen Projekten",
+   "pos": 20,
+   "im_diagramm": false
+  },
+  {
+   "datei": "d2-widgets.html",
+   "titel": "Entwurf D: Widgets",
+   "gruppe": "Dashboard 2.0",
+   "eltern": "dashboard-2-0.html",
+   "kurz": "Kacheln im Apple-Stil, 14 Tage, Suche",
+   "pos": 21,
+   "im_diagramm": false
+  },
+  {
+   "datei": "d2-zeitachse.html",
+   "titel": "Entwurf E: Zeitachse",
+   "gruppe": "Dashboard 2.0",
+   "eltern": "dashboard-2-0.html",
+   "kurz": "Alle Projekte auf einer Zeitleiste",
+   "pos": 22,
+   "im_diagramm": false
+  },
+  {
    "datei": "cockpit.html",
    "titel": "Gesamtdashboard",
    "gruppe": "ohne Menü",
@@ -199,5 +298,5 @@
    "pos": 999
   }
  ],
- "stand": "15.11.2026, 08:08 Uhr"
+ "stand": "18.11.2026, 06:30 Uhr"
 }
