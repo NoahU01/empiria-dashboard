@@ -14,6 +14,23 @@
   function plus(n) { return new Date(new Date(HEUTE + "T12:00:00").getTime() + n * 864e5).toLocaleDateString("sv-SE"); }
   function datum(f) { return f ? f.slice(8, 10) + "." + f.slice(5, 7) + "." : ""; }
   function uhr(ts) { return ts ? new Date(ts).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Berlin" }) : ""; }
+  /* Gliederung dichter Texte (Daniel, 18.11.2026: „strukturierter darstellen“) */
+  function saetze(t) {
+    t = String(t || "").trim(); if (!t) return [];
+    if (t.indexOf("\n") >= 0) return t.split(/\n+/).map(function (z) { return z.replace(/^[-•]\s*/, "").trim(); }).filter(Boolean);
+    return t.replace(/([.!?“])\s+(?=[A-ZÄÖÜ„])/g, "$1\u0001").split("\u0001").filter(Boolean);   /* ohne Lookbehind: läuft auch in älterem Safari */
+  }
+  function gegliedert(t) {
+    t = String(t || "").trim();
+    if (/^„/.test(t)) return "<p>" + esc(t) + "</p>";   /* wörtliches Zitat (z. B. Einstieg) bleibt ein Absatz */
+    var schritte = t.split(/\s*(?:^|\s)(?=\d\.\s)/).filter(function (x) { return /^\d\.\s/.test(x); });
+    if (schritte.length >= 2) return '<ol class="tm-schritte">' + schritte.map(function (x) { var m = x.replace(/^\d\.\s*/, "").match(/^([^:(]{2,60}(?:\([^)]*\))?):\s*([\s\S]*)$/);
+      return "<li>" + (m ? "<b>" + esc(m[1]) + "</b> " + esc(m[2]) : esc(x.replace(/^\d\.\s*/, ""))) + "</li>"; }).join("") + "</ol>";
+    var fragen = t.replace(/(\?)\s+(?=[A-ZÄÖÜ„])/g, "$1\u0001").split("\u0001");
+    if (fragen.length >= 2 && fragen.every(function (x) { return /\?\s*“?$/.test(x); })) return '<ul class="tm-liste-f">' + fragen.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>";
+    var l = saetze(t);
+    return l.length >= 3 ? '<ul class="tm-liste-f">' + l.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "<p>" + esc(t) + "</p>";
+  }
   function absaetze(t) { return String(t || "").split(/\n+/).filter(Boolean).map(function (z) { return "<p>" + esc(z) + "</p>"; }).join(""); }
   var TYP = {
     impuls: ["Empfehlung", "cl"], nachbereitung: ["Wie lief es?", "bl"], abnahme: ["Abnahme", "cl"], rueckfrage: ["Rückfrage", "cl"], freigabe: ["Freigabe", "or"], termin: ["Termin", "bl"],
@@ -351,7 +368,7 @@
     var st = ST.slice().sort(function (a, b) { return AMPEL[a.ampel][1] - AMPEL[b.ampel][1] || String(P[a.projekt_id].name).localeCompare(P[b.projekt_id].name); });
     el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>Lage</h1><span>' + esc(datumLang) + '</span></div><p class="k7-stand">' + esc(stand) + "</p></header>" +
       '<section class="k7-band"><div class="lg-raster">' +
-      '<div class="lg-kern">' + (L ? "<p>" + esc(L.text) + "</p>" : "<p>Der Stabschef hat heute noch kein Briefing geschrieben.</p>") + "</div>" +
+      '<div class="lg-kern"><h2 class="lg-kern-titel">Was heute zählt</h2>' + (L ? '<ul class="lg-kern-liste">' + saetze(L.text).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "<p>Der Stabschef hat heute noch kein Briefing geschrieben.</p>") + "</div>" +
       '<div class="lg-links"><h2>Meine Empfehlungen</h2>' + (emp.length ? emp.map(function (e) {
         return '<article class="e-detail lg-emp" data-s="' + esc(schluessel(e)) + '"><div class="lg-emp-kopf"><span class="k7-etikett ' + (e.art === "risiko" ? "k7-e-rot" : e.art === "chance" ? "k7-e-cy" : "k7-e-cl") + '">' + (ARTE[e.art] || "Empfehlung") + "</span>" +
           (P[e.projekt_id] ? '<span class="lg-proj">' + esc(P[e.projekt_id].name) + "</span>" : "") + "</div><h3>" + esc(e.titel) + "</h3>" + (e.kern ? "<p>" + esc(e.kern) + "</p>" : "") +
@@ -572,7 +589,7 @@
           var l = pp.filter(function (p) { return p.art === a[0]; }); if (!l.length) return;
           h += '<div class="e-block' + a[2] + '"><h3>' + a[1] + '</h3><ul class="tm-pp">' + l.map(function (p) {
             var m = String(p.text).match(/^([^:]{2,40}):\s*([\s\S]*)$/);
-            return "<li>" + (m ? "<b>" + esc(m[1]) + "</b>" + esc(m[2]) : esc(p.text)) + "</li>"; }).join("") + "</ul></div>";
+            return "<li>" + (m ? "<b>" + esc(m[1]) + "</b>" + gegliedert(m[2]) : gegliedert(p.text)) + "</li>"; }).join("") + "</ul></div>";
         });
         return h;
       })() +
