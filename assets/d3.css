@@ -1,6 +1,12 @@
 /* Dashboard 2.0 – Menüband oben (Daniel, 18.11.2026). Kein Menüstreifen links: kostet auf dem iPad mini ein Viertel der Breite.
    Schmale Leiste im Stil sofortsichtbar Story 7: Hauptbereiche Lage · Eingang · Projekte · Kontakte · Marketing,
    aktiver Bereich als schwarze Pille, am Eingang die Zahl dessen, was auf Daniel wartet. Alle übrigen Seiten im Aufklappmenü am Logo. */
+/* Schrift der Leiste, auch auf Seiten ohne eingang.css */
+@font-face { font-family: "Inter"; font-weight: 400; font-display: swap; src: url("/assets/fonts/inter-latin-400-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC; }
+@font-face { font-family: "Inter"; font-weight: 400; font-display: swap; src: url("/assets/fonts/inter-latin-ext-400-normal.woff2") format("woff2"); unicode-range: U+0100-02AF, U+1E00-1EFF; }
+@font-face { font-family: "Inter"; font-weight: 500; font-display: swap; src: url("/assets/fonts/inter-latin-500-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC; }
+@font-face { font-family: "Inter"; font-weight: 600; font-display: swap; src: url("/assets/fonts/inter-latin-600-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC; }
+@font-face { font-family: "Inter"; font-weight: 600; font-display: swap; src: url("/assets/fonts/inter-latin-ext-600-normal.woff2") format("woff2"); unicode-range: U+0100-02AF, U+1E00-1EFF; }
 body.d3 { background: #fff; }
 body.d3 .site-header { background: rgba(255,255,255,.94); border-bottom: 1px solid #e5e5ea; }
 body.d3 .site-header .nav { min-height: 56px; padding-top: 0; padding-bottom: 0; max-width: 1320px; }

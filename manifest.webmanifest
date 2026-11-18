@@ -1,7 +1,7 @@
 {
   "name": "empiria Dashboard",
   "short_name": "empiria",
-  "start_url": "/strategie/analyse.html",
+  "start_url": "/strategie/lage.html",
   "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",

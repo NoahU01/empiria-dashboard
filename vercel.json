@@ -2,12 +2,12 @@
   "redirects": [
     {
       "source": "/",
-      "destination": "/strategie/analyse.html",
+      "destination": "/strategie/lage.html",
       "permanent": false
     },
     {
       "source": "/index.html",
-      "destination": "/strategie/analyse.html",
+      "destination": "/strategie/lage.html",
       "permanent": false
     },
     {
@@ -22,7 +22,7 @@
     },
     {
       "source": "/lage",
-      "destination": "/strategie/steuerung.html",
+      "destination": "/strategie/lage.html",
       "permanent": false
     },
     {
