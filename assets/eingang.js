@@ -431,7 +431,8 @@
       '<div class="lg-kern"><h2 class="lg-kern-titel">Was heute zählt</h2>' + (L ? '<ul class="lg-kern-liste">' + saetze(L.text).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "<p>Der Stabschef hat heute noch kein Briefing geschrieben.</p>") + "</div>" +
       '<div class="lg-links"><div class="lg-emp-titel"><h2>Meine Empfehlungen</h2>' + reiter + "</div>" + (emp.length ? emp.map(function (e) {
         return '<article class="e-detail lg-emp" data-s="' + esc(schluessel(e)) + '"><div class="lg-emp-kopf"><span class="lg-art lg-art-' + (ARTE[e.art] ? e.art : "empfehlung") + '">' + (ARTE[e.art] || "Empfehlung") + "</span>" +
-          (P[e.projekt_id] ? '<span class="lg-proj">' + esc(P[e.projekt_id].name) + "</span>" : "") + "</div><h3>" + esc(e.titel) + "</h3>" + (e.kern ? "<p>" + esc(e.kern) + "</p>" : "") +
+          (P[e.projekt_id] ? '<span class="lg-proj">' + esc(P[e.projekt_id].name) + " · " + esc(P[e.projekt_id].marke) + "</span>" :
+            /^Stoßrichtung: ([^:]{2,40}):/.test(e.begruendung || "") ? '<span class="lg-proj">' + esc(e.begruendung.match(/^Stoßrichtung: ([^:]{2,40}):/)[1]) + "</span>" : "") + "</div><h3>" + esc(e.titel) + "</h3>" + (e.kern ? "<p>" + esc(e.kern) + "</p>" : "") +
           (e.begruendung ? '<details class="lg-warum"><summary>Warum jetzt</summary><p>' + esc(e.begruendung) + "</p></details>" : "") +
           '<div class="e-knoepfe"><button class="e-k e-k-voll" data-a="ja">' + esc(e.extra.knopf || "Passt, umsetzen") + '</button><button class="e-k" data-a="text" data-modus="anders">Anders</button></div>' +
           '<form class="e-text" hidden><textarea rows="3" placeholder="Was soll ich stattdessen tun?"></textarea><button class="e-k e-k-voll" type="submit">Senden</button></form><p class="e-ok" hidden></p></article>';
@@ -603,7 +604,7 @@
   /* =============== Termine – Management-Blick auf den laufenden Tag =============== */
   var TM = { tag: "heute", liste: [], br: {}, wahl: null, cache: {} };
   function termineLaden() {
-    var von = new Date(HEUTE + "T00:00:00"), bis = new Date(von.getTime() + 2 * 864e5);
+    var von = new Date(HEUTE + "T00:00:00"), bis = new Date(von.getTime() + 7 * 864e5);   // die nächsten 7 Tage (Daniel, 18.11.2026)
     Promise.all([
       db.from("termine").select("id, ical_uid, graph_id, betreff, start, ende, kalender, postfach, ort, teilnehmer, extern, projekt_id, vorbereitung, abgesagt, ganztags, nachbereitet").eq("im_kalender", true)
         .gte("start", von.toISOString()).lt("start", bis.toISOString()).order("start"),
@@ -632,8 +633,7 @@
       }
       var jetztMs = Date.now(), heute = TM.liste.filter(function (t) { return iso2(t.start) === HEUTE; });
       var naechster = heute.filter(function (t) { return new Date(t.ende).getTime() > jetztMs; })[0];
-      TM.wahl = naechster || heute[0] || TM.liste[0] || null;
-      if (TM.wahl && iso2(TM.wahl.start) !== HEUTE) TM.tag = "morgen";
+      TM.wahl = naechster || TM.liste.filter(function (t) { return new Date(t.ende).getTime() > jetztMs; })[0] || TM.liste[0] || null;
       termine();
     });
   }
@@ -648,21 +648,28 @@
     // Zwei eigene Scrollbereiche (Daniel, 18.11.2026): die Liste behält ihre Position, ein neu gewählter Termin beginnt oben
     var altListe = el.querySelector(".tm-liste"), listePos = altListe ? altListe.scrollTop : 0;
     var altDetail = el.querySelector(".tm-detail"), detailPos = altDetail && TM.gezeigt === TM.wahl ? altDetail.scrollTop : 0;
-    var tag = TM.tag === "heute" ? HEUTE : plus(1);
-    var l = TM.liste.filter(function (t) { return iso2(t.start) === tag; });
-    if (!TM.wahl || iso2(TM.wahl.start) !== tag) TM.wahl = l[0] || null;
-    var datumLang = new Date(tag + "T12:00:00").toLocaleDateString("de-DE", { weekday: "long", day: "2-digit", month: "long", timeZone: "Europe/Berlin" });
-    var jetztMs = Date.now();
-    el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>Termine</h1><span>' + esc(datumLang) + "</span></div>" +
-      '<nav class="k7-pillen"><button type="button" data-tag="heute" aria-pressed="' + (TM.tag === "heute") + '">Heute</button><button type="button" data-tag="morgen" aria-pressed="' + (TM.tag === "morgen") + '">Morgen</button></nav></header>' +
+    var l = TM.liste, tage = [];
+    l.forEach(function (t) { var d = iso2(t.start); if (tage.indexOf(d) < 0) tage.push(d); });
+    var jetztMs = Date.now(), letzterTag = "";
+    el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>Termine</h1><span>die nächsten 7 Tage</span></div>' +
+      '<nav class="k7-pillen tm-tage">' + tage.map(function (d) { return '<button type="button" data-sprung="' + d + '">' + esc(d === HEUTE || d === plus(1) ? tmTagName(d, true) : new Date(d + "T12:00:00").toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit" })) + "</button>"; }).join("") + "</nav></header>" +
       '<section class="k7-band"><div class="k7-raster' + (TM.wahl ? " hat-detail" : "") + '"><ul class="k7-liste tm-liste">' + (l.length ? l.map(function (t) {
-        var a = tmArt(t), b = TM.br[t.ical_uid] || {}, vorbei = new Date(t.ende).getTime() < jetztMs;
-        return '<li data-tid="' + t.id + '"' + (t === TM.wahl ? ' aria-current="true"' : "") + (vorbei ? ' class="tm-vorbei"' : "") + '><p class="tm-zeit"><b>' + uhr(t.start) + "–" + uhr(t.ende) + '</b><span class="k7-etikett k7-e-' + a[1] + '">' + a[0] + "</span></p>" +
-          "<b>" + esc(t.betreff) + "</b>" + (b.zusammenfassung ? '<p class="tm-kurz">' + esc(b.zusammenfassung) + "</p>" : "") +
-          (P[b.projekt_id] ? "<small>" + esc(P[b.projekt_id].name) + "</small>" : "") + "</li>";
-      }).join("") : '<li class="e-leer">Keine Termine.</li>') + "</ul>" +
+        var a = tmArt(t), b = TM.br[t.ical_uid] || {}, vorbei = new Date(t.ende).getTime() < jetztMs, d = iso2(t.start);
+        var kopf = d !== letzterTag ? '<li class="tm-tag" data-tag-kopf="' + d + '">' + esc(tmTagName(d, true)) + (d === HEUTE || d === plus(1) ? '<span>' + esc(new Date(d + "T12:00:00").toLocaleDateString("de-DE", { weekday: "long", day: "2-digit", month: "2-digit" })) + "</span>" : "") + "</li>" : "";
+        letzterTag = d;
+        var bezug = [P[b.projekt_id] ? P[b.projekt_id].name : "", tmMarke(t, b)].filter(Boolean).join(" · ");
+        return kopf + '<li data-tid="' + t.id + '"' + (t === TM.wahl ? ' aria-current="true"' : "") + (vorbei ? ' class="tm-vorbei"' : "") + '><p class="tm-zeit"><b>' + uhr(t.start) + "–" + uhr(t.ende) + '</b><span class="k7-etikett k7-e-' + a[1] + '">' + a[0] + "</span></p>" +
+          "<b>" + esc(t.betreff) + "</b>" + (b.zusammenfassung ? '<p class="tm-kurz">' + esc(String(b.zusammenfassung).replace(/^[^:\n]{2,40}:\s*/, "")) + "</p>" : "") +
+          (bezug ? "<small>" + esc(bezug) + "</small>" : "") + "</li>";
+      }).join("") : '<li class="e-leer">Keine Termine in den nächsten 7 Tagen.</li>') + "</ul>" +
       '<div class="k7-detail tm-detail">' + (TM.wahl ? '<button type="button" class="e-zurueck" data-zurueck>‹ Termine</button>' + tmDetail(TM.wahl) : '<p class="e-leer">Wähle links einen Termin.</p>') + "</div></div></section></div>";
-    el.querySelectorAll("[data-tag]").forEach(function (b) { b.onclick = function () { TM.tag = b.getAttribute("data-tag"); TM.wahl = null; termine(); }; });
+    // Sprung zu einem Tag: Liste dorthin scrollen (auf dem Tablet in der Liste, auf dem Telefon auf der Seite)
+    el.querySelectorAll("[data-sprung]").forEach(function (b) { b.onclick = function () {
+      var k = el.querySelector('[data-tag-kopf="' + b.getAttribute("data-sprung") + '"]'), li = el.querySelector(".tm-liste");
+      if (window.innerWidth <= 900 && TM.wahl) { TM.wahl = null; termine(); k = el.querySelector('[data-tag-kopf="' + b.getAttribute("data-sprung") + '"]'); li = el.querySelector(".tm-liste"); }
+      if (!k) return;
+      if (window.innerWidth > 900) li.scrollTo({ top: k.getBoundingClientRect().top - li.getBoundingClientRect().top + li.scrollTop, behavior: "smooth" }); else window.scrollTo({ top: k.getBoundingClientRect().top + window.scrollY - 70, behavior: "smooth" });
+    }; });
     el.querySelectorAll(".tm-liste [data-tid]").forEach(function (li) { li.onclick = function () { TM.wahl = TM.liste.filter(function (t) { return t.id === +li.getAttribute("data-tid"); })[0]; termine(); if (window.innerWidth <= 900) window.scrollTo(0, 0); }; });
     var z = el.querySelector("[data-zurueck]"); if (z) z.onclick = function () { TM.wahl = null; termine(); };
     var nl = el.querySelector(".tm-liste"), nd = el.querySelector(".tm-detail");
@@ -673,10 +680,20 @@
     if (TM.wahl) tmTiefer(TM.wahl);
     tmKnoepfe();
   }
+  // Tag als „heute“, „morgen“ oder „Freitag, 20.11.“; Marke aus dem Projekt, sonst aus dem Kalenderkonto
+  function tmTagName(d, gross) {
+    if (d === HEUTE) return gross ? "Heute" : "heute";
+    if (d === plus(1)) return gross ? "Morgen" : "morgen";
+    return new Date(d + "T12:00:00").toLocaleDateString("de-DE", { weekday: "long", day: "2-digit", month: "2-digit", timeZone: "Europe/Berlin" });
+  }
+  function tmMarke(t, b) {
+    var p = P[(b || {}).projekt_id] || P[t.projekt_id];
+    return p ? p.marke : ({ empiria: "empiria", sofortsichtbar: "sofortsichtbar", "Müller&Ströbel.": "Müller&Ströbel.", ms: "Müller&Ströbel.", ss: "sofortsichtbar" }[t.postfach] || t.postfach || "");
+  }
   function tmDetail(t) {
     var a = tmArt(t), b = TM.br[t.ical_uid] || {}, punkte = liste2(b.punkte), unt = liste2(b.unterlagen);
     return '<article class="e-detail" data-tid="' + t.id + '"><div class="e-d-kopf"><span class="k7-etikett k7-e-' + a[1] + '">' + a[0] + '</span><span class="e-d-meta">' +
-      (iso2(t.start) === HEUTE ? "heute " : "morgen ") + uhr(t.start) + "–" + uhr(t.ende) + (t.ort ? " · " + esc(t.ort) : "") + "</span></div><h2>" + esc(t.betreff) + "</h2>" +
+      tmTagName(iso2(t.start)) + " " + uhr(t.start) + "–" + uhr(t.ende) + (t.ort ? " · " + esc(t.ort) : "") + " · " + esc(tmMarke(t, b)) + "</span></div><h2>" + esc(t.betreff) + "</h2>" +
       '<div class="e-inhalt">' + (b.zusammenfassung ? '<div class="e-block e-vorschlag"><h3>Worum es geht</h3>' + themenText(b.zusammenfassung, false) + "</div>" : '<div class="e-block"><p>Für diesen Termin hat der Stabschef noch keine Zusammenfassung geschrieben.</p></div>') +
       (b.ziel ? '<div class="e-block"><h3>Was du herausholen solltest</h3>' + themenText(b.ziel, true) + "</div>" : "") +
       (punkte.length ? '<div class="e-block"><h3>Offene Punkte</h3><ul class="e-punkte">' + punkte.map(function (p) { return "<li>" + esc(p) + "</li>"; }).join("") + "</ul></div>" : "") +

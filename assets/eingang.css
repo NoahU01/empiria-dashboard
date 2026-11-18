@@ -505,3 +505,11 @@
   [data-ein="klar"] .k7-band { padding-bottom: 24px; }
   [data-ein="klar"] .k7-liste, [data-ein="klar"] .k7-detail { position: sticky; top: 72px; max-height: calc(100vh - 96px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
 }
+
+/* Termine über 7 Tage: Tagesüberschrift in der Liste, beim Scrollen oben stehend (18.11.2026) */
+.tm-liste .tm-tag { position: sticky; top: 0; z-index: 2; display: flex; align-items: baseline; gap: 8px; padding: 14px 4px 6px; margin: 0; border: 0; border-radius: 0; background: #f5f5f7; box-shadow: none; cursor: default;
+  font: 700 15px/1.2 "Inter Tight", "Inter", system-ui, sans-serif; color: var(--tinte); }
+.tm-liste .tm-tag:first-child { padding-top: 2px; }
+.tm-liste .tm-tag span { font: 500 12px/1.2 "Inter", system-ui, sans-serif; color: #86868b; }
+.tm-liste .tm-tag:hover { border: 0; }
+.tm-tage { flex-wrap: wrap; }
