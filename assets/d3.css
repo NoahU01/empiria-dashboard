@@ -1,0 +1,19 @@
+/* Dashboard 2.0 – Menüband oben (Daniel, 18.11.2026). Kein Menüstreifen links: kostet auf dem iPad mini ein Viertel der Breite.
+   Schmale Leiste im Stil sofortsichtbar Story 7: Hauptbereiche Lage · Eingang · Projekte · Kontakte · Marketing,
+   aktiver Bereich als schwarze Pille, am Eingang die Zahl dessen, was auf Daniel wartet. Alle übrigen Seiten im Aufklappmenü am Logo. */
+body.d3 { background: #fff; }
+body.d3 .site-header { background: rgba(255,255,255,.94); border-bottom: 1px solid #e5e5ea; }
+body.d3 .site-header .nav { min-height: 56px; padding-top: 0; padding-bottom: 0; max-width: 1320px; }
+body.d3 .brand img { height: 20px; width: auto; }
+body.d3 .hn { gap: 2px; }
+body.d3 .hn a { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 999px;
+  font: 500 14px/1 "Inter", system-ui, -apple-system, sans-serif; color: #424245; }
+body.d3 .hn a:hover { background: #f5f5f7; color: #1d1d1f; }
+body.d3 .hn a[aria-current="page"] { background: #1d1d1f; color: #fff; font-weight: 600; }
+body.d3 .hn a[aria-current="page"]::after { display: none; }
+body.d3 .hn a:last-child { padding-right: 12px; }
+body.d3 .hn a .d3-zahl { display: inline-grid; place-items: center; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: #8613a1; color: #fff; font-size: 11px; font-weight: 600; }
+@media (max-width: 900px) {
+  body.d3 .hn { margin: 0 0 8px; }
+  body.d3 .hn a { height: 30px; padding: 0 10px; margin-right: 2px; font-size: 13px; }
+}

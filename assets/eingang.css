@@ -150,12 +150,14 @@
 /* Kopf als Steuerleiste (Daniel, 18.11.2026: Überschrift kostete ein Drittel der Seite) */
 .k7-kopf { max-width: 1240px; margin: 0 auto; padding: 20px clamp(16px, 3vw, 40px) 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
 .k7-titel { display: flex; align-items: baseline; gap: 12px; }
-.k7-titel h1 { margin: 0; font: 700 28px/1.1 "Inter Tight", "Inter", system-ui, sans-serif; letter-spacing: -0.02em; color: var(--tinte); }
+.k7-titel h1 { margin: 0; font: 700 24px/1.1 "Inter Tight", "Inter", system-ui, sans-serif; letter-spacing: -0.02em; color: var(--tinte); }
 .k7-titel span { font-size: 14px; color: #86868b; }
 .k7-stand { margin: 0; font-size: 14px; color: #424245; }
-.k7-stand b { display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 7px; margin-right: 4px; border-radius: 999px; background: #8613a1; color: #fff; font-size: 13px; }
+.k7-stand b { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; margin-right: 4px; border-radius: 999px; background: #8613a1; color: #fff; font-size: 13px; }
 .k7-pillen { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; }
-.k7-pillen button { height: 36px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--tinte); background: #fff; color: var(--tinte); cursor: pointer; font-weight: 600; font-size: 14px; }
+.k7-pillen { gap: 6px; }
+.k7-pillen button { height: 30px; padding: 0 12px; border-radius: 999px; border: 1px solid #d2d2d7; background: #fff; color: var(--tinte); cursor: pointer; font-weight: 500; font-size: 13px; }
+.k7-pillen button[aria-pressed="true"] { border-color: var(--tinte); }
 .k7-pillen button span { font-weight: 500; color: #86868b; margin-left: 2px; }
 .k7-pillen button[aria-pressed="true"] { background: var(--tinte); color: #fff; }
 .k7-pillen button[aria-pressed="true"] span { color: #a1a1a6; }
@@ -168,19 +170,22 @@
 .k7-band { background: #f5f5f7; padding: 20px clamp(16px, 3vw, 40px) 80px; }
 .k7-raster { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: minmax(300px, 420px) minmax(0, 1fr); gap: 20px; align-items: start; }
 .k7-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.k7-liste li { display: grid; gap: 6px; justify-items: start; padding: 16px 18px; border-radius: 18px; background: #fff; cursor: pointer; border: 1.5px solid transparent; transition: border-color .12s ease; }
+.k7-liste li { display: grid; gap: 6px; justify-items: start; padding: 14px 16px; border-radius: 18px; background: #fff; cursor: pointer; border: 1.5px solid transparent; transition: border-color .12s ease; }
 .k7-liste li:hover { border-color: #d2d2d7; }
 .k7-liste li[aria-current="true"] { border-color: var(--tinte); }
 .k7-liste b { font-weight: 600; font-size: 15px; line-height: 1.35; color: var(--tinte); }
 .k7-liste small { display: flex; gap: 10px; flex-wrap: wrap; font-size: 13px; color: #86868b; }
 .k7-frist .e-spaet { color: #e3000f; }
-.k7-etikett { display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 600; color: #6e6e73; background: #f5f5f7; }
+.k7-etikett { display: inline-flex; align-items: center; height: 22px; padding: 0 9px; border-radius: 999px; font-size: 12px; font-weight: 600; color: #6e6e73; background: #f5f5f7; }
 .k7-etikett.k7-e-cl { background: #8613a1; color: #fff; } .k7-etikett.k7-e-ma { background: #c51f5d; color: #fff; }
 .k7-etikett.k7-e-tinte { background: #1d1d1f; color: #fff; } .k7-etikett.k7-e-cy { background: #0b9fbd; color: #fff; }
 .k7-etikett.k7-e-grau { background: #f5f5f7; color: #6e6e73; }
 .k7-detail { position: sticky; top: 80px; padding: clamp(24px, 3vw, 40px); border-radius: 24px; background: #fff; min-width: 0; }
-[data-ein="klar"] .e-detail h2 { font: 700 clamp(1.6rem, 2.6vw, 2.2rem)/1.1 "Inter Tight", "Inter", system-ui, sans-serif; letter-spacing: -0.025em; color: var(--tinte); }
-[data-ein="klar"] .e-typ { border-radius: 999px; height: 24px; padding: 0 10px; }
+[data-ein="klar"] .e-detail h2 { margin: 0 0 24px; font: 700 clamp(1.3rem, 1.9vw, 1.6rem)/1.2 "Inter Tight", "Inter", system-ui, sans-serif; letter-spacing: -0.02em; color: var(--tinte); }
+[data-ein="klar"] .e-d-kopf { margin-bottom: 14px; }
+[data-ein="klar"] .e-inhalt { gap: 16px; }
+[data-ein="klar"] .e-knoepfe { margin-top: 24px; }
+[data-ein="klar"] .e-typ { border-radius: 999px; height: 22px; padding: 0 9px; }
 [data-ein="klar"] .e-cl { background: #8613a1; color: #fff; } [data-ein="klar"] .e-or { background: #c51f5d; color: #fff; }
 [data-ein="klar"] .e-bl { background: #0b9fbd; color: #fff; } [data-ein="klar"] .e-sw { background: #1d1d1f; color: #fff; }
 [data-ein="klar"] .e-gr, [data-ein="klar"] .e-gy { background: #f5f5f7; color: #6e6e73; }
@@ -188,7 +193,7 @@
 [data-ein="klar"] .e-block { background: #f5f5f7; border-radius: 16px; }
 [data-ein="klar"] .e-frage, [data-ein="klar"] .e-vorschlag { background: #f5f5f7; box-shadow: inset 3px 0 0 #8613a1; }
 [data-ein="klar"] .e-frage h3, [data-ein="klar"] .e-vorschlag h3 { color: #6e6e73; }
-[data-ein="klar"] .e-k { height: 48px; padding: 0 24px; border-radius: 999px; border: 1.5px solid var(--tinte); font-size: 15px; }
+[data-ein="klar"] .e-k { height: 36px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--tinte); font-size: 14px; font-weight: 600; }
 [data-ein="klar"] .e-k-voll { background: var(--tinte); color: #fff; }
 [data-ein="klar"] .e-ok { background: #f5f5f7; color: var(--tinte); box-shadow: inset 3px 0 0 #0b9fbd; }
 [data-ein="klar"] .e-link { color: #8613a1; }
@@ -204,3 +209,50 @@
 .e-toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 200; max-width: min(560px, calc(100% - 32px)); padding: 14px 20px; border-radius: 14px;
            background: #1d1d1f; color: #fff; font: 500 15px/1.4 -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif; box-shadow: 0 12px 32px rgba(0,0,0,.25); transition: opacity .4s ease; }
 .e-toast.weg { opacity: 0; }
+
+/* =============== Lage – Briefing des Stabschefs (Grundlook Eingang 4) ===============
+   Muster (Daniel, 18.11.2026): Inhalte in hellgrauen Kästen, Empfehlungen mit schmalem violettem Rand links. */
+[data-ein="lage"] { --tinte: #1d1d1f; --text2: #86868b; --linie: #e5e5ea; font-family: "Inter", system-ui, sans-serif; color: #424245; font-size: 15px; line-height: 1.55; }
+.lg-raster { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; align-items: start; }
+.lg-kern { grid-column: 1 / -1; padding: 22px 26px; border-radius: 20px; background: #fff; box-shadow: inset 3px 0 0 #8613a1; }
+.lg-kern p { margin: 0; font: 600 clamp(1.05rem, 1.5vw, 1.25rem)/1.45 "Inter", system-ui, sans-serif; color: var(--tinte); }
+.lage h2 { margin: 0 0 12px; font: 700 18px/1.2 "Inter Tight", "Inter", system-ui, sans-serif; letter-spacing: -0.01em; color: var(--tinte); }
+.lg-links { display: grid; gap: 12px; min-width: 0; }
+.lg-emp { padding: 20px 22px; border-radius: 20px; background: #fff; }
+.lg-emp-kopf { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 0 0 10px; }
+.lg-proj { font-size: 13px; color: #86868b; }
+.lg-emp h3 { margin: 0 0 12px; font: 700 18px/1.3 "Inter Tight", "Inter", system-ui, sans-serif; letter-spacing: -0.01em; color: var(--tinte); }
+.lg-emp > p { margin: 0; padding: 12px 14px; border-radius: 14px; background: #f5f5f7; box-shadow: inset 3px 0 0 #8613a1; }
+.lg-warum { margin-top: 10px; padding: 10px 14px; border-radius: 14px; background: #f5f5f7; }
+.lg-warum summary { cursor: pointer; font-size: 13px; font-weight: 600; color: #6e6e73; }
+.lg-warum p { margin: 8px 0 0; }
+.lage .e-knoepfe { margin-top: 16px; }
+.lage .e-k { height: 36px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--tinte); font-size: 14px; font-weight: 600; }
+.lage .e-k-voll { background: var(--tinte); color: #fff; }
+.lage .e-ok { background: #f5f5f7; color: var(--tinte); box-shadow: inset 3px 0 0 #0b9fbd; }
+.k7-etikett.k7-e-rot { background: #e3000f; color: #fff; }
+.lg-rechts { display: grid; gap: 12px; min-width: 0; }
+.lg-kasten { padding: 18px 20px; border-radius: 20px; background: #fff; }
+.lg-kasten ul { margin: 0; padding: 0 0 0 18px; display: grid; gap: 6px; }
+.lg-wartet { list-style: none; padding: 0 !important; }
+.lg-wartet li { display: flex; gap: 8px; align-items: center; }
+.lg-wartet i { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+.lg-wartet b { color: var(--tinte); }
+.lg-zum-eingang { margin-top: 14px; text-decoration: none; }
+.lg-projekte { grid-column: 1 / -1; margin-top: 8px; }
+.lg-legende { display: flex; flex-wrap: wrap; gap: 14px; margin: -4px 0 12px; font-size: 12px; color: #86868b; }
+.lg-legende span { display: inline-flex; gap: 6px; align-items: center; }
+.lg-legende i, .lg-pliste i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.lg-a-kritisch { background: #e3000f; } .lg-a-achtung { background: #f29d0b; } .lg-a-im_plan { background: #1f9d55; } .lg-a-ruht { background: #c7c7cc; }
+.lg-pliste { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.lg-pliste a { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; align-items: start; padding: 14px 16px; border-radius: 16px; background: #fff; text-decoration: none; color: inherit; border: 1px solid transparent; }
+.lg-pliste a:hover { border-color: #d2d2d7; }
+.lg-pliste i { margin-top: 5px; }
+.lg-p-text b { font-weight: 600; color: var(--tinte); }
+.lg-p-text span { margin-left: 8px; font-size: 12px; color: #86868b; }
+.lg-p-text p { margin: 4px 0 0; font-size: 14px; }
+.lg-naechst { color: #6e6e73; font-size: 13px !important; }
+@media (max-width: 1000px) {
+  .lg-raster { grid-template-columns: minmax(0, 1fr); }
+  .lg-pliste { grid-template-columns: minmax(0, 1fr); }
+}

@@ -48,6 +48,7 @@
   db.auth.getSession().then(function (s) {
     if (!s.data.session) { el.innerHTML = '<p class="e-hinweis">Bitte einmal auf der <a href="/strategie/kontakte.html?zurueck=' + encodeURIComponent(location.pathname) + '">Kontaktseite</a> anmelden, dann erscheint hier dein Eingang.</p>'; return; }
     if (art === "aufraeumen") return aufraeumenLaden();
+    if (art === "lage") return lageLaden();
     Promise.all([db.from("eingang").select("*"), db.from("projekte").select("id, name, marke")]).then(function (r) {
       if (r[0].error) { el.innerHTML = '<p class="e-hinweis">Eingang konnte nicht geladen werden: ' + esc(r[0].error.message) + "</p>"; return; }
       var jetztMs = Date.now();
@@ -189,7 +190,7 @@
   function reiterVerdrahten(fn) {
     el.querySelectorAll("[data-g]").forEach(function (b) { b.onclick = function () { gruppe = b.getAttribute("data-g"); auswahl = null; fn(); }; });
   }
-  function zeichnen() { if (art === "liste") liste(); else if (art === "fokus") fokus(); else if (art === "plan") plan(); else if (art === "klar") klar(); }
+  function zeichnen() { zahlImMenue(); if (art === "liste") liste(); else if (art === "fokus") fokus(); else if (art === "plan") plan(); else if (art === "klar") klar(); }
   var verdrahtet = false;
 
   /* =============== Variante 1 · Posteingang (Liste links, Detail rechts) =============== */
@@ -280,6 +281,76 @@
     el.querySelectorAll(".k7-liste [data-s]").forEach(function (li) { li.onclick = function () { auswahl = E.filter(function (x) { return schluessel(x) === li.getAttribute("data-s"); })[0]; klar(); if (window.innerWidth <= 900) window.scrollTo(0, el.querySelector(".k7-band").offsetTop - 70); }; });
     var z = el.querySelector("[data-zurueck]"); if (z) z.onclick = function () { auswahl = null; klar(); };
     if (!verdrahtet) { verdrahtet = true; verdrahten(el, function () { var l2 = inGruppe(gruppe); auswahl = window.innerWidth > 900 ? l2[0] || null : null; klar(); }); }
+  }
+
+
+  /* Zahl dessen, was auf Daniel wartet, am Menüpunkt „Eingang“ */
+  function zahlImMenue() {
+    var n = E.filter(function (e) { return e.typ === "impuls" || e.typ === "abnahme" || e.typ === "rueckfrage" || e.typ === "freigabe" || (e.typ === "aufgabe" && e.frist && e.frist <= HEUTE); }).length;
+    document.querySelectorAll('.hn a[href*="eingang-klar"]').forEach(function (a) {
+      var z = a.querySelector(".d3-zahl"); if (!z) { z = document.createElement("span"); z.className = "d3-zahl"; a.appendChild(z); }
+      z.textContent = n; z.hidden = !n;
+    });
+  }
+
+  /* =============== Lage – das Briefing des Stabschefs (CEO-Blick) =============== */
+  var L = null, ST = [];
+  function lageLaden() {
+    Promise.all([
+      db.from("eingang").select("*"), db.from("projekte").select("id, name, marke, typ").eq("status", "läuft"),
+      db.from("lage").select("*").not("gilt_fuer", "is", null).order("gilt_fuer", { ascending: false }).limit(1),
+      db.from("projekt_status").select("*").gte("gilt_fuer", plus(-3)).order("gilt_fuer", { ascending: false }),
+      db.from("briefing").select("id, begruendung, art, projekt_id").is("entscheidung", null)
+    ]).then(function (r) {
+      var f = r.filter(function (x) { return x.error; })[0];
+      if (f) { el.innerHTML = '<p class="e-hinweis">Lage konnte nicht geladen werden: ' + esc(f.error.message) + "</p>"; return; }
+      E = r[0].data || []; (r[1].data || []).forEach(function (p) { P[p.id] = p; });
+      E.forEach(function (e) { e.gruppe = gruppeVon(e); e.extra = e.extra || {}; }); E.sort(sortieren);
+      var br = {}; (r[4].data || []).forEach(function (b) { br[b.id] = b; });
+      E.forEach(function (e) { if (e.quelle === "briefing" && br[e.qid]) { e.begruendung = br[e.qid].begruendung; e.art = br[e.qid].art; e.projekt_id = br[e.qid].projekt_id; } });
+      L = (r[2].data || [])[0] || null;
+      var gesehen = {}; ST = (r[3].data || []).filter(function (s) { if (gesehen[s.projekt_id] || !P[s.projekt_id]) return false; gesehen[s.projekt_id] = 1; return true; });
+      lage();
+    });
+  }
+  function liste2(t) { try { var l = typeof t === "string" ? JSON.parse(t) : t; return Array.isArray(l) ? l : []; } catch (x) { return t ? [t] : []; } }
+  var AMPEL = { kritisch: ["Kritisch", 0], achtung: ["Achtung", 1], im_plan: ["Im Plan", 2], ruht: ["Ruht", 3] };
+  var ARTE = { entscheidung: "Entscheidung", risiko: "Risiko", chance: "Chance" };
+  function lage() {
+    zahlImMenue();
+    var datumLang = new Date().toLocaleDateString("de-DE", { weekday: "long", day: "2-digit", month: "long", timeZone: "Europe/Berlin" });
+    var emp = E.filter(function (e) { return e.typ === "impuls"; });
+    var zaehl = function (f) { return E.filter(f).length; };
+    var wartet = [
+      ["Abnahmen", zaehl(function (e) { return e.typ === "abnahme"; }), "cl"], ["Rückfragen", zaehl(function (e) { return e.typ === "rueckfrage"; }), "cl"],
+      ["Freigaben", zaehl(function (e) { return e.typ === "freigabe"; }), "ma"], ["überfällige Aufgaben", zaehl(function (e) { return e.typ === "aufgabe" && e.frist && e.frist < HEUTE; }), "rot"],
+      ["Entscheidungen auf der Steuerung", zaehl(function (e) { return e.quelle === "vorlage"; }), "grau"]
+    ].filter(function (x) { return x[1]; });
+    var stand = L && L.gilt_fuer ? (L.gilt_fuer === HEUTE ? "Briefing von heute" : "Briefing vom " + datum(L.gilt_fuer) + ", das heutige fehlt noch") : "Noch kein Briefing";
+    var st = ST.slice().sort(function (a, b) { return AMPEL[a.ampel][1] - AMPEL[b.ampel][1] || String(P[a.projekt_id].name).localeCompare(P[b.projekt_id].name); });
+    el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>Lage</h1><span>' + esc(datumLang) + '</span></div><p class="k7-stand">' + esc(stand) + "</p></header>" +
+      '<section class="k7-band"><div class="lg-raster">' +
+      '<div class="lg-kern">' + (L ? "<p>" + esc(L.text) + "</p>" : "<p>Der Stabschef hat heute noch kein Briefing geschrieben.</p>") + "</div>" +
+      '<div class="lg-links"><h2>Meine Empfehlungen</h2>' + (emp.length ? emp.map(function (e) {
+        return '<article class="e-detail lg-emp" data-s="' + esc(schluessel(e)) + '"><div class="lg-emp-kopf"><span class="k7-etikett ' + (e.art === "risiko" ? "k7-e-rot" : e.art === "chance" ? "k7-e-cy" : "k7-e-cl") + '">' + (ARTE[e.art] || "Empfehlung") + "</span>" +
+          (P[e.projekt_id] ? '<span class="lg-proj">' + esc(P[e.projekt_id].name) + "</span>" : "") + "</div><h3>" + esc(e.titel) + "</h3>" + (e.kern ? "<p>" + esc(e.kern) + "</p>" : "") +
+          (e.begruendung ? '<details class="lg-warum"><summary>Warum jetzt</summary><p>' + esc(e.begruendung) + "</p></details>" : "") +
+          '<div class="e-knoepfe"><button class="e-k e-k-voll" data-a="ja">' + esc(e.extra.knopf || "Passt, umsetzen") + '</button><button class="e-k" data-a="text" data-modus="anders">Anders</button></div>' +
+          '<form class="e-text" hidden><textarea rows="3" placeholder="Was soll ich stattdessen tun?"></textarea><button class="e-k e-k-voll" type="submit">Senden</button></form><p class="e-ok" hidden></p></article>';
+      }).join("") : '<p class="e-leer">Alle Empfehlungen sind entschieden.</p>') + "</div>" +
+      '<aside class="lg-rechts"><div class="lg-kasten"><h2>Wartet auf dich</h2>' + (wartet.length ? '<ul class="lg-wartet">' + wartet.map(function (w) {
+        return '<li><i class="k7-f-' + w[2] + '"></i><b>' + w[1] + "</b> " + w[0] + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Nichts.</p>') +
+      '<a class="e-k e-k-voll lg-zum-eingang" href="/strategie/eingang-klar.html">Zum Eingang</a></div>' +
+      '<div class="lg-kasten"><h2>Seit gestern</h2>' + (L && liste2(L.fortschritt).length ? "<ul>" + liste2(L.fortschritt).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Keine Angaben.</p>') + "</div>" +
+      '<div class="lg-kasten"><h2>Diese Woche</h2>' + (L && liste2(L.woche).length ? "<ul>" + liste2(L.woche).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Keine Angaben.</p>') + "</div></aside>" +
+      '<div class="lg-projekte"><h2>Projekte</h2><div class="lg-legende"><span><i class="lg-a-kritisch"></i>kritisch</span><span><i class="lg-a-achtung"></i>Achtung</span><span><i class="lg-a-im_plan"></i>im Plan</span><span><i class="lg-a-ruht"></i>ruht</span></div>' +
+      (st.length ? '<ul class="lg-pliste">' + st.map(function (s) {
+        var p = P[s.projekt_id];
+        return '<li><a href="/strategie/projekte.html#p=' + s.projekt_id + '"><i class="lg-a-' + s.ampel + '" title="' + AMPEL[s.ampel][0] + '"></i><div class="lg-p-text"><b>' + esc(p.name) + "</b><span>" + esc(p.marke) + (p.typ === "Kunde" ? " · Kunde" : "") + "</span><p>" + esc(s.satz) + "</p>" +
+          (s.naechster_schritt ? '<p class="lg-naechst">Nächster Schritt: ' + esc(s.naechster_schritt) + (s.bei ? " · " + esc(s.bei) : "") + (s.faellig ? " · " + (s.faellig < HEUTE ? '<span class="e-spaet">seit ' + datum(s.faellig) + "</span>" : "bis " + datum(s.faellig)) : "") + "</p>" : "") + "</div></a></li>";
+      }).join("") + "</ul>" : '<p class="e-leer">Noch keine Projektstände.</p>') + "</div>" +
+      "</div></section></div>";
+    if (!verdrahtet) { verdrahtet = true; verdrahten(el, function () { lage(); }); }
   }
 
   /* =============== Aufräumen: Vorschlag bestätigen =============== */
