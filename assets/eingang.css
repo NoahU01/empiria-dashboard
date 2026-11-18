@@ -489,3 +489,10 @@
 .tm-pp .tm-zwischen { font-size: 13px; margin-top: 12px !important; }
 .tm-pp .tm-liste-f b { display: inline; font-size: inherit; }
 .tm-pp .tm-schritte b { font-size: inherit; }
+
+/* Termine: Liste und Termin scrollen getrennt (Daniel, 18.11.2026) – nur ab Tablet-Breite, mobil bleibt eine Spalte */
+@media (min-width: 901px) {
+  [data-ein="termine"] .k7-band { padding-bottom: 24px; }
+  [data-ein="termine"] .tm-liste, [data-ein="termine"] .tm-detail { position: sticky; top: 72px; max-height: calc(100vh - 96px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+  [data-ein="termine"] .tm-liste { padding-right: 4px; }
+}

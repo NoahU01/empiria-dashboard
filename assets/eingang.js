@@ -630,6 +630,9 @@
   }
   function termine() {
     zahlImMenue();
+    // Zwei eigene Scrollbereiche (Daniel, 18.11.2026): die Liste behält ihre Position, ein neu gewählter Termin beginnt oben
+    var altListe = el.querySelector(".tm-liste"), listePos = altListe ? altListe.scrollTop : 0;
+    var altDetail = el.querySelector(".tm-detail"), detailPos = altDetail && TM.gezeigt === TM.wahl ? altDetail.scrollTop : 0;
     var tag = TM.tag === "heute" ? HEUTE : plus(1);
     var l = TM.liste.filter(function (t) { return iso2(t.start) === tag; });
     if (!TM.wahl || iso2(TM.wahl.start) !== tag) TM.wahl = l[0] || null;
@@ -647,6 +650,11 @@
     el.querySelectorAll("[data-tag]").forEach(function (b) { b.onclick = function () { TM.tag = b.getAttribute("data-tag"); TM.wahl = null; termine(); }; });
     el.querySelectorAll(".tm-liste [data-tid]").forEach(function (li) { li.onclick = function () { TM.wahl = TM.liste.filter(function (t) { return t.id === +li.getAttribute("data-tid"); })[0]; termine(); if (window.innerWidth <= 900) window.scrollTo(0, 0); }; });
     var z = el.querySelector("[data-zurueck]"); if (z) z.onclick = function () { TM.wahl = null; termine(); };
+    var nl = el.querySelector(".tm-liste"), nd = el.querySelector(".tm-detail");
+    if (nl) nl.scrollTop = listePos;
+    if (nd) nd.scrollTop = detailPos;
+    if (TM.gezeigt !== TM.wahl && window.innerWidth > 900 && nd && nd.getBoundingClientRect().top < 60) window.scrollTo(0, 0);   // Kopf des Termins sichtbar
+    TM.gezeigt = TM.wahl;
     if (TM.wahl) tmTiefer(TM.wahl);
     tmKnoepfe();
   }
