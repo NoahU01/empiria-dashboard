@@ -552,8 +552,8 @@
       (iso2(t.start) === HEUTE ? "heute " : "morgen ") + uhr(t.start) + "–" + uhr(t.ende) + (t.ort ? " · " + esc(t.ort) : "") + "</span></div><h2>" + esc(t.betreff) + "</h2>" +
       '<div class="e-inhalt">' + (b.zusammenfassung ? '<div class="e-block e-vorschlag"><h3>Worum es geht</h3>' + absaetze(b.zusammenfassung) + "</div>" : '<div class="e-block"><p>Für diesen Termin hat der Stabschef noch keine Zusammenfassung geschrieben.</p></div>') +
       (b.ziel ? '<div class="e-block"><h3>Was du herausholen solltest</h3>' + absaetze(b.ziel) + "</div>" : "") +
-      (liste2(b.fragen).length ? '<div class="e-block tm-fragen"><h3>' + (tmArt(t)[0] === "Termin" ? "Ziel- und Impulsfragen" : "Leitfragen für dich") + '</h3><ul>' + liste2(b.fragen).map(function (f) { return "<li>" + esc(f) + "</li>"; }).join("") + "</ul></div>" : "") +
       (punkte.length ? '<div class="e-block"><h3>Offene Punkte</h3><ul class="e-punkte">' + punkte.map(function (p) { return "<li>" + esc(p) + "</li>"; }).join("") + "</ul></div>" : "") +
+      (liste2(b.fragen).length ? '<div class="e-block tm-fragen"><h3>' + (tmArt(t)[0] === "Termin" ? "Ziel- und Impulsfragen" : "Leitfragen für dich") + '</h3><ul>' + liste2(b.fragen).map(function (f) { return "<li>" + esc(f) + "</li>"; }).join("") + "</ul></div>" : "") +
       (unt.length ? '<div class="e-block e-ablage"><h3>Unterlagen</h3>' + unt.map(function (u) { return /^https?:/.test(u) ? '<p><a class="e-link" href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(u) + "</a></p>" : "<p>" + esc(u) + "</p>"; }).join("") + "</div>" : "") +
       '</div><div class="tm-tiefer" data-tiefer><p class="e-leer">Details werden geladen …</p></div>' +
       '<div class="tm-input"><h3>' + (new Date(t.ende).getTime() < Date.now() ? "Wie lief es? Protokoll" : "Dein Input zu diesem Termin") + '</h3><p>Diktieren oder einfügen. Claude legt daraus Punkte und Aufgaben im Projekt an.</p>' +
