@@ -511,6 +511,18 @@
       (r[1].data || []).forEach(function (b) { TM.br[b.ical_uid] = b; });
       (r[2].data || []).forEach(function (p) { P[p.id] = p; });
       E = r[3].data || [];
+      TM.punkte = {};
+      var schl = TM.liste.filter(function (t) { return t.graph_id; }).map(function (t) { return "kalender:" + t.graph_id; });
+      if (schl.length) {
+        db.from("projekt_ereignisse").select("id, aktivitaet_extern").in("aktivitaet_extern", schl).then(function (re) {
+          var ids = {}; (re.data || []).forEach(function (e) { if (e.aktivitaet_extern) ids[e.id] = e.aktivitaet_extern.slice(9); });
+          var eids = Object.keys(ids).map(Number); if (!eids.length) return;
+          db.from("projekt_punkte").select("ereignis_id, art, text, angelegt_am").in("ereignis_id", eids).order("angelegt_am").then(function (rp) {
+            (rp.data || []).forEach(function (p) { var g = ids[p.ereignis_id]; (TM.punkte[g] = TM.punkte[g] || []).push(p); });
+            if (TM.wahl) termine();
+          });
+        });
+      }
       var jetztMs = Date.now(), heute = TM.liste.filter(function (t) { return iso2(t.start) === HEUTE; });
       var naechster = heute.filter(function (t) { return new Date(t.ende).getTime() > jetztMs; })[0];
       TM.wahl = naechster || heute[0] || TM.liste[0] || null;
@@ -554,6 +566,16 @@
       (b.ziel ? '<div class="e-block"><h3>Was du herausholen solltest</h3>' + absaetze(b.ziel) + "</div>" : "") +
       (punkte.length ? '<div class="e-block"><h3>Offene Punkte</h3><ul class="e-punkte">' + punkte.map(function (p) { return "<li>" + esc(p) + "</li>"; }).join("") + "</ul></div>" : "") +
       (liste2(b.fragen).length ? '<div class="e-block tm-fragen"><h3>' + (tmArt(t)[0] === "Termin" ? "Ziel- und Impulsfragen" : "Leitfragen für dich") + '</h3><ul>' + liste2(b.fragen).map(function (f) { return "<li>" + esc(f) + "</li>"; }).join("") + "</ul></div>" : "") +
+      (function () {
+        var pp = (TM.punkte || {})[t.graph_id] || [], h = "";
+        [["Vorbereitung", "Gesprächsvorbereitung", " tm-vorb"], ["Protokoll", "Protokoll", ""], ["Entscheidung", "Entscheidungen", ""]].forEach(function (a) {
+          var l = pp.filter(function (p) { return p.art === a[0]; }); if (!l.length) return;
+          h += '<div class="e-block' + a[2] + '"><h3>' + a[1] + '</h3><ul class="tm-pp">' + l.map(function (p) {
+            var m = String(p.text).match(/^([^:]{2,40}):\s*([\s\S]*)$/);
+            return "<li>" + (m ? "<b>" + esc(m[1]) + "</b>" + esc(m[2]) : esc(p.text)) + "</li>"; }).join("") + "</ul></div>";
+        });
+        return h;
+      })() +
       (unt.length ? '<div class="e-block e-ablage"><h3>Unterlagen</h3>' + unt.map(function (u) { return /^https?:/.test(u) ? '<p><a class="e-link" href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(u) + "</a></p>" : "<p>" + esc(u) + "</p>"; }).join("") + "</div>" : "") +
       '</div><div class="tm-tiefer" data-tiefer><p class="e-leer">Details werden geladen …</p></div>' +
       '<div class="tm-input"><h3>' + (new Date(t.ende).getTime() < Date.now() ? "Wie lief es? Protokoll" : "Dein Input zu diesem Termin") + '</h3><p>Diktieren oder einfügen. Claude legt daraus Punkte und Aufgaben im Projekt an.</p>' +
