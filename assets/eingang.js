@@ -20,8 +20,32 @@
     if (t.indexOf("\n") >= 0) return t.split(/\n+/).map(function (z) { return z.replace(/^[-•]\s*/, "").trim(); }).filter(Boolean);
     return t.replace(/([.!?“])\s+(?=[A-ZÄÖÜ„])/g, "$1\u0001").split("\u0001").filter(Boolean);   /* ohne Lookbehind: läuft auch in älterem Safari */
   }
+  /* Mehrzeiliger Text (Daniel, 18.11.2026: „kein kompletter Textblock … thematisch unterteilen“): Zeile mit Doppelpunkt am Ende = Zwischenüberschrift,
+     „•“/„-“ = Aufzählung, „1.“ = Schritte, „Thema: Satz“ = Themenzeile mit fettem Thema */
+  function zeilenText(t) {
+    var h = "", liste = null, art = "";
+    var zu = function () { if (liste) { h += (art === "ol" ? '<ol class="tm-schritte">' : '<ul class="tm-liste-f">') + liste.join("") + (art === "ol" ? "</ol>" : "</ul>"); liste = null; } };
+    var thema = function (x) { var m = x.match(/^([^:]{2,90}):\s+([\s\S]+)$/); return m ? "<b>" + esc(m[1]) + "</b> " + esc(m[2]) : esc(x); };
+    String(t).split(/\n+/).map(function (z) { return z.trim(); }).filter(Boolean).forEach(function (z) {
+      var a = /^[•\-–]\s+/.test(z) ? "ul" : /^\d+\.\s/.test(z) ? "ol" : "";
+      if (a) { if (art !== a) zu(); art = a; liste = liste || []; liste.push("<li>" + thema(z.replace(/^([•\-–]|\d+\.)\s+/, "")) + "</li>"); return; }
+      zu(); h += /:$/.test(z) ? '<p class="tm-zwischen">' + esc(z.replace(/:$/, "")) + "</p>" : '<p class="tm-themenzeile">' + thema(z) + "</p>";
+    });
+    zu(); return h;
+  }
+  /* Zusammenfassung und Ziel: mehrzeilig als Themenzeilen bzw. Aufzählung; ältere Einzelabsätze in Sätze aufgeteilt */
+  function themenText(t, alsListe) {
+    t = String(t || "").trim();
+    if (/\n/.test(t)) {
+      var z = t.split(/\n+/).map(function (x) { return x.trim(); }).filter(Boolean);
+      return alsListe ? '<ul class="tm-liste-f">' + z.map(function (x) { return "<li>" + esc(x.replace(/^[•\-–]\s+/, "")) + "</li>"; }).join("") + "</ul>" : zeilenText(t);
+    }
+    var s = saetze(t);
+    return s.length >= 2 ? '<ul class="tm-liste-f">' + s.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "<p>" + esc(t) + "</p>";
+  }
   function gegliedert(t) {
     t = String(t || "").trim();
+    if (/\n/.test(t)) return zeilenText(t);
     if (/^„/.test(t)) return "<p>" + esc(t) + "</p>";   /* wörtliches Zitat (z. B. Einstieg) bleibt ein Absatz */
     var schritte = t.split(/\s*(?:^|\s)(?=\d\.\s)/).filter(function (x) { return /^\d\.\s/.test(x); });
     if (schritte.length >= 2) return '<ol class="tm-schritte">' + schritte.map(function (x) { var m = x.replace(/^\d\.\s*/, "").match(/^([^:(]{2,60}(?:\([^)]*\))?):\s*([\s\S]*)$/);
@@ -618,8 +642,8 @@
     var a = tmArt(t), b = TM.br[t.ical_uid] || {}, punkte = liste2(b.punkte), unt = liste2(b.unterlagen);
     return '<article class="e-detail" data-tid="' + t.id + '"><div class="e-d-kopf"><span class="k7-etikett k7-e-' + a[1] + '">' + a[0] + '</span><span class="e-d-meta">' +
       (iso2(t.start) === HEUTE ? "heute " : "morgen ") + uhr(t.start) + "–" + uhr(t.ende) + (t.ort ? " · " + esc(t.ort) : "") + "</span></div><h2>" + esc(t.betreff) + "</h2>" +
-      '<div class="e-inhalt">' + (b.zusammenfassung ? '<div class="e-block e-vorschlag"><h3>Worum es geht</h3>' + absaetze(b.zusammenfassung) + "</div>" : '<div class="e-block"><p>Für diesen Termin hat der Stabschef noch keine Zusammenfassung geschrieben.</p></div>') +
-      (b.ziel ? '<div class="e-block"><h3>Was du herausholen solltest</h3>' + absaetze(b.ziel) + "</div>" : "") +
+      '<div class="e-inhalt">' + (b.zusammenfassung ? '<div class="e-block e-vorschlag"><h3>Worum es geht</h3>' + themenText(b.zusammenfassung, false) + "</div>" : '<div class="e-block"><p>Für diesen Termin hat der Stabschef noch keine Zusammenfassung geschrieben.</p></div>') +
+      (b.ziel ? '<div class="e-block"><h3>Was du herausholen solltest</h3>' + themenText(b.ziel, true) + "</div>" : "") +
       (punkte.length ? '<div class="e-block"><h3>Offene Punkte</h3><ul class="e-punkte">' + punkte.map(function (p) { return "<li>" + esc(p) + "</li>"; }).join("") + "</ul></div>" : "") +
       (liste2(b.fragen).length ? '<div class="e-block tm-fragen"><h3>' + (tmArt(t)[0] === "Termin" ? "Ziel- und Impulsfragen" : "Leitfragen für dich") + '</h3><ul>' + liste2(b.fragen).map(function (f) { return "<li>" + esc(f) + "</li>"; }).join("") + "</ul></div>" : "") +
       (function () {

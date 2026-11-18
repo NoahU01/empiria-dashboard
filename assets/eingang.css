@@ -459,3 +459,10 @@
 .lage .pj-stand { box-shadow: none; }
 .lage .pj-stand > p:not(.pj-ampel):not(.pj-naechst):not(.pj-ziel) { font: 500 15px/1.55 "Inter", system-ui, sans-serif; }
 .lage .pj-naechst { font-size: 14px !important; }
+
+/* Termine: gegliederte Texte (18.11.2026) */
+.tm-zwischen { margin: 10px 0 4px !important; font-weight: 600; color: var(--tinte); }
+.tm-zwischen:first-child { margin-top: 0 !important; }
+.tm-themenzeile { margin: 0 0 6px !important; }
+.tm-themenzeile b, .tm-liste-f b, .tm-schritte b { color: var(--tinte); font-weight: 600; }
+.e-block .tm-liste-f + .tm-themenzeile, .e-block .tm-schritte + .tm-themenzeile { margin-top: 8px !important; }
