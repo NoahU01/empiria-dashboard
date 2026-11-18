@@ -44,6 +44,7 @@
 .d2-impulse { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
 .d2-impuls { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 20px; align-items: center; padding: 16px 0; border-top: 1px solid rgba(255,255,255,.16); }
 .d2-impuls b { display: block; font: 600 var(--fs-m)/1.4 var(--font-sans); }
+.d2-impuls b a { color: inherit; text-decoration: none; } .d2-impuls b a:hover { text-decoration: underline; }
 .d2-impuls span { display: block; margin-top: 3px; font: 400 var(--fs-m)/1.5 var(--font-sans); color: #d6d3cf; }
 .d2-impuls .d2-knopf { background: transparent; border-color: rgba(255,255,255,.5); color: #fff; }
 .d2-briefing--spalten .d2-impulse { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 28px; }

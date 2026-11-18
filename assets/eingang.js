@@ -16,19 +16,19 @@
   function uhr(ts) { return ts ? new Date(ts).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Berlin" }) : ""; }
   function absaetze(t) { return String(t || "").split(/\n+/).filter(Boolean).map(function (z) { return "<p>" + esc(z) + "</p>"; }).join(""); }
   var TYP = {
-    abnahme: ["Abnahme", "cl"], rueckfrage: ["Rückfrage", "cl"], freigabe: ["Freigabe", "or"], termin: ["Termin", "bl"],
+    impuls: ["Empfehlung", "cl"], abnahme: ["Abnahme", "cl"], rueckfrage: ["Rückfrage", "cl"], freigabe: ["Freigabe", "or"], termin: ["Termin", "bl"],
     aufgabe: ["Aufgabe", "sw"], entscheidung: ["Entscheiden", "gr"], ansehen: ["Ansehen", "gr"], info: ["Info", "gr"], wartet: ["Wartet", "gy"]
   };
   var GRUPPEN = [["heute", "Heute"], ["woche", "Diese Woche"], ["spaeter", "Später"], ["wartet", "Wartet auf andere"]];
   function gruppeVon(e) {
     if (e.typ === "wartet") return "wartet";
-    if (e.typ === "abnahme" || e.typ === "rueckfrage" || e.typ === "termin") return "heute";
+    if (e.typ === "impuls" || e.typ === "abnahme" || e.typ === "rueckfrage" || e.typ === "termin") return "heute";
     if (e.frist && e.frist <= HEUTE) return "heute";
     if (e.typ === "freigabe" && e.frist && e.frist <= plus(2)) return "heute";
     if (e.frist && e.frist <= plus(7)) return "woche";
     return "spaeter";
   }
-  function rang(e) { var o = { abnahme: 0, rueckfrage: 0, freigabe: 1, aufgabe: 2, termin: 3, entscheidung: 4, ansehen: 5, info: 6, wartet: 7 }; return o[e.typ]; }
+  function rang(e) { var o = { impuls: -1, abnahme: 0, rueckfrage: 0, freigabe: 1, aufgabe: 2, termin: 3, entscheidung: 4, ansehen: 5, info: 6, wartet: 7 }; return o[e.typ]; }
   function sortieren(a, b) {
     if (a.typ === "termin" && b.typ === "termin") return String(a.angelegt).localeCompare(String(b.angelegt));
     return rang(a) - rang(b) || String(a.frist || "9").localeCompare(String(b.frist || "9")) || String(b.angelegt).localeCompare(String(a.angelegt));
@@ -55,6 +55,8 @@
       (r[1].data || []).forEach(function (p) { P[p.id] = p; });
       E.forEach(function (e) { e.gruppe = gruppeVon(e); e.extra = e.extra || {}; });
       E.sort(sortieren);
+      var m = location.hash.match(/s=([a-z]+:\d+)/);
+      if (m) { var z = E.filter(function (e) { return schluessel(e) === m[1]; })[0]; if (z) { gruppe = z.gruppe; auswahl = z; } }
       zeichnen();
     });
   });
@@ -64,7 +66,11 @@
   function detail(e) {
     var x = e.extra, kopf = '<div class="e-d-kopf">' + marke(e) + '<span class="e-d-meta">' + esc(projekt(e)) + (frist(e) ? " · " + frist(e) : "") + "</span></div><h2>" + esc(e.titel) + "</h2>";
     var inhalt = "", knoepfe = "";
-    if (e.typ === "abnahme") {
+    if (e.typ === "impuls") {
+      inhalt = '<div class="e-block e-vorschlag"><h3>Empfehlung von Claude als Stabschef</h3>' + absaetze(e.kern) + "</div>" +
+        (x.knopf ? '<p class="e-klein">Mit „' + esc(x.knopf) + '“ setzt Claude die Empfehlung um, als Ticket in der Sofort-Spur.</p>' : "");
+      knoepfe = '<button class="e-k e-k-voll" data-a="ja">' + esc(x.knopf || "Passt, umsetzen") + '</button><button class="e-k" data-a="text" data-modus="anders">Anders</button>';
+    } else if (e.typ === "abnahme") {
       inhalt = '<div class="e-block"><h3>Ergebnis</h3>' + absaetze(x.ergebnis || e.kern) + "</div>" +
         (x.ablage ? '<div class="e-block e-ablage"><h3>Ablage</h3><p>' + esc(x.ablage) + "</p></div>" : "") +
         (x.link ? '<p><a class="e-link" href="' + esc(x.link) + '" target="_blank" rel="noopener">Ergebnis öffnen</a></p>' : "");
@@ -75,24 +81,24 @@
     } else if (e.typ === "freigabe") {
       inhalt = '<div class="e-block e-posting">' + absaetze(e.kern) + "</div>" + (x.bild ? '<div class="e-block"><h3>Bild</h3><p>' + esc(x.bild) + "</p></div>" : "") +
         '<p class="e-klein">' + esc(x.kanal || "") + (x.zeit ? " · erscheint " + datum(String(x.zeit).slice(0, 10)) + " " + uhr(x.zeit) : "") + "</p>";
-      knoepfe = '<button class="e-k e-k-voll" data-a="freigeben">Freigeben</button>';
+      knoepfe = '<button class="e-k e-k-voll" data-a="freigeben">Freigeben</button><button class="e-k" data-a="text" data-modus="hinweis">Überarbeiten</button>';
     } else if (e.typ === "termin") {
       inhalt = '<div class="e-block"><h3>Wann</h3><p>' + uhr(x.start) + " bis " + uhr(x.ende) + (x.ort ? " · " + esc(x.ort) : "") + " · Kalender " + esc(x.postfach || "") + "</p></div>" +
         (e.person ? '<div class="e-block"><h3>Mit</h3><p>' + esc(e.person) + "</p></div>" : "") +
         '<div class="e-block"><h3>Vorbereitung</h3><p>' + ({ offen: "Noch nicht vorbereitet.", laeuft: "Vorbereitung läuft.", vorbereitet: "Vorbereitet.", nicht_noetig: "Keine Vorbereitung nötig." }[e.kern] || "Keine Vorbereitung hinterlegt.") + "</p>" + absaetze(e.vorschlag) + "</div>";
-      knoepfe = e.projekt_id ? '<a class="e-k" href="/strategie/projekte.html#p=' + e.projekt_id + '">Projekt öffnen</a>' : "";
+      knoepfe = '<button class="e-k e-k-voll" data-a="text" data-modus="hinweis">Hinweis an Claude</button>' + (e.projekt_id ? '<a class="e-k" href="/strategie/projekte.html#p=' + e.projekt_id + '">Projekt öffnen</a>' : "");
     } else if (e.typ === "aufgabe" || e.typ === "wartet") {
       inhalt = (e.kern ? '<div class="e-block">' + absaetze(e.kern) + "</div>" : "") + (e.vorschlag ? '<div class="e-block"><h3>Hinweis</h3>' + absaetze(e.vorschlag) + "</div>" : "") +
         (e.typ === "wartet" ? '<div class="e-block"><h3>Wartet auf</h3><p>' + esc(e.person || "nicht eingetragen") + (x.gesendet ? " · Mail gesendet am " + datum(String(x.gesendet).slice(0, 10)) : "") + "</p></div>" : "") +
         (x.mail_entwurf ? '<p class="e-klein">Ein Mail-Entwurf liegt in Outlook. Gesendet wird erst, wenn du im Chat „senden“ sagst.</p>' : "");
-      knoepfe = '<button class="e-k e-k-voll" data-a="erledigt">' + (e.typ === "wartet" ? "Antwort ist da" : "Erledigt") + "</button>" +
+      knoepfe = '<button class="e-k e-k-voll" data-a="erledigt">' + (e.typ === "wartet" ? "Antwort ist da" : "Erledigt") + '</button><button class="e-k" data-a="text" data-modus="hinweis">' + (e.typ === "wartet" ? "Nachhaken lassen" : "Hinweis an Claude") + "</button>" +
         (e.projekt_id ? '<a class="e-k" href="/strategie/projekte.html#p=' + e.projekt_id + '">Projekt öffnen</a>' : "");
     } else {
       var punkte = Array.isArray(x.punkte) ? x.punkte : [];
       inhalt = '<div class="e-block">' + absaetze(e.kern) + "</div>" + (e.vorschlag ? '<div class="e-block e-vorschlag"><h3>Vorschlag von Claude</h3>' + absaetze(e.vorschlag) + "</div>" : "") +
         (punkte.length ? '<ul class="e-punkte">' + punkte.map(function (p) { return "<li>" + esc(typeof p === "string" ? p : (p.text || p.titel || JSON.stringify(p))) + "</li>"; }).join("") + "</ul>" : "") +
         (x.link ? '<p><a class="e-link" href="' + esc(x.link) + '" target="_blank" rel="noopener">Öffnen</a></p>' : "");
-      knoepfe = e.typ === "info" ? '<button class="e-k e-k-voll" data-a="gelesen">Gelesen</button>'
+      knoepfe = e.typ === "info" ? '<button class="e-k e-k-voll" data-a="gelesen">Gelesen</button><button class="e-k" data-a="text" data-modus="anders">Antworten</button>'
         : '<button class="e-k e-k-voll" data-a="ja">' + esc(x.knopf || "Passt") + '</button><button class="e-k" data-a="text" data-modus="anders">Anders</button>';
     }
     return '<article class="e-detail" data-s="' + esc(schluessel(e)) + '">' + kopf + '<div class="e-inhalt">' + inhalt + '</div><div class="e-knoepfe">' + knoepfe +
@@ -101,6 +107,16 @@
 
   /* ---------- Knöpfe: schreiben wie die bestehenden Seiten ---------- */
   function jetzt() { return new Date().toISOString(); }
+  function ticket(e, text) {
+    var titel = (text.length > 80 ? text.slice(0, 77).replace(/\s+\S*$/, "") + " …" : text);
+    return db.from("aufgaben").insert({
+      titel: titel, beschreibung: "Aus dem Eingang (Dashboard), " + new Date().toLocaleString("de-DE") + ", zu „" + e.titel + "“ (" + e.quelle + " " + e.qid + "):\n" + text,
+      projekt_id: e.projekt_id || null, status: "offen", spalte: "todo", art: "aufgabe", verantwortlich: "Claude",
+      ticket_stand: "bereit", ticket_spur: "sofort", ticket_herkunft: "eingang", ticket_prioritaet: "hoch",
+      ticket_ergebnis: text + "\n\nBezug: „" + e.titel + "“ (" + e.quelle + " " + e.qid + ").",
+      ticket_grenzen: "Mails nur als Entwurf, pushen nur auf Daniels Branches und ins Dashboard, kein Löschen, nichts, was Geld kostet."
+    });
+  }
   function handeln(e, a, txt) {
     var heute = new Date().toLocaleDateString("de-DE"), q;
     if (e.quelle === "ticket" && a === "passt")
@@ -114,6 +130,11 @@
     else if (e.quelle === "vorlage" && a === "gelesen") q = db.from("vorlagen").update({ status: "erledigt", entscheidung: "gelesen", entschieden_am: jetzt() }).eq("id", e.qid);
     else if ((e.quelle === "aufgabe" || e.quelle === "wartet") && a === "erledigt") q = db.from("aufgaben").update({ status: "erledigt", erledigt_am: jetzt() }).eq("id", e.qid);
     else if (e.quelle === "posting" && a === "freigeben") q = db.from("beitraege").update({ status: "freigegeben" }).eq("id", e.qid);
+    else if (e.quelle === "briefing" && (a === "ja" || a === "text"))
+      q = ticket(e, a === "ja" ? "Daniel sagt ja zur Empfehlung „" + e.titel + "“ (" + (e.extra.knopf || "umsetzen") + "). Setze sie um. Inhalt: " + (e.kern || "") : "Daniel zur Empfehlung „" + e.titel + "“: " + txt).then(function (r) {
+        return r.error ? r : db.from("briefing").update({ entscheidung: a === "ja" ? "ja" : "anders", entscheidung_text: txt || null, entschieden_am: jetzt() }).eq("id", e.qid); });
+    else if (a === "text" && (e.quelle === "posting" || e.quelle === "termin" || e.quelle === "aufgabe" || e.quelle === "wartet"))
+      q = ticket(e, (e.quelle === "posting" ? "Posting überarbeiten: " : e.quelle === "wartet" ? "Nachhaken: " : "Hinweis von Daniel: ") + txt);
     return q;
   }
   var MELDUNG = {
@@ -122,6 +143,7 @@
     antwort: "Antwort gespeichert. Das Ticket läuft weiter.",
     ja: "Entschieden. Claude setzt es bei der nächsten Prüfung um.",
     anders: "Gespeichert. Claude setzt deinen Hinweis bei der nächsten Prüfung um.",
+    hinweis: "Dein Hinweis ist als Ticket bei Claude (Sofort-Spur). Das Ergebnis kommt zur Abnahme in den Eingang.",
     gelesen: "Als gelesen abgelegt.", erledigt: "Erledigt.", freigeben: "Freigegeben. Das Posting erscheint wie geplant."
   };
   function verdrahten(wurzel, weiter) {
@@ -139,14 +161,20 @@
       ausfuehren(d, e, "text", txt, f.dataset.modus, weiter);
     });
   }
+  /* Bestätigung bleibt sichtbar, auch wenn die Liste neu aufgebaut wird */
+  function toast(text) {
+    var t = document.createElement("div"); t.className = "e-toast"; t.setAttribute("role", "status"); t.textContent = text;
+    document.body.appendChild(t); setTimeout(function () { t.classList.add("weg"); setTimeout(function () { t.remove(); }, 400); }, 4000);
+  }
   function ausfuehren(d, e, a, txt, meldung, weiter) {
     d.querySelectorAll("button").forEach(function (b) { b.disabled = true; });
     var q = handeln(e, a, txt);
     if (!q) { d.querySelectorAll("button").forEach(function (b) { b.disabled = false; }); return; }
     q.then(function (r) {
       if (r && r.error) { alert("Nicht gespeichert: " + r.error.message); d.querySelectorAll("button").forEach(function (b) { b.disabled = false; }); return; }
-      var ok = d.querySelector(".e-ok"); ok.textContent = MELDUNG[meldung] || "Gespeichert."; ok.hidden = false;
+      var ok = d.querySelector(".e-ok"); ok.textContent = (e.quelle === "briefing" ? "Als Ticket bei Claude (Sofort-Spur). Claude setzt es um und meldet sich im Eingang." : MELDUNG[meldung] || "Gespeichert."); ok.hidden = false;
       E = E.filter(function (x) { return x !== e; });
+      toast(ok.textContent);
       setTimeout(function () { weiter(e); }, 900);
     });
   }
@@ -229,20 +257,20 @@
 
   /* =============== Variante 4 · Klar (Stil sofortsichtbar Story 7: Apple-Basis, Verlauf Cyan → Violett nur als Akzent) =============== */
   function k7Etikett(e) {
-    var t = TYP[e.typ] || ["", ""], dran = e.typ === "abnahme" || e.typ === "rueckfrage" || e.typ === "freigabe";
-    return '<span class="k7-etikett' + (dran ? " k7-etikett--dran" : e.typ === "aufgabe" ? " k7-etikett--tinte" : "") + '">' + t[0] + "</span>";
+    var t = TYP[e.typ] || ["", ""], f = { impuls: "cl", abnahme: "cl", rueckfrage: "cl", freigabe: "ma", aufgabe: "tinte", termin: "cy" }[e.typ] || "grau";
+    return '<span class="k7-etikett k7-e-' + f + '">' + t[0] + "</span>";
   }
   function klar() {
     var l = inGruppe(gruppe);
     if (!auswahl || l.indexOf(auswahl) < 0) auswahl = window.innerWidth > 900 ? l[0] || null : null;
-    var h = new Date().getHours(), gruss = h < 11 ? "Guten Morgen" : h < 18 ? "Guten Tag" : "Guten Abend";
-    var dran = E.filter(function (e) { return e.typ === "abnahme" || e.typ === "rueckfrage" || e.typ === "freigabe" || (e.typ === "aufgabe" && e.frist && e.frist <= HEUTE); }).length;
+        var dran = E.filter(function (e) { return e.typ === "impuls" || e.typ === "abnahme" || e.typ === "rueckfrage" || e.typ === "freigabe" || (e.typ === "aufgabe" && e.frist && e.frist <= HEUTE); }).length;
     var datumLang = new Date().toLocaleDateString("de-DE", { weekday: "long", day: "2-digit", month: "long", timeZone: "Europe/Berlin" });
-    el.innerHTML = '<div class="k7"><header class="k7-held"><p class="k7-kicker">' + esc(datumLang) + "</p><h1>" + gruss + ', Daniel.<br><span class="k7-wort">' +
-      (dran ? dran + (dran === 1 ? " Sache wartet" : " Dinge warten") + " auf dich." : "Nichts wartet auf dich.") + "</span></h1>" +
+    el.innerHTML = '<div class="k7"><header class="k7-kopf"><div class="k7-titel"><h1>Eingang</h1><span>' + esc(datumLang) + '</span></div>' +
+      '<p class="k7-stand"><b>' + dran + '</b> ' + (dran === 1 ? "Sache wartet" : "Dinge warten") + " auf dich</p>" +
       '<nav class="k7-pillen">' + GRUPPEN.map(function (g) {
         return '<button type="button" data-g="' + g[0] + '" aria-pressed="' + (g[0] === gruppe) + '">' + g[1] + " <span>" + inGruppe(g[0]).length + "</span></button>";
-      }).join("") + "</nav></header>" +
+      }).join("") + "</nav>" +
+      '<p class="k7-legende"><i class="k7-f-cl"></i>Claude braucht dich<i class="k7-f-ma"></i>geht nach außen<i class="k7-f-tinte"></i>deine Aufgabe<i class="k7-f-cy"></i>Termin<i class="k7-f-grau"></i>ansehen oder warten<i class="k7-f-rot"></i>überfällig</p></header>' +
       '<section class="k7-band"><div class="k7-raster' + (auswahl ? " hat-detail" : "") + '"><ul class="k7-liste">' + (l.length ? l.map(function (e) {
         return '<li data-s="' + esc(schluessel(e)) + '"' + (e === auswahl ? ' aria-current="true"' : "") + ">" + k7Etikett(e) +
           '<b>' + esc(e.titel) + "</b><small>" + esc(projekt(e)) + (frist(e) ? '<span class="k7-frist">' + frist(e) + "</span>" : "") + "</small></li>";

@@ -204,3 +204,13 @@
   .x-gruppen { grid-template-columns: minmax(0, 1fr); }
   .x-plan-in { min-width: 760px; }
 }
+
+/* Angeklickte Aufgabe oben im Seitenfenster (Daniel, 18.11.2026: „ich kann nichts zu diesem Punkt machen“) */
+.x-ang { margin: 14px 0 6px; padding: 14px; border-radius: 12px; background: #f2f2f7; }
+.x-ang > p { margin: 0 0 10px; font-size: 13px; color: #6e6e73; }
+.x-hinweis { display: grid; gap: 8px; justify-items: start; }
+.x-hinweis textarea { width: 100%; padding: 10px 12px; border: 1px solid #e5e5ea; border-radius: 10px; font: inherit; resize: vertical; }
+.x-hinweis button { height: 38px; padding: 0 16px; border: 0; border-radius: 999px; background: #1d1d1f; color: #fff; font: 600 14px/1 -apple-system, system-ui, sans-serif; cursor: pointer; }
+.x-ok { margin: 10px 0 0; font-size: 14px; color: #14632f; }
+.x-zusammenhang { margin-top: 24px !important; }
+.x-zeilen li[data-ziel] { cursor: pointer; }

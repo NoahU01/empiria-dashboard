@@ -28,7 +28,7 @@
       db.from("projekte").select("id, name, marke, typ, phase, prioritaet").eq("status", "läuft"),
       db.from("aufgaben").select("id, projekt_id, titel, verantwortlich, faellig_am, ticket_stand, spalte").eq("status", "offen"),
       db.from("termine").select("start, ende, ganztags, betreff, postfach, abgesagt").gte("start", von.toISOString()).lt("start", bis.toISOString()).order("start"),
-      db.from("briefing").select("rang, titel, kern, knopf, link").eq("gilt_fuer", HEUTE).order("rang")
+      db.from("briefing").select("id, rang, titel, kern, knopf, link").is("entscheidung", null).eq("gilt_fuer", HEUTE).order("rang")
     ]).then(function (r) {
       var fehler = r.filter(function (x) { return x.error; })[0];
       if (fehler) { el.innerHTML = '<p class="d2-leer">Daten konnten nicht geladen werden: ' + esc(fehler.error.message) + "</p>"; return; }
@@ -50,7 +50,8 @@
 
   function briefing(spalten) {
     var l = D.briefing.length ? '<ul class="d2-impulse">' + D.briefing.map(function (i) {
-      return '<li class="d2-impuls"><div><b>' + esc(i.titel) + "</b><span>" + esc(i.kern) + '</span></div><a class="d2-knopf" href="' + esc(i.link || "/strategie/steuerung.html") + '">' + esc(i.knopf || "Ansehen") + "</a></li>";
+      var ziel = "/strategie/eingang-klar.html#s=briefing:" + i.id;
+      return '<li class="d2-impuls"><div><b><a href="' + ziel + '">' + esc(i.titel) + "</a></b><span>" + esc(i.kern) + '</span></div><a class="d2-knopf" href="' + ziel + '">Öffnen und entscheiden</a></li>';
     }).join("") + "</ul>" : '<p class="d2-impuls">Für diesen Tag liegt noch kein Briefing vor.</p>';
     return '<section class="d2-briefing' + (spalten ? " d2-briefing--spalten" : "") + '"><h2>Drei Dinge zuerst</h2>' +
       '<span class="d2-neben">Briefing von Claude als Stabschef</span>' + l + "</section>";
@@ -69,7 +70,7 @@
     var z = D.dir.filter(function (x) { return x.s !== "in_arbeit"; }).map(function (x) {
       var was = x.s === "rueckfrage" ? "Rückfrage" : "Abnahme";
       return '<li class="d2-zeile d2-zeile--ohne"><span><b>' + was + ":</b> " + esc(x.t) + "<small>" + esc(x.p) +
-        '</small></span><a class="d2-knopf" href="/strategie/aufgaben.html">' + (x.s === "rueckfrage" ? "Antworten" : "Ansehen") + "</a></li>";
+        '</small></span><a class="d2-knopf" href="/strategie/eingang-klar.html#s=ticket:' + x.id + '">' + (x.s === "rueckfrage" ? "Antworten" : "Öffnen") + "</a></li>";
     }).join("");
     return '<section class="d2-abschnitt d2-dran"><h2>Wartet auf dich</h2><ul class="d2-liste">' + z + "</ul></section>";
   }

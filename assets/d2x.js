@@ -54,7 +54,7 @@
       db.from("projekte").select("id, name, marke, typ, phase").eq("status", "läuft"),
       db.from("aufgaben").select("id, projekt_id, titel, verantwortlich, faellig_am, ticket_stand, spalte, art").eq("status", "offen"),
       db.from("termine").select("start, ende, ganztags, betreff, postfach, abgesagt, projekt_id").gte("start", von.toISOString()).lt("start", bis.toISOString()).order("start"),
-      db.from("briefing").select("gilt_fuer, rang, titel, kern, knopf, link").gte("gilt_fuer", tagPlus(HEUTE, -1)).lte("gilt_fuer", tagPlus(HEUTE, 1)).order("gilt_fuer", { ascending: false }).order("rang")
+      db.from("briefing").select("id, gilt_fuer, rang, titel, kern, knopf, link").is("entscheidung", null).gte("gilt_fuer", tagPlus(HEUTE, -1)).lte("gilt_fuer", tagPlus(HEUTE, 1)).order("gilt_fuer", { ascending: false }).order("rang")
     ]).then(function (r) {
       var f = r.filter(function (x) { return x.error; })[0];
       if (f) { el.innerHTML = '<div class="x-in"><p class="x-hinweis">Daten konnten nicht geladen werden: ' + esc(f.error.message) + "</p></div>"; return; }
@@ -83,12 +83,14 @@
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") zu(); });
     document.addEventListener("click", function (e) {
       var t = e.target.closest("[data-pid]"); if (!t || fenster.contains(t)) return;
-      e.preventDefault(); auf(+t.getAttribute("data-pid"));
+      e.preventDefault(); auf(+t.getAttribute("data-pid"), +t.getAttribute("data-aid") || null);
     });
+    document.addEventListener("click", function (e) { var t = e.target.closest("[data-ziel]"); if (t) location.href = t.getAttribute("data-ziel"); });
   }
   function zu() { fenster.classList.remove("is-auf"); schleier.classList.remove("is-auf"); }
-  function auf(pid) {
+  function auf(pid, aid) {
     var p = projekt(pid); if (!p) return;
+    var ang = aid ? D.aufgaben.filter(function (a) { return a.id === aid; })[0] : null;
     var auf_ = aufgabenVon(pid), aktiv = auf_.filter(function (a) { return !istGate(a); }).sort(nachDatum);
     function liste(titel, kl, l) {
       return "<h3><span class=\"x-punkt x-p-" + kl + "\"></span>" + titel + '</h3><ul class="x-fliste">' + (l.length ? l.map(function (a) {
@@ -99,7 +101,9 @@
     var termine = D.termine.filter(function (t) { return t.projekt_id === pid; });
     var gates = auf_.filter(istGate).sort(nachDatum);
     fenster.innerHTML = '<div class="x-fenster-kopf"><div><p>' + mpunkt(p.marke) + esc(p.marke) + (p.typ ? " · " + esc(p.typ) : "") + (p.phase ? " · " + esc(p.phase) : "") +
-      "</p><h2>" + esc(p.name) + '</h2></div><button class="x-zu" type="button" aria-label="Schließen">×</button></div><div class="x-fenster-in">' +
+      "</p><h2>" + esc(ang ? ang.t : p.name) + '</h2></div><button class="x-zu" type="button" aria-label="Schließen">×</button></div><div class="x-fenster-in">' +
+      (ang ? '<div class="x-ang"><p>' + esc(wer(ang) === "andere" ? ang.v : WER[wer(ang)]) + " · " + frist(ang.f) + " · Projekt " + esc(p.name) + "</p>" +
+        '<form class="x-hinweis"><textarea rows="3" placeholder="Hinweis an Claude, zum Beispiel: nachhaken, vorziehen, anders angehen"></textarea><button type="submit">Hinweis an Claude</button></form><p class="x-ok" hidden></p></div><h3 class="x-zusammenhang">Zusammenhang im Projekt</h3>' : "") +
       liste("Bei dir", "du", aktiv.filter(function (a) { return wer(a) === "du" || wartetAufDich(a); })) +
       liste("Bei Claude", "claude", aktiv.filter(function (a) { return wer(a) === "claude" && !wartetAufDich(a); })) +
       liste("Bei anderen", "andere", aktiv.filter(function (a) { return wer(a) === "andere" || wer(a) === "offen"; })) +
@@ -111,6 +115,16 @@
       }).join("") + "</ul>" : "") +
       '<a class="x-auf" href="/strategie/projekte.html#p=' + pid + '">Im Projekt öffnen</a></div>';
     fenster.querySelector(".x-zu").addEventListener("click", zu);
+    var fo = fenster.querySelector(".x-hinweis");
+    if (fo) fo.addEventListener("submit", function (ev) {
+      ev.preventDefault(); var txt = fo.querySelector("textarea").value.trim(); if (!txt) return; fo.querySelector("button").disabled = true;
+      db.from("aufgaben").insert({ titel: (txt.length > 80 ? txt.slice(0, 77) + " …" : txt), beschreibung: "Aus dem Dashboard (Widgets), " + new Date().toLocaleString("de-DE") + ", zu „" + ang.t + "“ (Aufgabe " + ang.id + "):\n" + txt,
+        projekt_id: pid, status: "offen", spalte: "todo", art: "aufgabe", verantwortlich: "Claude", ticket_stand: "bereit", ticket_spur: "sofort", ticket_herkunft: "eingang", ticket_prioritaet: "hoch",
+        ticket_ergebnis: txt + "\n\nBezug: „" + ang.t + "“ (Aufgabe " + ang.id + ").", ticket_grenzen: "Mails nur als Entwurf, pushen nur auf Daniels Branches und ins Dashboard, kein Löschen, nichts, was Geld kostet." }).then(function (r) {
+        var ok = fenster.querySelector(".x-ok"); ok.hidden = false;
+        ok.textContent = r.error ? "Nicht gespeichert: " + r.error.message : "Dein Hinweis ist als Ticket bei Claude (Sofort-Spur).";
+      });
+    });
     fenster.scrollTop = 0;
     fenster.classList.add("is-auf"); schleier.classList.add("is-auf");
   }
@@ -138,7 +152,7 @@
         .sort(nachDatum).map(function (a) { return { a: a, typ: spaet(a.f) ? "überfällig" : "fällig" }; }));
     function dranZeile(x) {
       var kl = x.typ === "Abnahme" ? "x-b-du" : x.typ === "Rückfrage" ? "x-b-andere" : x.typ === "überfällig" ? "x-b-rot" : "x-b-grau";
-      return '<li data-pid="' + x.a.p + '"><span class="x-badge ' + kl + '">' + x.typ + '</span><span class="x-txt"><b>' + esc(x.a.t) + "</b><small>" + esc(pname(x.a.p)) +
+      return '<li data-ziel="/strategie/eingang-klar.html#s=' + (wartetAufDich(x.a) ? "ticket:" : "aufgabe:") + x.a.id + '"><span class="x-badge ' + kl + '">' + x.typ + '</span><span class="x-txt"><b>' + esc(x.a.t) + "</b><small>" + esc(pname(x.a.p)) +
         '</small></span><span class="x-klein">' + (x.typ === "Abnahme" || x.typ === "Rückfrage" ? "" : frist(x.a.f)) + "</span></li>";
     }
 
@@ -158,13 +172,13 @@
 
     var laeuft = D.aufgaben.filter(function (a) { return a.v === "Claude" && a.s === "in_arbeit"; });
     var bereit = D.aufgaben.filter(function (a) { return a.v === "Claude" && a.s === "bereit"; }).sort(nachDatum).slice(0, 5 - Math.min(laeuft.length, 2));
-    var claudeZ = laeuft.map(function (a) { return '<li data-pid="' + a.p + '"><span class="x-punkt x-p-claude x-laeuft"></span><span class="x-txt"><b>' + esc(a.t) + "</b><small>läuft gerade · " + esc(pname(a.p)) + "</small></span></li>"; })
-      .concat(bereit.map(function (a) { return '<li data-pid="' + a.p + '"><span class="x-punkt x-p-claude"></span><span class="x-txt"><b>' + esc(a.t) + "</b><small>" + esc(pname(a.p)) + '</small></span><span class="x-klein">' + frist(a.f) + "</span></li>"; })).join("");
+    var claudeZ = laeuft.map(function (a) { return '<li data-pid="' + a.p + '" data-aid="' + a.id + '"><span class="x-punkt x-p-claude x-laeuft"></span><span class="x-txt"><b>' + esc(a.t) + "</b><small>läuft gerade · " + esc(pname(a.p)) + "</small></span></li>"; })
+      .concat(bereit.map(function (a) { return '<li data-pid="' + a.p + '" data-aid="' + a.id + '"><span class="x-punkt x-p-claude"></span><span class="x-txt"><b>' + esc(a.t) + "</b><small>" + esc(pname(a.p)) + '</small></span><span class="x-klein">' + frist(a.f) + "</span></li>"; })).join("");
 
     var andere = {}; D.aufgaben.filter(function (a) { return wer(a) === "andere" && spaet(a.f) && !istGate(a); }).forEach(function (a) { (andere[a.v] = andere[a.v] || []).push(a); });
     var nach = Object.keys(andere).sort().map(function (n) {
       var l = andere[n].sort(nachDatum);
-      return '<li data-pid="' + l[0].p + '">' + ava(n) + '<span class="x-txt"><b>' + esc(n) + "</b><small>" + l.map(function (a) { return esc(a.t); }).join(" · ") + '</small></span><span class="x-klein">' + frist(l[0].f) + "</span></li>";
+      return '<li data-pid="' + l[0].p + '" data-aid="' + l[0].id + '">' + ava(n) + '<span class="x-txt"><b>' + esc(n) + "</b><small>" + l.map(function (a) { return esc(a.t); }).join(" · ") + '</small></span><span class="x-klein">' + frist(l[0].f) + "</span></li>";
     }).join("");
 
     var chips = MARKEN.map(function (m) {
@@ -182,7 +196,7 @@
       '<div class="x-raster">' +
       '<section class="x-karte x-s7 x-briefing"><h2>' + ikon("stern", "#af52de") + 'Drei Dinge zuerst<span class="x-klein">Claude als Stabschef</span></h2>' +
       (D.briefing.length ? '<ul class="x-imp">' + D.briefing.map(function (b) {
-        return "<li><div><b>" + esc(b.titel) + "</b><span>" + esc(b.kern) + '</span></div><a href="' + esc(b.link || "/strategie/steuerung.html") + '">' + esc(b.knopf || "Ansehen") + "</a></li>";
+        return "<li><div><b>" + esc(b.titel) + "</b><span>" + esc(b.kern) + '</span></div><a href="/strategie/eingang-klar.html#s=briefing:' + b.id + '">Öffnen und entscheiden</a></li>';
       }).join("") + "</ul>" : '<p class="x-klein">Für heute liegt noch kein Briefing vor.</p>') + "</section>" +
       '<section class="x-karte x-s5"><h2>' + ikon("hand", "#ff9500") + 'Du bist am Zug<span class="x-klein">diese Woche</span></h2><ul class="x-zeilen" data-dran>' +
       dran.slice(0, 6).map(dranZeile).join("") + "</ul>" + (dran.length > 6 ? '<button type="button" class="x-mehr" data-mehr>Alle anzeigen</button>' : "") + "</section>" +

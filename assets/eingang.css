@@ -147,16 +147,25 @@
 @font-face { font-family: "Inter Tight"; font-weight: 700; font-display: swap; src: url("/assets/fonts/inter-tight-latin-ext-700-normal.woff2") format("woff2"); unicode-range: U+0100-02AF, U+1E00-1EFF; }
 [data-ein="klar"] { --k7-verlauf: linear-gradient(100deg, #0b9fbd 0%, #8613a1 100%); --tinte: #1d1d1f; --text2: #86868b; --linie: #e5e5ea;
   font-family: "Inter", system-ui, sans-serif; color: #424245; font-size: 16px; line-height: 1.55; }
-.k7-held { max-width: 1240px; margin: 0 auto; padding: clamp(40px, 6vw, 80px) clamp(16px, 3vw, 40px) clamp(28px, 4vw, 44px); text-align: center; }
-.k7-kicker { margin: 0 0 14px; font-size: 16px; font-weight: 600; color: #6e6e73; }
-.k7-held h1 { margin: 0 auto; max-width: 18ch; font: 700 clamp(2.4rem, 5.6vw, 4.6rem)/1.02 "Inter Tight", "Inter", system-ui, sans-serif; letter-spacing: -0.03em; color: var(--tinte); text-wrap: balance; }
-.k7-wort { color: transparent; background-image: var(--k7-verlauf); -webkit-background-clip: text; background-clip: text; }
-.k7-pillen { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 32px; }
-.k7-pillen button { height: 44px; padding: 0 20px; border-radius: 999px; border: 1.5px solid var(--tinte); background: #fff; color: var(--tinte); cursor: pointer; font-weight: 600; font-size: 15px; }
-.k7-pillen button span { font-weight: 500; color: #86868b; margin-left: 4px; }
+/* Kopf als Steuerleiste (Daniel, 18.11.2026: Überschrift kostete ein Drittel der Seite) */
+.k7-kopf { max-width: 1240px; margin: 0 auto; padding: 20px clamp(16px, 3vw, 40px) 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+.k7-titel { display: flex; align-items: baseline; gap: 12px; }
+.k7-titel h1 { margin: 0; font: 700 28px/1.1 "Inter Tight", "Inter", system-ui, sans-serif; letter-spacing: -0.02em; color: var(--tinte); }
+.k7-titel span { font-size: 14px; color: #86868b; }
+.k7-stand { margin: 0; font-size: 14px; color: #424245; }
+.k7-stand b { display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 7px; margin-right: 4px; border-radius: 999px; background: #8613a1; color: #fff; font-size: 13px; }
+.k7-pillen { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; }
+.k7-pillen button { height: 36px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--tinte); background: #fff; color: var(--tinte); cursor: pointer; font-weight: 600; font-size: 14px; }
+.k7-pillen button span { font-weight: 500; color: #86868b; margin-left: 2px; }
 .k7-pillen button[aria-pressed="true"] { background: var(--tinte); color: #fff; }
 .k7-pillen button[aria-pressed="true"] span { color: #a1a1a6; }
-.k7-band { background: #f5f5f7; padding: clamp(28px, 4vw, 56px) clamp(16px, 3vw, 40px) 80px; }
+.k7-legende { flex-basis: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 0; font-size: 12px; color: #86868b; }
+.k7-legende i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-left: 8px; }
+.k7-legende i:first-child { margin-left: 0; }
+/* Farben je Bedeutung, einfarbig (keine Verläufe) */
+.k7-f-cl, .k7-e-cl { background: #8613a1; } .k7-f-ma, .k7-e-ma { background: #c51f5d; } .k7-f-tinte, .k7-e-tinte { background: #1d1d1f; }
+.k7-f-cy, .k7-e-cy { background: #0b9fbd; } .k7-f-grau { background: #d2d2d7; } .k7-f-rot { background: #e3000f; }
+.k7-band { background: #f5f5f7; padding: 20px clamp(16px, 3vw, 40px) 80px; }
 .k7-raster { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: minmax(300px, 420px) minmax(0, 1fr); gap: 20px; align-items: start; }
 .k7-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .k7-liste li { display: grid; gap: 6px; justify-items: start; padding: 16px 18px; border-radius: 18px; background: #fff; cursor: pointer; border: 1.5px solid transparent; transition: border-color .12s ease; }
@@ -164,15 +173,18 @@
 .k7-liste li[aria-current="true"] { border-color: var(--tinte); }
 .k7-liste b { font-weight: 600; font-size: 15px; line-height: 1.35; color: var(--tinte); }
 .k7-liste small { display: flex; gap: 10px; flex-wrap: wrap; font-size: 13px; color: #86868b; }
-.k7-frist .e-spaet { color: var(--tinte); }
+.k7-frist .e-spaet { color: #e3000f; }
 .k7-etikett { display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 600; color: #6e6e73; background: #f5f5f7; }
-.k7-etikett--tinte { background: var(--tinte); color: #fff; }
-.k7-etikett--dran { background-image: var(--k7-verlauf); color: #fff; }
-.k7-detail { position: sticky; top: 90px; padding: clamp(24px, 3vw, 40px); border-radius: 24px; background: #fff; min-width: 0; }
+.k7-etikett.k7-e-cl { background: #8613a1; color: #fff; } .k7-etikett.k7-e-ma { background: #c51f5d; color: #fff; }
+.k7-etikett.k7-e-tinte { background: #1d1d1f; color: #fff; } .k7-etikett.k7-e-cy { background: #0b9fbd; color: #fff; }
+.k7-etikett.k7-e-grau { background: #f5f5f7; color: #6e6e73; }
+.k7-detail { position: sticky; top: 80px; padding: clamp(24px, 3vw, 40px); border-radius: 24px; background: #fff; min-width: 0; }
 [data-ein="klar"] .e-detail h2 { font: 700 clamp(1.6rem, 2.6vw, 2.2rem)/1.1 "Inter Tight", "Inter", system-ui, sans-serif; letter-spacing: -0.025em; color: var(--tinte); }
 [data-ein="klar"] .e-typ { border-radius: 999px; height: 24px; padding: 0 10px; }
-[data-ein="klar"] .e-cl, [data-ein="klar"] .e-or { background-image: var(--k7-verlauf); color: #fff; }
-[data-ein="klar"] .e-bl, [data-ein="klar"] .e-gr, [data-ein="klar"] .e-gy { background: #f5f5f7; color: #6e6e73; }
+[data-ein="klar"] .e-cl { background: #8613a1; color: #fff; } [data-ein="klar"] .e-or { background: #c51f5d; color: #fff; }
+[data-ein="klar"] .e-bl { background: #0b9fbd; color: #fff; } [data-ein="klar"] .e-sw { background: #1d1d1f; color: #fff; }
+[data-ein="klar"] .e-gr, [data-ein="klar"] .e-gy { background: #f5f5f7; color: #6e6e73; }
+[data-ein="klar"] .e-spaet { color: #e3000f; }
 [data-ein="klar"] .e-block { background: #f5f5f7; border-radius: 16px; }
 [data-ein="klar"] .e-frage, [data-ein="klar"] .e-vorschlag { background: #f5f5f7; box-shadow: inset 3px 0 0 #8613a1; }
 [data-ein="klar"] .e-frage h3, [data-ein="klar"] .e-vorschlag h3 { color: #6e6e73; }
@@ -187,3 +199,8 @@
   .k7-detail { position: static; padding: 20px; }
   [data-ein="klar"] .e-zurueck { display: inline-flex; margin: 0 0 14px; padding: 0; border: 0; background: none; color: #8613a1; font-weight: 600; cursor: pointer; }
 }
+
+/* Bestätigung unten, 4 Sekunden */
+.e-toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 200; max-width: min(560px, calc(100% - 32px)); padding: 14px 20px; border-radius: 14px;
+           background: #1d1d1f; color: #fff; font: 500 15px/1.4 -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif; box-shadow: 0 12px 32px rgba(0,0,0,.25); transition: opacity .4s ease; }
+.e-toast.weg { opacity: 0; }
