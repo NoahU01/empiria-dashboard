@@ -49,6 +49,7 @@
     if (!s.data.session) { el.innerHTML = '<p class="e-hinweis">Bitte einmal auf der <a href="/strategie/kontakte.html?zurueck=' + encodeURIComponent(location.pathname) + '">Kontaktseite</a> anmelden, dann erscheint hier dein Eingang.</p>'; return; }
     if (art === "aufraeumen") return aufraeumenLaden();
     if (art === "lage") return lageLaden();
+    if (art === "projekt") return projektLaden();
     Promise.all([db.from("eingang").select("*"), db.from("projekte").select("id, name, marke")]).then(function (r) {
       if (r[0].error) { el.innerHTML = '<p class="e-hinweis">Eingang konnte nicht geladen werden: ' + esc(r[0].error.message) + "</p>"; return; }
       var jetztMs = Date.now();
@@ -84,7 +85,7 @@
         '<p class="e-klein">' + esc(x.kanal || "") + (x.zeit ? " · erscheint " + datum(String(x.zeit).slice(0, 10)) + " " + uhr(x.zeit) : "") + "</p>";
       knoepfe = '<button class="e-k e-k-voll" data-a="freigeben">Freigeben</button><button class="e-k" data-a="text" data-modus="hinweis">Überarbeiten</button>';
     } else if (e.typ === "termin") {
-      inhalt = '<div class="e-block"><h3>Wann</h3><p>' + uhr(x.start) + " bis " + uhr(x.ende) + (x.ort ? " · " + esc(x.ort) : "") + " · Kalender " + esc(x.postfach || "") + "</p></div>" +
+      inhalt = '<div class="e-block"><h3>Wann</h3><p>' + uhr(x.start) + " bis " + uhr(x.ende) + (x.ort ? " · " + esc(x.ort) : "") + " · " + ((x.kalender === "Aufgaben" || x.kalender === "Block") ? "dein Arbeitsblock" : "Kalender " + esc(x.postfach || "")) + "</p></div>" +
         (e.person ? '<div class="e-block"><h3>Mit</h3><p>' + esc(e.person) + "</p></div>" : "") +
         '<div class="e-block"><h3>Vorbereitung</h3><p>' + ({ offen: "Noch nicht vorbereitet.", laeuft: "Vorbereitung läuft.", vorbereitet: "Vorbereitet.", nicht_noetig: "Keine Vorbereitung nötig." }[e.kern] || "Keine Vorbereitung hinterlegt.") + "</p>" + absaetze(e.vorschlag) + "</div>";
       knoepfe = '<button class="e-k e-k-voll" data-a="text" data-modus="hinweis">Hinweis an Claude</button>' + (e.projekt_id ? '<a class="e-k" href="/strategie/projekte.html#p=' + e.projekt_id + '">Projekt öffnen</a>' : "");
@@ -108,8 +109,9 @@
 
   /* ---------- Knöpfe: schreiben wie die bestehenden Seiten ---------- */
   function jetzt() { return new Date().toISOString(); }
-  function ticket(e, text) {
-    var titel = (text.length > 80 ? text.slice(0, 77).replace(/\s+\S*$/, "") + " …" : text);
+  function ticket(e, text, titel) {
+    titel = titel || (text.length > 80 ? text.slice(0, 77).replace(/\s+\S*$/, "") + " …" : text);
+    if (titel.length > 90) titel = titel.slice(0, 87).replace(/\s+\S*$/, "") + " …";
     return db.from("aufgaben").insert({
       titel: titel, beschreibung: "Aus dem Eingang (Dashboard), " + new Date().toLocaleString("de-DE") + ", zu „" + e.titel + "“ (" + e.quelle + " " + e.qid + "):\n" + text,
       projekt_id: e.projekt_id || null, status: "offen", spalte: "todo", art: "aufgabe", verantwortlich: "Claude",
@@ -132,7 +134,8 @@
     else if ((e.quelle === "aufgabe" || e.quelle === "wartet") && a === "erledigt") q = db.from("aufgaben").update({ status: "erledigt", erledigt_am: jetzt() }).eq("id", e.qid);
     else if (e.quelle === "posting" && a === "freigeben") q = db.from("beitraege").update({ status: "freigegeben" }).eq("id", e.qid);
     else if (e.quelle === "briefing" && (a === "ja" || a === "text"))
-      q = ticket(e, a === "ja" ? "Daniel sagt ja zur Empfehlung „" + e.titel + "“ (" + (e.extra.knopf || "umsetzen") + "). Setze sie um. Inhalt: " + (e.kern || "") : "Daniel zur Empfehlung „" + e.titel + "“: " + txt).then(function (r) {
+      q = ticket(e, a === "ja" ? "Daniel sagt ja zur Empfehlung „" + e.titel + "“ (" + (e.extra.knopf || "umsetzen") + "). Setze sie um. Inhalt: " + (e.kern || "") : "Daniel zur Empfehlung „" + e.titel + "“: " + txt,
+        (a === "ja" ? (e.extra.knopf || "Umsetzen") + ": " : "Anders: ") + (a === "ja" ? e.titel : txt)).then(function (r) {
         return r.error ? r : db.from("briefing").update({ entscheidung: a === "ja" ? "ja" : "anders", entscheidung_text: txt || null, entschieden_am: jetzt() }).eq("id", e.qid); });
     else if (a === "text" && (e.quelle === "posting" || e.quelle === "termin" || e.quelle === "aufgabe" || e.quelle === "wartet"))
       q = ticket(e, (e.quelle === "posting" ? "Posting überarbeiten: " : e.quelle === "wartet" ? "Nachhaken: " : "Hinweis von Daniel: ") + txt);
@@ -346,12 +349,124 @@
       '<div class="lg-projekte"><h2>Projekte</h2><div class="lg-legende"><span><i class="lg-a-kritisch"></i>kritisch</span><span><i class="lg-a-achtung"></i>Achtung</span><span><i class="lg-a-im_plan"></i>im Plan</span><span><i class="lg-a-ruht"></i>ruht</span></div>' +
       (st.length ? '<ul class="lg-pliste">' + st.map(function (s) {
         var p = P[s.projekt_id];
-        return '<li><a href="/strategie/projekte.html#p=' + s.projekt_id + '"><i class="lg-a-' + s.ampel + '" title="' + AMPEL[s.ampel][0] + '"></i><div class="lg-p-text"><b>' + esc(p.name) + "</b><span>" + esc(p.marke) + (p.typ === "Kunde" ? " · Kunde" : "") + "</span><p>" + esc(s.satz) + "</p>" +
+        return '<li><a href="/strategie/projekt.html#p=' + s.projekt_id + '"><i class="lg-a-' + s.ampel + '" title="' + AMPEL[s.ampel][0] + '"></i><div class="lg-p-text"><b>' + esc(p.name) + "</b><span>" + esc(p.marke) + (p.typ === "Kunde" ? " · Kunde" : "") + "</span><p>" + esc(s.satz) + "</p>" +
           (s.naechster_schritt ? '<p class="lg-naechst">Nächster Schritt: ' + esc(s.naechster_schritt) + (s.bei ? " · " + esc(s.bei) : "") + (s.faellig ? " · " + (s.faellig < HEUTE ? '<span class="e-spaet">seit ' + datum(s.faellig) + "</span>" : "bis " + datum(s.faellig)) : "") + "</p>" : "") + "</div></a></li>";
       }).join("") + "</ul>" : '<p class="e-leer">Noch keine Projektstände.</p>') + "</div>" +
       "</div></section></div>";
     if (!verdrahtet) { verdrahtet = true; verdrahten(el, function () { lage(); }); }
   }
+
+
+  /* =============== Projekt – Projektleiter-Blick (Kunden- und interne Projekte) =============== */
+  var PJ = {};
+  function projektLaden() {
+    Promise.all([
+      db.from("projekte").select("id, name, marke, typ, phase, ziel, naechstes_gate, gate_datum").eq("status", "läuft"),
+      db.from("projekt_status").select("*").gte("gilt_fuer", plus(-7)).order("gilt_fuer", { ascending: false }),
+      db.from("aufgaben").select("id, projekt_id, titel, beschreibung, verantwortlich, faellig_am, ticket_stand, ticket_rueckmeldung, spalte, art, status, erledigt_am, warten_auf, hinweis")
+        .or("status.eq.offen,erledigt_am.gte." + plus(-14)),
+      db.from("vorlagen").select("id, projekt_id, titel, kern, art").eq("status", "offen"),
+      db.from("termine").select("start, ende, betreff, kalender, postfach, projekt_id, vorbereitung").eq("im_kalender", true).gte("start", new Date().toISOString()).order("start"),
+      db.from("projekt_ereignisse").select("projekt_id, datum, art, titel").gte("datum", plus(-30)).lte("datum", plus(120)).order("datum"),
+      db.from("eingang").select("typ, frist")
+    ]).then(function (r) {
+      E = r[6].data || [];
+      var f = r.filter(function (x) { return x.error; })[0];
+      if (f) { el.innerHTML = '<p class="e-hinweis">Projekte konnten nicht geladen werden: ' + esc(f.error.message) + "</p>"; return; }
+      PJ = { projekte: r[0].data || [], aufgaben: r[2].data || [], vorlagen: r[3].data || [], termine: r[4].data || [], ereignisse: r[5].data || [], status: {} };
+      PJ.projekte.forEach(function (p) { P[p.id] = p; });
+      (r[1].data || []).forEach(function (s) { if (!PJ.status[s.projekt_id]) PJ.status[s.projekt_id] = s; });
+      projekt();
+      window.addEventListener("hashchange", projekt);
+    });
+  }
+  function wer2(a) { return a.verantwortlich === "Claude" ? "claude" : /^Daniel( |$)/.test(a.verantwortlich || "") ? "du" : "andere"; }
+  function istGate2(a) { return a.art === "gate" || a.art === "projektgate"; }
+  function aZeile(a) {
+    var dran = a.verantwortlich === "Claude" && (a.ticket_stand === "zur_abnahme" || a.ticket_stand === "rueckfrage");
+    var stand = dran ? (a.ticket_stand === "rueckfrage" ? "Rückfrage an dich" : "liegt zur Abnahme") : a.verantwortlich === "Claude" ? ({ bereit: "als Nächstes", in_arbeit: "läuft", wartet: "wartet" }[a.ticket_stand] || "") : "";
+    return '<li class="pj-a" data-aid="' + a.id + '"><div class="pj-a-zeile"><b>' + esc(a.titel) + "</b><small>" + [wer2(a) === "andere" ? esc(a.verantwortlich) : "", stand, a.spalte === "backlog" ? "zurückgestellt" : "",
+      a.faellig_am ? (a.faellig_am < HEUTE ? '<span class="e-spaet">seit ' + datum(a.faellig_am) + "</span>" : "bis " + datum(a.faellig_am)) : ""].filter(Boolean).join(" · ") + "</small></div>" +
+      '<div class="pj-a-auf" hidden>' + (a.beschreibung ? '<div class="e-block">' + absaetze(String(a.beschreibung).slice(0, 900)) + "</div>" : "") +
+      (a.hinweis ? '<div class="e-block e-vorschlag"><h3>Hinweis</h3>' + absaetze(a.hinweis) + "</div>" : "") +
+      '<div class="e-knoepfe">' + (dran ? '<a class="e-k e-k-voll" href="/strategie/eingang-klar.html#s=ticket:' + a.id + '">' + (a.ticket_stand === "rueckfrage" ? "Antworten" : "Abnehmen") + "</a>" :
+        wer2(a) === "du" ? '<button class="e-k e-k-voll" data-pa="erledigt">Erledigt</button>' : "") +
+      '<button class="e-k" data-pa="hinweis">' + (wer2(a) === "andere" ? "Nachhaken lassen" : "Hinweis an Claude") + "</button></div>" +
+      '<form class="e-text" hidden><textarea rows="3" placeholder="Was soll Claude tun?"></textarea><button class="e-k e-k-voll" type="submit">Senden</button></form><p class="e-ok" hidden></p></div></li>';
+  }
+  function projekt() {
+    zahlImMenue();
+    var m = location.hash.match(/p=(\d+)/), pid = m ? +m[1] : null, p = pid && P[pid];
+    var MARKEN = ["empiria", "sofortsichtbar", "Müller&Ströbel."];
+    var waehler = '<select class="pj-waehler" aria-label="Projekt wählen"><option value="">Alle Projekte</option>' + MARKEN.map(function (mk) {
+      return '<optgroup label="' + esc(mk) + '">' + PJ.projekte.filter(function (x) { return x.marke === mk; }).sort(function (a, b) { return a.name.localeCompare(b.name); })
+        .map(function (x) { return '<option value="' + x.id + '"' + (x.id === pid ? " selected" : "") + ">" + esc(x.name) + "</option>"; }).join("") + "</optgroup>";
+    }).join("") + "</select>";
+    if (!p) {
+      el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>Projekte</h1><span>' + PJ.projekte.length + ' laufend</span></div>' + waehler + "</header>" +
+        '<section class="k7-band"><div class="lg-raster">' + MARKEN.map(function (mk) {
+          var l = PJ.projekte.filter(function (x) { return x.marke === mk; }).sort(function (a, b) {
+            var sa = PJ.status[a.id], sb = PJ.status[b.id]; return ((sa ? AMPEL[sa.ampel][1] : 9) - (sb ? AMPEL[sb.ampel][1] : 9)) || a.name.localeCompare(b.name); });
+          return '<div class="lg-projekte"><h2>' + esc(mk) + '</h2><ul class="lg-pliste">' + l.map(function (x) {
+            var s = PJ.status[x.id] || {};
+            return '<li><a href="#p=' + x.id + '"><i class="lg-a-' + (s.ampel || "ruht") + '"></i><div class="lg-p-text"><b>' + esc(x.name) + "</b><span>" + (x.typ === "Kunde" ? "Kunde" : "intern") + "</span><p>" + esc(s.satz || "Noch kein Stand.") + "</p>" +
+              (s.naechster_schritt ? '<p class="lg-naechst">Nächster Schritt: ' + esc(s.naechster_schritt) + (s.bei ? " · " + esc(s.bei) : "") + "</p>" : "") + "</div></a></li>";
+          }).join("") + "</ul></div>";
+        }).join("") + "</div></section></div>";
+    } else {
+      var s = PJ.status[pid] || null;
+      var auf = PJ.aufgaben.filter(function (a) { return a.projekt_id === pid; });
+      var offen = auf.filter(function (a) { return a.status === "offen" && !istGate2(a); }).sort(function (a, b) { return (a.spalte === "backlog") - (b.spalte === "backlog") || String(a.faellig_am || "9").localeCompare(String(b.faellig_am || "9")); });
+      var gates = auf.filter(function (a) { return a.status === "offen" && istGate2(a); }).sort(function (a, b) { return String(a.faellig_am || "9").localeCompare(String(b.faellig_am || "9")); });
+      var erledigt = auf.filter(function (a) { return a.status !== "offen"; }).sort(function (a, b) { return String(b.erledigt_am).localeCompare(String(a.erledigt_am)); });
+      var spalte = function (titel, kl, l) { return '<div class="pj-spalte"><h3><i class="k7-f-' + kl + '"></i>' + titel + " <span>" + l.length + "</span></h3>" + (l.length ? '<ul class="pj-liste">' + l.map(aZeile).join("") + "</ul>" : '<p class="e-leer">Nichts offen.</p>') + "</div>"; };
+      var ent = PJ.vorlagen.filter(function (v) { return v.projekt_id === pid; });
+      var nameKlein = p.name.toLowerCase().replace(/\s*\(.*\)$/, "");
+      var ter = PJ.termine.filter(function (t) { return t.projekt_id === pid || String(t.betreff || "").toLowerCase().indexOf(nameKlein) >= 0; }).slice(0, 6);
+      var ere = PJ.ereignisse.filter(function (e) { return e.projekt_id === pid; });
+      var kommend = ere.filter(function (e) { return String(e.datum).slice(0, 10) >= HEUTE; }).slice(0, 6), vergangen = ere.filter(function (e) { return String(e.datum).slice(0, 10) < HEUTE; }).reverse().slice(0, 6);
+      el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>' + esc(p.name) + "</h1><span>" + esc(p.marke) + " · " + (p.typ === "Kunde" ? "Kundenprojekt" : "internes Projekt") + (p.phase ? " · " + esc(p.phase) : "") + "</span></div>" + waehler + "</header>" +
+        '<section class="k7-band"><div class="lg-raster">' +
+        '<div class="lg-kern pj-stand">' + (s ? '<p class="pj-ampel"><i class="lg-a-' + s.ampel + '"></i>' + AMPEL[s.ampel][0] + " · Stand " + datum(s.gilt_fuer) + "</p><p>" + esc(s.satz) + "</p>" +
+          (s.naechster_schritt ? '<p class="pj-naechst">Nächster Schritt: <b>' + esc(s.naechster_schritt) + "</b>" + (s.bei ? " · " + esc(s.bei) : "") + (s.faellig ? " · bis " + datum(s.faellig) : "") + "</p>" : "") : "<p>Für dieses Projekt hat der Stabschef noch keinen Stand geschrieben.</p>") +
+          (p.ziel ? '<p class="pj-ziel"><span>Ziel</span>' + esc(p.ziel) + "</p>" : "") + "</div>" +
+        '<div class="lg-links"><div class="pj-spalten">' + spalte("Bei dir", "tinte", offen.filter(function (a) { return wer2(a) === "du"; })) +
+          spalte("Bei Claude", "cl", offen.filter(function (a) { return wer2(a) === "claude"; })) + spalte("Bei anderen", "grau", offen.filter(function (a) { return wer2(a) === "andere"; })) + "</div>" +
+          (ent.length ? '<div class="lg-kasten"><h2>Offene Entscheidungen</h2><ul class="pj-einfach">' + ent.map(function (v) { return '<li><a href="/strategie/eingang-klar.html#s=vorlage:' + v.id + '">' + esc(v.titel) + "</a></li>"; }).join("") + "</ul></div>" : "") + "</div>" +
+        '<aside class="lg-rechts">' +
+          '<div class="lg-kasten"><h2>Meilensteine</h2>' + (gates.length ? '<ul class="pj-zeit">' + gates.slice(0, 6).map(function (a) { return "<li><span>" + (a.faellig_am ? datum(a.faellig_am) + a.faellig_am.slice(2, 4) : "offen") + "</span>" + esc(a.titel) + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Keine hinterlegt.</p>') + "</div>" +
+          '<div class="lg-kasten"><h2>Was kommt</h2>' + (ter.length || kommend.length ? '<ul class="pj-zeit">' + ter.map(function (t) { return "<li><span>" + datum(iso2(t.start)) + " " + uhr(t.start) + "</span>" + esc(t.betreff) + "</li>"; }).join("") +
+            kommend.filter(function (e) { return !ter.some(function (t) { return t.betreff === e.titel; }); }).map(function (e) { return "<li><span>" + datum(String(e.datum).slice(0, 10)) + "</span>" + esc(e.titel) + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Nichts geplant.</p>') + "</div>" +
+          '<div class="lg-kasten"><h2>Zuletzt</h2>' + (erledigt.length || vergangen.length ? '<ul class="pj-zeit">' + erledigt.slice(0, 5).map(function (a) { return "<li><span>" + datum(String(a.erledigt_am).slice(0, 10)) + "</span>erledigt: " + esc(a.titel) + "</li>"; }).join("") +
+            vergangen.map(function (e) { return "<li><span>" + datum(String(e.datum).slice(0, 10)) + "</span>" + esc(e.titel) + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Keine Einträge in den letzten Wochen.</p>') + "</div>" +
+          '<a class="e-k lage-alt" href="/strategie/projekte.html#p=' + pid + '">Bisherige Projektseite (Plan, Protokolle)</a></aside>' +
+        "</div></section></div>";
+    }
+    var w = el.querySelector(".pj-waehler"); if (w) w.onchange = function () { location.hash = w.value ? "p=" + w.value : ""; };
+    el.querySelectorAll(".pj-a-zeile").forEach(function (z) { z.onclick = function () { var a = z.nextElementSibling; a.hidden = !a.hidden; z.parentNode.classList.toggle("ist-offen", !a.hidden); }; });
+    el.querySelectorAll("[data-pa]").forEach(function (b) {
+      b.onclick = function () {
+        var li = b.closest(".pj-a"), a = PJ.aufgaben.filter(function (x) { return x.id === +li.getAttribute("data-aid"); })[0], ok = li.querySelector(".e-ok");
+        if (b.getAttribute("data-pa") === "hinweis") { var fo = li.querySelector(".e-text"); fo.hidden = !fo.hidden; if (!fo.hidden) fo.querySelector("textarea").focus(); return; }
+        b.disabled = true;
+        db.from("aufgaben").update({ status: "erledigt", erledigt_am: new Date().toISOString() }).eq("id", a.id).then(function (r) {
+          ok.hidden = false; ok.textContent = r.error ? "Nicht gespeichert: " + r.error.message : "Erledigt."; if (!r.error) { a.status = "erledigt"; a.erledigt_am = new Date().toISOString(); toast("Erledigt: " + a.titel); setTimeout(projekt, 900); }
+        });
+      };
+    });
+    el.querySelectorAll(".pj-a .e-text").forEach(function (fo) {
+      fo.onsubmit = function (ev) {
+        ev.preventDefault(); var txt = fo.querySelector("textarea").value.trim(); if (!txt) return;
+        var li = fo.closest(".pj-a"), a = PJ.aufgaben.filter(function (x) { return x.id === +li.getAttribute("data-aid"); })[0], ok = li.querySelector(".e-ok");
+        fo.querySelector("button").disabled = true;
+        ticket({ titel: a.titel, quelle: "aufgabe", qid: a.id, projekt_id: a.projekt_id }, (wer2(a) === "andere" ? "Nachhaken bei " + a.verantwortlich + ": " : "Hinweis von Daniel: ") + txt).then(function (r) {
+          ok.hidden = false; ok.textContent = r.error ? "Nicht gespeichert: " + r.error.message : "Dein Hinweis ist als Ticket bei Claude (Sofort-Spur).";
+          if (!r.error) toast("Hinweis an Claude: " + a.titel);
+        });
+      };
+    });
+  }
+  function iso2(ts) { return new Date(ts).toLocaleDateString("sv-SE", { timeZone: "Europe/Berlin" }); }
 
   /* =============== Aufräumen: Vorschlag bestätigen =============== */
   function aufraeumenLaden() {

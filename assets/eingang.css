@@ -256,3 +256,39 @@
   .lg-raster { grid-template-columns: minmax(0, 1fr); }
   .lg-pliste { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* =============== Projekt – Projektleiter-Blick (gleicher Grundlook wie Lage) =============== */
+[data-ein="projekt"] { --tinte: #1d1d1f; --text2: #86868b; --linie: #e5e5ea; font-family: "Inter", system-ui, sans-serif; color: #424245; font-size: 15px; line-height: 1.55; }
+.pj-waehler { margin-left: auto; height: 32px; width: 280px; max-width: 100%; padding: 0 12px; border: 1px solid #d2d2d7; border-radius: 999px; background: #fff; font: 500 14px/1 "Inter", system-ui, sans-serif; color: var(--tinte); }
+.pj-ampel { display: flex; gap: 8px; align-items: center; margin: 0 0 8px !important; font: 500 13px/1.3 "Inter", system-ui, sans-serif !important; color: #6e6e73 !important; }
+.pj-ampel i { width: 10px; height: 10px; border-radius: 50%; }
+.pj-naechst { margin-top: 12px !important; font: 400 15px/1.5 "Inter", system-ui, sans-serif !important; color: #424245 !important; }
+.pj-naechst b { color: var(--tinte); }
+.pj-ziel { margin-top: 12px !important; padding: 12px 14px; border-radius: 14px; background: #f5f5f7; font: 400 14px/1.5 "Inter", system-ui, sans-serif !important; color: #424245 !important; }
+.pj-ziel span { display: block; margin-bottom: 2px; font-size: 12px; font-weight: 600; color: #86868b; }
+.pj-spalten { display: grid; gap: 12px; }
+.pj-spalte { padding: 16px 18px; border-radius: 20px; background: #fff; }
+.pj-spalte h3 { display: flex; gap: 8px; align-items: center; margin: 0 0 10px; font: 700 16px/1.2 "Inter Tight", "Inter", system-ui, sans-serif; color: var(--tinte); }
+.pj-spalte h3 i { width: 10px; height: 10px; border-radius: 3px; }
+.pj-spalte h3 span { font: 500 13px/1 "Inter", system-ui, sans-serif; color: #86868b; }
+.pj-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.pj-a { border-radius: 14px; background: #f5f5f7; }
+.pj-a-zeile { padding: 10px 14px; cursor: pointer; }
+.pj-a-zeile b { display: block; font-weight: 600; font-size: 14px; color: var(--tinte); }
+.pj-a-zeile small { display: block; font-size: 12px; color: #86868b; }
+.pj-a.ist-offen { background: #fff; box-shadow: inset 0 0 0 1px #d2d2d7; }
+.pj-a-auf { padding: 0 14px 14px; display: grid; gap: 10px; }
+.pj-a-auf .e-block { background: #f5f5f7; border-radius: 12px; padding: 10px 12px; font-size: 14px; }
+.pj-a-auf .e-vorschlag { box-shadow: inset 3px 0 0 #8613a1; }
+.pj-a-auf .e-knoepfe { margin-top: 4px; }
+.pj-a-auf .e-k { height: 32px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--tinte); font-size: 13px; font-weight: 600; background: #fff; color: var(--tinte); text-decoration: none; }
+[data-ein="projekt"] .e-k-voll { background: var(--tinte); color: #fff; }
+.pj-a-auf .e-text { display: grid; gap: 8px; justify-items: start; }
+.pj-a-auf .e-text textarea { width: 100%; padding: 10px 12px; border: 1px solid #e5e5ea; border-radius: 10px; font: inherit; }
+.pj-a-auf .e-ok { margin: 0; padding: 8px 12px; border-radius: 10px; background: #f5f5f7; color: var(--tinte); box-shadow: inset 3px 0 0 #0b9fbd; }
+.pj-einfach { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.pj-einfach a { color: var(--tinte); }
+.pj-zeit { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.pj-zeit li { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; font-size: 14px; }
+.pj-zeit span { color: #86868b; font-variant-numeric: tabular-nums; }
+.lage-alt { display: inline-flex; align-items: center; justify-content: center; height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid #d2d2d7; background: #fff; color: #424245; font-size: 13px; font-weight: 500; text-decoration: none; }
