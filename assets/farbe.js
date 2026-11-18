@@ -9,14 +9,14 @@
   function dunkel() { return document.documentElement.getAttribute("data-farbe") === "dunkel"; }
   function zeichnen(b) { b.innerHTML = dunkel() ? SONNE : MOND; b.setAttribute("aria-label", dunkel() ? "Helle Darstellung" : "Dunkle Darstellung"); b.title = b.getAttribute("aria-label"); }
   function einbauen() {
-    var hn = document.querySelector(".hn"); if (!hn || hn.querySelector(".d3-farbe")) return;
+    var hn = document.querySelector(".hn"); if (!hn || document.querySelector(".d3-farbe")) return;
     var b = document.createElement("button"); b.type = "button"; b.className = "d3-farbe"; zeichnen(b);
     b.onclick = function () {
       if (dunkel()) document.documentElement.removeAttribute("data-farbe"); else document.documentElement.setAttribute("data-farbe", "dunkel");
       try { localStorage.setItem("farbe", dunkel() ? "dunkel" : "hell"); } catch (x) {}
       zeichnen(b);
     };
-    hn.appendChild(b);
+    hn.insertAdjacentElement("afterend", b);   // hinter die Leiste, nicht hinein: die Leiste blendet am rechten Rand per Maske aus
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", einbauen); else einbauen();
 })();
