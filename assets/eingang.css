@@ -466,3 +466,13 @@
 .tm-themenzeile { margin: 0 0 6px !important; }
 .tm-themenzeile b, .tm-liste-f b, .tm-schritte b { color: var(--tinte); font-weight: 600; }
 .e-block .tm-liste-f + .tm-themenzeile, .e-block .tm-schritte + .tm-themenzeile { margin-top: 8px !important; }
+
+/* Lage-Empfehlungen (Daniel, 18.11.2026): Art wieder farbig, aber klein und mit Luft; Kern neutral grau (kein Blaustich neben Lila) */
+.lage .lg-emp-kopf { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; letter-spacing: 0; }
+.lg-art { display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 999px; font-size: 11px; font-weight: 600; color: #fff; }
+.lg-art-risiko { background: #e3000f; } .lg-art-chance { background: #1f9d55; } .lg-art-entscheidung, .lg-art-empfehlung { background: #1d1d1f; }
+.lage .lg-emp-kopf .lg-proj { font-size: 12px; font-weight: 500; color: #86868b; }
+.lage .lg-emp > p { background: #f3f3f3; }
+.lage .lg-warum p { background: #f3f3f3; }
+/* Termine: in nummerierten Schritten steht das Fette allein in der ersten Zeile, der Text darunter */
+.tm-schritte b { display: block; margin-bottom: 2px; }
