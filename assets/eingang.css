@@ -292,3 +292,33 @@
 .pj-zeit li { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; font-size: 14px; }
 .pj-zeit span { color: #86868b; font-variant-numeric: tabular-nums; }
 .lage-alt { display: inline-flex; align-items: center; justify-content: center; height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid #d2d2d7; background: #fff; color: #424245; font-size: 13px; font-weight: 500; text-decoration: none; }
+
+/* =============== Termine – Management-Blick auf den Tag (Grundlook Eingang 4) =============== */
+[data-ein="termine"] { --tinte: #1d1d1f; --text2: #86868b; --linie: #e5e5ea; font-family: "Inter", system-ui, sans-serif; color: #424245; font-size: 15px; line-height: 1.55; }
+.tm-zeit { display: flex; gap: 10px; align-items: center; margin: 0; }
+.tm-zeit b { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--tinte); }
+.tm-kurz { margin: 2px 0 0; font-size: 13px; color: #6e6e73; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.tm-vorbei { opacity: .55; }
+.tm-tiefer { margin-top: 28px; }
+.tm-ebene { margin: 0 0 10px; font: 600 12px/1.3 "Inter", system-ui, sans-serif; color: #86868b; }
+.tm-auf { margin: 0 0 8px; padding: 12px 16px; border-radius: 16px; background: #f5f5f7; }
+.tm-auf summary { cursor: pointer; font-weight: 600; color: var(--tinte); }
+.tm-auf[open] summary { margin-bottom: 10px; }
+.tm-auf h4 { margin: 14px 0 6px; font-size: 12px; font-weight: 600; color: #86868b; }
+.tm-personen { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.tm-personen b { display: block; color: var(--tinte); }
+.tm-personen small { display: block; font-size: 13px; color: #6e6e73; }
+.tm-personen p { margin: 4px 0 0; font-size: 14px; }
+.tm-stand { display: flex; gap: 8px; align-items: baseline; margin: 0 0 6px; }
+.tm-stand i { flex: none; width: 10px; height: 10px; border-radius: 50%; }
+[data-ein="termine"] .e-detail h2 { margin: 0 0 24px; font: 700 clamp(1.3rem, 1.9vw, 1.6rem)/1.2 "Inter Tight", "Inter", system-ui, sans-serif; letter-spacing: -0.02em; color: var(--tinte); }
+[data-ein="termine"] .e-block { background: #f5f5f7; border-radius: 16px; }
+[data-ein="termine"] .e-vorschlag { box-shadow: inset 3px 0 0 #8613a1; background: #f5f5f7; }
+[data-ein="termine"] .e-vorschlag h3 { color: #6e6e73; }
+[data-ein="termine"] .e-inhalt { gap: 16px; }
+[data-ein="termine"] .e-k { height: 36px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--tinte); font-size: 14px; font-weight: 600; background: #fff; color: var(--tinte); }
+[data-ein="termine"] .e-k-voll { background: var(--tinte); color: #fff; }
+[data-ein="termine"] .e-knoepfe { margin-top: 20px; }
+[data-ein="termine"] .e-ok { background: #f5f5f7; color: var(--tinte); box-shadow: inset 3px 0 0 #0b9fbd; }
+@media (max-width: 900px) { [data-ein="termine"] .e-zurueck { display: inline-flex; margin: 0 0 14px; padding: 0; border: 0; background: none; color: #8613a1; font-weight: 600; cursor: pointer; } }
+.tm-label { font-size: 12px; font-weight: 600; color: #86868b; }

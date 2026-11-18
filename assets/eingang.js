@@ -50,6 +50,7 @@
     if (art === "aufraeumen") return aufraeumenLaden();
     if (art === "lage") return lageLaden();
     if (art === "projekt") return projektLaden();
+    if (art === "termine") return termineLaden();
     Promise.all([db.from("eingang").select("*"), db.from("projekte").select("id, name, marke")]).then(function (r) {
       if (r[0].error) { el.innerHTML = '<p class="e-hinweis">Eingang konnte nicht geladen werden: ' + esc(r[0].error.message) + "</p>"; return; }
       var jetztMs = Date.now();
@@ -467,6 +468,127 @@
     });
   }
   function iso2(ts) { return new Date(ts).toLocaleDateString("sv-SE", { timeZone: "Europe/Berlin" }); }
+
+
+  /* =============== Termine – Management-Blick auf den laufenden Tag =============== */
+  var TM = { tag: "heute", liste: [], br: {}, wahl: null, cache: {} };
+  function termineLaden() {
+    var von = new Date(HEUTE + "T00:00:00"), bis = new Date(von.getTime() + 2 * 864e5);
+    Promise.all([
+      db.from("termine").select("id, ical_uid, betreff, start, ende, kalender, postfach, ort, teilnehmer, extern, projekt_id, vorbereitung, abgesagt, ganztags").eq("im_kalender", true)
+        .gte("start", von.toISOString()).lt("start", bis.toISOString()).order("start"),
+      db.from("termin_briefing").select("*").gte("gilt_fuer", HEUTE),
+      db.from("projekte").select("id, name, marke").eq("status", "läuft"),
+      db.from("eingang").select("typ, frist")
+    ]).then(function (r) {
+      var f = r.filter(function (x) { return x.error; })[0];
+      if (f) { el.innerHTML = '<p class="e-hinweis">Termine konnten nicht geladen werden: ' + esc(f.error.message) + "</p>"; return; }
+      TM.liste = (r[0].data || []).filter(function (t) { return !t.abgesagt && !t.ganztags; });
+      (r[1].data || []).forEach(function (b) { TM.br[b.ical_uid] = b; });
+      (r[2].data || []).forEach(function (p) { P[p.id] = p; });
+      E = r[3].data || [];
+      var jetztMs = Date.now(), heute = TM.liste.filter(function (t) { return iso2(t.start) === HEUTE; });
+      var naechster = heute.filter(function (t) { return new Date(t.ende).getTime() > jetztMs; })[0];
+      TM.wahl = naechster || heute[0] || TM.liste[0] || null;
+      if (TM.wahl && iso2(TM.wahl.start) !== HEUTE) TM.tag = "morgen";
+      termine();
+    });
+  }
+  function tmArt(t) {
+    var b = (t.betreff || "").toLowerCase();
+    if (/^(anfahrt|rückfahrt|anreise|abreise|fahrt)/.test(b)) return ["Fahrt", "grau"];
+    if (t.kalender === "Aufgaben" || t.kalender === "Block" || !(t.teilnehmer || []).length) return ["Arbeitsblock", "tinte"];
+    return ["Termin", "cy"];
+  }
+  function termine() {
+    zahlImMenue();
+    var tag = TM.tag === "heute" ? HEUTE : plus(1);
+    var l = TM.liste.filter(function (t) { return iso2(t.start) === tag; });
+    if (!TM.wahl || iso2(TM.wahl.start) !== tag) TM.wahl = l[0] || null;
+    var datumLang = new Date(tag + "T12:00:00").toLocaleDateString("de-DE", { weekday: "long", day: "2-digit", month: "long", timeZone: "Europe/Berlin" });
+    var jetztMs = Date.now();
+    el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>Termine</h1><span>' + esc(datumLang) + "</span></div>" +
+      '<nav class="k7-pillen"><button type="button" data-tag="heute" aria-pressed="' + (TM.tag === "heute") + '">Heute</button><button type="button" data-tag="morgen" aria-pressed="' + (TM.tag === "morgen") + '">Morgen</button></nav></header>' +
+      '<section class="k7-band"><div class="k7-raster' + (TM.wahl ? " hat-detail" : "") + '"><ul class="k7-liste tm-liste">' + (l.length ? l.map(function (t) {
+        var a = tmArt(t), b = TM.br[t.ical_uid] || {}, vorbei = new Date(t.ende).getTime() < jetztMs;
+        return '<li data-tid="' + t.id + '"' + (t === TM.wahl ? ' aria-current="true"' : "") + (vorbei ? ' class="tm-vorbei"' : "") + '><p class="tm-zeit"><b>' + uhr(t.start) + "–" + uhr(t.ende) + '</b><span class="k7-etikett k7-e-' + a[1] + '">' + a[0] + "</span></p>" +
+          "<b>" + esc(t.betreff) + "</b>" + (b.zusammenfassung ? '<p class="tm-kurz">' + esc(b.zusammenfassung) + "</p>" : "") +
+          (P[b.projekt_id] ? "<small>" + esc(P[b.projekt_id].name) + "</small>" : "") + "</li>";
+      }).join("") : '<li class="e-leer">Keine Termine.</li>') + "</ul>" +
+      '<div class="k7-detail tm-detail">' + (TM.wahl ? '<button type="button" class="e-zurueck" data-zurueck>‹ Termine</button>' + tmDetail(TM.wahl) : '<p class="e-leer">Wähle links einen Termin.</p>') + "</div></div></section></div>";
+    el.querySelectorAll("[data-tag]").forEach(function (b) { b.onclick = function () { TM.tag = b.getAttribute("data-tag"); TM.wahl = null; termine(); }; });
+    el.querySelectorAll(".tm-liste [data-tid]").forEach(function (li) { li.onclick = function () { TM.wahl = TM.liste.filter(function (t) { return t.id === +li.getAttribute("data-tid"); })[0]; termine(); if (window.innerWidth <= 900) window.scrollTo(0, 0); }; });
+    var z = el.querySelector("[data-zurueck]"); if (z) z.onclick = function () { TM.wahl = null; termine(); };
+    if (TM.wahl) tmTiefer(TM.wahl);
+    tmKnoepfe();
+  }
+  function tmDetail(t) {
+    var a = tmArt(t), b = TM.br[t.ical_uid] || {}, punkte = liste2(b.punkte), unt = liste2(b.unterlagen);
+    return '<article class="e-detail" data-tid="' + t.id + '"><div class="e-d-kopf"><span class="k7-etikett k7-e-' + a[1] + '">' + a[0] + '</span><span class="e-d-meta">' +
+      (iso2(t.start) === HEUTE ? "heute " : "morgen ") + uhr(t.start) + "–" + uhr(t.ende) + (t.ort ? " · " + esc(t.ort) : "") + "</span></div><h2>" + esc(t.betreff) + "</h2>" +
+      '<div class="e-inhalt">' + (b.zusammenfassung ? '<div class="e-block e-vorschlag"><h3>Worum es geht</h3>' + absaetze(b.zusammenfassung) + "</div>" : '<div class="e-block"><p>Für diesen Termin hat der Stabschef noch keine Zusammenfassung geschrieben.</p></div>') +
+      (b.ziel ? '<div class="e-block"><h3>Was du herausholen solltest</h3>' + absaetze(b.ziel) + "</div>" : "") +
+      (punkte.length ? '<div class="e-block"><h3>Offene Punkte</h3><ul class="e-punkte">' + punkte.map(function (p) { return "<li>" + esc(p) + "</li>"; }).join("") + "</ul></div>" : "") +
+      (unt.length ? '<div class="e-block e-ablage"><h3>Unterlagen</h3>' + unt.map(function (u) { return /^https?:/.test(u) ? '<p><a class="e-link" href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(u) + "</a></p>" : "<p>" + esc(u) + "</p>"; }).join("") + "</div>" : "") +
+      '</div><div class="tm-tiefer" data-tiefer><p class="e-leer">Details werden geladen …</p></div>' +
+      '<div class="e-knoepfe"><button class="e-k e-k-voll" data-tm="hinweis">Vorbereitung anfordern</button>' + (t.vorbereitung === "offen" || t.vorbereitung === "laeuft" ? '<button class="e-k" data-tm="fertig">Ich bin vorbereitet</button>' : "") + "</div>" +
+      '<form class="e-text" hidden><textarea rows="3" placeholder="Was soll Claude für diesen Termin vorbereiten?"></textarea><button class="e-k e-k-voll" type="submit">Senden</button></form><p class="e-ok" hidden></p></article>';
+  }
+  /* Eine Ebene tiefer: alles, was zu Teilnehmern und Projekt vorliegt */
+  function tmTiefer(t) {
+    var b = TM.br[t.ical_uid] || {}, ids = b.kontakt_ids || [], pid = b.projekt_id || t.projekt_id, ziel = el.querySelector("[data-tiefer]");
+    var key = t.ical_uid;
+    function zeigen(d) {
+      if (!ziel || !el.contains(ziel)) return;
+      var teil = (d.kontakte || []).map(function (k) {
+        return '<li><b>' + esc((k.vorname || "") + " " + (k.nachname || "")) + "</b><small>" + [esc(k.position || ""), esc((k.organisationen || {}).name || ""), k.beziehungsstatus ? "Beziehung: " + esc(k.beziehungsstatus) : "", k.letzter_kontakt ? "letzter Kontakt " + datum(String(k.letzter_kontakt).slice(0, 10)) : ""].filter(Boolean).join(" · ") + "</small>" +
+          (k.kontaktbriefing ? '<p><span class="tm-label">Kontaktplan im CRM:</span> ' + esc(String(k.kontaktbriefing).slice(0, 500)) + "</p>" : "") + "</li>"; }).join("");
+      var andere = (t.teilnehmer || []).filter(function (n) { return !(d.kontakte || []).some(function (k) { return n.indexOf(k.nachname) >= 0 || n.toLowerCase().indexOf(String(k.nachname).toLowerCase()) >= 0; }); });
+      var akt = (d.aktivitaeten || []).map(function (x) { return "<li><span>" + datum(String(x.datum).slice(0, 10)) + "</span>" + esc([x.kanal, x.anlass, x.ergebnis].filter(Boolean).join(" · ")) + "</li>"; }).join("");
+      var aufg = (d.aufgaben || []).map(function (x) { return "<li><span>" + (x.faellig_am ? datum(x.faellig_am) : "–") + "</span>" + esc(x.titel) + " · " + esc(x.verantwortlich || "") + "</li>"; }).join("");
+      var prot = (d.punkte || []).map(function (x) { return "<li><span>" + datum(String(x.angelegt_am).slice(0, 10)) + "</span>" + esc(String(x.text).slice(0, 220)) + "</li>"; }).join("");
+      var st = d.status;
+      ziel.innerHTML = '<h3 class="tm-ebene">Eine Ebene tiefer</h3>' +
+        '<details class="tm-auf" open><summary>Teilnehmer</summary>' + (teil || andere.length ? '<ul class="tm-personen">' + teil + andere.map(function (n) { return "<li><b>" + esc(n) + "</b><small>nicht in den Kontakten</small></li>"; }).join("") + "</ul>" : '<p class="e-leer">Keine Teilnehmer, eigener Arbeitsblock.</p>') + "</details>" +
+        (pid && P[pid] ? '<details class="tm-auf"><summary>Projekt: ' + esc(P[pid].name) + "</summary>" + (st ? '<p class="tm-stand"><i class="lg-a-' + st.ampel + '"></i>' + esc(st.satz) + "</p>" + (st.naechster_schritt ? '<p class="lg-naechst">Nächster Schritt: ' + esc(st.naechster_schritt) + "</p>" : "") : "") +
+          (aufg ? '<h4>Offene Aufgaben</h4><ul class="pj-zeit">' + aufg + "</ul>" : "") + (prot ? '<h4>Letzte Protokollpunkte</h4><ul class="pj-zeit">' + prot + "</ul>" : "") +
+          '<p><a class="lage-alt" href="/strategie/projekt.html#p=' + pid + '">Projekt öffnen</a></p></details>' : "") +
+        (akt ? '<details class="tm-auf"><summary>Letzte Kontakte</summary><ul class="pj-zeit">' + akt + "</ul></details>" : "");
+    }
+    if (TM.cache[key]) return zeigen(TM.cache[key]);
+    var q = [
+      ids.length ? db.from("kontakte").select("id, vorname, nachname, position, beziehungsstatus, letzter_kontakt, kontaktbriefing, organisationen(name)").in("id", ids) : Promise.resolve({ data: [] }),
+      ids.length ? db.from("aktivitaeten").select("kontakt_id, datum, kanal, anlass, ergebnis").in("kontakt_id", ids).order("datum", { ascending: false }).limit(8) : Promise.resolve({ data: [] }),
+      pid ? db.from("projekt_status").select("ampel, satz, naechster_schritt, gilt_fuer").eq("projekt_id", pid).order("gilt_fuer", { ascending: false }).limit(1) : Promise.resolve({ data: [] }),
+      pid ? db.from("aufgaben").select("titel, verantwortlich, faellig_am, spalte, art").eq("projekt_id", pid).eq("status", "offen").order("faellig_am").limit(10) : Promise.resolve({ data: [] }),
+      pid ? db.from("projekt_punkte").select("angelegt_am, text").eq("projekt_id", pid).order("angelegt_am", { ascending: false }).limit(6) : Promise.resolve({ data: [] })
+    ];
+    Promise.all(q).then(function (r) {
+      var d = { kontakte: r[0].data || [], aktivitaeten: r[1].data || [], status: (r[2].data || [])[0], aufgaben: (r[3].data || []).filter(function (a) { return a.spalte !== "backlog" && a.art !== "gate" && a.art !== "projektgate"; }), punkte: r[4].data || [] };
+      TM.cache[key] = d; zeigen(d);
+    });
+  }
+  function tmKnoepfe() {
+    var d = el.querySelector(".tm-detail .e-detail"); if (!d) return;
+    var t = TM.wahl, ok = d.querySelector(".e-ok"), fo = d.querySelector(".e-text");
+    d.querySelectorAll("[data-tm]").forEach(function (b) {
+      b.onclick = function () {
+        if (b.getAttribute("data-tm") === "hinweis") { fo.hidden = !fo.hidden; if (!fo.hidden) fo.querySelector("textarea").focus(); return; }
+        b.disabled = true;
+        db.from("termine").update({ vorbereitung: "vorbereitet", von_hand: true }).eq("id", t.id).then(function (r) {
+          ok.hidden = false; ok.textContent = r.error ? "Nicht gespeichert: " + r.error.message : "Als vorbereitet vermerkt."; if (!r.error) { t.vorbereitung = "vorbereitet"; toast("Vorbereitet: " + t.betreff); }
+        });
+      };
+    });
+    fo.onsubmit = function (ev) {
+      ev.preventDefault(); var txt = fo.querySelector("textarea").value.trim(); if (!txt) return; fo.querySelector("button").disabled = true;
+      var b = TM.br[t.ical_uid] || {};
+      ticket({ titel: t.betreff, quelle: "termin", qid: t.id, projekt_id: b.projekt_id || t.projekt_id }, "Vorbereitung für den Termin „" + t.betreff + "“ am " + datum(iso2(t.start)) + " um " + uhr(t.start) + ": " + txt, "Vorbereitung: " + t.betreff).then(function (r) {
+        ok.hidden = false; ok.textContent = r.error ? "Nicht gespeichert: " + r.error.message : "Als Ticket bei Claude (Sofort-Spur). Die Vorbereitung kommt zur Abnahme in den Eingang.";
+        if (!r.error) toast("Vorbereitung angefordert: " + t.betreff);
+      });
+    };
+  }
 
   /* =============== Aufräumen: Vorschlag bestätigen =============== */
   function aufraeumenLaden() {
