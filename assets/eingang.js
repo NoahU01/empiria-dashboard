@@ -25,10 +25,11 @@
   function zeilenText(t) {
     var h = "", liste = null, art = "";
     var zu = function () { if (liste) { h += (art === "ol" ? '<ol class="tm-schritte">' : '<ul class="tm-liste-f">') + liste.join("") + (art === "ol" ? "</ol>" : "</ul>"); liste = null; } };
-    var thema = function (x) { var m = x.match(/^([^:]{2,90}):\s+([\s\S]+)$/); return m ? "<b>" + esc(m[1]) + "</b> " + esc(m[2]) : esc(x); };
+    // Fett nur für ein Stichwort vor dem Doppelpunkt: in Schritten bis 90 Zeichen, in Aufzählungen bis 30 (sonst ist es ein Satz)
+    var thema = function (x, max) { var m = x.match(new RegExp("^([^:]{2," + (max || 90) + "}):\\s+([\\s\\S]+)$")); return m ? "<b>" + esc(m[1]) + "</b> " + esc(m[2]) : esc(x); };
     String(t).split(/\n+/).map(function (z) { return z.trim(); }).filter(Boolean).forEach(function (z) {
       var a = /^[•\-–]\s+/.test(z) ? "ul" : /^\d+\.\s/.test(z) ? "ol" : "";
-      if (a) { if (art !== a) zu(); art = a; liste = liste || []; liste.push("<li>" + thema(z.replace(/^([•\-–]|\d+\.)\s+/, "")) + "</li>"); return; }
+      if (a) { if (art !== a) zu(); art = a; liste = liste || []; liste.push("<li>" + thema(z.replace(/^([•\-–]|\d+\.)\s+/, ""), a === "ol" ? 90 : 30) + "</li>"); return; }
       zu(); h += /:$/.test(z) ? '<p class="tm-zwischen">' + esc(z.replace(/:$/, "")) + "</p>" : '<p class="tm-themenzeile">' + thema(z) + "</p>";
     });
     zu(); return h;
@@ -45,7 +46,7 @@
   }
   function gegliedert(t) {
     t = String(t || "").trim();
-    if (/\n/.test(t)) return zeilenText(t);
+    if (/\n/.test(t) || /^[•\-–]\s/.test(t)) return zeilenText(t);
     if (/^„/.test(t)) return "<p>" + esc(t) + "</p>";   /* wörtliches Zitat (z. B. Einstieg) bleibt ein Absatz */
     var schritte = t.split(/\s*(?:^|\s)(?=\d\.\s)/).filter(function (x) { return /^\d\.\s/.test(x); });
     if (schritte.length >= 2) return '<ol class="tm-schritte">' + schritte.map(function (x) { var m = x.replace(/^\d\.\s*/, "").match(/^([^:(]{2,60}(?:\([^)]*\))?):\s*([\s\S]*)$/);
