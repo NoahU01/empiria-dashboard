@@ -142,7 +142,7 @@
    "eltern": null,
    "kurz": "Eingang in vier Varianten, ältere Entwürfe",
    "pos": 12,
-   "im_diagramm": false
+   "im_diagramm": true
   },
   {
    "datei": "eingang-liste.html",
@@ -151,7 +151,7 @@
    "eltern": "dashboard-2-0.html",
    "kurz": "Liste links, Detail rechts",
    "pos": 13,
-   "im_diagramm": false
+   "im_diagramm": true
   },
   {
    "datei": "eingang-fokus.html",
@@ -160,7 +160,7 @@
    "eltern": "dashboard-2-0.html",
    "kurz": "Eine Sache nach der anderen",
    "pos": 14,
-   "im_diagramm": false
+   "im_diagramm": true
   },
   {
    "datei": "eingang-plan.html",
@@ -169,7 +169,7 @@
    "eltern": "dashboard-2-0.html",
    "kurz": "Spalten nach Zeit",
    "pos": 15,
-   "im_diagramm": false
+   "im_diagramm": true
   },
   {
    "datei": "eingang-klar.html",
@@ -178,7 +178,7 @@
    "eltern": "dashboard-2-0.html",
    "kurz": "Stil sofortsichtbar Story 7",
    "pos": 16,
-   "im_diagramm": false
+   "im_diagramm": true
   },
   {
    "datei": "aufraeumen.html",
@@ -187,7 +187,7 @@
    "eltern": "dashboard-2-0.html",
    "kurz": "Vorschlag zu den alten Steuerungs-Karten",
    "pos": 17,
-   "im_diagramm": false
+   "im_diagramm": true
   },
   {
    "datei": "d2-tagesblatt.html",
@@ -196,7 +196,7 @@
    "eltern": "dashboard-2-0.html",
    "kurz": "Eine Spalte, von oben nach unten",
    "pos": 18,
-   "im_diagramm": false
+   "im_diagramm": true
   },
   {
    "datei": "d2-lagezentrum.html",
@@ -205,7 +205,7 @@
    "eltern": "dashboard-2-0.html",
    "kurz": "Briefing und Projektlage auf einen Blick",
    "pos": 19,
-   "im_diagramm": false
+   "im_diagramm": true
   },
   {
    "datei": "d2-projektraum.html",
@@ -214,7 +214,7 @@
    "eltern": "dashboard-2-0.html",
    "kurz": "Arbeiten im Projekt, Seitenleiste mit allen Projekten",
    "pos": 20,
-   "im_diagramm": false
+   "im_diagramm": true
   },
   {
    "datei": "d2-widgets.html",
@@ -223,7 +223,7 @@
    "eltern": "dashboard-2-0.html",
    "kurz": "Kacheln im Apple-Stil, 14 Tage, Suche",
    "pos": 21,
-   "im_diagramm": false
+   "im_diagramm": true
   },
   {
    "datei": "d2-zeitachse.html",
@@ -232,7 +232,7 @@
    "eltern": "dashboard-2-0.html",
    "kurz": "Alle Projekte auf einer Zeitleiste",
    "pos": 22,
-   "im_diagramm": false
+   "im_diagramm": true
   },
   {
    "datei": "cockpit.html",
@@ -298,5 +298,5 @@
    "pos": 999
   }
  ],
- "stand": "18.11.2026, 06:30 Uhr"
+ "stand": "18.11.2026, 07:10 Uhr"
 }
