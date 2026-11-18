@@ -375,7 +375,7 @@
           (e.begruendung ? '<details class="lg-warum"><summary>Warum jetzt</summary><p>' + esc(e.begruendung) + "</p></details>" : "") +
           '<div class="e-knoepfe"><button class="e-k e-k-voll" data-a="ja">' + esc(e.extra.knopf || "Passt, umsetzen") + '</button><button class="e-k" data-a="text" data-modus="anders">Anders</button></div>' +
           '<form class="e-text" hidden><textarea rows="3" placeholder="Was soll ich stattdessen tun?"></textarea><button class="e-k e-k-voll" type="submit">Senden</button></form><p class="e-ok" hidden></p></article>';
-      }).join("") : '<p class="e-leer">Alle Empfehlungen sind entschieden.</p>') + "</div>" +
+      }).join("") : '<p class="e-leer">Alle Empfehlungen sind entschieden.</p>') + nachschubHtml() + "</div>" +
       '<aside class="lg-rechts"><div class="lg-kasten"><h2>Wartet auf dich</h2>' + (wartet.length ? '<ul class="lg-wartet">' + wartet.map(function (w) {
         return '<li><i class="k7-f-' + w[2] + '"></i><b>' + w[1] + "</b> " + w[0] + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Nichts.</p>') +
       '<a class="e-k e-k-voll lg-zum-eingang" href="/strategie/eingang-klar.html">Zum Eingang</a></div>' +
@@ -388,7 +388,32 @@
           (s.naechster_schritt ? '<p class="lg-naechst">Nächster Schritt: ' + esc(s.naechster_schritt) + (s.bei ? " · " + esc(s.bei) : "") + (s.faellig ? " · " + (s.faellig < HEUTE ? '<span class="e-spaet">seit ' + datum(s.faellig) + "</span>" : "bis " + datum(s.faellig)) : "") + "</p>" : "") + "</div></a></li>";
       }).join("") + "</ul>" : '<p class="e-leer">Noch keine Projektstände.</p>') + "</div>" +
       "</div></section></div>";
-    if (!verdrahtet) { verdrahtet = true; verdrahten(el, function () { lage(); }); }
+    if (!verdrahtet) { verdrahtet = true; verdrahten(el, function () { lage(); }); nachschubVerdrahten(); }
+  }
+  /* „Nächste Empfehlungen“ (Daniel, 18.11.2026): Wenn ich Zeit habe, mit dem Stabschef Themen abzuarbeiten, hole ich mir weitere
+     Empfehlungen. Der Knopf legt einen Anstoß an; der Mac sieht jede Minute nach und lässt den Stabschef drei neue schreiben. */
+  var NS = null;   // null = bereit, sonst Zeitpunkt des Anstoßes
+  function nachschubHtml() {
+    return '<div class="lg-nachschub">' + (NS ? '<p class="lg-ns-laeuft"><span class="lg-ns-punkt"></span>Der Stabschef schreibt drei weitere Empfehlungen. Das dauert etwa drei Minuten, die Seite aktualisiert sich selbst.</p>'
+      : '<button type="button" class="e-k" data-nachschub>Nächste Empfehlungen holen</button><span class="lg-ns-hinweis">Drei weitere, die sich von den heutigen unterscheiden</span>') + "</div>";
+  }
+  function nachschubPruefen() {
+    db.from("anstoesse").select("id, status, angelegt_am").eq("art", "empfehlungen").in("status", ["offen", "läuft"]).order("id", { ascending: false }).limit(1).then(function (r) {
+      var offen = (r.data || [])[0];
+      if (offen) { if (!NS) { NS = offen.angelegt_am; lage(); } setTimeout(nachschubPruefen, 15000); }
+      else if (NS) { NS = null; lageLaden(); toast("Neue Empfehlungen sind da."); }
+    });
+  }
+  function nachschubVerdrahten() {
+    el.addEventListener("click", function (ev) {
+      var b = ev.target.closest("[data-nachschub]"); if (!b || NS) return;
+      b.disabled = true;
+      db.from("anstoesse").insert({ art: "empfehlungen", quelle: "lage" }).then(function (r) {
+        if (r && r.error) { b.disabled = false; toast("Konnte den Stabschef nicht anstoßen: " + r.error.message); return; }
+        NS = new Date().toISOString(); lage(); setTimeout(nachschubPruefen, 15000);
+      });
+    });
+    nachschubPruefen();
   }
 
 
