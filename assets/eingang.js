@@ -608,7 +608,8 @@
         db.from("projekt_ereignisse").select("id, aktivitaet_extern").in("aktivitaet_extern", schl).then(function (re) {
           var ids = {}; (re.data || []).forEach(function (e) { if (e.aktivitaet_extern) ids[e.id] = e.aktivitaet_extern.slice(9); });
           var eids = Object.keys(ids).map(Number); if (!eids.length) return;
-          db.from("projekt_punkte").select("ereignis_id, art, text, angelegt_am").in("ereignis_id", eids).order("angelegt_am").then(function (rp) {
+          db.from("projekt_punkte").select("id, ereignis_id, art, text, angelegt_am").in("ereignis_id", eids).order("angelegt_am").order("id").then(function (rp) {
+            if (rp && rp.data) rp.data.sort(function (a, b) { return String(a.angelegt_am).localeCompare(String(b.angelegt_am)) || a.id - b.id; });   // gleiche Uhrzeit: Reihenfolge des Anlegens
             (rp.data || []).forEach(function (p) { var g = ids[p.ereignis_id]; (TM.punkte[g] = TM.punkte[g] || []).push(p); });
             if (TM.wahl) termine();
           });
