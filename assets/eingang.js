@@ -16,19 +16,19 @@
   function uhr(ts) { return ts ? new Date(ts).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Berlin" }) : ""; }
   function absaetze(t) { return String(t || "").split(/\n+/).filter(Boolean).map(function (z) { return "<p>" + esc(z) + "</p>"; }).join(""); }
   var TYP = {
-    impuls: ["Empfehlung", "cl"], abnahme: ["Abnahme", "cl"], rueckfrage: ["Rückfrage", "cl"], freigabe: ["Freigabe", "or"], termin: ["Termin", "bl"],
+    impuls: ["Empfehlung", "cl"], nachbereitung: ["Wie lief es?", "bl"], abnahme: ["Abnahme", "cl"], rueckfrage: ["Rückfrage", "cl"], freigabe: ["Freigabe", "or"], termin: ["Termin", "bl"],
     aufgabe: ["Aufgabe", "sw"], entscheidung: ["Entscheiden", "gr"], ansehen: ["Ansehen", "gr"], info: ["Info", "gr"], wartet: ["Wartet", "gy"]
   };
   var GRUPPEN = [["heute", "Heute"], ["woche", "Diese Woche"], ["spaeter", "Später"], ["wartet", "Wartet auf andere"]];
   function gruppeVon(e) {
     if (e.typ === "wartet") return "wartet";
-    if (e.typ === "impuls" || e.typ === "abnahme" || e.typ === "rueckfrage" || e.typ === "termin") return "heute";
+    if (e.typ === "impuls" || e.typ === "abnahme" || e.typ === "rueckfrage" || e.typ === "termin" || e.typ === "nachbereitung") return "heute";
     if (e.frist && e.frist <= HEUTE) return "heute";
     if (e.typ === "freigabe" && e.frist && e.frist <= plus(2)) return "heute";
     if (e.frist && e.frist <= plus(7)) return "woche";
     return "spaeter";
   }
-  function rang(e) { var o = { impuls: -1, abnahme: 0, rueckfrage: 0, freigabe: 1, aufgabe: 2, termin: 3, entscheidung: 4, ansehen: 5, info: 6, wartet: 7 }; return o[e.typ]; }
+  function rang(e) { var o = { impuls: -1, abnahme: 0, rueckfrage: 0, nachbereitung: 1, freigabe: 1, aufgabe: 2, termin: 3, entscheidung: 4, ansehen: 5, info: 6, wartet: 7 }; return o[e.typ]; }
   function sortieren(a, b) {
     if (a.typ === "termin" && b.typ === "termin") return String(a.angelegt).localeCompare(String(b.angelegt));
     return rang(a) - rang(b) || String(a.frist || "9").localeCompare(String(b.frist || "9")) || String(b.angelegt).localeCompare(String(a.angelegt));
@@ -73,6 +73,10 @@
       inhalt = '<div class="e-block e-vorschlag"><h3>Empfehlung von Claude als Stabschef</h3>' + absaetze(e.kern) + "</div>" +
         (x.knopf ? '<p class="e-klein">Mit „' + esc(x.knopf) + '“ setzt Claude die Empfehlung um, als Ticket in der Sofort-Spur.</p>' : "");
       knoepfe = '<button class="e-k e-k-voll" data-a="ja">' + esc(x.knopf || "Passt, umsetzen") + '</button><button class="e-k" data-a="text" data-modus="anders">Anders</button>';
+    } else if (e.typ === "nachbereitung") {
+      inhalt = '<div class="e-block"><h3>Termin</h3><p>' + datum(e.frist) + ", " + uhr(x.start) + " bis " + uhr(x.ende) + (e.person ? " · mit " + esc(e.person) : "") + "</p></div>" +
+        '<div class="e-block e-vorschlag"><h3>Wie lief es?</h3><p>Diktiere kurz, was besprochen und entschieden wurde und wer was bis wann macht. Claude legt daraus Protokollpunkte und Aufgaben im Projekt an.</p></div>';
+      knoepfe = '<button class="e-k e-k-voll" data-a="text" data-modus="protokoll">Protokoll diktieren</button><button class="e-k" data-a="nichts">Nichts festzuhalten</button>';
     } else if (e.typ === "abnahme") {
       inhalt = '<div class="e-block"><h3>Ergebnis</h3>' + absaetze(x.ergebnis || e.kern) + "</div>" +
         (x.ablage ? '<div class="e-block e-ablage"><h3>Ablage</h3><p>' + esc(x.ablage) + "</p></div>" : "") +
@@ -121,6 +125,13 @@
       ticket_grenzen: "Mails nur als Entwurf, pushen nur auf Daniels Branches und ins Dashboard, kein Löschen, nichts, was Geld kostet."
     });
   }
+  function protokollTicket(t, pid, txt) {
+    var nach = new Date(t.ende).getTime() < Date.now();
+    return ticket({ titel: t.betreff, quelle: "termin", qid: t.id, projekt_id: pid || null },
+      (nach ? "Protokoll" : "Input") + " von Daniel zum Termin „" + t.betreff + "“ am " + datum(iso2(t.start)) + " " + uhr(t.start) + ":\n\n" + txt +
+      "\n\ngraph_id: " + (t.graph_id || "") + "\nprojekt_id: " + (pid || "unbekannt") + "\ntermin_id: " + t.id,
+      (nach ? "Protokoll: " : "Input: ") + t.betreff);
+  }
   function handeln(e, a, txt) {
     var heute = new Date().toLocaleDateString("de-DE"), q;
     if (e.quelle === "ticket" && a === "passt")
@@ -138,6 +149,10 @@
       q = ticket(e, a === "ja" ? "Daniel sagt ja zur Empfehlung „" + e.titel + "“ (" + (e.extra.knopf || "umsetzen") + "). Setze sie um. Inhalt: " + (e.kern || "") : "Daniel zur Empfehlung „" + e.titel + "“: " + txt,
         (a === "ja" ? (e.extra.knopf || "Umsetzen") + ": " : "Anders: ") + (a === "ja" ? e.titel : txt)).then(function (r) {
         return r.error ? r : db.from("briefing").update({ entscheidung: a === "ja" ? "ja" : "anders", entscheidung_text: txt || null, entschieden_am: jetzt() }).eq("id", e.qid); });
+    else if (e.quelle === "nachbereitung" && a === "text")
+      q = protokollTicket({ betreff: e.titel, start: e.extra.start, ende: e.extra.ende, graph_id: e.extra.graph_id, id: e.qid }, e.projekt_id, txt).then(function (r) {
+        return r.error ? r : db.from("termine").update({ nachbereitet: true }).eq("id", e.qid); });
+    else if (e.quelle === "nachbereitung" && a === "nichts") q = db.from("termine").update({ nachbereitet: true }).eq("id", e.qid);
     else if (a === "text" && (e.quelle === "posting" || e.quelle === "termin" || e.quelle === "aufgabe" || e.quelle === "wartet"))
       q = ticket(e, (e.quelle === "posting" ? "Posting überarbeiten: " : e.quelle === "wartet" ? "Nachhaken: " : "Hinweis von Daniel: ") + txt);
     return q;
@@ -148,6 +163,8 @@
     antwort: "Antwort gespeichert. Das Ticket läuft weiter.",
     ja: "Entschieden. Claude setzt es bei der nächsten Prüfung um.",
     anders: "Gespeichert. Claude setzt deinen Hinweis bei der nächsten Prüfung um.",
+    protokoll: "Übergeben. Claude legt Protokollpunkte und Aufgaben im Projekt an und legt dir das Ergebnis zur Abnahme vor.",
+    nichts: "Vermerkt: zu diesem Termin ist nichts festzuhalten.",
     hinweis: "Dein Hinweis ist als Ticket bei Claude (Sofort-Spur). Das Ergebnis kommt zur Abnahme in den Eingang.",
     gelesen: "Als gelesen abgelegt.", erledigt: "Erledigt.", freigeben: "Freigegeben. Das Posting erscheint wie geplant."
   };
@@ -262,7 +279,7 @@
 
   /* =============== Variante 4 · Klar (Stil sofortsichtbar Story 7: Apple-Basis, Verlauf Cyan → Violett nur als Akzent) =============== */
   function k7Etikett(e) {
-    var t = TYP[e.typ] || ["", ""], f = { impuls: "cl", abnahme: "cl", rueckfrage: "cl", freigabe: "ma", aufgabe: "tinte", termin: "cy" }[e.typ] || "grau";
+    var t = TYP[e.typ] || ["", ""], f = { impuls: "cl", abnahme: "cl", rueckfrage: "cl", freigabe: "ma", aufgabe: "tinte", termin: "cy", nachbereitung: "cy" }[e.typ] || "grau";
     return '<span class="k7-etikett k7-e-' + f + '">' + t[0] + "</span>";
   }
   function klar() {
@@ -369,16 +386,17 @@
       db.from("vorlagen").select("id, projekt_id, titel, kern, art").eq("status", "offen"),
       db.from("termine").select("start, ende, betreff, kalender, postfach, projekt_id, vorbereitung").eq("im_kalender", true).gte("start", new Date().toISOString()).order("start"),
       db.from("projekt_ereignisse").select("projekt_id, datum, art, titel").gte("datum", plus(-30)).lte("datum", plus(120)).order("datum"),
-      db.from("eingang").select("typ, frist")
+      db.from("eingang").select("typ, frist"),
+      db.from("projekt_verlauf").select("projekt_id, datum, titel, inhalt").eq("art", "arbeitsstand").order("datum", { ascending: false }).limit(200)
     ]).then(function (r) {
       E = r[6].data || [];
       var f = r.filter(function (x) { return x.error; })[0];
       if (f) { el.innerHTML = '<p class="e-hinweis">Projekte konnten nicht geladen werden: ' + esc(f.error.message) + "</p>"; return; }
-      PJ = { projekte: r[0].data || [], aufgaben: r[2].data || [], vorlagen: r[3].data || [], termine: r[4].data || [], ereignisse: r[5].data || [], status: {} };
+      PJ = { arbeitsstaende: r[7].data || [], projekte: r[0].data || [], aufgaben: r[2].data || [], vorlagen: r[3].data || [], termine: r[4].data || [], ereignisse: r[5].data || [], status: {} };
       PJ.projekte.forEach(function (p) { P[p.id] = p; });
       (r[1].data || []).forEach(function (s) { if (!PJ.status[s.projekt_id]) PJ.status[s.projekt_id] = s; });
-      projekt();
-      window.addEventListener("hashchange", projekt);
+      projektSeite();
+      window.addEventListener("hashchange", projektSeite);
     });
   }
   function wer2(a) { return a.verantwortlich === "Claude" ? "claude" : /^Daniel( |$)/.test(a.verantwortlich || "") ? "du" : "andere"; }
@@ -395,7 +413,7 @@
       '<button class="e-k" data-pa="hinweis">' + (wer2(a) === "andere" ? "Nachhaken lassen" : "Hinweis an Claude") + "</button></div>" +
       '<form class="e-text" hidden><textarea rows="3" placeholder="Was soll Claude tun?"></textarea><button class="e-k e-k-voll" type="submit">Senden</button></form><p class="e-ok" hidden></p></div></li>';
   }
-  function projekt() {
+  function projektSeite() {
     zahlImMenue();
     var m = location.hash.match(/p=(\d+)/), pid = m ? +m[1] : null, p = pid && P[pid];
     var MARKEN = ["empiria", "sofortsichtbar", "Müller&Ströbel."];
@@ -434,7 +452,13 @@
         '<div class="lg-links"><div class="pj-spalten">' + spalte("Bei dir", "tinte", offen.filter(function (a) { return wer2(a) === "du"; })) +
           spalte("Bei Claude", "cl", offen.filter(function (a) { return wer2(a) === "claude"; })) + spalte("Bei anderen", "grau", offen.filter(function (a) { return wer2(a) === "andere"; })) + "</div>" +
           (ent.length ? '<div class="lg-kasten"><h2>Offene Entscheidungen</h2><ul class="pj-einfach">' + ent.map(function (v) { return '<li><a href="/strategie/eingang-klar.html#s=vorlage:' + v.id + '">' + esc(v.titel) + "</a></li>"; }).join("") + "</ul></div>" : "") + "</div>" +
-        '<aside class="lg-rechts">' +
+        '<aside class="lg-rechts">' + (function () {
+          var as = (PJ.arbeitsstaende || []).filter(function (v) { return v.projekt_id === pid; }).slice(0, 5);
+          return '<div class="lg-kasten"><h2>Arbeitsstände</h2>' + (as.length ? '<ul class="pj-stand-liste">' + as.map(function (v) {
+            var i = v.inhalt || {};
+            return "<li><b>" + esc(v.titel) + "</b><small>" + datum(String(v.datum).slice(0, 10)) + "</small>" + (i.text ? "<p>" + esc(String(i.text).slice(0, 220)) + "</p>" : "") +
+              (i.link ? '<a class="e-link" href="' + esc(i.link) + '" target="_blank" rel="noopener">Öffnen</a>' : i.ablage ? '<p class="pj-ablage">' + esc(i.ablage) + "</p>" : "") + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Noch keine Arbeitsstände.</p>') + "</div>";
+        })() +
           '<div class="lg-kasten"><h2>Meilensteine</h2>' + (gates.length ? '<ul class="pj-zeit">' + gates.slice(0, 6).map(function (a) { return "<li><span>" + (a.faellig_am ? datum(a.faellig_am) + a.faellig_am.slice(2, 4) : "offen") + "</span>" + esc(a.titel) + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Keine hinterlegt.</p>') + "</div>" +
           '<div class="lg-kasten"><h2>Was kommt</h2>' + (ter.length || kommend.length ? '<ul class="pj-zeit">' + ter.map(function (t) { return "<li><span>" + datum(iso2(t.start)) + " " + uhr(t.start) + "</span>" + esc(t.betreff) + "</li>"; }).join("") +
             kommend.filter(function (e) { return !ter.some(function (t) { return t.betreff === e.titel; }); }).map(function (e) { return "<li><span>" + datum(String(e.datum).slice(0, 10)) + "</span>" + esc(e.titel) + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Nichts geplant.</p>') + "</div>" +
@@ -451,7 +475,7 @@
         if (b.getAttribute("data-pa") === "hinweis") { var fo = li.querySelector(".e-text"); fo.hidden = !fo.hidden; if (!fo.hidden) fo.querySelector("textarea").focus(); return; }
         b.disabled = true;
         db.from("aufgaben").update({ status: "erledigt", erledigt_am: new Date().toISOString() }).eq("id", a.id).then(function (r) {
-          ok.hidden = false; ok.textContent = r.error ? "Nicht gespeichert: " + r.error.message : "Erledigt."; if (!r.error) { a.status = "erledigt"; a.erledigt_am = new Date().toISOString(); toast("Erledigt: " + a.titel); setTimeout(projekt, 900); }
+          ok.hidden = false; ok.textContent = r.error ? "Nicht gespeichert: " + r.error.message : "Erledigt."; if (!r.error) { a.status = "erledigt"; a.erledigt_am = new Date().toISOString(); toast("Erledigt: " + a.titel); setTimeout(projektSeite, 900); }
         });
       };
     });
@@ -475,7 +499,7 @@
   function termineLaden() {
     var von = new Date(HEUTE + "T00:00:00"), bis = new Date(von.getTime() + 2 * 864e5);
     Promise.all([
-      db.from("termine").select("id, ical_uid, betreff, start, ende, kalender, postfach, ort, teilnehmer, extern, projekt_id, vorbereitung, abgesagt, ganztags").eq("im_kalender", true)
+      db.from("termine").select("id, ical_uid, graph_id, betreff, start, ende, kalender, postfach, ort, teilnehmer, extern, projekt_id, vorbereitung, abgesagt, ganztags, nachbereitet").eq("im_kalender", true)
         .gte("start", von.toISOString()).lt("start", bis.toISOString()).order("start"),
       db.from("termin_briefing").select("*").gte("gilt_fuer", HEUTE),
       db.from("projekte").select("id, name, marke").eq("status", "läuft"),
@@ -528,10 +552,13 @@
       (iso2(t.start) === HEUTE ? "heute " : "morgen ") + uhr(t.start) + "–" + uhr(t.ende) + (t.ort ? " · " + esc(t.ort) : "") + "</span></div><h2>" + esc(t.betreff) + "</h2>" +
       '<div class="e-inhalt">' + (b.zusammenfassung ? '<div class="e-block e-vorschlag"><h3>Worum es geht</h3>' + absaetze(b.zusammenfassung) + "</div>" : '<div class="e-block"><p>Für diesen Termin hat der Stabschef noch keine Zusammenfassung geschrieben.</p></div>') +
       (b.ziel ? '<div class="e-block"><h3>Was du herausholen solltest</h3>' + absaetze(b.ziel) + "</div>" : "") +
+      (liste2(b.fragen).length ? '<div class="e-block tm-fragen"><h3>' + (tmArt(t)[0] === "Termin" ? "Ziel- und Impulsfragen" : "Leitfragen für dich") + '</h3><ul>' + liste2(b.fragen).map(function (f) { return "<li>" + esc(f) + "</li>"; }).join("") + "</ul></div>" : "") +
       (punkte.length ? '<div class="e-block"><h3>Offene Punkte</h3><ul class="e-punkte">' + punkte.map(function (p) { return "<li>" + esc(p) + "</li>"; }).join("") + "</ul></div>" : "") +
       (unt.length ? '<div class="e-block e-ablage"><h3>Unterlagen</h3>' + unt.map(function (u) { return /^https?:/.test(u) ? '<p><a class="e-link" href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(u) + "</a></p>" : "<p>" + esc(u) + "</p>"; }).join("") + "</div>" : "") +
       '</div><div class="tm-tiefer" data-tiefer><p class="e-leer">Details werden geladen …</p></div>' +
-      '<div class="e-knoepfe"><button class="e-k e-k-voll" data-tm="hinweis">Vorbereitung anfordern</button>' + (t.vorbereitung === "offen" || t.vorbereitung === "laeuft" ? '<button class="e-k" data-tm="fertig">Ich bin vorbereitet</button>' : "") + "</div>" +
+      '<div class="tm-input"><h3>' + (new Date(t.ende).getTime() < Date.now() ? "Wie lief es? Protokoll" : "Dein Input zu diesem Termin") + '</h3><p>Diktieren oder einfügen. Claude legt daraus Punkte und Aufgaben im Projekt an.</p>' +
+        '<form class="tm-protokoll"><textarea rows="4" placeholder="' + (new Date(t.ende).getTime() < Date.now() ? "Was wurde besprochen, entschieden, wer macht was bis wann?" : "Was ist dir für den Termin wichtig, was willst du erreichen?") + '"></textarea><button class="e-k e-k-voll" type="submit">Übergeben</button></form></div>' +
+      '<div class="e-knoepfe"><button class="e-k" data-tm="hinweis">Vorbereitung anfordern</button>' + (t.vorbereitung === "offen" || t.vorbereitung === "laeuft" ? '<button class="e-k" data-tm="fertig">Ich bin vorbereitet</button>' : "") + "</div>" +
       '<form class="e-text" hidden><textarea rows="3" placeholder="Was soll Claude für diesen Termin vorbereiten?"></textarea><button class="e-k e-k-voll" type="submit">Senden</button></form><p class="e-ok" hidden></p></article>';
   }
   /* Eine Ebene tiefer: alles, was zu Teilnehmern und Projekt vorliegt */
@@ -580,6 +607,14 @@
         });
       };
     });
+    var pf = d.querySelector(".tm-protokoll");
+    if (pf) pf.onsubmit = function (ev) {
+      ev.preventDefault(); var txt = pf.querySelector("textarea").value.trim(); if (!txt) return; pf.querySelector("button").disabled = true;
+      protokollTicket(t, (TM.br[t.ical_uid] || {}).projekt_id || t.projekt_id, txt).then(function (r) {
+        ok.hidden = false; ok.textContent = r.error ? "Nicht gespeichert: " + r.error.message : "Übergeben. Claude legt Punkte und Aufgaben im Projekt an und legt dir das Ergebnis zur Abnahme vor.";
+        if (!r.error) { toast("Übergeben: " + t.betreff); pf.querySelector("textarea").value = ""; }
+      });
+    };
     fo.onsubmit = function (ev) {
       ev.preventDefault(); var txt = fo.querySelector("textarea").value.trim(); if (!txt) return; fo.querySelector("button").disabled = true;
       var b = TM.br[t.ical_uid] || {};

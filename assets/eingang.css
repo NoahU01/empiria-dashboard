@@ -322,3 +322,18 @@
 [data-ein="termine"] .e-ok { background: #f5f5f7; color: var(--tinte); box-shadow: inset 3px 0 0 #0b9fbd; }
 @media (max-width: 900px) { [data-ein="termine"] .e-zurueck { display: inline-flex; margin: 0 0 14px; padding: 0; border: 0; background: none; color: #8613a1; font-weight: 600; cursor: pointer; } }
 .tm-label { font-size: 12px; font-weight: 600; color: #86868b; }
+/* Ziel- und Impulsfragen (Daniel, 18.11.2026): wörtlich stellbare Fragen, ruhig als Liste */
+.tm-fragen ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.tm-fragen li { padding-left: 18px; position: relative; color: #1d1d1f; }
+.tm-fragen li::before { content: "?"; position: absolute; left: 0; top: 0; font-weight: 700; color: #8613a1; }
+/* Input / Protokoll zum Termin (Daniel, 18.11.2026) */
+.tm-input { margin-top: 20px; padding: 16px 18px; border-radius: 16px; background: #f5f5f7; box-shadow: inset 3px 0 0 #0b9fbd; }
+.tm-input h3 { margin: 0 0 4px; font-size: 12px; font-weight: 600; color: #6e6e73; }
+.tm-input p { margin: 0 0 10px; font-size: 13px; color: #6e6e73; }
+.tm-protokoll { display: grid; gap: 8px; justify-items: start; }
+.tm-protokoll textarea { width: 100%; padding: 10px 12px; border: 1px solid #e5e5ea; border-radius: 10px; font: inherit; background: #fff; resize: vertical; }
+.pj-stand-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.pj-stand-liste b { display: block; color: #1d1d1f; font-size: 14px; }
+.pj-stand-liste small { display: block; font-size: 12px; color: #86868b; }
+.pj-stand-liste p { margin: 4px 0 0; font-size: 13px; }
+.pj-ablage { color: #86868b; overflow-wrap: anywhere; }
