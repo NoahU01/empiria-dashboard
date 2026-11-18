@@ -494,7 +494,7 @@
       db.from("marken_strategie").select("*"),
       db.from("projekte").select("id, name, marke, typ, phase, naechstes_gate, gate_datum, status").eq("status", "läuft"),
       db.from("projekt_status").select("*").gte("gilt_fuer", plus(-7)).order("gilt_fuer", { ascending: false }),
-      db.from("projekt_straenge").select("id, projekt_id, eltern_id, titel, erklaerung, reihenfolge, verantwortlich"),
+      db.from("projekt_straenge").select("id, projekt_id, eltern_id, titel, erklaerung, reihenfolge, verantwortlich, projekt_ids"),
       db.from("strategie_notizen").select("*").order("angelegt_am", { ascending: false }),
       db.from("eingang").select("typ, frist")
     ]).then(function (r) {
@@ -544,18 +544,26 @@
       (st.liste.length ? '<div class="sg-stoss">' + st.liste.map(function (s, i) {
         return '<article class="lg-kasten sg-sr"><p class="sg-nr">' + (s.nr || String(i + 1).padStart(2, "0")) + (s.stand ? ' · <span class="sg-stand sg-stand-' + esc(s.stand.replace(/\s+/g, "-")) + '">' + esc(s.stand) + "</span>" : "") + '</p><h3>' + esc(s.titel) + "</h3>" +
           (s.text ? '<p class="sg-text">' + esc(s.text) + "</p>" : "") +
-          (s.straenge && s.straenge.length ? '<ul class="sg-straenge">' + s.straenge.map(function (x) { return "<li><b>" + esc(x.titel.replace(/^\d+\s*/, "")) + "</b>" + (x.erklaerung ? "<span>" + esc(x.erklaerung) + "</span>" : "") + "</li>"; }).join("") + "</ul>" : "") +
+          (s.straenge && s.straenge.length ? '<ul class="sg-straenge">' + s.straenge.map(function (x) { var ids = (x.projekt_ids || []).map(Number).filter(function (id) { return P[id]; });
+            return "<li><b>" + esc(x.titel.replace(/^\d+\s*/, "")) + "</b>" + (x.erklaerung ? "<span>" + esc(x.erklaerung) + "</span>" : "") +
+              (ids.length ? '<ul class="sg-projekte sg-strang-pr">' + ids.map(projektZeile).join("") + "</ul>" : "") + "</li>"; }).join("") + "</ul>" : "") +
           (s.projekte && s.projekte.length ? '<ul class="sg-projekte">' + s.projekte.map(projektZeile).join("") + "</ul>" : "") +
           (s.wer ? '<p class="sg-wer">' + esc(s.wer) + "</p>" : "") + "</article>";
       }).join("") + "</div>" : leer("Noch keine Stoßrichtungen.")) +
-      // Stoßrichtungen aus der Markenstrategie, wenn oben das Strategieprojekt steht – nichts davon geht verloren
-      (st.projekt ? (function () { var ms = sgStoss({ stossrichtungen: m.stossrichtungen }, true); SG.ms2 = ms; return ms.liste.length ? '<div class="sg-stoss-kopf"><h2>Arbeitsstränge und Projekte</h2><span>aus: Markenstrategie, Stand ' + (m.stand ? datum(String(m.stand).slice(0, 10)) : "") + '</span></div><div class="sg-stoss">' + ms.liste.map(function (s) {
-        return '<article class="lg-kasten sg-sr"><h3>' + esc(s.titel) + "</h3>" + (s.text ? '<p class="sg-text">' + esc(s.text) + "</p>" : "") +
-          (s.projekte && s.projekte.length ? '<ul class="sg-projekte">' + s.projekte.map(projektZeile).join("") + "</ul>" : "") + (s.wer ? '<p class="sg-wer">' + esc(s.wer) + "</p>" : "") + "</article>"; }).join("") + "</div>" : ""; })() : "") +
+      // Erste Fassung (Markenstrategie, Stand 11.10.) zum Abgleich, wenn oben das Strategieprojekt steht – je Punkt, unter welchem Strang er einsortiert ist
+      (st.projekt ? (function () { var ms = sgStoss({ stossrichtungen: m.stossrichtungen }, true); if (!ms.liste.length) return "";
+        var straenge = SG.str.filter(function (x) { return x.projekt_id === st.projekt.id && x.eltern_id; });
+        return '<details class="lg-kasten sg-alt"><summary><h2>Erste Fassung vom ' + (m.stand ? datum(String(m.stand).slice(0, 10)) : "11.10.") + ' zum Abgleich</h2><span>' + ms.liste.length + ' Punkte, eingeordnet in die Stränge oben</span></summary><ul class="sg-alt-liste">' +
+          ms.liste.map(function (s) {
+            // ausdrücklich hinterlegte Einordnung (marken_strategie.einordnung), sonst über gemeinsame Projekte
+            var fest = m.einordnung && m.einordnung[s.titel];
+            var ziel = straenge.filter(function (x) { return fest ? fest.map(Number).indexOf(Number(x.id)) >= 0 : (s.projekte || []).some(function (id) { return (x.projekt_ids || []).map(Number).indexOf(Number(id)) >= 0; }); }).map(function (x) { return x.titel.replace(/^\d+\s*/, ""); });
+            return "<li><b>" + esc(s.titel) + "</b>" + (s.wer ? ' <span class="sg-wer">· ' + esc(s.wer) + "</span>" : "") + (s.text ? "<p>" + esc(s.text) + "</p>" : "") +
+              '<p class="sg-einsortiert">' + (ziel.length ? "Einsortiert unter: " + esc(ziel.join(" · ")) : "Noch keinem Strang zugeordnet") + "</p></li>"; }).join("") + "</ul></details>"; })() : "") +
       // Laufende Projekte der Marke, die keiner Stoßrichtung zugeordnet sind
       (function () {
-        var zugeordnet = {}; [st, st.projekt ? sgStoss({ stossrichtungen: m.stossrichtungen }, true) : { liste: [] }].forEach(function (x) { x.liste.forEach(function (s) { (s.projekte || []).forEach(function (id) { zugeordnet[id] = 1; }); }); });
-        if (st.projekt) zugeordnet[st.projekt.id] = 1;
+        var zugeordnet = {}; [st].forEach(function (x) { x.liste.forEach(function (s) { (s.projekte || []).forEach(function (id) { zugeordnet[id] = 1; }); }); });
+        if (st.projekt) { zugeordnet[st.projekt.id] = 1; SG.str.forEach(function (x) { if (x.projekt_id === st.projekt.id) (x.projekt_ids || []).forEach(function (id) { zugeordnet[Number(id)] = 1; }); }); }
         var ohne = SG.pr.filter(function (p) { return p.marke === SG.marke && !zugeordnet[p.id]; }).sort(function (a, b) { return a.name.localeCompare(b.name, "de"); });
         return ohne.length ? '<div class="lg-kasten"><h2>Projekte ohne Stoßrichtung</h2><p class="sg-hinweis">Laufende Projekte von ' + esc(SG.marke) + ', die noch keiner Stoßrichtung zugeordnet sind.</p><ul class="sg-projekte sg-ohne">' + ohne.map(function (p) { return projektZeile(p.id); }).join("") + "</ul></div>" : "";
       })() +

@@ -533,9 +533,9 @@
 .sg-stand { font-weight: 600; color: #1f9d55; } .sg-stand-parallel { color: #86868b; } .sg-stand-nach-Gate-1 { color: #86868b; }
 .sg-text { font-size: 14px; color: #424245; }
 .sg-straenge { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
-.sg-straenge li { padding: 10px 12px; border-radius: 12px; background: #f5f5f7; }
-.sg-straenge b { display: block; font-size: 14px; font-weight: 600; color: var(--tinte); }
-.sg-straenge span { display: block; margin-top: 2px; font-size: 13px; line-height: 1.45; color: #6e6e73; }
+.sg-straenge > li { padding: 10px 12px; border-radius: 12px; background: #f5f5f7; }
+.sg-straenge > li > b { display: block; font-size: 14px; font-weight: 600; color: var(--tinte); }
+.sg-straenge > li > span { display: block; margin-top: 2px; font-size: 13px; line-height: 1.45; color: #6e6e73; }
 .sg-projekte { list-style: none; margin: 10px 0 0; padding: 10px 0 0; border-top: 1px solid #f0f0f2; display: grid; gap: 4px; }
 .sg-projekte a { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--tinte); font-size: 13px; }
 .sg-projekte a:hover span { text-decoration: underline; text-underline-offset: 3px; }
@@ -556,3 +556,18 @@
 .sg-ohne li { break-inside: avoid; padding: 3px 0; }
 @media (max-width: 700px) { .sg .sg-projekte.sg-ohne { columns: 1; } }
 .sg .lg-kasten ul.sg-straenge, .sg .lg-kasten ul.sg-projekte, .sg .lg-kasten ul.sg-liste { padding-left: 0; }
+/* Projekte am Strang, erste Fassung zum Abgleich */
+.sg .sg-straenge .sg-strang-pr { margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e5ea; }
+.sg-alt summary { display: flex; align-items: baseline; gap: 12px; cursor: pointer; list-style: none; }
+.sg-alt summary::-webkit-details-marker { display: none; }
+.sg-alt summary h2 { margin: 0 !important; }
+.sg-alt summary span { font-size: 12px; color: #86868b; }
+.sg-alt summary::after { content: ""; margin-left: auto; width: 8px; height: 8px; border-right: 1.5px solid #86868b; border-bottom: 1.5px solid #86868b; transform: rotate(45deg); }
+.sg-alt[open] summary::after { transform: rotate(225deg); }
+.sg .lg-kasten ul.sg-alt-liste { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 24px; }
+.sg-alt-liste li { padding: 10px 0; border-top: 1px solid #f0f0f2; font-size: 14px; }
+.sg-alt-liste p { margin: 2px 0 0 !important; color: #6e6e73; font-size: 13px; }
+.sg .sg-alt-liste .sg-einsortiert { color: #1d1d1f; font-weight: 500; }
+@media (max-width: 700px) { .sg .lg-kasten ul.sg-alt-liste { grid-template-columns: minmax(0, 1fr); } }
+.sg .sg-strang-pr li { padding: 0; background: none; }
+.sg .sg-strang-pr { gap: 4px; }
