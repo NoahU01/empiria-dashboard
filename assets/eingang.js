@@ -421,7 +421,7 @@
   var PJ = {};
   function projektLaden() {
     Promise.all([
-      db.from("projekte").select("id, name, marke, typ, phase, ziel, naechstes_gate, gate_datum").eq("status", "läuft"),
+      db.from("projekte").select("id, name, marke, typ, phase, ziel, naechstes_gate, gate_datum, organisationen(name, gruppe)").eq("status", "läuft"),
       db.from("projekt_status").select("*").gte("gilt_fuer", plus(-7)).order("gilt_fuer", { ascending: false }),
       db.from("aufgaben").select("id, projekt_id, titel, beschreibung, verantwortlich, faellig_am, ticket_stand, ticket_rueckmeldung, spalte, art, status, erledigt_am, warten_auf, hinweis")
         .or("status.eq.offen,erledigt_am.gte." + plus(-14)),
@@ -465,14 +465,22 @@
     }).join("") + "</select>";
     if (!p) {
       el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>Projekte</h1><span>' + PJ.projekte.length + ' laufend</span></div>' + waehler + "</header>" +
-        '<section class="k7-band"><div class="lg-raster">' + MARKEN.map(function (mk) {
-          var l = PJ.projekte.filter(function (x) { return x.marke === mk; }).sort(function (a, b) {
-            var sa = PJ.status[a.id], sb = PJ.status[b.id]; return ((sa ? AMPEL[sa.ampel][1] : 9) - (sb ? AMPEL[sb.ampel][1] : 9)) || a.name.localeCompare(b.name); });
-          return '<div class="lg-projekte"><h2>' + esc(mk) + '</h2><ul class="lg-pliste">' + l.map(function (x) {
-            var s = PJ.status[x.id] || {};
-            return '<li><a href="#p=' + x.id + '"><i class="lg-a-' + (s.ampel || "ruht") + '"></i><div class="lg-p-text"><b>' + esc(x.name) + "</b><span>" + (x.typ === "Kunde" ? "Kunde" : "intern") + "</span><p>" + esc(s.satz || "Noch kein Stand.") + "</p>" +
-              (s.naechster_schritt ? '<p class="lg-naechst">Nächster Schritt: ' + esc(s.naechster_schritt) + (s.bei ? " · " + esc(s.bei) : "") + "</p>" : "") + "</div></a></li>";
-          }).join("") + "</ul></div>";
+        '<section class="k7-band"><div class="pj-uebersicht">' +
+        '<div class="lg-legende"><span><i class="lg-a-kritisch"></i>kritisch</span><span><i class="lg-a-achtung"></i>Achtung</span><span><i class="lg-a-im_plan"></i>im Plan</span><span><i class="lg-a-ruht"></i>ruht</span></div>' +
+        MARKEN.map(function (mk) {
+          // Je Marke: Kundenprojekte und interne Projekte nebeneinander, alphabetisch zum Finden (Daniel, 18.11.2026)
+          var l = PJ.projekte.filter(function (x) { return x.marke === mk; }).sort(function (a, b) { return a.name.localeCompare(b.name, "de"); });
+          var gruppe = function (titel, liste, mitKunde) {
+            return '<div class="pj-gruppe"><h3>' + titel + " <span>" + liste.length + "</span></h3>" + (liste.length ? '<ul class="pj-ueb">' + liste.map(function (x) {
+              var s = PJ.status[x.id] || {}, org = x.organisationen ? (x.organisationen.gruppe || x.organisationen.name) : "";
+              return '<li><a href="#p=' + x.id + '"><i class="lg-a-' + (s.ampel || "ruht") + '" title="' + (s.ampel ? AMPEL[s.ampel][0] : "kein Stand") + '"></i><div><p class="pj-ueb-kopf"><b>' + esc(x.name) + "</b>" +
+                (mitKunde && org ? "<span>" + esc(org) + "</span>" : "") + "</p>" + (s.satz ? '<p class="pj-ueb-satz">' + esc(s.satz) + "</p>" : "") +
+                (s.naechster_schritt ? '<p class="pj-ueb-naechst">Nächster Schritt: ' + esc(s.naechster_schritt) + (s.bei ? " · " + esc(s.bei) : "") +
+                  (s.faellig ? " · " + (s.faellig < HEUTE ? '<span class="e-spaet">seit ' + datum(s.faellig) + "</span>" : "bis " + datum(s.faellig)) : "") + "</p>" : "") + "</div></a></li>";
+            }).join("") + "</ul>" : '<p class="e-leer">Keine.</p>') + "</div>";
+          };
+          return '<section class="pj-marke"><h2>' + esc(mk) + '</h2><div class="pj-zwei">' + gruppe("Kundenprojekte", l.filter(function (x) { return x.typ === "Kunde"; }), true) +
+            gruppe("Interne Projekte", l.filter(function (x) { return x.typ !== "Kunde"; }), false) + "</div></section>";
         }).join("") + "</div></section></div>";
     } else {
       var s = PJ.status[pid] || null;
