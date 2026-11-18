@@ -311,8 +311,10 @@
       }).join("") + "</nav>" +
       '<p class="k7-legende"><i class="k7-f-cl"></i>Claude braucht dich<i class="k7-f-ma"></i>geht nach außen<i class="k7-f-tinte"></i>deine Aufgabe<i class="k7-f-cy"></i>Termin<i class="k7-f-grau"></i>ansehen oder warten<i class="k7-f-rot"></i>überfällig</p></header>' +
       '<section class="k7-band"><div class="k7-raster' + (auswahl ? " hat-detail" : "") + '"><ul class="k7-liste">' + (l.length ? l.map(function (e) {
+        // Zeile wie Eingang 1 (Daniel, 18.11.2026: links mehr auf einen Blick): Etikett · Titel und Projekt · Frist rechts
         return '<li data-s="' + esc(schluessel(e)) + '"' + (e === auswahl ? ' aria-current="true"' : "") + ">" + k7Etikett(e) +
-          '<b>' + esc(e.titel) + "</b><small>" + esc(projekt(e)) + (frist(e) ? '<span class="k7-frist">' + frist(e) + "</span>" : "") + "</small></li>";
+          '<div class="k7-z"><b>' + esc(e.titel) + "</b>" + (projekt(e) ? "<small>" + esc(projekt(e)) + "</small>" : "") + "</div>" +
+          (frist(e) ? '<span class="k7-frist">' + frist(e) + "</span>" : "") + "</li>";
       }).join("") : '<li class="e-leer">Nichts in dieser Gruppe.</li>') + "</ul>" +
       '<div class="k7-detail">' + (auswahl ? '<button type="button" class="e-zurueck" data-zurueck>‹ Eingang</button>' + detail(auswahl) : '<p class="e-leer">Wähle links einen Eintrag.</p>') + "</div></div></section></div>";
     reiterVerdrahten(klar);
