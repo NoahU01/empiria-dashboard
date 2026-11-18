@@ -2410,3 +2410,13 @@ a.pr-unterlage::after { content: " · PDF"; font-weight: 400; color: var(--grey-
 .pr-n-termine .pr-n-vorb li { display: list-item; grid-template-columns: none; font-size: var(--fs-s); line-height: 1.5; margin: 0 0 4px; }
 .pr-n-termine .pr-n-vorb li.vb-kopf { list-style: none; margin: 14px 0 4px -1.05em; font-size: var(--fs-s); }
 .pr-n-termine .pr-n-vorb li.vb-kopf:first-child { margin-top: 0; }
+
+/* Kontakt: Diskussionsstand (18.11.2026) */
+.kt3-dstand .kt3-kurz { font-size: var(--fs-m); line-height: 1.5; margin: 0 0 6px; }
+.kt3-themen li > div { min-width: 0; }
+.kt3-themen li > div b { display: block; font-weight: 600; margin-bottom: 2px; }
+.kt3-themen li > div p { margin: 0; font-weight: 300; line-height: 1.5; }
+.kt3-themen li > div p.kt3-offen { margin-top: 3px; color: var(--grey-50); font-size: var(--fs-s); }
+.kt3-quelle { margin-top: 10px !important; font-size: var(--fs-xs); }
+.kt3-v li[hidden] { display: none; }
+@media (max-width: 600px) { .kt3-v.kt3-themen li { grid-template-columns: 1fr; } .kt3-zeile a { overflow-wrap: anywhere; } }

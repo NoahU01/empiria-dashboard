@@ -349,11 +349,20 @@
         "kontakt_merkmale(merkmale(kategorie, wert)), kampagnen_teilnehmer(status, zuordnungsgrund, kampagnen(name, zeitraum)), " +
         "aktivitaeten(datum, kanal, richtung, anlass, inhalt, ergebnis, teilnehmer, ort, link)").eq("id", id).single(),
       db.from("aufgaben").select("id, titel, faellig_am").eq("kontakt_id", id).eq("status", "offen").order("angelegt_am"),
-      db.from("projekt_beteiligte").select("rolle, projekte(id, name, phase, status)").eq("kontakt_id", id)
+      db.from("projekt_beteiligte").select("rolle, projekte(id, name, phase, status)").eq("kontakt_id", id),
+      db.from("kontakt_stand").select("kurz, themen, erstellt_am").eq("kontakt_id", id)
     ]).then(function (r) {
       if (r[0].error) { wurzel.innerHTML = '<p class="kb-leer">Fehler: ' + esc(r[0].error.message) + "</p>"; return; }
-      wurzel.innerHTML = personHtml(r[0].data, r[1].data || [], (r[2].data || []).filter(function (b) { return b.projekte; }));
-      neuTodoVerdrahten(); todoVerdrahten();
+      var k = r[0].data, voll = [k.vorname, k.nachname].filter(Boolean).join(" ");
+      // Termine aus dem Kalender (Daniel, 18.11.2026): auch geplante, Teilnehmer per Name
+      db.from("termine").select("start, betreff, teilnehmer, abgesagt").contains("teilnehmer", [voll])
+        .gte("start", new Date(Date.now() - 365 * 864e5).toISOString()).lte("start", new Date(Date.now() + 60 * 864e5).toISOString())
+        .then(function (t) {
+          var termine = (t.data || []).filter(function (x) { return !x.abgesagt && (x.teilnehmer || []).indexOf(voll) >= 0; })
+            .map(function (x) { return { datum: x.start, kanal: "Termin", anlass: x.betreff }; });
+          wurzel.innerHTML = personHtml(k, r[1].data || [], (r[2].data || []).filter(function (b) { return b.projekte; }), (r[3].data || [])[0], termine);
+          neuTodoVerdrahten(); todoVerdrahten();
+        });
     });
   }
 
@@ -364,7 +373,7 @@
       return '<li><a href="/strategie/projekte.html#p=' + p.id + '"><b>' + esc(p.name) + "</b></a>" + '<span class="kt3-leise">' + esc([b.rolle, p.phase, p.status].filter(Boolean).join(" · ")) + "</span></li>";
     }).join("") + "</ul></section>";
   }
-  function personHtml(k, todos, projekte) {
+  function personHtml(k, todos, projekte, stand, termine) {
     var o = k.organisationen, h = "";
     kopfSetzen([k.titel, k.vorname, k.nachname].filter(Boolean).join(" "), "#" + zustand.tab);
     var ART = { direkt: "direkter Kontakt", LinkedIn: "nur LinkedIn", "Sales Navigator": "aus Sales Navigator", recherchiert: "recherchiert" };
@@ -372,14 +381,19 @@
       '<p class="kt-info-tags">' + [ART[k.kontaktart], k.ansprache && "per " + k.ansprache, k.prioritaet && "Priorität " + k.prioritaet,
         (k.kontakt_marken || []).map(function (m) { return m.marke; }).join(", ")].filter(Boolean).map(esc).join(" · ") +
       (k.kontaktstopp ? ' · <b class="kt-stopp">Kontaktstopp</b>' : "") + "</p></div>";
-    var naechst = k.naechster_kontakt ? "Termin am " + datum(k.naechster_kontakt) : faellig(k) ? "<b>jetzt wieder dran</b>" :
+    var akt = einmal((k.aktivitaeten || []).concat(termine || []).sort(function (a, b) { return new Date(b.datum) - new Date(a.datum); }));
+    var kommt = akt.filter(function (a) { return istTermin(a) && new Date(a.datum) > Date.now(); }).pop();
+    var naechst = kommt ? "Termin am " + datum(kommt.datum) + " · " + esc(kommt.anlass || "") : k.naechster_kontakt ? "Termin am " + datum(k.naechster_kontakt) : faellig(k) ? "<b>jetzt wieder dran</b>" :
       k.rhythmus_tage && k.letzter_kontakt ? datum(new Date(new Date(k.letzter_kontakt).getTime() + k.rhythmus_tage * 864e5)) : "–";
     h += '<p class="kt3-stand"><span>Letzter Kontakt</span>' + zuletzt(k.letzter_kontakt) + '<span>Nächster Kontakt</span>' + naechst +
       (k.beziehungsstatus ? "<span>Beziehung</span>" + esc(k.beziehungsstatus) : "") + "</p>";
     var klaer = [k.klaeren, o && o.klaeren && "Firma: " + o.klaeren].filter(Boolean);
     if (klaer.length) h += '<p class="kt3-klaer">' + klaer.map(esc).join(" · ") + "</p>";
 
-    h += '<div class="kt3-raster">' + projekteBox(projekte || []) + kontaktdatenBox(k.kontaktwege, k.anschriften, k.linkedin_url);
+    h += '<div class="kt3-raster">' + standBox(stand) + projekteBox(projekte || []);
+    h += box("Termine", liste(akt.filter(istTermin)), "Keine Termine erfasst.");
+    h += box("Kommunikation", liste(akt.filter(function (a) { return !istTermin(a) && !RAUSCHEN.test(a.anlass || ""); })), "Noch nichts erfasst – einfach diktieren, z. B. „Habe heute mit " + esc(k.vorname || name(k)) + " telefoniert …“.");
+    h += kontaktdatenBox(k.kontaktwege, k.anschriften, k.linkedin_url);
     var m = {}; (k.kontakt_merkmale || []).forEach(function (x) { if (x.merkmale) (m[x.merkmale.kategorie] = m[x.merkmale.kategorie] || []).push(x.merkmale.wert); });
     var kamp = (k.kampagnen_teilnehmer || []).filter(function (t) { return t.status === "freigegeben" || t.status === "vorgeschlagen"; });
     h += box("Ansatzpunkte",
@@ -391,15 +405,25 @@
     h += box("Nächste Schritte", todos.length ? '<ul class="kt3-todo">' + todos.map(function (a) {
         return '<li data-a="' + a.id + '"><button type="button" class="st-haken" aria-label="Erledigt"></button><span>' + esc(a.titel) + "</span></li>"; }).join("") + "</ul>" : "",
       "Nichts offen.");
-    var akt = einmal((k.aktivitaeten || []).slice().sort(function (a, b) { return new Date(b.datum) - new Date(a.datum); }));
-    h += box("Termine", liste(akt.filter(istTermin)), "Keine Termine erfasst.");
-    h += box("Kommunikation", liste(akt.filter(function (a) { return !istTermin(a); })), "Noch nichts erfasst – einfach diktieren, z. B. „Habe heute mit " + esc(k.vorname || name(k)) + " telefoniert …“.");
     return h + "</div>";
   }
 
+  // Diskussionsstand (Daniel, 18.11.2026): ein Satz und bis zu drei Themen, täglich vom Stabschef aus Mails, Terminen und Projekten
+  function standBox(s) {
+    if (!s || !s.kurz) return "";
+    var th = (s.themen || []).map(function (x) {
+      return '<li><span class="kt3-d">' + (x.datum ? datum(x.datum) : "") + '</span><div><b>' + esc(x.thema) + "</b><p>" + esc(x.stand) + "</p>" +
+        (x.offen ? '<p class="kt3-offen">' + esc(x.offen) + "</p>" : "") + "</div></li>";
+    }).join("");
+    return '<section class="kt3-box kt3-breit kt3-dstand"><h3>Diskussionsstand</h3><p class="kt3-kurz">' + esc(s.kurz) + "</p>" +
+      (th ? '<ul class="kt3-v kt3-themen">' + th + "</ul>" : "") + '<p class="kt3-leise kt3-quelle">Stand ' + datum(s.erstellt_am) + " · aus Mails, Terminen und Projekten</p></section>";
+  }
+
   /* ---------- Bausteine ---------- */
+  // Abwesenheitsnotizen und Kalenderantworten sind kein Austausch (Daniel, 18.11.2026: „sehr kompakt“)
+  var RAUSCHEN = /^(automatische antwort|abwesenheit|out of office|automatic reply|angenommen|abgelehnt|mit vorbehalt|akzeptiert|accepted|declined|tentative)\b/i;
   function istTermin(a) { return a.kanal === "Termin" || a.kanal === "Treffen"; }
-  function einmal(akt) { var s = {}; return akt.filter(function (a) { var k = a.datum + "|" + a.anlass; if (s[k]) return false; s[k] = 1; return true; }); }
+  function einmal(akt) { var s = {}; return akt.filter(function (a) { var k = String(a.datum).slice(0, 10) + "|" + (a.anlass || "").toLowerCase(); if (s[k]) return false; s[k] = 1; return true; }); }
   var KURZ = 5;
   function klappKnopf(n) { return n > KURZ ? '<button type="button" class="kt3-klapp" data-klapp-knopf aria-expanded="false">Alle zeigen</button>' : ""; }
   // Auf- und Zuklappen: alles hinter den ersten KURZ Einträgen
