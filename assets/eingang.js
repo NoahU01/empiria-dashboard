@@ -507,9 +507,9 @@
       strategieSeite();
     });
   }
-  function sgStoss(m) {
+  function sgStoss(m, nurMarkenstrategie) {
     // Stoßrichtungen: aus dem Strategieprojekt der Marke (Stoßrichtung → Stränge), sonst aus marken_strategie
-    var sp = SG.pr.filter(function (p) { return p.marke === SG.marke && p.typ === "strategie"; })[0];
+    var sp = nurMarkenstrategie ? null : SG.pr.filter(function (p) { return p.marke === SG.marke && p.typ === "strategie"; })[0];
     if (sp) {
       var alle = SG.str.filter(function (s) { return s.projekt_id === sp.id; }), ober = alle.filter(function (s) { return !s.eltern_id; }).sort(function (a, b) { return a.reihenfolge - b.reihenfolge; });
       return { quelle: "Strategieprojekt „" + sp.name + "“", projekt: sp, liste: ober.map(function (o) {
@@ -537,7 +537,7 @@
         (m.geschaeftsmodell ? '<h3 class="sg-unter">Geschäftsmodell</h3>' + themenText(m.geschaeftsmodell, false) : "") + "</div></div>" +
       // 3 Zwischenziel
       '<div class="lg-kasten sg-ziel"><h2>Nächstes Zwischenziel</h2>' + (m.ziel_kurz ? '<p class="sg-ziel-kurz">' + esc(m.ziel_kurz) + "</p>" : "") +
-        (m.zwischenziel ? themenText(m.zwischenziel, false) : leer("Noch kein Zwischenziel.")) +
+        (m.zwischenziel ? themenText(m.ziel_kurz ? String(m.zwischenziel).replace(new RegExp("^" + m.ziel_kurz.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\s*:\\s*"), "") : m.zwischenziel, false) : leer("Noch kein Zwischenziel.")) +
         (ueberholt ? '<p class="sg-warn">Das Datum ist vorbei. Das Zwischenziel sollte neu gesetzt werden.</p>' : "") + "</div>" +
       // 4 Stoßrichtungen
       '<div class="sg-stoss-kopf"><h2>Stoßrichtungen</h2><span>aus: ' + esc(st.quelle) + "</span></div>" +
@@ -548,9 +548,20 @@
           (s.projekte && s.projekte.length ? '<ul class="sg-projekte">' + s.projekte.map(projektZeile).join("") + "</ul>" : "") +
           (s.wer ? '<p class="sg-wer">' + esc(s.wer) + "</p>" : "") + "</article>";
       }).join("") + "</div>" : leer("Noch keine Stoßrichtungen.")) +
+      // Stoßrichtungen aus der Markenstrategie, wenn oben das Strategieprojekt steht – nichts davon geht verloren
+      (st.projekt ? (function () { var ms = sgStoss({ stossrichtungen: m.stossrichtungen }, true); SG.ms2 = ms; return ms.liste.length ? '<div class="sg-stoss-kopf"><h2>Arbeitsstränge und Projekte</h2><span>aus: Markenstrategie, Stand ' + (m.stand ? datum(String(m.stand).slice(0, 10)) : "") + '</span></div><div class="sg-stoss">' + ms.liste.map(function (s) {
+        return '<article class="lg-kasten sg-sr"><h3>' + esc(s.titel) + "</h3>" + (s.text ? '<p class="sg-text">' + esc(s.text) + "</p>" : "") +
+          (s.projekte && s.projekte.length ? '<ul class="sg-projekte">' + s.projekte.map(projektZeile).join("") + "</ul>" : "") + (s.wer ? '<p class="sg-wer">' + esc(s.wer) + "</p>" : "") + "</article>"; }).join("") + "</div>" : ""; })() : "") +
+      // Laufende Projekte der Marke, die keiner Stoßrichtung zugeordnet sind
+      (function () {
+        var zugeordnet = {}; [st, st.projekt ? sgStoss({ stossrichtungen: m.stossrichtungen }, true) : { liste: [] }].forEach(function (x) { x.liste.forEach(function (s) { (s.projekte || []).forEach(function (id) { zugeordnet[id] = 1; }); }); });
+        if (st.projekt) zugeordnet[st.projekt.id] = 1;
+        var ohne = SG.pr.filter(function (p) { return p.marke === SG.marke && !zugeordnet[p.id]; }).sort(function (a, b) { return a.name.localeCompare(b.name, "de"); });
+        return ohne.length ? '<div class="lg-kasten"><h2>Projekte ohne Stoßrichtung</h2><p class="sg-hinweis">Laufende Projekte von ' + esc(SG.marke) + ', die noch keiner Stoßrichtung zugeordnet sind.</p><ul class="sg-projekte sg-ohne">' + ohne.map(function (p) { return projektZeile(p.id); }).join("") + "</ul></div>" : "";
+      })() +
       // 5 Überlegungen
       '<div class="lg-kasten sg-notizen"><h2>Strategische Überlegungen</h2><p class="sg-hinweis">Diktiere oder tippe, was dir zur Strategie von ' + esc(SG.marke) + ' durch den Kopf geht. Claude legt es mit Datum ab und arbeitet es oben ein: Wofür wir stehen, Zielbild, Zwischenziel oder Stoßrichtungen.</p>' +
-        '<form class="sg-form"><textarea rows="4" placeholder="Zum Beispiel: Bei sofortsichtbar soll das Strategietool vor den Vertriebsstrecken kommen, weil …"></textarea><button class="e-k e-k-voll" type="submit">Hinterlegen</button></form>' +
+        '<form class="sg-form"><textarea rows="4" placeholder="Überlegung diktieren oder tippen …"></textarea><button class="e-k e-k-voll" type="submit">Hinterlegen</button></form>' +
         (notizen.length ? '<ul class="sg-liste">' + notizen.map(function (n) {
           return '<li><p class="sg-n-kopf">' + datum(String(n.angelegt_am).slice(0, 10)) + " · " + (n.eingearbeitet_am ? '<span class="sg-ok">eingearbeitet</span>' : '<span class="sg-offen">wird eingearbeitet</span>') + "</p><p>" + esc(n.text) + "</p>" +
             (n.ergebnis ? '<p class="sg-ergebnis">' + esc(n.ergebnis) + "</p>" : "") + "</li>"; }).join("") + "</ul>" : "") + "</div>" +
