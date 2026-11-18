@@ -9,8 +9,10 @@
 @font-face { font-family: "Inter"; font-weight: 600; font-display: swap; src: url("/assets/fonts/inter-latin-ext-600-normal.woff2") format("woff2"); unicode-range: U+0100-02AF, U+1E00-1EFF; }
 body.d3 { background: #fff; }
 body.d3 .site-header { background: rgba(255,255,255,.94); border-bottom: 1px solid #e5e5ea; }
-body.d3 .site-header .nav { min-height: 56px; padding-top: 0; padding-bottom: 0; max-width: 1320px; }
-body.d3 .brand img { height: 20px; width: auto; }
+body.d3 .site-header .nav { min-height: 56px; padding-top: 0; padding-bottom: 0;
+  /* bündig mit dem Inhalt (Daniel, 18.11.2026): gleiche Breite und gleicher Rand wie Seitenkopf und Kästen */
+  max-width: calc(1240px + 2 * clamp(16px, 3vw, 40px)); padding-inline: clamp(16px, 3vw, 40px); }
+body.d3 .brand img { height: 24px; width: auto; margin-left: -5px; }   /* optisch bündig: die Logodatei hat links einen Innenrand */
 body.d3 .hn { gap: 2px; }
 body.d3 .hn a { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 999px;
   font: 500 14px/1 "Inter", system-ui, -apple-system, sans-serif; color: #424245; }

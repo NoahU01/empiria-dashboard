@@ -2390,7 +2390,7 @@ html[data-farbe="dunkel"] .k7-etikett.k7-e-tinte { color: #1c1c1e; }
 /* Auf schmalen Bildschirmen wischt die Leiste waagerecht – der Schalter sitzt dann fest oben rechts in der Logo-Zeile */
 @media (max-width: 900px) {
   body.d3 .site-header .nav { position: relative; }
-  body.d3 .d3-farbe { position: absolute; top: 4px; right: 16px; margin: 0; background: #fff; }
+  body.d3 .d3-farbe { position: absolute; top: 4px; right: clamp(16px, 3vw, 40px); margin: 0; background: #fff; }
   html[data-farbe="dunkel"] body.d3 .d3-farbe { background: #1c1c1e; }
 }
 

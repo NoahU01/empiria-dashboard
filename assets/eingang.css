@@ -513,3 +513,42 @@
 .tm-liste .tm-tag span { font: 500 12px/1.2 "Inter", system-ui, sans-serif; color: #86868b; }
 .tm-liste .tm-tag:hover { border: 0; }
 .tm-tage { flex-wrap: wrap; }
+
+/* =============== Strategie je Marke (18.11.2026) =============== */
+[data-ein="strategie"] { --tinte: #1d1d1f; --text2: #86868b; --linie: #e5e5ea; font-family: "Inter", system-ui, sans-serif; color: #424245; font-size: 15px; line-height: 1.55; }
+.sg { max-width: 1240px; margin: 0 auto; display: grid; gap: 14px; }
+.sg .lg-kasten { padding: 20px 24px; }
+.sg h2 { margin: 0 0 10px; font: 700 16px/1.25 "Inter Tight", "Inter", system-ui, sans-serif; color: var(--tinte); }
+.sg .lg-kasten p { margin: 0 0 8px; }
+.sg-zwei { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; }
+.sg-unter { margin: 14px 0 6px; font-size: 13px; font-weight: 600; color: #86868b; }
+.sg-ziel-kurz { font: 600 17px/1.35 "Inter Tight", "Inter", system-ui, sans-serif; color: var(--tinte); }
+.sg-warn { margin-top: 10px !important; padding: 8px 12px; border-radius: 10px; background: #fdecec; color: #b00010; font-size: 13px; }
+.sg-stoss-kopf { display: flex; align-items: baseline; gap: 12px; margin-top: 10px; }
+.sg-stoss-kopf h2 { margin: 0; font: 700 16px/1.25 "Inter Tight", "Inter", system-ui, sans-serif; color: var(--tinte); }
+.sg-stoss-kopf span { font-size: 12px; color: #86868b; }
+.sg-stoss { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: start; }
+.sg-sr h3 { margin: 2px 0 8px; font: 700 16px/1.3 "Inter Tight", "Inter", system-ui, sans-serif; color: var(--tinte); }
+.sg-nr { font-size: 12px; font-weight: 600; color: #86868b; margin: 0 !important; }
+.sg-stand { font-weight: 600; color: #1f9d55; } .sg-stand-parallel { color: #86868b; } .sg-stand-nach-Gate-1 { color: #86868b; }
+.sg-text { font-size: 14px; color: #424245; }
+.sg-straenge { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
+.sg-straenge li { padding: 10px 12px; border-radius: 12px; background: #f5f5f7; }
+.sg-straenge b { display: block; font-size: 14px; font-weight: 600; color: var(--tinte); }
+.sg-straenge span { display: block; margin-top: 2px; font-size: 13px; line-height: 1.45; color: #6e6e73; }
+.sg-projekte { list-style: none; margin: 10px 0 0; padding: 10px 0 0; border-top: 1px solid #f0f0f2; display: grid; gap: 4px; }
+.sg-projekte a { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--tinte); font-size: 13px; }
+.sg-projekte a:hover span { text-decoration: underline; text-underline-offset: 3px; }
+.sg-projekte i { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.sg-wer { margin-top: 8px !important; font-size: 12px; color: #86868b; }
+.sg-hinweis { font-size: 13px; color: #6e6e73; }
+.sg-form { display: grid; gap: 10px; margin: 6px 0 14px; }
+.sg-form textarea { width: 100%; padding: 12px 14px; border: 1px solid #d2d2d7; border-radius: 12px; font: 400 15px/1.5 "Inter", system-ui, sans-serif; resize: vertical; }
+.sg-form .e-k { justify-self: start; height: 32px; padding: 0 16px; border-radius: 999px; font-size: 13px; font-weight: 600; }
+.sg-liste { list-style: none; margin: 0; padding: 0; }
+.sg-liste li { padding: 10px 0; border-top: 1px solid #f0f0f2; font-size: 14px; }
+.sg-n-kopf { font-size: 12px !important; color: #86868b; margin: 0 0 2px !important; }
+.sg-ok { color: #1f9d55; font-weight: 600; } .sg-offen { color: #8613a1; font-weight: 600; }
+.sg-ergebnis { font-size: 13px; color: #6e6e73; }
+@media (max-width: 1000px) { .sg-stoss { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .sg-zwei, .sg-stoss { grid-template-columns: minmax(0, 1fr); } }

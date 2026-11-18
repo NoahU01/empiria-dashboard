@@ -96,6 +96,7 @@
     if (art === "lage") return lageLaden();
     if (art === "projekt") return projektLaden();
     if (art === "termine") return termineLaden();
+    if (art === "strategie") return strategieLaden();
     Promise.all([db.from("eingang").select("*"), db.from("projekte").select("id, name, marke")]).then(function (r) {
       if (r[0].error) { el.innerHTML = '<p class="e-hinweis">Eingang konnte nicht geladen werden: ' + esc(r[0].error.message) + "</p>"; return; }
       var jetztMs = Date.now();
@@ -481,6 +482,94 @@
   }
 
 
+
+  /* =============== Strategie – je Marke: Wofür wir stehen · Zielbild · Zwischenziel · Stoßrichtungen · Überlegungen ===============
+     Daniel, 18.11.2026: „einen eigenen Punkt, wo ich meine strategischen Überlegungen hinterlegen kann und wo die strukturiert abgelegt
+     sind … Stoßrichtungen und Stränge … das darf nicht wegbrechen und muss so dargestellt sein, dass man es nutzen, weiterentwickeln
+     und verstehen kann.“ Logik: Selbstverständnis → Vision als Zielbild → Strategie (Stoßrichtungen, Stränge) → Projekte und Gates. */
+  var SG = { marke: (function () { try { return localStorage.getItem("strategie-marke") || "empiria"; } catch (x) { return "empiria"; } })() };
+  var SG_MARKEN = ["empiria", "sofortsichtbar", "Müller&Ströbel."];
+  function strategieLaden() {
+    Promise.all([
+      db.from("marken_strategie").select("*"),
+      db.from("projekte").select("id, name, marke, typ, phase, naechstes_gate, gate_datum, status").eq("status", "läuft"),
+      db.from("projekt_status").select("*").gte("gilt_fuer", plus(-7)).order("gilt_fuer", { ascending: false }),
+      db.from("projekt_straenge").select("id, projekt_id, eltern_id, titel, erklaerung, reihenfolge, verantwortlich"),
+      db.from("strategie_notizen").select("*").order("angelegt_am", { ascending: false }),
+      db.from("eingang").select("typ, frist")
+    ]).then(function (r) {
+      var f = r.filter(function (x) { return x.error; })[0];
+      if (f) { el.innerHTML = '<p class="e-hinweis">Strategie konnte nicht geladen werden: ' + esc(f.error.message) + "</p>"; return; }
+      SG.ms = {}; (r[0].data || []).forEach(function (m) { SG.ms[m.marke] = m; });
+      SG.pr = r[1].data || []; SG.pr.forEach(function (p) { P[p.id] = p; });
+      SG.st = {}; (r[2].data || []).forEach(function (s) { if (!SG.st[s.projekt_id]) SG.st[s.projekt_id] = s; });
+      SG.str = r[3].data || []; SG.no = r[4].data || []; E = r[5].data || [];
+      strategieSeite();
+    });
+  }
+  function sgStoss(m) {
+    // Stoßrichtungen: aus dem Strategieprojekt der Marke (Stoßrichtung → Stränge), sonst aus marken_strategie
+    var sp = SG.pr.filter(function (p) { return p.marke === SG.marke && p.typ === "strategie"; })[0];
+    if (sp) {
+      var alle = SG.str.filter(function (s) { return s.projekt_id === sp.id; }), ober = alle.filter(function (s) { return !s.eltern_id; }).sort(function (a, b) { return a.reihenfolge - b.reihenfolge; });
+      return { quelle: "Strategieprojekt „" + sp.name + "“", projekt: sp, liste: ober.map(function (o) {
+        return { titel: o.titel.replace(/^\d+\s*/, ""), nr: (o.titel.match(/^(\d+)/) || [])[1], text: o.erklaerung, straenge: alle.filter(function (s) { return s.eltern_id === o.id; }).sort(function (a, b) { return a.reihenfolge - b.reihenfolge; }) };
+      }) };
+    }
+    var roh = (m && m.stossrichtungen) || [];
+    if (typeof roh === "string") { try { roh = JSON.parse(roh.replace(/'/g, '"')); } catch (x) { roh = []; } }
+    return { quelle: "Markenstrategie", liste: roh.map(function (s) { return { titel: s.titel, text: s.beschreibung, stand: s.stand, wer: s.verantwortlich, projekte: s.projekte || [] }; }) };
+  }
+  function strategieSeite() {
+    zahlImMenue();
+    var m = SG.ms[SG.marke] || {}, st = sgStoss(m);
+    var reiter = '<nav class="k7-pillen">' + SG_MARKEN.map(function (mk) { return '<button type="button" data-sg-marke="' + esc(mk) + '" aria-pressed="' + (mk === SG.marke) + '">' + esc(mk) + "</button>"; }).join("") + "</nav>";
+    var leer = function (t) { return '<p class="e-leer">' + t + "</p>"; };
+    var ueberholt = m.zwischenziel && /bis Baden-Baden|18\.–20\.10\./.test(m.zwischenziel);
+    var projektZeile = function (id) { var p = P[id]; if (!p) return ""; var s = SG.st[id] || {};
+      return '<li><a href="/strategie/projekt.html#p=' + id + '"><i class="lg-a-' + (s.ampel || "ruht") + '"></i><span>' + esc(p.name) + "</span></a></li>"; };
+    var notizen = SG.no.filter(function (n) { return n.marke === SG.marke; });
+    el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>Strategie</h1><span>' + esc(SG.marke) + (m.stand ? " · Stand " + datum(String(m.stand).slice(0, 10)) : "") + "</span></div>" + reiter + "</header>" +
+      '<section class="k7-band"><div class="sg">' +
+      // 1 Wofür wir stehen  2 Zielbild
+      '<div class="sg-zwei"><div class="lg-kasten"><h2>Wofür wir stehen</h2>' + (m.selbstverstaendnis ? themenText(m.selbstverstaendnis, false) : leer("Noch nicht formuliert. Diktiere es unten als Überlegung, Claude legt es hier ab.")) + "</div>" +
+      '<div class="lg-kasten"><h2>Zielbild</h2>' + (m.vision ? themenText(m.vision, false) : leer("Noch kein Zielbild.")) +
+        (m.geschaeftsmodell ? '<h3 class="sg-unter">Geschäftsmodell</h3>' + themenText(m.geschaeftsmodell, false) : "") + "</div></div>" +
+      // 3 Zwischenziel
+      '<div class="lg-kasten sg-ziel"><h2>Nächstes Zwischenziel</h2>' + (m.ziel_kurz ? '<p class="sg-ziel-kurz">' + esc(m.ziel_kurz) + "</p>" : "") +
+        (m.zwischenziel ? themenText(m.zwischenziel, false) : leer("Noch kein Zwischenziel.")) +
+        (ueberholt ? '<p class="sg-warn">Das Datum ist vorbei. Das Zwischenziel sollte neu gesetzt werden.</p>' : "") + "</div>" +
+      // 4 Stoßrichtungen
+      '<div class="sg-stoss-kopf"><h2>Stoßrichtungen</h2><span>aus: ' + esc(st.quelle) + "</span></div>" +
+      (st.liste.length ? '<div class="sg-stoss">' + st.liste.map(function (s, i) {
+        return '<article class="lg-kasten sg-sr"><p class="sg-nr">' + (s.nr || String(i + 1).padStart(2, "0")) + (s.stand ? ' · <span class="sg-stand sg-stand-' + esc(s.stand.replace(/\s+/g, "-")) + '">' + esc(s.stand) + "</span>" : "") + '</p><h3>' + esc(s.titel) + "</h3>" +
+          (s.text ? '<p class="sg-text">' + esc(s.text) + "</p>" : "") +
+          (s.straenge && s.straenge.length ? '<ul class="sg-straenge">' + s.straenge.map(function (x) { return "<li><b>" + esc(x.titel.replace(/^\d+\s*/, "")) + "</b>" + (x.erklaerung ? "<span>" + esc(x.erklaerung) + "</span>" : "") + "</li>"; }).join("") + "</ul>" : "") +
+          (s.projekte && s.projekte.length ? '<ul class="sg-projekte">' + s.projekte.map(projektZeile).join("") + "</ul>" : "") +
+          (s.wer ? '<p class="sg-wer">' + esc(s.wer) + "</p>" : "") + "</article>";
+      }).join("") + "</div>" : leer("Noch keine Stoßrichtungen.")) +
+      // 5 Überlegungen
+      '<div class="lg-kasten sg-notizen"><h2>Strategische Überlegungen</h2><p class="sg-hinweis">Diktiere oder tippe, was dir zur Strategie von ' + esc(SG.marke) + ' durch den Kopf geht. Claude legt es mit Datum ab und arbeitet es oben ein: Wofür wir stehen, Zielbild, Zwischenziel oder Stoßrichtungen.</p>' +
+        '<form class="sg-form"><textarea rows="4" placeholder="Zum Beispiel: Bei sofortsichtbar soll das Strategietool vor den Vertriebsstrecken kommen, weil …"></textarea><button class="e-k e-k-voll" type="submit">Hinterlegen</button></form>' +
+        (notizen.length ? '<ul class="sg-liste">' + notizen.map(function (n) {
+          return '<li><p class="sg-n-kopf">' + datum(String(n.angelegt_am).slice(0, 10)) + " · " + (n.eingearbeitet_am ? '<span class="sg-ok">eingearbeitet</span>' : '<span class="sg-offen">wird eingearbeitet</span>') + "</p><p>" + esc(n.text) + "</p>" +
+            (n.ergebnis ? '<p class="sg-ergebnis">' + esc(n.ergebnis) + "</p>" : "") + "</li>"; }).join("") + "</ul>" : "") + "</div>" +
+      "</div></section></div>";
+    el.querySelectorAll("[data-sg-marke]").forEach(function (b) { b.onclick = function () { SG.marke = b.getAttribute("data-sg-marke"); try { localStorage.setItem("strategie-marke", SG.marke); } catch (x) {} strategieSeite(); }; });
+    var fo = el.querySelector(".sg-form");
+    fo.onsubmit = function (ev) {
+      ev.preventDefault(); var ta = fo.querySelector("textarea"), txt = ta.value.trim(); if (!txt) return;
+      fo.querySelector("button").disabled = true;
+      db.from("strategie_notizen").insert({ marke: SG.marke, text: txt, quelle: "Dashboard Strategie" }).select("id").then(function (r) {
+        if (r && r.error) { toast("Nicht gespeichert: " + r.error.message); fo.querySelector("button").disabled = false; return; }
+        var nid = r && r.data && r.data[0] ? r.data[0].id : null;
+        ticket({ titel: "Strategie " + SG.marke, quelle: "strategie", qid: nid, projekt_id: null },
+          "Strategische Überlegung von Daniel zu " + SG.marke + " (strategie_notizen " + nid + "):\n\n" + txt + "\n\nEinarbeiten in marken_strategie (selbstverstaendnis, vision, geschaeftsmodell, zwischenziel, stossrichtungen) oder in die Stränge des Strategieprojekts; danach strategie_notizen.eingearbeitet_am und ergebnis (ein Satz in Klartext, was wo geändert wurde) setzen.",
+          "Strategie einarbeiten: " + txt.slice(0, 60)).then(function () {
+          toast("Hinterlegt. Claude arbeitet die Überlegung ein."); strategieLaden(); });
+      });
+    };
+  }
   /* =============== Projekt – Projektleiter-Blick (Kunden- und interne Projekte) =============== */
   var PJ = {};
   function projektLaden() {
