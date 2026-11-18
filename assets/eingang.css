@@ -476,3 +476,12 @@
 .lage .lg-warum p { background: #f3f3f3; }
 /* Termine: in nummerierten Schritten steht das Fette allein in der ersten Zeile, der Text darunter */
 .tm-schritte b { display: block; margin-bottom: 2px; }
+
+/* Lage: Reiter Strategisch / Operativ (18.11.2026) */
+.lg-emp-titel { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; }
+.lg-emp-titel h2 { margin: 0 !important; }
+.lg-reiter { display: inline-flex; padding: 3px; border-radius: 999px; background: #e8e8ed; }
+.lg-reiter button { height: 28px; padding: 0 14px; border: 0; border-radius: 999px; background: none; font: 500 13px/1 "Inter", system-ui, sans-serif; color: #424245; cursor: pointer; }
+.lg-reiter button span { margin-left: 2px; color: #86868b; }
+.lg-reiter button[aria-selected="true"] { background: #fff; color: var(--tinte); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+@media (min-width: 1001px) { .lage-start .lg-rechts { padding-top: 46px; } }

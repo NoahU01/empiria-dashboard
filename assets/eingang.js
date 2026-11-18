@@ -365,14 +365,14 @@
       db.from("eingang").select("*"), db.from("projekte").select("id, name, marke, typ, organisationen(name, gruppe)").eq("status", "läuft"),
       db.from("lage").select("*").not("gilt_fuer", "is", null).order("gilt_fuer", { ascending: false }).limit(1),
       db.from("projekt_status").select("*").gte("gilt_fuer", plus(-3)).order("gilt_fuer", { ascending: false }),
-      db.from("briefing").select("id, begruendung, art, projekt_id").is("entscheidung", null)
+      db.from("briefing").select("id, begruendung, art, projekt_id, ebene").is("entscheidung", null)
     ]).then(function (r) {
       var f = r.filter(function (x) { return x.error; })[0];
       if (f) { el.innerHTML = '<p class="e-hinweis">Lage konnte nicht geladen werden: ' + esc(f.error.message) + "</p>"; return; }
       E = r[0].data || []; (r[1].data || []).forEach(function (p) { P[p.id] = p; });
       E.forEach(function (e) { e.gruppe = gruppeVon(e); e.extra = e.extra || {}; }); E.sort(sortieren);
       var br = {}; (r[4].data || []).forEach(function (b) { br[b.id] = b; });
-      E.forEach(function (e) { if (e.quelle === "briefing" && br[e.qid]) { e.begruendung = br[e.qid].begruendung; e.art = br[e.qid].art; e.projekt_id = br[e.qid].projekt_id; } });
+      E.forEach(function (e) { if (e.quelle === "briefing" && br[e.qid]) { e.begruendung = br[e.qid].begruendung; e.art = br[e.qid].art; e.projekt_id = br[e.qid].projekt_id; e.ebene = br[e.qid].ebene || "operativ"; } });
       L = (r[2].data || [])[0] || null;
       var gesehen = {}; ST = (r[3].data || []).filter(function (s) { if (gesehen[s.projekt_id] || !P[s.projekt_id]) return false; gesehen[s.projekt_id] = 1; return true; });
       lage();
@@ -398,7 +398,11 @@
   function lage() {
     zahlImMenue();
     var datumLang = new Date().toLocaleDateString("de-DE", { weekday: "long", day: "2-digit", month: "long", timeZone: "Europe/Berlin" });
-    var emp = E.filter(function (e) { return e.typ === "impuls"; });
+    var alleEmp = E.filter(function (e) { return e.typ === "impuls"; });
+    var emp = alleEmp.filter(function (e) { return (e.ebene || "operativ") === EBENE; });
+    var reiter = '<div class="lg-reiter" role="tablist">' + [["strategisch", "Strategisch"], ["operativ", "Operativ"]].map(function (r) {
+      var n = alleEmp.filter(function (e) { return (e.ebene || "operativ") === r[0]; }).length;
+      return '<button type="button" role="tab" data-ebene="' + r[0] + '" aria-selected="' + (r[0] === EBENE) + '">' + r[1] + " <span>" + n + "</span></button>"; }).join("") + "</div>";
     var zaehl = function (f) { return E.filter(f).length; };
     var wartet = [
       ["Abnahmen", zaehl(function (e) { return e.typ === "abnahme"; }), "cl"], ["Rückfragen", zaehl(function (e) { return e.typ === "rueckfrage"; }), "cl"],
@@ -410,13 +414,13 @@
     el.innerHTML = '<div class="k7 lage lage-start"><header class="k7-kopf"><div class="k7-titel"><h1>Lage</h1><span>' + esc(datumLang) + '</span></div><p class="k7-stand">' + esc(stand) + "</p></header>" +
       '<section class="k7-band"><div class="lg-raster">' +
       '<div class="lg-kern"><h2 class="lg-kern-titel">Was heute zählt</h2>' + (L ? '<ul class="lg-kern-liste">' + saetze(L.text).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "<p>Der Stabschef hat heute noch kein Briefing geschrieben.</p>") + "</div>" +
-      '<div class="lg-links"><h2>Meine Empfehlungen</h2>' + (emp.length ? emp.map(function (e) {
+      '<div class="lg-links"><div class="lg-emp-titel"><h2>Meine Empfehlungen</h2>' + reiter + "</div>" + (emp.length ? emp.map(function (e) {
         return '<article class="e-detail lg-emp" data-s="' + esc(schluessel(e)) + '"><div class="lg-emp-kopf"><span class="lg-art lg-art-' + (ARTE[e.art] ? e.art : "empfehlung") + '">' + (ARTE[e.art] || "Empfehlung") + "</span>" +
           (P[e.projekt_id] ? '<span class="lg-proj">' + esc(P[e.projekt_id].name) + "</span>" : "") + "</div><h3>" + esc(e.titel) + "</h3>" + (e.kern ? "<p>" + esc(e.kern) + "</p>" : "") +
           (e.begruendung ? '<details class="lg-warum"><summary>Warum jetzt</summary><p>' + esc(e.begruendung) + "</p></details>" : "") +
           '<div class="e-knoepfe"><button class="e-k e-k-voll" data-a="ja">' + esc(e.extra.knopf || "Passt, umsetzen") + '</button><button class="e-k" data-a="text" data-modus="anders">Anders</button></div>' +
           '<form class="e-text" hidden><textarea rows="3" placeholder="Was soll ich stattdessen tun?"></textarea><button class="e-k e-k-voll" type="submit">Senden</button></form><p class="e-ok" hidden></p></article>';
-      }).join("") : '<p class="e-leer">Alle Empfehlungen sind entschieden.</p>') + nachschubHtml() + "</div>" +
+      }).join("") : '<p class="e-leer lg-alle-ent">Alle ' + (EBENE === "strategisch" ? "strategischen" : "operativen") + ' Empfehlungen sind entschieden.</p>') + nachschubHtml() + "</div>" +
       '<aside class="lg-rechts"><div class="lg-kasten"><h2>Wartet auf dich</h2>' + (wartet.length ? '<ul class="lg-wartet">' + wartet.map(function (w) {
         return '<li><i class="k7-f-' + w[2] + '"></i><b>' + w[1] + "</b> " + w[0] + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Nichts.</p>') +
       '<a class="e-k e-k-voll lg-zum-eingang" href="/strategie/eingang-klar.html">Zum Eingang</a></div>' +
@@ -430,22 +434,28 @@
   /* „Nächste Empfehlungen“ (Daniel, 18.11.2026): Wenn ich Zeit habe, mit dem Stabschef Themen abzuarbeiten, hole ich mir weitere
      Empfehlungen. Der Knopf legt einen Anstoß an; der Mac sieht jede Minute nach und lässt den Stabschef drei neue schreiben. */
   var NS = null;   // null = bereit, sonst Zeitpunkt des Anstoßes
+  // Reiter Strategisch/Operativ (Daniel, 18.11.2026: „nicht immer geistig fähig, strategische Empfehlungen zu diskutieren“) – gemerkt je Gerät
+  var EBENE = (function () { try { return localStorage.getItem("lage-ebene") || "strategisch"; } catch (x) { return "strategisch"; } })();
   function nachschubHtml() {
-    return '<div class="lg-nachschub">' + (NS ? '<p class="lg-ns-laeuft"><span class="lg-ns-punkt"></span>Der Stabschef schreibt drei weitere Empfehlungen. Das dauert etwa drei Minuten, die Seite aktualisiert sich selbst.</p>'
-      : '<button type="button" class="e-k" data-nachschub>Nächste Empfehlungen holen</button><span class="lg-ns-hinweis">Drei weitere, die sich von den heutigen unterscheiden</span>') + "</div>";
+    return '<div class="lg-nachschub">' + (NS ? '<p class="lg-ns-laeuft"><span class="lg-ns-punkt"></span>Der Stabschef schreibt drei weitere Empfehlungen (' + esc(NS_EBENE) + '). Das dauert etwa drei Minuten, die Seite aktualisiert sich selbst.</p>'
+      : '<button type="button" class="e-k" data-nachschub>Nächste ' + (EBENE === "strategisch" ? "strategische" : "operative") + ' Empfehlungen holen</button><span class="lg-ns-hinweis">Drei weitere, die sich von den heutigen unterscheiden</span>') + "</div>";
   }
   function nachschubPruefen() {
-    db.from("anstoesse").select("id, status, angelegt_am").eq("art", "empfehlungen").in("status", ["offen", "läuft"]).order("id", { ascending: false }).limit(1).then(function (r) {
+    db.from("anstoesse").select("id, status, angelegt_am, quelle").eq("art", "empfehlungen").in("status", ["offen", "läuft"]).order("id", { ascending: false }).limit(1).then(function (r) {
       var offen = (r.data || [])[0];
-      if (offen) { if (!NS) { NS = offen.angelegt_am; lage(); } setTimeout(nachschubPruefen, 15000); }
+      if (offen) { if (!NS) { NS = offen.angelegt_am; NS_EBENE = /strategisch/.test(offen.quelle || "") ? "strategisch" : "operativ"; lage(); } setTimeout(nachschubPruefen, 15000); }
       else if (NS) { NS = null; lageLaden(); toast("Neue Empfehlungen sind da."); }
     });
   }
+  var NS_EBENE = "";
   function nachschubVerdrahten() {
     el.addEventListener("click", function (ev) {
+      var r = ev.target.closest("[data-ebene]");
+      if (r) { EBENE = r.getAttribute("data-ebene"); try { localStorage.setItem("lage-ebene", EBENE); } catch (x) {} lage(); return; }
       var b = ev.target.closest("[data-nachschub]"); if (!b || NS) return;
       b.disabled = true;
-      db.from("anstoesse").insert({ art: "empfehlungen", quelle: "lage" }).then(function (r) {
+      NS_EBENE = EBENE === "strategisch" ? "strategisch" : "operativ";
+      db.from("anstoesse").insert({ art: "empfehlungen", quelle: "lage:" + EBENE }).then(function (r) {
         if (r && r.error) { b.disabled = false; toast("Konnte den Stabschef nicht anstoßen: " + r.error.message); return; }
         NS = new Date().toISOString(); lage(); setTimeout(nachschubPruefen, 15000);
       });
