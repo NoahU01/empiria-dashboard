@@ -385,26 +385,28 @@
     var kommt = akt.filter(function (a) { return istTermin(a) && new Date(a.datum) > Date.now(); }).pop();
     var naechst = kommt ? "Termin am " + datum(kommt.datum) + " · " + esc(kommt.anlass || "") : k.naechster_kontakt ? "Termin am " + datum(k.naechster_kontakt) : faellig(k) ? "<b>jetzt wieder dran</b>" :
       k.rhythmus_tage && k.letzter_kontakt ? datum(new Date(new Date(k.letzter_kontakt).getTime() + k.rhythmus_tage * 864e5)) : "–";
-    h += '<p class="kt3-stand"><span>Letzter Kontakt</span>' + zuletzt(k.letzter_kontakt) + '<span>Nächster Kontakt</span>' + naechst +
-      (k.beziehungsstatus ? "<span>Beziehung</span>" + esc(k.beziehungsstatus) : "") + "</p>";
+    // Zwei Spalten (Daniel, 18.11.2026: „Kontaktdaten kommen so weit unten … was ist eine gute Ansicht?“): links der Steckbrief zum Erreichen,
+    // rechts, was gerade läuft – wie in guten CRM-Ansichten
+    var stand2 = '<section class="kt3-box"><h3>Stand</h3><p class="kt3-zeile"><span>Letzter Kontakt</span>' + zuletzt(k.letzter_kontakt) + "</p>" +
+      '<p class="kt3-zeile"><span>Nächster Kontakt</span>' + naechst + "</p>" + (k.beziehungsstatus ? '<p class="kt3-zeile"><span>Beziehung</span>' + esc(k.beziehungsstatus) + "</p>" : "") + "</section>";
     var klaer = [k.klaeren, o && o.klaeren && "Firma: " + o.klaeren].filter(Boolean);
-    if (klaer.length) h += '<p class="kt3-klaer">' + klaer.map(esc).join(" · ") + "</p>";
-
-    h += '<div class="kt3-raster">' + standBox(stand) + projekteBox(projekte || []);
-    h += box("Termine", liste(akt.filter(istTermin)), "Keine Termine erfasst.");
-    h += box("Kommunikation", liste(akt.filter(function (a) { return !istTermin(a) && !RAUSCHEN.test(a.anlass || ""); })), "Noch nichts erfasst – einfach diktieren, z. B. „Habe heute mit " + esc(k.vorname || name(k)) + " telefoniert …“.");
-    h += kontaktdatenBox(k.kontaktwege, k.anschriften, k.linkedin_url);
     var m = {}; (k.kontakt_merkmale || []).forEach(function (x) { if (x.merkmale) (m[x.merkmale.kategorie] = m[x.merkmale.kategorie] || []).push(x.merkmale.wert); });
     var kamp = (k.kampagnen_teilnehmer || []).filter(function (t) { return t.status === "freigegeben" || t.status === "vorgeschlagen"; });
-    h += box("Ansatzpunkte",
-      (k.kontaktbriefing ? briefingHtml(k.kontaktbriefing) : "") +
-      (m.Bedarf ? '<p class="kt3-zeile"><span>Bedarf</span>' + esc(m.Bedarf.join(", ")) + "</p>" : "") +
-      (m.Angebot ? '<p class="kt3-zeile"><span>Passt von uns</span>' + esc(m.Angebot.join(", ")) + "</p>" : "") +
-      (kamp.length ? '<p class="kt3-zeile"><span>Kampagnen</span>' + kamp.map(function (t) { return esc(t.kampagnen.name) + (t.kampagnen.zeitraum ? " (" + esc(t.kampagnen.zeitraum) + ")" : ""); }).join(", ") + "</p>" : ""),
-      "Noch keine Ansatzpunkte erfasst.");
-    h += box("Nächste Schritte", todos.length ? '<ul class="kt3-todo">' + todos.map(function (a) {
-        return '<li data-a="' + a.id + '"><button type="button" class="st-haken" aria-label="Erledigt"></button><span>' + esc(a.titel) + "</span></li>"; }).join("") + "</ul>" : "",
-      "Nichts offen.");
+    var links = kontaktdatenBox(k.kontaktwege, k.anschriften, k.linkedin_url) + stand2 + projekteBox(projekte || []).replace("kt3-box kt3-breit", "kt3-box") +
+      box("Ansatzpunkte",
+        (k.kontaktbriefing ? briefingHtml(k.kontaktbriefing) : "") +
+        (m.Bedarf ? '<p class="kt3-zeile"><span>Bedarf</span>' + esc(m.Bedarf.join(", ")) + "</p>" : "") +
+        (m.Angebot ? '<p class="kt3-zeile"><span>Passt von uns</span>' + esc(m.Angebot.join(", ")) + "</p>" : "") +
+        (kamp.length ? '<p class="kt3-zeile"><span>Kampagnen</span>' + kamp.map(function (t) { return esc(t.kampagnen.name) + (t.kampagnen.zeitraum ? " (" + esc(t.kampagnen.zeitraum) + ")" : ""); }).join(", ") + "</p>" : ""),
+        "Noch keine Ansatzpunkte erfasst.") +
+      (klaer.length ? '<section class="kt3-box"><h3>Zu klären</h3><p class="kt3-klaer">' + klaer.map(esc).join(" · ") + "</p></section>" : "");
+    var rechts = standBox(stand).replace("kt3-box kt3-breit", "kt3-box") +
+      box("Nächste Schritte", todos.length ? '<ul class="kt3-todo">' + todos.map(function (a) {
+          return '<li data-a="' + a.id + '"><button type="button" class="st-haken" aria-label="Erledigt"></button><span>' + esc(a.titel) + "</span></li>"; }).join("") + "</ul>" : "",
+        "Nichts offen.") +
+      box("Termine", liste(akt.filter(istTermin)), "Keine Termine erfasst.") +
+      box("Kommunikation", liste(akt.filter(function (a) { return !istTermin(a) && !RAUSCHEN.test(a.anlass || ""); })), "Noch nichts erfasst – einfach diktieren, z. B. „Habe heute mit " + esc(k.vorname || name(k)) + " telefoniert …“.");
+    h += '<div class="kt-zwei"><div class="kt-steckbrief">' + links + '</div><div class="kt-verlauf">' + rechts + "</div>";
     return h + "</div>";
   }
 

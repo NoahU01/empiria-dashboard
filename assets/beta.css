@@ -2420,3 +2420,53 @@ a.pr-unterlage::after { content: " · PDF"; font-weight: 400; color: var(--grey-
 .kt3-quelle { margin-top: 10px !important; font-size: var(--fs-xs); }
 .kt3-v li[hidden] { display: none; }
 @media (max-width: 600px) { .kt3-v.kt3-themen li { grid-template-columns: 1fr; } .kt3-zeile a { overflow-wrap: anywhere; } }
+
+/* =============== Kontakte im neuen Look (18.11.2026): Kopf wie die anderen Seiten, graue Fläche, weiße Kästen, Inter =============== */
+.kt-look { --ink: #1d1d1f; --ink-2: #424245; --grey-50: #86868b; font-family: "Inter", system-ui, sans-serif; }
+.kt-look .k7-kopf { align-items: center; }
+.kt-look .db-kopf .k7-titel { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.kt-look .db-kopf h1 { order: 1; margin: 0; font: 700 24px/1.1 "Inter Tight", "Inter", system-ui, sans-serif; letter-spacing: -0.02em; color: var(--ink); }
+.kt-look .db-kopf .kicker, .kt-look .db-kopf .kicker:not(:has(a)) { order: 2; display: inline; margin: 0; font: 400 14px/1.2 "Inter", system-ui, sans-serif; letter-spacing: 0; text-transform: none; color: #86868b; }
+.kt-look .db-kopf .kicker::before { display: none !important; }
+.kt-look .db-kopf .kicker a { color: #86868b; text-decoration: none; } .kt-look .db-kopf .kicker a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.kt-look .db-rechts { margin-left: auto; font-size: 13px; color: #86868b; }
+.kt-look .kt-flaeche { max-width: 1240px; margin: 0 auto; }
+.kt-look .kt-tabs { gap: 6px; margin: 0 0 14px; }
+.kt-look .kt-tabs a { display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 999px; border: 1px solid #d2d2d7; background: #fff; font-size: 13px; font-weight: 500; color: var(--ink); text-decoration: none; }
+.kt-look .kt-tabs a[aria-current="page"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+.kt-look .kt3-suche { width: min(420px, 100%); height: 38px; margin: 0 0 14px; padding: 0 14px; border: 1px solid #d2d2d7; border-radius: 999px; background: #fff; font: 400 14px "Inter", system-ui, sans-serif; }
+.kt-look .kt3-tab { background: #fff; border-radius: 18px; overflow: hidden; font-size: 14px; }
+.kt-look .kt3-tab th { padding: 12px 14px 8px; font-size: 12px; font-weight: 600; color: #86868b; border-bottom: 1px solid #f0f0f2; }
+.kt-look .kt3-tab td { padding: 11px 14px; border-bottom: 1px solid #f5f5f7; font-weight: 400; color: #424245; }
+.kt-look .kt3-tab td:first-child { font-weight: 600; color: var(--ink); }
+.kt-look .kt3-tab tr[data-href]:hover td { background: #f5f5f7; }
+.kt-look .kt3-box { border-radius: 18px; box-shadow: none; background: #fff; padding: 18px 20px; }
+.kt-look .kt3-box h3 { font: 700 15px/1.3 "Inter Tight", "Inter", system-ui, sans-serif; color: var(--ink); }
+.kt-look .kt3-zeile { grid-template-columns: 120px minmax(0, 1fr); font-size: 14px; font-weight: 400; }
+.kt-look .kt3-zeile span { font-size: 12px; color: #86868b; }
+.kt-look .kt3-v li { font-size: 14px; } .kt-look .kt3-v a, .kt-look .kt3-v span { font-weight: 400; }
+.kt-look .kt3-proj a b, .kt-look .kt3-proj b { font-family: "Inter", system-ui, sans-serif; font-weight: 600; font-size: 14px; }
+.kt-look .kt-info { margin: 0 0 14px; padding: 16px 20px; border-radius: 18px; background: #fff; }
+.kt-look .kt-info-sub { margin: 0; font-size: 15px; color: var(--ink); } .kt-look .kt-info-sub a { color: var(--ink); }
+.kt-look .kt-info-tags { margin: 4px 0 0; font-size: 13px; color: #86868b; }
+.kt-look .kt3-raster { margin-top: 0; }
+.kt-look .kt3-klaer { margin: 0; font-size: 14px; }
+/* Person: links Steckbrief, rechts Verlauf */
+.kt-zwei { display: grid; grid-template-columns: minmax(280px, 380px) minmax(0, 1fr); gap: 14px; align-items: start; }
+.kt-steckbrief, .kt-verlauf { display: grid; gap: 14px; min-width: 0; }
+@media (max-width: 900px) { .kt-zwei { grid-template-columns: minmax(0, 1fr); } }
+.kt-look .kt-steckbrief .kt3-zeile { grid-template-columns: 96px minmax(0, 1fr); }
+.kt-look .kt3-zeile > .kt3-leise { grid-column: 2; margin-top: -4px; font-size: 12px; }
+.kt-look .kt3-zeile a { overflow-wrap: anywhere; }
+.kt-look .db-kopf .kicker { display: inline-flex !important; align-items: baseline; gap: 6px; }
+.kt-look .db-kopf .kicker, .kt-look .db-kopf .kicker a { font: 400 14px/1.2 "Inter", system-ui, sans-serif !important; letter-spacing: 0 !important; text-transform: none !important; color: #86868b !important; }
+.kt-look .db-kopf .kicker::before { display: none !important; }
+.kt-look .db-kopf h1 { font: 700 24px/1.1 "Inter Tight", "Inter", system-ui, sans-serif !important; }
+/* Telefon: erst Kontaktdaten, dann Diskussionsstand, dann der Rest */
+@media (max-width: 900px) {
+  .kt-zwei { display: flex; flex-direction: column; gap: 14px; }
+  .kt-steckbrief, .kt-verlauf { display: contents; }
+  .kt-zwei .kt3-box { order: 3; }
+  .kt-steckbrief > .kt3-box:first-child { order: 1; }
+  .kt-zwei .kt3-dstand { order: 2; }
+}

@@ -1527,6 +1527,28 @@ html[data-farbe="dunkel"] a.pr-unterlage:hover { text-decoration-color: var(--in
 html[data-farbe="dunkel"] a.pr-unterlage::after { color: var(--grey-50); }
 html[data-farbe="dunkel"] .an-notiz li.vb-kopf, html[data-farbe="dunkel"] .tl-seite-det li.vb-kopf, html[data-farbe="dunkel"] .tl-auf-det li.vb-kopf, html[data-farbe="dunkel"] li.vb-kopf { color: var(--ink); }
 html[data-farbe="dunkel"] .kt3-themen li > div p.kt3-offen { color: var(--grey-50); }
+html[data-farbe="dunkel"] .kt-look { --ink: #f2f2f7; --ink-2: #f2f2f7; --grey-50: #a1a1a6; }
+html[data-farbe="dunkel"] .kt-look .db-kopf h1 { color: var(--ink); }
+html[data-farbe="dunkel"] .kt-look .db-kopf .kicker, html[data-farbe="dunkel"] .kt-look .db-kopf .kicker:not(:has(a)) { color: #a1a1a6; }
+html[data-farbe="dunkel"] .kt-look .db-kopf .kicker a { color: #a1a1a6; }
+html[data-farbe="dunkel"] .kt-look .db-kopf .kicker a:hover { color: var(--ink); }
+html[data-farbe="dunkel"] .kt-look .db-rechts { color: #a1a1a6; }
+html[data-farbe="dunkel"] .kt-look .kt-tabs a { border: 1px solid #636366; background: #1c1c1e; color: var(--ink); }
+html[data-farbe="dunkel"] .kt-look .kt-tabs a[aria-current="page"] { background: var(--ink); border-color: var(--ink); color: #fff; color: #1c1c1e; }
+html[data-farbe="dunkel"] .kt-look .kt3-suche { border: 1px solid #636366; background: #1c1c1e; }
+html[data-farbe="dunkel"] .kt-look .kt3-tab { background: #1c1c1e; }
+html[data-farbe="dunkel"] .kt-look .kt3-tab th { color: #a1a1a6; border-bottom: 1px solid #38383a; }
+html[data-farbe="dunkel"] .kt-look .kt3-tab td { border-bottom: 1px solid #38383a; color: #f2f2f7; }
+html[data-farbe="dunkel"] .kt-look .kt3-tab td:first-child { color: var(--ink); }
+html[data-farbe="dunkel"] .kt-look .kt3-tab tr[data-href]:hover td { background: #2c2c2e; }
+html[data-farbe="dunkel"] .kt-look .kt3-box { box-shadow: none; background: #1c1c1e; }
+html[data-farbe="dunkel"] .kt-look .kt3-box h3 { color: var(--ink); }
+html[data-farbe="dunkel"] .kt-look .kt3-zeile span { color: #a1a1a6; }
+html[data-farbe="dunkel"] .kt-look .kt-info { background: #1c1c1e; }
+html[data-farbe="dunkel"] .kt-look .kt-info-sub { color: var(--ink); }
+html[data-farbe="dunkel"] .kt-look .kt-info-sub a { color: var(--ink); }
+html[data-farbe="dunkel"] .kt-look .kt-info-tags { color: #a1a1a6; }
+html[data-farbe="dunkel"] .kt-look .db-kopf .kicker, html[data-farbe="dunkel"] .kt-look .db-kopf .kicker a { color: #a1a1a6 !important; }
 
 /* ---- assets/cockpit.css ---- */
 html[data-farbe="dunkel"] body.ck .ck-entwurf { color: var(--grey-50); }
@@ -2133,6 +2155,7 @@ html[data-farbe="dunkel"] .mk-liste small { color: #a1a1a6; }
 html[data-farbe="dunkel"] .mk-d { color: #a1a1a6; }
 html[data-farbe="dunkel"] .mk-naechst { color: #f2f2f7; }
 html[data-farbe="dunkel"] .mk-alle { border: 1px solid var(--tinte); color: var(--tinte); }
+html[data-farbe="dunkel"] .mk-mehr { color: #a1a1a6; }
 
 /* ---- assets/leasing-fahrzeug.css ---- */
 html[data-farbe="dunkel"] .lf-profil div { border-top: 1px solid var(--linie); }
