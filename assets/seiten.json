@@ -145,13 +145,22 @@
    "im_diagramm": true
   },
   {
-   "datei": "eingang-liste.html",
-   "titel": "Eingang 1: Posteingang",
+   "datei": "lage.html",
+   "titel": "Lage",
    "gruppe": "Dashboard 2.0",
    "eltern": "dashboard-2-0.html",
-   "kurz": "Liste links, Detail rechts",
+   "kurz": "Briefing des Stabschefs: Empfehlungen, Projektstände",
    "pos": 13,
-   "im_diagramm": true
+   "im_diagramm": false
+  },
+  {
+   "datei": "termine-tag.html",
+   "titel": "Termine",
+   "gruppe": "Dashboard 2.0",
+   "eltern": "dashboard-2-0.html",
+   "kurz": "Management-Blick auf den Tag",
+   "pos": 14,
+   "im_diagramm": false
   },
   {
    "datei": "eingang-plan.html",
@@ -159,16 +168,16 @@
    "gruppe": "Dashboard 2.0",
    "eltern": "dashboard-2-0.html",
    "kurz": "Spalten nach Zeit",
-   "pos": 14,
+   "pos": 15,
    "im_diagramm": true
   },
   {
    "datei": "eingang-klar.html",
-   "titel": "Eingang 4: Klar",
+   "titel": "Eingang",
    "gruppe": "Dashboard 2.0",
    "eltern": "dashboard-2-0.html",
-   "kurz": "Stil sofortsichtbar Story 7",
-   "pos": 15,
+   "kurz": "Alles, was auf dich wartet",
+   "pos": 16,
    "im_diagramm": true
   },
   {
@@ -177,7 +186,7 @@
    "gruppe": "Dashboard 2.0",
    "eltern": "dashboard-2-0.html",
    "kurz": "Vorschlag zu den alten Steuerungs-Karten",
-   "pos": 16,
+   "pos": 17,
    "im_diagramm": true
   },
   {
@@ -186,7 +195,7 @@
    "gruppe": "Dashboard 2.0",
    "eltern": "dashboard-2-0.html",
    "kurz": "Eine Spalte, von oben nach unten",
-   "pos": 17,
+   "pos": 18,
    "im_diagramm": true
   },
   {
@@ -195,7 +204,7 @@
    "gruppe": "Dashboard 2.0",
    "eltern": "dashboard-2-0.html",
    "kurz": "Briefing und Projektlage auf einen Blick",
-   "pos": 18,
+   "pos": 19,
    "im_diagramm": true
   },
   {
@@ -204,7 +213,7 @@
    "gruppe": "Dashboard 2.0",
    "eltern": "dashboard-2-0.html",
    "kurz": "Arbeiten im Projekt, Seitenleiste mit allen Projekten",
-   "pos": 19,
+   "pos": 20,
    "im_diagramm": true
   },
   {
@@ -213,7 +222,7 @@
    "gruppe": "Dashboard 2.0",
    "eltern": "dashboard-2-0.html",
    "kurz": "Kacheln im Apple-Stil, 14 Tage, Suche",
-   "pos": 20,
+   "pos": 21,
    "im_diagramm": true
   },
   {
@@ -222,7 +231,7 @@
    "gruppe": "Dashboard 2.0",
    "eltern": "dashboard-2-0.html",
    "kurz": "Alle Projekte auf einer Zeitleiste",
-   "pos": 21,
+   "pos": 22,
    "im_diagramm": true
   },
   {
@@ -237,6 +246,15 @@
   {
    "datei": "dashboard-korrespondenz.html",
    "titel": "Korrespondenz · Dashboard",
+   "gruppe": "ohne Menü",
+   "eltern": null,
+   "kurz": "",
+   "im_diagramm": true,
+   "pos": 999
+  },
+  {
+   "datei": "eingang-liste.html",
+   "titel": "Eingang 1: Posteingang",
    "gruppe": "ohne Menü",
    "eltern": null,
    "kurz": "",
@@ -262,6 +280,15 @@
    "pos": 999
   },
   {
+   "datei": "marketing-stratege.html",
+   "titel": "Marketing",
+   "gruppe": "ohne Menü",
+   "eltern": null,
+   "kurz": "",
+   "im_diagramm": false,
+   "pos": 999
+  },
+  {
    "datei": "meilensteine.html",
    "titel": "Meilensteine",
    "gruppe": "ohne Menü",
@@ -280,6 +307,24 @@
    "pos": 999
   },
   {
+   "datei": "projekt.html",
+   "titel": "Projekte",
+   "gruppe": "ohne Menü",
+   "eltern": null,
+   "kurz": "",
+   "im_diagramm": false,
+   "pos": 999
+  },
+  {
+   "datei": "strategie-marken.html",
+   "titel": "Strategie",
+   "gruppe": "ohne Menü",
+   "eltern": null,
+   "kurz": "",
+   "im_diagramm": false,
+   "pos": 999
+  },
+  {
    "datei": "zielbild.html",
    "titel": "Strategie und Zielbild",
    "gruppe": "ohne Menü",
@@ -289,5 +334,5 @@
    "pos": 999
   }
  ],
- "stand": "18.11.2026, 09:08 Uhr"
+ "stand": "19.11.2026, 06:30 Uhr"
 }
