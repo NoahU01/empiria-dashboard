@@ -11,6 +11,16 @@
       "permanent": false
     },
     {
+      "source": "/cockpit",
+      "destination": "/strategie/lage.html",
+      "permanent": false
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/strategie/lage.html",
+      "permanent": false
+    },
+    {
       "source": "/oekosystem",
       "destination": "/strategie/oekosystem.html",
       "permanent": false
