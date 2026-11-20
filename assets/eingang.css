@@ -904,3 +904,9 @@ html.pj-plan-voll-offen { overflow: hidden; }
 .pp-liste a { grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr) 96px; }
 .pp-liste a .pp-st { justify-self: end; }
 @media (max-width: 700px) { .pp-liste a { grid-template-columns: minmax(0, 1fr) auto; } }
+/* Vertrieb mit vier Stufen (Daniel, 21.11.2026) */
+.vt-board { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.vt-detail .vt-stufen { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.vt-spalte header p { min-height: calc(3 * 1.35em); }
+@media (max-width: 1100px) { .vt-board { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .vt-board { grid-template-columns: minmax(0, 1fr); } .vt-detail .vt-stufen { grid-template-columns: repeat(2, minmax(0, 1fr)); } .vt-spalte header p { min-height: 0; } }

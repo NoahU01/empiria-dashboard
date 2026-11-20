@@ -1273,8 +1273,11 @@
      Arbeitsprinzip wie in Vertriebs-Pipelines (Pipedrive, HubSpot): jede Chance hat einen nächsten Schritt; fehlt er oder ist er
      überfällig, fällt die Karte auf. Der Marketing- und Vertriebsstratege schreibt je Chance den Hebel und schlägt neue Chancen vor. */
   var VT = { l: [], marke: (function () { try { return localStorage.getItem("vertrieb-marke") || "alle"; } catch (x) { return "alle"; } })(), wahl: null };
-  var VT_STUFEN = [["ansatzpunkt", "Ansatzpunkt", "Aus dem Anlass eine Anfrage oder ein Angebot machen"],
-    ["angebot", "Abstimmung und Angebot", "Umfang, Budget und Zusage klären"], ["projekt", "Projekt", "Gut liefern, Folgeauftrag und Empfehlung gewinnen"]];
+  // vier Stufen, jede mit einem Kriterium, ab wann die Chance weiterrückt (Daniel, 21.11.2026)
+  var VT_STUFEN = [["ansatzpunkt", "Ansatzpunkt", "Anlass erkannt – weiter, wenn ein Gespräch zum Bedarf vereinbart ist"],
+    ["bedarf", "Bedarf geklärt", "Problem, Entscheider, Zeit und Budget bekannt – weiter, wenn das Angebot rausgeht"],
+    ["angebot", "Angebot beim Kunden", "Angebot liegt vor, Verhandlung – weiter mit der Zusage"],
+    ["projekt", "Projekt", "Auftrag läuft – Folgeauftrag und Empfehlung gewinnen"]];
   // Ist es zum Projekt gekommen, trägt die Chance den echten Projekttitel (Daniel, 20.11.2026)
   function vtTitel(c) { return c.stufe === "projekt" && c.projekt_id && P[c.projekt_id] ? P[c.projekt_id].name : c.titel; }
   function vtPersonen(c) { return (c.vertriebschance_personen || []).filter(function (p) { return p.kontakte; }); }
@@ -1315,13 +1318,13 @@
       return '<button type="button" data-vt-marke="' + esc(m[0]) + '" aria-pressed="' + (m[0] === VT.marke) + '">' + esc(m[1]) + "</button>"; }).join("") + "</nav>";
     el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>Vertrieb</h1><span>Vertriebschancen vom Ansatzpunkt bis zum Projekt</span></div>' + pillen + "</header>" +
       '<section class="k7-band"><div class="vt">' +
-      '<p class="vt-hinweis">Hier stehen nur echte Chancen: ein konkreter Bedarf, eine Anfrage, ein Angebot oder ein laufender Auftrag – mit allen, die dazugehören. Jede Chance braucht einen nächsten Schritt; rot heißt: fehlt oder überfällig.</p>' +
+      '<p class="vt-hinweis">Hier stehen nur echte Chancen mit allen, die dazugehören. Eine Chance rückt weiter, wenn das Kriterium ihrer Stufe erfüllt ist. Jede Chance braucht einen nächsten Schritt; rot heißt: fehlt oder überfällig.</p>' +
       (vor.length ? '<div class="vt-vorschlaege"><h2>Vorschläge des Strategen <span>' + vor.length + "</span></h2><p>Neue Chancen aus den letzten Kontakten. Aufnehmen setzt sie auf das Board, Verwerfen merkt sich der Stratege.</p><ul>" + vor.map(function (c) {
         return '<li><div><b>' + esc(c.titel) + "</b><span>" + esc([vtStufeName(c.stufe), c.marke, vtPersonen(c).map(vtPName).join(", ")].filter(Boolean).join(" · ")) + "</span>" + (c.begruendung ? "<small>" + esc(c.begruendung) + "</small>" : "") +
           '</div><div class="vt-v-knoepfe"><button type="button" class="e-k e-k-voll" data-vt-auf="' + c.id + '">Aufnehmen</button><button type="button" class="e-k" data-vt-weg="' + c.id + '">Verwerfen</button></div></li>'; }).join("") + "</ul></div>" : "") +
       '<div class="vt-board">' + VT_STUFEN.map(function (s) {
         var k = l.filter(function (c) { return c.stufe === s[0]; }).sort(ordnen);
-        return '<section class="vt-spalte"><header><h2>' + s[1] + " <span>" + k.length + '</span></h2><p>Ziel: ' + s[2] + "</p></header>" +
+        return '<section class="vt-spalte"><header><h2>' + s[1] + " <span>" + k.length + '</span></h2><p>' + s[2] + "</p></header>" +
           (k.length ? '<ul class="vt-karten">' + k.map(vtKarte).join("") + "</ul>" : '<p class="e-leer">Keine Chance in dieser Stufe.</p>') + "</section>";
       }).join("") + "</div>" +
       '<button type="button" class="e-k vt-neu" data-vt-neu>Chance anlegen</button></div></section>' +
