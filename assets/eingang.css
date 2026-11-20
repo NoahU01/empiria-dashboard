@@ -671,3 +671,10 @@
 .tp-vorb summary::after { content: ""; width: 7px; height: 7px; border-right: 1.5px solid #86868b; border-bottom: 1.5px solid #86868b; transform: rotate(45deg); margin-top: -3px; }
 .tp-vorb[open] summary::after { transform: rotate(225deg); margin-top: 3px; }
 .tp-vorb[open] summary { margin-bottom: 6px; }
+.pj-tp .tp { margin-top: 16px; }
+@media (max-width: 600px) {
+  .pj-fahrplan summary { flex-wrap: wrap; row-gap: 4px; }
+  .pj-fahrplan summary h2 { order: 1; }
+  .pj-fahrplan summary::after { order: 2; }
+  .pj-fahrplan summary span { order: 3; flex-basis: 100%; }
+}

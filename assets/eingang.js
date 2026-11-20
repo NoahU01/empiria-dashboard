@@ -842,7 +842,8 @@
         // Fahrplan (Daniel, 20.11.2026: „eine der wichtigsten Informationen im Projekt“) – derselbe Linienplan wie auf der bisherigen Projektseite
         (p.name === "Operative Aufgaben" || p.workshop ? "" : '<details class="lg-kasten pj-fahrplan"><summary><h2>Fahrplan</h2><span>Linienplan mit Stoßrichtungen, Arbeitspaketen und Meilensteinen</span></summary>' +
           '<div class="pj-plan-wisch"><iframe class="pj-plan-rahmen" src="' + (location.pathname.indexOf("/.pruefung/") === 0 ? "/.pruefung/" : "/strategie/") + 'projekte.html?nurplan#p=' + pid + '" title="Fahrplan" loading="lazy"></iframe></div></details>') +
-        '<section class="lg-kasten pj-tp"><h2>Termine und Protokolle</h2><div class="tp"><p class="e-leer">Lädt …</p></div></section>' +
+        // zugeklappt wie der Fahrplan (Daniel, 20.11.2026)
+        '<details class="lg-kasten pj-fahrplan pj-tp"><summary><h2>Termine und Protokolle</h2><span>Alle Termine mit Vorbereitung, Protokoll, Entscheidungen und Aufgaben</span></summary><div class="tp"><p class="e-leer">Lädt …</p></div></details>' +
         '<div class="lg-links"><div class="pj-spalten">' + spalte("Bei dir", "tinte", offen.filter(function (a) { return wer2(a) === "du"; })) +
           spalte("Bei Claude", "cl", offen.filter(function (a) { return wer2(a) === "claude"; })) + spalte("Bei anderen", "grau", offen.filter(function (a) { return wer2(a) === "andere"; })) + "</div>" +
           (erledigt.length ? '<details class="lg-kasten pj-erledigt"><summary><h2>Zuletzt erledigt</h2><span>' + erledigt.length + "</span></summary><ul class=\"pj-zeit\">" + erledigt.map(function (a) {
