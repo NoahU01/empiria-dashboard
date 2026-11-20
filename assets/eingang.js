@@ -779,7 +779,7 @@
           (s.naechster_schritt ? '<p class="pj-naechst">Nächster Schritt: <b>' + esc(s.naechster_schritt) + "</b>" + (s.bei ? " · " + esc(s.bei) : "") + (s.faellig ? " · bis " + datum(s.faellig) : "") + "</p>" : "") : "<p>Für dieses Projekt hat der Stabschef noch keinen Stand geschrieben.</p>") +
           (p.ziel ? '<p class="pj-ziel"><span>Ziel</span>' + esc(p.ziel) + "</p>" : "") + "</div>" +
         // Fahrplan (Daniel, 20.11.2026: „eine der wichtigsten Informationen im Projekt“) – derselbe Linienplan wie auf der bisherigen Projektseite
-        (p.name === "Operative Aufgaben" || p.workshop ? "" : '<details class="lg-kasten pj-fahrplan" open><summary><h2>Fahrplan</h2><span>Linienplan mit Stoßrichtungen, Arbeitspaketen und Meilensteinen</span></summary>' +
+        (p.name === "Operative Aufgaben" || p.workshop ? "" : '<details class="lg-kasten pj-fahrplan"><summary><h2>Fahrplan</h2><span>Linienplan mit Stoßrichtungen, Arbeitspaketen und Meilensteinen</span></summary>' +
           '<div class="pj-plan-wisch"><iframe class="pj-plan-rahmen" src="' + (location.pathname.indexOf("/.pruefung/") === 0 ? "/.pruefung/" : "/strategie/") + 'projekte.html?nurplan#p=' + pid + '" title="Fahrplan" loading="lazy"></iframe></div></details>') +
         '<div class="lg-links"><div class="pj-spalten">' + spalte("Bei dir", "tinte", offen.filter(function (a) { return wer2(a) === "du"; })) +
           spalte("Bei Claude", "cl", offen.filter(function (a) { return wer2(a) === "claude"; })) + spalte("Bei anderen", "grau", offen.filter(function (a) { return wer2(a) === "andere"; })) + "</div>" +
