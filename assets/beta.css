@@ -2478,3 +2478,7 @@ html.nur-plan .nurplan-host { padding: 0; }
 html.nur-plan .nurplan-host .pr-n-auf, html.nur-plan .nurplan-host .pr-n-pfeil-knopf { display: none; }
 html.nur-plan .nurplan-host .pr-n-kopf { justify-content: flex-end; min-height: 0; }
 html.nur-plan .nurplan-host .pr-n { margin: 0; border: 0; box-shadow: none; background: none; }
+/* Eingebetteter Fahrplan: die Leiste steht in der Kopfzeile der Projektseite; hier unsichtbar, die Legende geht weiter an ihrer Stelle auf (Daniel, 20.11.2026) */
+html.nur-plan .nurplan-host { position: relative; }
+html.nur-plan .nurplan-host .ub-zoom:not(.ub-zoom--weit) { position: absolute; top: 0; right: 0; visibility: hidden; }
+html.nur-plan .nurplan-host .ub-zoom:not(.ub-zoom--weit) .ub-pop--legende { visibility: visible; }

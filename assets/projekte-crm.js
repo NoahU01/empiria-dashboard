@@ -764,6 +764,16 @@
         try { parent.postMessage({ fahrplanWeit: w }, location.origin); } catch (x) {} }).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
       window.addEventListener("message", function (ev) { if (ev.origin !== location.origin || !ev.data || !ev.data.fahrplanWeitZu || !warWeit) return;
         var k = document.querySelector("[data-weit]"); if (k) k.click(); });
+      // Leiste der einbettenden Seite (Größe, volle Breite, Legende) bedient die Leiste des Plans
+      window.addEventListener("message", function (ev) {
+        if (ev.origin !== location.origin || !ev.data || !ev.data.planAktion) return;
+        var sel = { minus: '[data-z="-1"]', plus: '[data-z="1"]', weit: "[data-weit]", legende: "[data-leg]" }[ev.data.planAktion];
+        var k = sel && document.querySelector(".ub-zoom " + sel); if (!k || k.disabled) return;
+        if (ev.data.planAktion === "weit" && warWeit) return;
+        k.click();
+        if (ev.data.planAktion === "minus" || ev.data.planAktion === "plus") { var o = document.querySelector(".ub-zoom output");
+          try { parent.postMessage({ planGroesse: parseInt(o.textContent, 10) }, location.origin); } catch (x) {} }
+      });
     }
   }
 

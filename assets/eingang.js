@@ -842,12 +842,29 @@
     if (ev.origin !== location.origin || !ev.data) return;
     var w = el.querySelector(".pj-plan-wisch");
     // Volle Breite im eingebetteten Plan: Rahmen über das ganze Fenster (Daniel, 20.11.2026)
-    if (typeof ev.data.fahrplanWeit === "boolean" && w) { w.classList.toggle("pj-plan-voll", ev.data.fahrplanWeit); document.documentElement.classList.toggle("pj-plan-voll-offen", ev.data.fahrplanWeit); return; }
+    if (typeof ev.data.fahrplanWeit === "boolean" && w) {
+      w.classList.toggle("pj-plan-voll", ev.data.fahrplanWeit); document.documentElement.classList.toggle("pj-plan-voll-offen", ev.data.fahrplanWeit);
+      if (!ev.data.fahrplanWeit && PJ.zuNachWeit) { PJ.zuNachWeit = false; var dz = el.querySelector(".pj-fp"); if (dz) dz.open = false; }
+      return;
+    }
+    if (ev.data.planGroesse) { var o = el.querySelector(".pj-plan-pill output"); if (o) o.textContent = ev.data.planGroesse + " %"; return; }
     if (!ev.data.fahrplanHoehe) return;
+    if (!PJ.planBereit) { PJ.planBereit = true; if (PJ.planWarte) { planSenden(PJ.planWarte); PJ.planWarte = null; } }
     var f = el.querySelector(".pj-plan-rahmen"); if (f) f.style.height = Math.max(200, ev.data.fahrplanHoehe) + "px";
   });
+  // Knöpfe der Leiste im Kopf: Klick wirkt im eingebetteten Plan; der Fahrplan geht dafür auf, „volle Breite“ zeigt sofort das große Fenster
+  function planSenden(a) { var f = el.querySelector(".pj-plan-rahmen"); try { f.contentWindow.postMessage({ planAktion: a }, location.origin); } catch (x) {} }
+  el.addEventListener("click", function (ev) {
+    var b = ev.target.closest("[data-pp]"); if (!b) return;
+    ev.preventDefault(); ev.stopPropagation();
+    var a = b.getAttribute("data-pp"), d = el.querySelector(".pj-fp"), w = el.querySelector(".pj-plan-wisch"); if (!d || !w) return;
+    if (a === "weit") { if (!d.open) PJ.zuNachWeit = true; w.classList.add("pj-plan-voll"); document.documentElement.classList.add("pj-plan-voll-offen"); }
+    if (!d.open) d.open = true;
+    if (PJ.planBereit) planSenden(a); else PJ.planWarte = a;
+  }, true);
   document.addEventListener("keydown", function (ev) {
     var w = el.querySelector(".pj-plan-wisch.pj-plan-voll"); if (ev.key !== "Escape" || !w) return;
+    if (!PJ.planBereit) { w.classList.remove("pj-plan-voll"); document.documentElement.classList.remove("pj-plan-voll-offen"); PJ.planWarte = null; if (PJ.zuNachWeit) { PJ.zuNachWeit = false; el.querySelector(".pj-fp").open = false; } return; }
     var f = w.querySelector("iframe"); try { f.contentWindow.postMessage({ fahrplanWeitZu: true }, location.origin); } catch (x) {}
   });
   function projektSeite() {
@@ -890,7 +907,11 @@
           (s.naechster_schritt ? '<p class="pj-naechst">Nächster Schritt: <b>' + esc(s.naechster_schritt) + "</b>" + (s.bei ? " · " + esc(s.bei) : "") + (s.faellig ? " · bis " + datum(s.faellig) : "") + "</p>" : "") : "<p>Für dieses Projekt hat der Stabschef noch keinen Stand geschrieben.</p>") +
           (p.ziel ? '<p class="pj-ziel"><span>Ziel</span>' + esc(p.ziel) + "</p>" : "") + "</div>" +
         // Fahrplan (Daniel, 20.11.2026: „eine der wichtigsten Informationen im Projekt“) – derselbe Linienplan wie auf der bisherigen Projektseite
-        (p.name === "Operative Aufgaben" || p.workshop ? "" : '<details class="lg-kasten pj-fahrplan"><summary><h2>Fahrplan</h2><span>Linienplan mit Stoßrichtungen, Arbeitspaketen und Meilensteinen</span></summary>' +
+        (p.name === "Operative Aufgaben" || p.workshop ? "" : '<details class="lg-kasten pj-fahrplan pj-fp"><summary><h2>Fahrplan</h2><span>Linienplan mit Stoßrichtungen, Arbeitspaketen und Meilensteinen</span>' +
+          // Größe, volle Breite und Legende schon im zugeklappten Zustand (Daniel, 20.11.2026); volle Breite öffnet sofort das große Fenster
+          '<span class="pj-plan-pill"><button type="button" data-pp="minus" aria-label="Plan kleiner">&minus;</button><output>' + (function () { try { return localStorage.getItem("sv-plan-groesse") || "100"; } catch (x) { return "100"; } })() + ' %</output><button type="button" data-pp="plus" aria-label="Plan größer">+</button><i></i>' +
+          '<button type="button" data-pp="weit" aria-label="Plan in voller Breite" title="Plan in voller Breite"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 5V1h4M9 1h4v4M13 9v4H9M5 13H1V9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><i></i>' +
+          '<button type="button" data-pp="legende">Legende</button></span></summary>' +
           '<div class="pj-plan-wisch"><iframe class="pj-plan-rahmen" src="' + (location.pathname.indexOf("/.pruefung/") === 0 ? "/.pruefung/" : "/strategie/") + 'projekte.html?nurplan#p=' + pid + '" title="Fahrplan" loading="lazy"></iframe></div></details>') +
         // zugeklappt wie der Fahrplan (Daniel, 20.11.2026)
         '<details class="lg-kasten pj-fahrplan pj-tp"><summary><h2>Termine und Protokolle</h2><span>Alle Termine mit Vorbereitung, Protokoll, Entscheidungen und Aufgaben</span></summary><div class="tp"><p class="e-leer">Lädt …</p></div></details>' +
@@ -914,6 +935,7 @@
     }
     var w = el.querySelector(".pj-waehler"); if (w) w.onchange = function () { location.hash = w.value ? "p=" + w.value : ""; };
     if (p) tpLaden(pid, ter);
+    PJ.planBereit = false; PJ.planWarte = null; PJ.zuNachWeit = false;
     el.querySelectorAll(".pj-a-zeile").forEach(function (z) { z.onclick = function () { var a = z.nextElementSibling; a.hidden = !a.hidden; z.parentNode.classList.toggle("ist-offen", !a.hidden); }; });
     el.querySelectorAll("[data-pa]").forEach(function (b) {
       b.onclick = function () {
