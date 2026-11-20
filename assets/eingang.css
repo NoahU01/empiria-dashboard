@@ -865,3 +865,5 @@ html.pj-plan-voll-offen { overflow: hidden; }
 /* Eingang: Titel in der Liste in normaler Schriftstärke (Daniel, 20.11.2026) */
 .k7-liste li > b { font-weight: 400 !important; }
 .pj-sb-kopf .e-leer, .pj-sb-auf .e-leer { margin: 0; padding: 0; }
+/* nächster anstehender Termin im Projekt: farbige Klammer links (Daniel, 20.11.2026) */
+.tp-zeile.tp-naechster { box-shadow: inset 3px 0 0 #8613a1; border-radius: 4px 12px 12px 4px; }

@@ -786,7 +786,7 @@
   }
   function tpZeile(x, i) {
     var c = tpInhalt(x), was = [c.vorb.length ? "Vorbereitung" : "", c.prot.length ? "Protokoll" : "", c.ent.length ? "Entscheidungen" : "", c.auf.length ? "Aufgaben" : ""].filter(Boolean);
-    return '<li><button type="button" class="tp-zeile' + (TP.wahl === i ? " an" : "") + '" data-tp="' + i + '"><span class="tp-d">' + tpTag(x.ts) + (tpZeit(x.ts) && x.art !== "Meilenstein" ? " · " + tpZeit(x.ts) : "") + "</span>" +
+    return '<li><button type="button" class="tp-zeile' + (TP.wahl === i ? " an" : "") + (TP.naechster === i ? " tp-naechster" : "") + '" data-tp="' + i + '"><span class="tp-d">' + tpTag(x.ts) + (tpZeit(x.ts) && x.art !== "Meilenstein" ? " · " + tpZeit(x.ts) : "") + "</span>" +
       "<b>" + esc(x.titel) + "</b><small>" + esc(x.art || "Termin") + (was.length ? " · " + was.join(", ") : " · noch nichts festgehalten") + "</small></button></li>";
   }
   function tpPunkte(l) {
@@ -815,14 +815,20 @@
   function tpZeichnen() {
     var ziel = el.querySelector(".tp"); if (!ziel || !TP.l) return;
     var l = TP.l, heute0 = new Date(HEUTE + "T00:00:00").getTime();
-    var kommend = l.map(function (x, i) { return i; }).filter(function (i) { return new Date(l[i].ts).getTime() >= heute0; }).reverse();
+    // durchgängige Zeitachse (Daniel, 20.11.2026): ganz oben der Termin, der am weitesten in der Zukunft liegt, ganz unten der älteste;
+    // der nächste anstehende Termin trägt die farbige Klammer links
+    var kommend = l.map(function (x, i) { return i; }).filter(function (i) { return new Date(l[i].ts).getTime() >= heute0; });
+    TP.naechster = kommend.length ? kommend[kommend.length - 1] : null;
     var bisher = l.map(function (x, i) { return i; }).filter(function (i) { return new Date(l[i].ts).getTime() < heute0; });
-    if (TP.wahl == null) { var nah = kommend.filter(function (i) { return new Date(l[i].ts).getTime() < Date.now() + 3 * 864e5; })[0];
-      TP.wahl = nah != null ? nah : bisher.length ? bisher[0] : kommend.length ? kommend[0] : null; }
+    if (TP.wahl == null) { var nah = kommend.filter(function (i) { return new Date(l[i].ts).getTime() < Date.now() + 3 * 864e5; }).pop();
+      TP.wahl = nah != null ? nah : bisher.length ? bisher[0] : kommend.length ? TP.naechster : null; }
     if (!l.length) { ziel.innerHTML = '<p class="e-leer">Noch keine Termine im Projekt.</p>'; return; }
     ziel.innerHTML = '<div class="tp-liste">' + (kommend.length ? '<h3>Kommend</h3><ul>' + kommend.map(function (i) { return tpZeile(l[i], i); }).join("") + "</ul>" : "") +
       (bisher.length ? '<h3>Bisher</h3><ul>' + bisher.map(function (i) { return tpZeile(l[i], i); }).join("") + "</ul>" : "") + '</div><div class="tp-detail">' + tpDetail(l[TP.wahl]) + "</div>";
     tpPlatz();
+    // die Liste so scrollen, dass der nächste Termin sichtbar ist
+    var nb = ziel.querySelector(".tp-naechster"), li = ziel.querySelector(".tp-liste");
+    if (nb && li && li.scrollHeight > li.clientHeight) li.scrollTop = Math.max(0, nb.offsetTop - li.offsetTop - 120);
     ziel.querySelectorAll("[data-tp]").forEach(function (b) { b.onclick = function () {
       TP.wahl = +b.getAttribute("data-tp");
       ziel.querySelectorAll(".tp-zeile.an").forEach(function (x) { x.classList.remove("an"); }); b.classList.add("an");
