@@ -1249,7 +1249,7 @@
       (c.hebel ? '<div class="vt-hebel"><h3>So kommt die Chance in die nächste Stufe</h3><p>' + esc(c.hebel) + "</p>" + (c.hebel_stand ? '<small>Marketing- und Vertriebsstratege · ' + datum(c.hebel_stand) + "</small>" : "") + "</div>" : "") +
       '<form class="vt-schritt-form"><h3>Nächster Schritt</h3><input name="schritt" type="text" value="' + esc(c.naechster_schritt || "") + '" placeholder="Was passiert als Nächstes?">' +
       '<div class="vt-zeile"><input name="faellig" type="date" value="' + esc(c.faellig_am || "") + '"><button class="e-k e-k-voll" type="submit">Speichern</button></div>' +
-      '<h3>Titel</h3><input name="titel" type="text" value="' + esc(c.titel) + '"><h3>Vorhaben</h3><textarea name="vorhaben" rows="2" placeholder="Worum geht es?">' + esc(c.vorhaben || "") + "</textarea></form>"' +
+      '<h3>Titel</h3><input name="titel" type="text" value="' + esc(c.titel) + '"><h3>Vorhaben</h3><textarea name="vorhaben" rows="2" placeholder="Worum geht es?">' + esc(c.vorhaben || "") + "</textarea></form>" +
       '<div class="vt-pers"><h3>Wer dazugehört</h3><ul>' + pers.map(function (p) { var k = p.kontakte;
         return '<li><a href="/strategie/kontakte.html#k=' + k.id + '">' + esc(vtPName(p)) + "</a><span>" + esc([p.rolle, k.position].filter(Boolean).join(" · ")) + '</span><button type="button" class="vt-p-weg" data-vt-pweg="' + k.id + '" aria-label="Aus der Chance nehmen">×</button></li>'; }).join("") +
       '</ul><div class="vt-p-neu"><input type="search" placeholder="Person hinzufügen" autocomplete="off"><ul class="vt-treffer"></ul></div></div>' +
