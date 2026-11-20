@@ -30,6 +30,7 @@
     String(t).split(/\n+/).map(function (z) { return z.trim(); }).filter(Boolean).forEach(function (z) {
       var a = /^[•\-–]\s+/.test(z) ? "ul" : /^\d+\.\s/.test(z) ? "ol" : "";
       if (a) { if (art !== a) zu(); art = a; liste = liste || []; liste.push("<li>" + thema(z.replace(/^([•\-–]|\d+\.)\s+/, ""), a === "ol" ? 90 : 30) + "</li>"); return; }
+      if (/^#{1,4}\s+/.test(z)) { zu(); h += '<p class="tm-zwischen">' + esc(z.replace(/^#{1,4}\s+/, "")) + "</p>"; return; }
       zu(); h += /:$/.test(z) ? '<p class="tm-zwischen">' + esc(z.replace(/:$/, "")) + "</p>" : '<p class="tm-themenzeile">' + thema(z) + "</p>";
     });
     zu(); return h;
@@ -673,13 +674,13 @@
   var PJ = {};
   function projektLaden() {
     Promise.all([
-      db.from("projekte").select("id, name, marke, typ, phase, ziel, naechstes_gate, gate_datum, organisationen(name, gruppe)").eq("status", "läuft"),
+      db.from("projekte").select("id, name, marke, typ, phase, ziel, naechstes_gate, gate_datum, projektseite, workshop, organisationen(name, gruppe)").eq("status", "läuft"),
       db.from("projekt_status").select("*").gte("gilt_fuer", plus(-7)).order("gilt_fuer", { ascending: false }),
       db.from("aufgaben").select("id, projekt_id, titel, beschreibung, verantwortlich, faellig_am, ticket_stand, ticket_rueckmeldung, spalte, art, status, erledigt_am, warten_auf, hinweis")
         .or("status.eq.offen,erledigt_am.gte." + plus(-14)),
       db.from("vorlagen").select("id, projekt_id, titel, kern, art").eq("status", "offen"),
-      db.from("termine").select("start, ende, betreff, kalender, postfach, projekt_id, vorbereitung").eq("im_kalender", true).gte("start", new Date().toISOString()).order("start"),
-      db.from("projekt_ereignisse").select("projekt_id, datum, art, titel").gte("datum", plus(-30)).lte("datum", plus(120)).order("datum"),
+      db.from("termine").select("start, ende, betreff, kalender, postfach, projekt_id, vorbereitung, graph_id").eq("im_kalender", true).gte("start", new Date().toISOString()).order("start"),
+      db.from("projekt_ereignisse").select("id, projekt_id, datum, art, titel, aktivitaet_extern").gte("datum", plus(-30)).lte("datum", plus(120)).order("datum"),
       db.from("eingang").select("typ, frist"),
       db.from("projekt_verlauf").select("projekt_id, datum, titel, inhalt").eq("art", "arbeitsstand").order("datum", { ascending: false }).limit(200)
     ]).then(function (r) {
@@ -707,6 +708,35 @@
       '<button class="e-k" data-pa="hinweis">' + (wer2(a) === "andere" ? "Nachhaken lassen" : "Hinweis an Claude") + "</button></div>" +
       '<form class="e-text" hidden><textarea rows="3" placeholder="Was soll Claude tun?"></textarea><button class="e-k e-k-voll" type="submit">Senden</button></form><p class="e-ok" hidden></p></div></li>';
   }
+  // Termine im Projekt: innerhalb der nächsten 7 Tage direkt in die Seite Termine, sonst aufklappbar mit Vorbereitung, Protokoll und Entscheidungen
+  function pjTerminLink(titel, gid, start) {
+    var nah = start && new Date(start).getTime() < Date.now() + 7 * 864e5 && new Date(start).getTime() > Date.now() - 864e5;
+    return gid && nah ? '<a class="pj-termin" href="/strategie/termine-tag.html#g=' + encodeURIComponent(gid) + '">' + esc(titel) + " →</a>" : esc(titel);
+  }
+  function pjEreignis(e, zeit) {
+    var gid = e.aktivitaet_extern && e.aktivitaet_extern.indexOf("kalender:") === 0 ? e.aktivitaet_extern.slice(9) : null, d = String(e.datum).slice(0, 10);
+    var nah = new Date(e.datum).getTime() < Date.now() + 7 * 864e5 && new Date(e.datum).getTime() > Date.now() - 864e5;
+    return "<li><span>" + (typeof zeit === "string" ? zeit : datum(d)) + '</span><details class="pj-ereignis" data-ereignis="' + e.id + '"><summary>' + esc(e.titel) + "</summary>" +
+      '<div class="pj-ereignis-inhalt"><p class="e-leer">Lädt …</p></div>' + (gid && nah ? '<a class="pj-termin" href="/strategie/termine-tag.html#g=' + encodeURIComponent(gid) + '">Im Termin öffnen →</a>' : "") + "</details></li>";
+  }
+  document.addEventListener("toggle", function (ev) {
+    var d = ev.target; if (!d.matches || !d.matches("details.pj-ereignis") || !d.open || d.dataset.geladen) return;
+    d.dataset.geladen = "1";
+    db.from("projekt_punkte").select("id, ereignis_id, art, text, angelegt_am").eq("ereignis_id", +d.getAttribute("data-ereignis")).order("angelegt_am").order("id").then(function (r) {
+      var eid = +d.getAttribute("data-ereignis"), l = (r.data || []).filter(function (p) { return p.art !== "Ersetzt" && (p.ereignis_id == null || +p.ereignis_id === eid); }), ziel = d.querySelector(".pj-ereignis-inhalt");
+      if (!l.length) { ziel.innerHTML = '<p class="e-leer">Noch nichts festgehalten.</p>'; return; }
+      ziel.innerHTML = [["Vorbereitung", "Gesprächsvorbereitung"], ["Protokoll", "Protokoll"], ["Entscheidung", "Entscheidungen"]].map(function (a) {
+        var x = l.filter(function (p) { return p.art === a[0]; }); if (!x.length) return "";
+        return '<div class="e-block"><h3>' + a[1] + '</h3><ul class="tm-pp">' + x.map(function (p) { var m = String(p.text).match(/^([^:]{2,40}):\s*([\s\S]*)$/);
+          return "<li>" + (m ? "<b>" + esc(m[1]) + "</b>" + gegliedert(m[2]) : gegliedert(p.text)) + "</li>"; }).join("") + "</ul></div>";
+      }).join("");
+    });
+  }, true);
+  // Höhe des eingebetteten Fahrplans
+  window.addEventListener("message", function (ev) {
+    if (ev.origin !== location.origin || !ev.data || !ev.data.fahrplanHoehe) return;
+    var f = el.querySelector(".pj-plan-rahmen"); if (f) f.style.height = Math.max(200, ev.data.fahrplanHoehe) + "px";
+  });
   function projektSeite() {
     zahlImMenue();
     var m = location.hash.match(/p=(\d+)/), pid = m ? +m[1] : null, p = pid && P[pid];
@@ -740,11 +770,17 @@
       var ter = PJ.termine.filter(function (t) { return t.projekt_id === pid || String(t.betreff || "").toLowerCase().indexOf(nameKlein) >= 0; }).slice(0, 6);
       var ere = PJ.ereignisse.filter(function (e) { return e.projekt_id === pid; });
       var kommend = ere.filter(function (e) { return String(e.datum).slice(0, 10) >= HEUTE; }).slice(0, 6), vergangen = ere.filter(function (e) { return String(e.datum).slice(0, 10) < HEUTE; }).reverse().slice(0, 6);
-      el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>' + esc(p.name) + "</h1><span>" + esc(p.marke) + " · " + (p.typ === "Kunde" ? "Kundenprojekt" : "internes Projekt") + (p.phase ? " · " + esc(p.phase) : "") + "</span></div>" + waehler + "</header>" +
+      el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>' + esc(p.name) + "</h1><span>" + esc(p.marke) + " · " + (p.typ === "Kunde" ? "Kundenprojekt" : "internes Projekt") + (p.phase ? " · " + esc(p.phase) : "") + "</span></div>" +
+        // Absprung zur Kundenprojektseite und Methodenkoffer (Daniel, 20.11.2026)
+        '<nav class="pj-wege">' + (p.projektseite && p.projektseite.url ? '<a class="e-k" href="' + esc(p.projektseite.url) + '"' + (p.projektseite.url.charAt(0) === "/" ? "" : ' target="_blank" rel="noopener"') + ">" + esc(p.projektseite.titel || "Projektseite") + " ↗</a>" : "") +
+        '<a class="e-k" href="/strategie/methoden.html">Methodenkoffer</a></nav>' + waehler + "</header>" +
         '<section class="k7-band"><div class="lg-raster">' +
         '<div class="lg-kern pj-stand">' + (s ? '<p class="pj-ampel"><i class="lg-a-' + s.ampel + '"></i>' + AMPEL[s.ampel][0] + " · Stand " + datum(s.gilt_fuer) + "</p><p>" + esc(s.satz) + "</p>" +
           (s.naechster_schritt ? '<p class="pj-naechst">Nächster Schritt: <b>' + esc(s.naechster_schritt) + "</b>" + (s.bei ? " · " + esc(s.bei) : "") + (s.faellig ? " · bis " + datum(s.faellig) : "") + "</p>" : "") : "<p>Für dieses Projekt hat der Stabschef noch keinen Stand geschrieben.</p>") +
           (p.ziel ? '<p class="pj-ziel"><span>Ziel</span>' + esc(p.ziel) + "</p>" : "") + "</div>" +
+        // Fahrplan (Daniel, 20.11.2026: „eine der wichtigsten Informationen im Projekt“) – derselbe Linienplan wie auf der bisherigen Projektseite
+        (p.name === "Operative Aufgaben" || p.workshop ? "" : '<details class="lg-kasten pj-fahrplan" open><summary><h2>Fahrplan</h2><span>Linienplan mit Stoßrichtungen, Arbeitspaketen und Meilensteinen</span></summary>' +
+          '<div class="pj-plan-wisch"><iframe class="pj-plan-rahmen" src="' + (location.pathname.indexOf("/.pruefung/") === 0 ? "/.pruefung/" : "/strategie/") + 'projekte.html?nurplan#p=' + pid + '" title="Fahrplan" loading="lazy"></iframe></div></details>') +
         '<div class="lg-links"><div class="pj-spalten">' + spalte("Bei dir", "tinte", offen.filter(function (a) { return wer2(a) === "du"; })) +
           spalte("Bei Claude", "cl", offen.filter(function (a) { return wer2(a) === "claude"; })) + spalte("Bei anderen", "grau", offen.filter(function (a) { return wer2(a) === "andere"; })) + "</div>" +
           (ent.length ? '<div class="lg-kasten"><h2>Offene Entscheidungen</h2><ul class="pj-einfach">' + ent.map(function (v) { return '<li><a href="/strategie/eingang-klar.html#s=vorlage:' + v.id + '">' + esc(v.titel) + "</a></li>"; }).join("") + "</ul></div>" : "") + "</div>" +
@@ -752,14 +788,16 @@
           var as = (PJ.arbeitsstaende || []).filter(function (v) { return v.projekt_id === pid; }).slice(0, 5);
           return '<div class="lg-kasten"><h2>Arbeitsstände</h2>' + (as.length ? '<ul class="pj-stand-liste">' + as.map(function (v) {
             var i = v.inhalt || {};
-            return "<li><b>" + esc(v.titel) + "</b><small>" + datum(String(v.datum).slice(0, 10)) + "</small>" + (i.text ? "<p>" + esc(String(i.text).slice(0, 220)) + "</p>" : "") +
-              (i.link ? '<a class="e-link" href="' + esc(i.link) + '" target="_blank" rel="noopener">Öffnen</a>' : i.ablage ? '<p class="pj-ablage">' + esc(i.ablage) + "</p>" : "") + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Noch keine Arbeitsstände.</p>') + "</div>";
+            // zugeklappt: Titel und Datum; aufgeklappt Text und Ablageort (Daniel, 20.11.2026: „Arbeitsstände sind hier viel zu viel“)
+            return '<li><details><summary><b>' + esc(v.titel) + "</b><small>" + datum(String(v.datum).slice(0, 10)) + "</small></summary>" + (i.text ? "<p>" + esc(i.text) + "</p>" : "") +
+              (i.link ? '<a class="e-link" href="' + esc(i.link) + '" target="_blank" rel="noopener">Öffnen</a>' : "") + (i.ablage ? '<p class="pj-ablage">' + esc(i.ablage) + "</p>" : "") + "</details></li>"; }).join("") + "</ul>" : '<p class="e-leer">Noch keine Arbeitsstände.</p>') + "</div>";
         })() +
           '<div class="lg-kasten"><h2>Meilensteine</h2>' + (gates.length ? '<ul class="pj-zeit">' + gates.slice(0, 6).map(function (a) { return "<li><span>" + (a.faellig_am ? datum(a.faellig_am) + a.faellig_am.slice(2, 4) : "offen") + "</span>" + esc(a.titel) + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Keine hinterlegt.</p>') + "</div>" +
-          '<div class="lg-kasten"><h2>Was kommt</h2>' + (ter.length || kommend.length ? '<ul class="pj-zeit">' + ter.map(function (t) { return "<li><span>" + datum(iso2(t.start)) + " " + uhr(t.start) + "</span>" + esc(t.betreff) + "</li>"; }).join("") +
-            kommend.filter(function (e) { return !ter.some(function (t) { return t.betreff === e.titel; }); }).map(function (e) { return "<li><span>" + datum(String(e.datum).slice(0, 10)) + "</span>" + esc(e.titel) + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Nichts geplant.</p>') + "</div>" +
+          '<div class="lg-kasten"><h2>Was kommt</h2>' + (ter.length || kommend.length ? '<ul class="pj-zeit">' + ter.map(function (t) { var e = t.graph_id && PJ.ereignisse.filter(function (x) { return x.aktivitaet_extern === "kalender:" + t.graph_id; })[0];
+              return e ? pjEreignis(e, datum(iso2(t.start)) + " " + uhr(t.start)) : "<li><span>" + datum(iso2(t.start)) + " " + uhr(t.start) + "</span>" + pjTerminLink(t.betreff, t.graph_id, t.start) + "</li>"; }).join("") +
+            kommend.filter(function (e) { return !ter.some(function (t) { return t.betreff === e.titel; }); }).map(pjEreignis).join("") + "</ul>" : '<p class="e-leer">Nichts geplant.</p>') + "</div>" +
           '<div class="lg-kasten"><h2>Zuletzt</h2>' + (erledigt.length || vergangen.length ? '<ul class="pj-zeit">' + erledigt.slice(0, 5).map(function (a) { return "<li><span>" + datum(String(a.erledigt_am).slice(0, 10)) + "</span>erledigt: " + esc(a.titel) + "</li>"; }).join("") +
-            vergangen.map(function (e) { return "<li><span>" + datum(String(e.datum).slice(0, 10)) + "</span>" + esc(e.titel) + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Keine Einträge in den letzten Wochen.</p>') + "</div>" +
+            vergangen.map(pjEreignis).join("") + "</ul>" : '<p class="e-leer">Keine Einträge in den letzten Wochen.</p>') + "</div>" +
           '<a class="e-k lage-alt" href="/strategie/projekte.html#p=' + pid + '">Bisherige Projektseite (Plan, Protokolle)</a></aside>' +
         "</div></section></div>";
     }
@@ -823,6 +861,8 @@
       var jetztMs = Date.now(), heute = TM.liste.filter(function (t) { return iso2(t.start) === HEUTE; });
       var naechster = heute.filter(function (t) { return new Date(t.ende).getTime() > jetztMs; })[0];
       TM.wahl = naechster || TM.liste.filter(function (t) { return new Date(t.ende).getTime() > jetztMs; })[0] || TM.liste[0] || null;
+      var gh = location.hash.match(/g=([^&]+)/);   // Sprung aus dem Projekt in einen bestimmten Termin
+      if (gh) { var gz = TM.liste.filter(function (t) { return t.graph_id === decodeURIComponent(gh[1]); })[0]; if (gz) TM.wahl = gz; }
       TM.ersterSprung = true;   // beim Öffnen: aktueller Termin steht oben in der Liste (Daniel, 18.11.2026)
       termine();
     });

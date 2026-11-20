@@ -5,6 +5,9 @@
   "use strict";
   var db = window.empiriaDb, wurzel = document.querySelector("[data-projekte]");
   if (!db || !wurzel) return;
+  // Nur der Fahrplan (Daniel, 20.11.2026): die neue Projektseite bettet diese Seite mit ?nurplan ein – derselbe Linienplan, nichts doppelt gepflegt
+  var NURPLAN = /[?&]nurplan/.test(location.search);
+  if (NURPLAN) document.documentElement.classList.add("nur-plan");
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
   function datum(d) { return d ? new Date(d).toLocaleDateString("de-DE", { day: "numeric", month: "short", year: "numeric" }) : ""; }
   function kurz(d) { return d ? new Date(d).toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "short" }) : ""; }
@@ -748,6 +751,13 @@
     else ubw.innerHTML = '<p class="pr-offen">Noch keine Aufgaben für den Plan.</p>';
     // Größe und Legende in die Kopfzeile von „Fahrplan“ – bleiben auch zugeklappt erreichbar
     var leiste = ubw.querySelector(".ub-dash-kopf"); if (leiste) weg.rechts.appendChild(leiste);
+    if (NURPLAN) {   // nur den Fahrplan zeigen, aufgeklappt, und die Höhe an die einbettende Seite melden
+      weg.classList.remove("pr-n-zu"); var kn = weg.querySelector(".pr-n-auf"); if (kn) kn.setAttribute("aria-expanded", "true");
+      var host = document.querySelector(".nurplan-host") || document.body.appendChild(Object.assign(document.createElement("div"), { className: "nurplan-host" }));
+      host.innerHTML = ""; host.appendChild(weg); ubw.dispatchEvent(new CustomEvent("ub-zeigen"));
+      var melden = function () { try { parent.postMessage({ fahrplanHoehe: host.scrollHeight + 4 }, location.origin); } catch (x) {} };
+      melden(); if (window.ResizeObserver) new ResizeObserver(melden).observe(host); setTimeout(melden, 600);
+    }
   }
 
   /* Workshop-Ansicht (Daniel, 09.11.2026): Daniels Gliederung 1:1, nichts umformuliert, nichts ergänzt.

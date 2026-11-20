@@ -2470,3 +2470,11 @@ a.pr-unterlage::after { content: " · PDF"; font-weight: 400; color: var(--grey-
   .kt-steckbrief > .kt3-box:first-child { order: 1; }
   .kt-zwei .kt3-dstand { order: 2; }
 }
+
+/* Nur-Fahrplan-Ansicht für die Einbettung in die neue Projektseite (20.11.2026) */
+html.nur-plan body > *:not(.nurplan-host):not(.modal-overlay):not(script):not([class*="modal"]):not([class*="fenster"]):not([class*="dlg"]) { display: none !important; }
+html.nur-plan body { background: #fff; margin: 0; padding: 0; }
+html.nur-plan .nurplan-host { padding: 0; }
+html.nur-plan .nurplan-host .pr-n-auf, html.nur-plan .nurplan-host .pr-n-pfeil-knopf { display: none; }
+html.nur-plan .nurplan-host .pr-n-kopf { justify-content: flex-end; min-height: 0; }
+html.nur-plan .nurplan-host .pr-n { margin: 0; border: 0; box-shadow: none; background: none; }

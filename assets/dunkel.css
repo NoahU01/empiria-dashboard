@@ -1549,6 +1549,8 @@ html[data-farbe="dunkel"] .kt-look .kt-info-sub { color: var(--ink); }
 html[data-farbe="dunkel"] .kt-look .kt-info-sub a { color: var(--ink); }
 html[data-farbe="dunkel"] .kt-look .kt-info-tags { color: #a1a1a6; }
 html[data-farbe="dunkel"] .kt-look .db-kopf .kicker, html[data-farbe="dunkel"] .kt-look .db-kopf .kicker a { color: #a1a1a6 !important; }
+html[data-farbe="dunkel"].nur-plan body { background: #1c1c1e; }
+html[data-farbe="dunkel"].nur-plan .nurplan-host .pr-n { box-shadow: none; background: none; }
 
 /* ---- assets/cockpit.css ---- */
 html[data-farbe="dunkel"] body.ck .ck-entwurf { color: var(--grey-50); }
@@ -2156,6 +2158,16 @@ html[data-farbe="dunkel"] .mk-d { color: #a1a1a6; }
 html[data-farbe="dunkel"] .mk-naechst { color: #f2f2f7; }
 html[data-farbe="dunkel"] .mk-alle { border: 1px solid var(--tinte); color: var(--tinte); }
 html[data-farbe="dunkel"] .mk-mehr { color: #a1a1a6; }
+html[data-farbe="dunkel"] .pj-wege .e-k { border: 1px solid #636366; background: #1c1c1e; color: var(--tinte); }
+html[data-farbe="dunkel"] .pj-wege .e-k:hover { border-color: var(--tinte); }
+html[data-farbe="dunkel"] .pj-fahrplan summary span { color: #a1a1a6; }
+html[data-farbe="dunkel"] .pj-fahrplan summary::after { border-right: 1.5px solid #636366; border-bottom: 1.5px solid #636366; }
+html[data-farbe="dunkel"] .pj-stand-liste details summary b::before { color: #a1a1a6; }
+html[data-farbe="dunkel"] .pj-stand-liste details p { color: #f2f2f7; }
+html[data-farbe="dunkel"] .pj-stand-liste .pj-ablage { color: #a1a1a6 !important; }
+html[data-farbe="dunkel"] .pj-ereignis summary::after { color: #a1a1a6; }
+html[data-farbe="dunkel"] .pj-termin { color: var(--tinte); }
+html[data-farbe="dunkel"] .pj-zeit > li:has(> details[open]) > span { color: #a1a1a6; }
 
 /* ---- assets/leasing-fahrzeug.css ---- */
 html[data-farbe="dunkel"] .lf-profil div { border-top: 1px solid var(--linie); }
