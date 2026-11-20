@@ -716,7 +716,7 @@
   var PJ = {};
   function projektLaden() {
     Promise.all([
-      db.from("projekte").select("id, name, marke, typ, phase, ziel, naechstes_gate, gate_datum, projektseite, workshop, organisationen(name, gruppe)").eq("status", "läuft"),
+      db.from("projekte").select("id, name, marke, typ, phase, ziel, naechstes_gate, gate_datum, projektseite, workshop, fahrplan, organisationen(name, gruppe)").eq("status", "läuft"),
       db.from("projekt_status").select("*").gte("gilt_fuer", plus(-7)).order("gilt_fuer", { ascending: false }),
       db.from("aufgaben").select("id, projekt_id, titel, beschreibung, verantwortlich, faellig_am, ticket_stand, ticket_rueckmeldung, spalte, art, status, erledigt_am, warten_auf, hinweis")
         .or("status.eq.offen,erledigt_am.gte." + plus(-14)),
@@ -912,7 +912,7 @@
         // Worum es geht (Daniel, 20.11.2026: „ich muss sagen können, um was es bei dem Projekt geht … wer sind die Projektteilnehmer?“)
         '<section class="lg-kasten pj-steckbrief" data-steckbrief><p class="e-leer">Lädt …</p></section>' +
         // Fahrplan (Daniel, 20.11.2026: „eine der wichtigsten Informationen im Projekt“) – derselbe Linienplan wie auf der bisherigen Projektseite
-        (p.name === "Operative Aufgaben" || p.workshop ? "" : '<details class="lg-kasten pj-fahrplan pj-fp"><summary><h2>Fahrplan</h2><span>Linienplan mit Stoßrichtungen, Arbeitspaketen und Meilensteinen</span>' +
+        (p.name === "Operative Aufgaben" || p.workshop || p.fahrplan === false ? "" : '<details class="lg-kasten pj-fahrplan pj-fp"><summary><h2>Fahrplan</h2><span>Linienplan mit Stoßrichtungen, Arbeitspaketen und Meilensteinen</span>' +
           // Größe, volle Breite und Legende schon im zugeklappten Zustand (Daniel, 20.11.2026); volle Breite öffnet sofort das große Fenster
           '<span class="pj-plan-pill"><button type="button" data-pp="minus" aria-label="Plan kleiner">&minus;</button><output>' + (function () { try { return localStorage.getItem("sv-plan-groesse") || "100"; } catch (x) { return "100"; } })() + ' %</output><button type="button" data-pp="plus" aria-label="Plan größer">+</button><i></i>' +
           '<button type="button" data-pp="weit" aria-label="Plan in voller Breite" title="Plan in voller Breite"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 5V1h4M9 1h4v4M13 9v4H9M5 13H1V9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><i></i>' +
@@ -978,7 +978,8 @@
       var z = el.querySelector("[data-steckbrief]"); if (!z || (location.hash.match(/p=(\d+)/) || [])[1] != pid) return;
       var pr = (r[0].data || []).filter(function (x) { return x.id === pid; })[0] || p;
       var st = (r[1].data || []).filter(function (x) { return x.projekt_id === pid; }), bet = (r[2].data || []).filter(function (x) { return x.projekt_id === pid; });
-      var oben = st.filter(function (s) { return !s.eltern_id; });
+      // die technische Sammelgruppe „Aufgaben“ ist keine Stoßrichtung
+      var oben = st.filter(function (s) { return !s.eltern_id && !(s.titel === "Aufgaben" && !s.erklaerung && !st.some(function (k) { return k.eltern_id === s.id; })); });
       var zd = Array.isArray(pr.ziel_details) ? pr.ziel_details : [];
       var name = function (b) { return b.kontakte ? ((b.kontakte.vorname || "") + " " + (b.kontakte.nachname || "")).trim() : b.name || ""; };
       var person = function (b) { var info = [b.rolle, b.kontakte && b.kontakte.position].filter(Boolean).join(" · ");
@@ -992,9 +993,11 @@
         (oben.length ? "<h3>Stoßrichtungen</h3><ul class=\"pj-sb-stoss\">" + oben.map(function (s) { var kinder = st.filter(function (k) { return k.eltern_id === s.id; });
           return "<li><b>" + esc(s.titel) + "</b>" + (s.erklaerung ? "<span>" + esc(s.erklaerung) + "</span>" : "") +
             (kinder.length ? '<em>' + kinder.map(function (k) { return esc(k.titel); }).join(" · ") + "</em>" : "") + "</li>"; }).join("") + "</ul>" : "") + "</div>" +
-        '<div class="pj-sb-rechts"><h2>Projektteam</h2>' + seite(p.typ === "Kunde" ? "Beim Kunden" : "Beteiligte", bet.filter(function (b) { return b.seite === "Kunde"; })) +
-        seite("empiria und Partner", bet.filter(function (b) { return b.seite !== "Kunde"; })) +
-        '<div class="vt-p-neu pj-team-neu"><input type="search" placeholder="Person hinzufügen" autocomplete="off"><select aria-label="Seite"><option value="Kunde">beim Kunden</option><option value="empiria">empiria</option><option value="Partner">Partner</option></select><ul class="vt-treffer"></ul></div></div>';
+        '<div class="pj-sb-rechts"><h2>Projektteam</h2>' + (p.typ === "Kunde" ? seite("Beim Kunden", bet.filter(function (b) { return b.seite === "Kunde"; })) +
+          seite("empiria und Partner", bet.filter(function (b) { return b.seite !== "Kunde"; })) : seite("Beteiligte", bet)) +
+        '<div class="vt-p-neu pj-team-neu"><input type="search" placeholder="Person hinzufügen" autocomplete="off"><select aria-label="Seite">' +
+          (p.typ === "Kunde" ? '<option value="Kunde">beim Kunden</option><option value="empiria">empiria</option><option value="Partner">Partner</option>' : '<option value="Partner">Partner</option><option value="empiria">empiria</option><option value="Kunde">extern</option>') +
+          '</select><ul class="vt-treffer"></ul></div></div>';
       z.querySelectorAll("[data-bet-weg]").forEach(function (b) { b.onclick = function () {
         db.from("projekt_beteiligte").delete().eq("id", +b.getAttribute("data-bet-weg")).then(function (x) { if (x && x.error) { toast("Nicht gespeichert: " + x.error.message); return; } steckbriefLaden(p); }); }; });
       var such = z.querySelector(".pj-team-neu input"), wahl = z.querySelector(".pj-team-neu select"), warte;
