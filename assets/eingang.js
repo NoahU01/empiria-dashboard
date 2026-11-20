@@ -894,7 +894,10 @@
       var offen = auf.filter(function (a) { return a.status === "offen" && !istGate2(a); }).sort(function (a, b) { return (a.spalte === "backlog") - (b.spalte === "backlog") || String(a.faellig_am || "9").localeCompare(String(b.faellig_am || "9")); });
       var gates = auf.filter(function (a) { return a.status === "offen" && istGate2(a); }).sort(function (a, b) { return String(a.faellig_am || "9").localeCompare(String(b.faellig_am || "9")); });
       var erledigt = auf.filter(function (a) { return a.status !== "offen"; }).sort(function (a, b) { return String(b.erledigt_am).localeCompare(String(a.erledigt_am)); });
-      var spalte = function (titel, kl, l) { return '<div class="pj-spalte"><h3><i class="k7-f-' + kl + '"></i>' + titel + " <span>" + l.length + "</span></h3>" + (l.length ? '<ul class="pj-liste">' + l.map(aZeile).join("") + "</ul>" : '<p class="e-leer">Nichts offen.</p>') + "</div>"; };
+      // je Spalte zuerst vier Einträge, der Rest auf Klick (Daniel, 20.11.2026: „bei anderen … dadurch wird es extrem hoch“)
+      var spalte = function (titel, kl, l) { return '<div class="pj-spalte"><h3><i class="k7-f-' + kl + '"></i>' + titel + " <span>" + l.length + "</span></h3>" +
+        (l.length ? '<ul class="pj-liste">' + l.map(function (a, i) { return i < 4 ? aZeile(a) : aZeile(a).replace('<li class="pj-a"', '<li class="pj-a pj-mehr" hidden'); }).join("") + "</ul>" +
+          (l.length > 4 ? '<button type="button" class="pj-alle" data-pj-alle>Alle ' + l.length + " zeigen</button>" : "") : '<p class="e-leer">Nichts offen.</p>') + "</div>"; };
       var ent = PJ.vorlagen.filter(function (v) { return v.projekt_id === pid; });
       var nameKlein = p.name.toLowerCase().replace(/\s*\(.*\)$/, "");
       var ter = PJ.termine.filter(function (t) { return t.projekt_id === pid || String(t.betreff || "").toLowerCase().indexOf(nameKlein) >= 0; });
@@ -905,7 +908,9 @@
         '<section class="k7-band"><div class="lg-raster">' +
         '<div class="lg-kern pj-stand">' + (s ? '<p class="pj-ampel"><i class="lg-a-' + s.ampel + '"></i>' + AMPEL[s.ampel][0] + " · Stand " + datum(s.gilt_fuer) + "</p><p>" + esc(s.satz) + "</p>" +
           (s.naechster_schritt ? '<p class="pj-naechst">Nächster Schritt: <b>' + esc(s.naechster_schritt) + "</b>" + (s.bei ? " · " + esc(s.bei) : "") + (s.faellig ? " · bis " + datum(s.faellig) : "") + "</p>" : "") : "<p>Für dieses Projekt hat der Stabschef noch keinen Stand geschrieben.</p>") +
-          (p.ziel ? '<p class="pj-ziel"><span>Ziel</span>' + esc(p.ziel) + "</p>" : "") + "</div>" +
+          "</div>" +
+        // Worum es geht (Daniel, 20.11.2026: „ich muss sagen können, um was es bei dem Projekt geht … wer sind die Projektteilnehmer?“)
+        '<section class="lg-kasten pj-steckbrief" data-steckbrief><p class="e-leer">Lädt …</p></section>' +
         // Fahrplan (Daniel, 20.11.2026: „eine der wichtigsten Informationen im Projekt“) – derselbe Linienplan wie auf der bisherigen Projektseite
         (p.name === "Operative Aufgaben" || p.workshop ? "" : '<details class="lg-kasten pj-fahrplan pj-fp"><summary><h2>Fahrplan</h2><span>Linienplan mit Stoßrichtungen, Arbeitspaketen und Meilensteinen</span>' +
           // Größe, volle Breite und Legende schon im zugeklappten Zustand (Daniel, 20.11.2026); volle Breite öffnet sofort das große Fenster
@@ -934,7 +939,9 @@
         "</div></section></div>";
     }
     var w = el.querySelector(".pj-waehler"); if (w) w.onchange = function () { location.hash = w.value ? "p=" + w.value : ""; };
-    if (p) tpLaden(pid, ter);
+    if (p) { tpLaden(pid, ter); steckbriefLaden(p); }
+    el.querySelectorAll("[data-pj-alle]").forEach(function (b) { b.onclick = function () { var s = b.closest(".pj-spalte"), zu = !!s.querySelector(".pj-mehr[hidden]");
+      s.querySelectorAll(".pj-mehr").forEach(function (x) { x.hidden = !zu; }); b.textContent = zu ? "Weniger zeigen" : "Alle " + s.querySelectorAll(".pj-a").length + " zeigen"; }; });
     PJ.planBereit = false; PJ.planWarte = null; PJ.zuNachWeit = false;
     el.querySelectorAll(".pj-a-zeile").forEach(function (z) { z.onclick = function () { var a = z.nextElementSibling; a.hidden = !a.hidden; z.parentNode.classList.toggle("ist-offen", !a.hidden); }; });
     el.querySelectorAll("[data-pa]").forEach(function (b) {
@@ -957,6 +964,43 @@
           if (!r.error) toast("Hinweis an Claude: " + a.titel);
         });
       };
+    });
+  }
+
+  /* Worum es geht: Ziel mit Zieldetails, Stoßrichtungen mit Strängen, Projektteam (Kunde | empiria und Partner) */
+  function steckbriefLaden(p) {
+    var pid = p.id;
+    Promise.all([
+      db.from("projekte").select("id, ziel, ziel_details, thema").eq("id", pid),
+      db.from("projekt_straenge").select("id, projekt_id, titel, erklaerung, eltern_id, reihenfolge").eq("projekt_id", pid).order("reihenfolge"),
+      db.from("projekt_beteiligte").select("id, projekt_id, kontakt_id, name, seite, rolle, kontakte(id, vorname, nachname, position, organisationen(name))").eq("projekt_id", pid)
+    ]).then(function (r) {
+      var z = el.querySelector("[data-steckbrief]"); if (!z || (location.hash.match(/p=(\d+)/) || [])[1] != pid) return;
+      var pr = (r[0].data || []).filter(function (x) { return x.id === pid; })[0] || p;
+      var st = (r[1].data || []).filter(function (x) { return x.projekt_id === pid; }), bet = (r[2].data || []).filter(function (x) { return x.projekt_id === pid; });
+      var oben = st.filter(function (s) { return !s.eltern_id; });
+      var zd = Array.isArray(pr.ziel_details) ? pr.ziel_details : [];
+      var name = function (b) { return b.kontakte ? ((b.kontakte.vorname || "") + " " + (b.kontakte.nachname || "")).trim() : b.name || ""; };
+      var person = function (b) { var info = [b.rolle, b.kontakte && b.kontakte.position].filter(Boolean).join(" · ");
+        return "<li>" + (b.kontakte ? '<a href="/strategie/kontakte.html#k=' + b.kontakte.id + '">' + esc(name(b)) + "</a>" : "<b>" + esc(name(b)) + "</b>") + (info ? "<span>" + esc(info) + "</span>" : "") +
+          '<button type="button" class="vt-p-weg" data-bet-weg="' + b.id + '" aria-label="Aus dem Team nehmen">×</button></li>'; };
+      var seite = function (titel, l) { return '<div class="pj-team-teil"><h3>' + titel + "</h3>" + (l.length ? "<ul>" + l.map(person).join("") + "</ul>" : '<p class="e-leer">Noch niemand eingetragen.</p>') + "</div>"; };
+      z.innerHTML = '<div class="pj-sb-links"><h2>Worum es geht</h2>' +
+        (pr.ziel ? '<p class="pj-sb-ziel">' + esc(pr.ziel) + "</p>" : '<p class="e-leer">Noch kein Projektziel hinterlegt. Diktiere es mir, dann trage ich es ein.</p>') +
+        (zd.length ? '<details class="pj-sb-mehr"><summary>Mehr zum Ziel</summary>' + zd.map(function (d) { return "<h4>" + esc(d.titel || "") + "</h4>" + (d.text ? "<p>" + esc(d.text) + "</p>" : "") +
+          ((d.punkte || []).length ? "<ul>" + d.punkte.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : ""); }).join("") + "</details>" : "") +
+        (oben.length ? "<h3>Stoßrichtungen</h3><ul class=\"pj-sb-stoss\">" + oben.map(function (s) { var kinder = st.filter(function (k) { return k.eltern_id === s.id; });
+          return "<li><b>" + esc(s.titel) + "</b>" + (s.erklaerung ? "<span>" + esc(s.erklaerung) + "</span>" : "") +
+            (kinder.length ? '<em>' + kinder.map(function (k) { return esc(k.titel); }).join(" · ") + "</em>" : "") + "</li>"; }).join("") + "</ul>" : "") + "</div>" +
+        '<div class="pj-sb-rechts"><h2>Projektteam</h2>' + seite(p.typ === "Kunde" ? "Beim Kunden" : "Beteiligte", bet.filter(function (b) { return b.seite === "Kunde"; })) +
+        seite("empiria und Partner", bet.filter(function (b) { return b.seite !== "Kunde"; })) +
+        '<div class="vt-p-neu pj-team-neu"><input type="search" placeholder="Person hinzufügen" autocomplete="off"><select aria-label="Seite"><option value="Kunde">beim Kunden</option><option value="empiria">empiria</option><option value="Partner">Partner</option></select><ul class="vt-treffer"></ul></div></div>';
+      z.querySelectorAll("[data-bet-weg]").forEach(function (b) { b.onclick = function () {
+        db.from("projekt_beteiligte").delete().eq("id", +b.getAttribute("data-bet-weg")).then(function (x) { if (x && x.error) { toast("Nicht gespeichert: " + x.error.message); return; } steckbriefLaden(p); }); }; });
+      var such = z.querySelector(".pj-team-neu input"), wahl = z.querySelector(".pj-team-neu select"), warte;
+      such.oninput = function () { clearTimeout(warte); var s = such.value.trim(), ziel = z.querySelector(".pj-team-neu .vt-treffer"); if (s.length < 2) { ziel.innerHTML = ""; return; }
+        warte = setTimeout(function () { vtSuche(s, ziel, function (k) {
+          db.from("projekt_beteiligte").insert({ projekt_id: pid, kontakt_id: k.id, seite: wahl.value }).then(function (x) { if (x && x.error) { toast("Nicht gespeichert: " + x.error.message); return; } toast("Im Team."); steckbriefLaden(p); }); }); }, 250); };
     });
   }
   function iso2(ts) { return new Date(ts).toLocaleDateString("sv-SE", { timeZone: "Europe/Berlin" }); }

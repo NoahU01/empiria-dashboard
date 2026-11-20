@@ -2244,6 +2244,23 @@ html[data-farbe="dunkel"] .pj-plan-pill button:hover { background: #2c2c2e; }
 html[data-farbe="dunkel"] .pj-plan-pill output { color: var(--tinte) !important; }
 html[data-farbe="dunkel"] .pj-plan-pill i { background: #3a3a3c; }
 html[data-farbe="dunkel"] .pj-fp summary .pj-plan-pill { color: var(--tinte); }
+html[data-farbe="dunkel"] .pj-steckbrief h3 { color: #c7c7cc; }
+html[data-farbe="dunkel"] .pj-sb-ziel { color: var(--tinte); }
+html[data-farbe="dunkel"] .pj-sb-mehr { background: #2c2c2e; }
+html[data-farbe="dunkel"] .pj-sb-mehr summary { color: #c7c7cc; }
+html[data-farbe="dunkel"] .pj-sb-mehr h4 { color: var(--tinte); }
+html[data-farbe="dunkel"] .pj-sb-mehr p { color: #f2f2f7; }
+html[data-farbe="dunkel"] .pj-sb-mehr ul { color: #f2f2f7; }
+html[data-farbe="dunkel"] .pj-sb-stoss li { background: #2c2c2e; }
+html[data-farbe="dunkel"] .pj-sb-stoss b { color: var(--tinte); }
+html[data-farbe="dunkel"] .pj-sb-stoss span { color: #f2f2f7; }
+html[data-farbe="dunkel"] .pj-sb-stoss em { color: #a1a1a6; }
+html[data-farbe="dunkel"] .pj-team-teil li a, html[data-farbe="dunkel"] .pj-team-teil li b { color: var(--tinte); }
+html[data-farbe="dunkel"] .pj-team-teil li span { color: #a1a1a6; }
+html[data-farbe="dunkel"] .pj-team-neu input, html[data-farbe="dunkel"] .pj-team-neu select { border: 1px solid #636366; background: #1c1c1e; color: var(--tinte); }
+html[data-farbe="dunkel"] .pj-alle { background: none; color: #c7c7cc; }
+html[data-farbe="dunkel"] .pj-alle:hover { color: var(--tinte); }
+html[data-farbe="dunkel"] .pj-spalte .pj-alle { background: none; color: #c7c7cc; }
 
 /* ---- assets/leasing-fahrzeug.css ---- */
 html[data-farbe="dunkel"] .lf-profil div { border-top: 1px solid var(--linie); }
