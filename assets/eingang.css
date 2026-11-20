@@ -821,3 +821,21 @@ html.pj-plan-voll-offen { overflow: hidden; }
 @media (max-width: 900px) { .pj-steckbrief { grid-template-columns: minmax(0, 1fr); gap: 18px; } }
 .pj-spalte .pj-alle { display: inline-block; margin-top: 8px; padding: 0; border: 0; background: none; font: 600 13px/1.4 "Inter", system-ui, sans-serif !important; color: #6e6e73; cursor: pointer; }
 @media (hover: hover) { .pj-team-teil li .vt-p-weg { opacity: 0; transition: opacity .15s; } .pj-team-teil li:hover .vt-p-weg, .pj-team-teil li .vt-p-weg:focus { opacity: 1; } }
+/* Worum es geht: Grundinfo sofort, Details aufklappbar (Daniel, 20.11.2026) */
+.pj-steckbrief { row-gap: 14px; }
+.pj-sb-kurz { margin: 0 0 6px; font-size: 14px; color: var(--tinte); }
+.pj-sb-kurz span { display: block; font-size: 12px; font-weight: 600; color: #86868b; }
+.pj-sb-kurz em { font-style: normal; color: #86868b; }
+.pj-sb-details { grid-column: 1 / -1; border-top: 1px solid #e8e8ed; padding-top: 12px; }
+.pj-sb-details > summary { cursor: pointer; font-size: 13px; font-weight: 600; color: #6e6e73; list-style: none; display: inline-flex; align-items: center; gap: 8px; }
+.pj-sb-details > summary::-webkit-details-marker { display: none; }
+.pj-sb-details > summary::after { content: ""; width: 7px; height: 7px; border-right: 1.5px solid #86868b; border-bottom: 1.5px solid #86868b; transform: rotate(45deg); margin-top: -3px; }
+.pj-sb-details[open] > summary::after { transform: rotate(225deg); margin-top: 3px; }
+.pj-sb-auf { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 28px; margin-top: 12px; }
+.pj-sb-auf h4 { margin: 12px 0 2px; font-size: 14px; font-weight: 600; color: var(--tinte); }
+.pj-sb-auf h4:first-child { margin-top: 0; }
+.pj-sb-auf p { margin: 0; font-size: 14px; color: #424245; }
+.pj-sb-auf ul { margin: 4px 0 0; padding-left: 18px; font-size: 14px; color: #424245; }
+.pj-sb-auf .pj-team-teil h3 { margin-top: 0; }
+.pj-sb-auf .pj-team-teil + .pj-team-teil h3 { margin-top: 14px; }
+@media (max-width: 900px) { .pj-sb-auf { grid-template-columns: minmax(0, 1fr); gap: 18px; } }

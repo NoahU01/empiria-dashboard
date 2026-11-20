@@ -2261,6 +2261,15 @@ html[data-farbe="dunkel"] .pj-team-neu input, html[data-farbe="dunkel"] .pj-team
 html[data-farbe="dunkel"] .pj-alle { background: none; color: #c7c7cc; }
 html[data-farbe="dunkel"] .pj-alle:hover { color: var(--tinte); }
 html[data-farbe="dunkel"] .pj-spalte .pj-alle { background: none; color: #c7c7cc; }
+html[data-farbe="dunkel"] .pj-sb-kurz { color: var(--tinte); }
+html[data-farbe="dunkel"] .pj-sb-kurz span { color: #a1a1a6; }
+html[data-farbe="dunkel"] .pj-sb-kurz em { color: #a1a1a6; }
+html[data-farbe="dunkel"] .pj-sb-details { border-top: 1px solid #38383a; }
+html[data-farbe="dunkel"] .pj-sb-details > summary { color: #c7c7cc; }
+html[data-farbe="dunkel"] .pj-sb-details > summary::after { border-right: 1.5px solid #636366; border-bottom: 1.5px solid #636366; }
+html[data-farbe="dunkel"] .pj-sb-auf h4 { color: var(--tinte); }
+html[data-farbe="dunkel"] .pj-sb-auf p { color: #f2f2f7; }
+html[data-farbe="dunkel"] .pj-sb-auf ul { color: #f2f2f7; }
 
 /* ---- assets/leasing-fahrzeug.css ---- */
 html[data-farbe="dunkel"] .lf-profil div { border-top: 1px solid var(--linie); }

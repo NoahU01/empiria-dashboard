@@ -978,26 +978,29 @@
       var z = el.querySelector("[data-steckbrief]"); if (!z || (location.hash.match(/p=(\d+)/) || [])[1] != pid) return;
       var pr = (r[0].data || []).filter(function (x) { return x.id === pid; })[0] || p;
       var st = (r[1].data || []).filter(function (x) { return x.projekt_id === pid; }), bet = (r[2].data || []).filter(function (x) { return x.projekt_id === pid; });
-      // die technische Sammelgruppe „Aufgaben“ ist keine Stoßrichtung
-      var oben = st.filter(function (s) { return !s.eltern_id && !(s.titel === "Aufgaben" && !s.erklaerung && !st.some(function (k) { return k.eltern_id === s.id; })); });
       var zd = Array.isArray(pr.ziel_details) ? pr.ziel_details : [];
       var name = function (b) { return b.kontakte ? ((b.kontakte.vorname || "") + " " + (b.kontakte.nachname || "")).trim() : b.name || ""; };
       var person = function (b) { var info = [b.rolle, b.kontakte && b.kontakte.position].filter(Boolean).join(" · ");
         return "<li>" + (b.kontakte ? '<a href="/strategie/kontakte.html#k=' + b.kontakte.id + '">' + esc(name(b)) + "</a>" : "<b>" + esc(name(b)) + "</b>") + (info ? "<span>" + esc(info) + "</span>" : "") +
           '<button type="button" class="vt-p-weg" data-bet-weg="' + b.id + '" aria-label="Aus dem Team nehmen">×</button></li>'; };
       var seite = function (titel, l) { return '<div class="pj-team-teil"><h3>' + titel + "</h3>" + (l.length ? "<ul>" + l.map(person).join("") + "</ul>" : '<p class="e-leer">Noch niemand eingetragen.</p>') + "</div>"; };
+      // Grundinfo sofort, Details auf Klick (Daniel, 20.11.2026: „oben so eine Grundinfo, worum geht's … dann kann ich weiter aufklappen“);
+      // Stoßrichtungen stehen im Fahrplan, nicht hier
+      var kunde = bet.filter(function (b) { return b.seite === "Kunde"; }), eigen = bet.filter(function (b) { return b.seite !== "Kunde"; });
+      var kurz = function (titel, l) { if (!l.length) return ""; var n = l.slice(0, 3).map(name).join(", ");
+        return '<p class="pj-sb-kurz"><span>' + titel + "</span>" + esc(n) + (l.length > 3 ? " <em>+ " + (l.length - 3) + " weitere</em>" : "") + "</p>"; };
+      var teamKurz = p.typ === "Kunde" ? kurz("Beim Kunden", kunde) + kurz("empiria und Partner", eigen) : kurz("Beteiligte", bet);
       z.innerHTML = '<div class="pj-sb-links"><h2>Worum es geht</h2>' +
-        (pr.ziel ? '<p class="pj-sb-ziel">' + esc(pr.ziel) + "</p>" : '<p class="e-leer">Noch kein Projektziel hinterlegt. Diktiere es mir, dann trage ich es ein.</p>') +
-        (zd.length ? '<details class="pj-sb-mehr"><summary>Mehr zum Ziel</summary>' + zd.map(function (d) { return "<h4>" + esc(d.titel || "") + "</h4>" + (d.text ? "<p>" + esc(d.text) + "</p>" : "") +
-          ((d.punkte || []).length ? "<ul>" + d.punkte.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : ""); }).join("") + "</details>" : "") +
-        (oben.length ? "<h3>Stoßrichtungen</h3><ul class=\"pj-sb-stoss\">" + oben.map(function (s) { var kinder = st.filter(function (k) { return k.eltern_id === s.id; });
-          return "<li><b>" + esc(s.titel) + "</b>" + (s.erklaerung ? "<span>" + esc(s.erklaerung) + "</span>" : "") +
-            (kinder.length ? '<em>' + kinder.map(function (k) { return esc(k.titel); }).join(" · ") + "</em>" : "") + "</li>"; }).join("") + "</ul>" : "") + "</div>" +
-        '<div class="pj-sb-rechts"><h2>Projektteam</h2>' + (p.typ === "Kunde" ? seite("Beim Kunden", bet.filter(function (b) { return b.seite === "Kunde"; })) +
-          seite("empiria und Partner", bet.filter(function (b) { return b.seite !== "Kunde"; })) : seite("Beteiligte", bet)) +
+        (pr.ziel ? '<p class="pj-sb-ziel">' + esc(pr.ziel) + "</p>" : '<p class="e-leer">Noch kein Projektziel hinterlegt. Diktiere es mir, dann trage ich es ein.</p>') + "</div>" +
+        '<div class="pj-sb-rechts"><h2>Projektteam</h2>' + (teamKurz || '<p class="e-leer">Noch niemand eingetragen.</p>') + "</div>" +
+        '<details class="pj-sb-details"' + (PJ.sbOffen ? " open" : "") + "><summary>" + (zd.length ? "Mehr zum Ziel und zum Team" : "Team bearbeiten") + "</summary>" +
+        '<div class="pj-sb-auf"><div>' + (zd.length ? zd.map(function (d) { return "<h4>" + esc(d.titel || "") + "</h4>" + (d.text ? "<p>" + esc(d.text) + "</p>" : "") +
+          ((d.punkte || []).length ? "<ul>" + d.punkte.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : ""); }).join("") : "") + "</div>" +
+        "<div>" + (p.typ === "Kunde" ? seite("Beim Kunden", kunde) + seite("empiria und Partner", eigen) : seite("Beteiligte", bet)) +
         '<div class="vt-p-neu pj-team-neu"><input type="search" placeholder="Person hinzufügen" autocomplete="off"><select aria-label="Seite">' +
           (p.typ === "Kunde" ? '<option value="Kunde">beim Kunden</option><option value="empiria">empiria</option><option value="Partner">Partner</option>' : '<option value="Partner">Partner</option><option value="empiria">empiria</option><option value="Kunde">extern</option>') +
-          '</select><ul class="vt-treffer"></ul></div></div>';
+          '</select><ul class="vt-treffer"></ul></div></div></div></details>';
+      z.querySelector(".pj-sb-details").addEventListener("toggle", function (ev) { PJ.sbOffen = ev.target.open; });
       z.querySelectorAll("[data-bet-weg]").forEach(function (b) { b.onclick = function () {
         db.from("projekt_beteiligte").delete().eq("id", +b.getAttribute("data-bet-weg")).then(function (x) { if (x && x.error) { toast("Nicht gespeichert: " + x.error.message); return; } steckbriefLaden(p); }); }; });
       var such = z.querySelector(".pj-team-neu input"), wahl = z.querySelector(".pj-team-neu select"), warte;
