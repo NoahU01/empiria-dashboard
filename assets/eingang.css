@@ -749,3 +749,30 @@ html.vt-offen { overflow: hidden; }
   .vt-detail { padding: 18px 16px 28px; }
   .vt-stufen { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+/* Vertriebschancen (Daniel, 20.11.2026): drei Stufen, Vorschläge, Personen je Chance */
+.vt-board { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.vt-vorschlaege { margin: 0 0 16px; padding: 16px 18px; border-radius: 20px; background: #fff; box-shadow: inset 3px 0 0 #8613a1; }
+.vt-vorschlaege h2 { margin: 0 !important; font-size: 15px !important; }
+.vt-vorschlaege h2 span { margin-left: 4px; font-weight: 500; color: #86868b; }
+.vt-vorschlaege > p { margin: 4px 0 10px; font-size: 12px; color: #86868b; }
+.vt-vorschlaege ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.vt-vorschlaege li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 14px; background: #f5f5f7; }
+.vt-vorschlaege li b { display: block; font-size: 14px; color: var(--tinte); }
+.vt-vorschlaege li span { display: block; font-size: 12px; color: #6e6e73; }
+.vt-vorschlaege li small { display: block; margin-top: 3px; font-size: 12px; color: #424245; }
+.vt-v-knoepfe { display: flex; gap: 6px; }
+.vt-v-knoepfe .e-k { height: 30px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--tinte); background: #fff; font-size: 12px; font-weight: 600; color: var(--tinte); cursor: pointer; }
+.vt-v-knoepfe .e-k-voll { background: var(--tinte); color: #fff; }
+.vt-detail .vt-stufen { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.vt-d-kopf a { color: var(--tinte); }
+.vt-pers ul { list-style: none; margin: 0 0 8px; padding: 0; display: grid; gap: 4px; }
+.vt-pers li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; align-items: baseline; font-size: 14px; }
+.vt-pers li a { color: var(--tinte); font-weight: 600; text-decoration: none; }
+.vt-pers li a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.vt-pers li span { font-size: 12px; color: #86868b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vt-p-weg { width: 24px; height: 24px; border: 0; border-radius: 50%; background: #f2f2f7; color: #6e6e73; cursor: pointer; }
+.vt-d-fuss { align-items: center; }
+.vt-d-fuss span { font-size: 13px; color: #6e6e73; }
+@media (max-width: 1100px) { .vt-board { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .vt-board { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 700px) { .vt-board { display: grid; overflow: visible; margin: 0; padding: 0; } .vt-spalte { flex: none; } .vt-vorschlaege li { grid-template-columns: minmax(0, 1fr); } .vt-detail .vt-stufen { grid-template-columns: minmax(0, 1fr); } }

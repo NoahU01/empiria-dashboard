@@ -2223,6 +2223,20 @@ html[data-farbe="dunkel"] .vt-kontakte span { color: #a1a1a6; }
 html[data-farbe="dunkel"] .vt-begr { color: #c7c7cc; }
 html[data-farbe="dunkel"] .vt-d-fuss .e-k { border: 1px solid #636366; background: #1c1c1e; color: var(--tinte); }
 html[data-farbe="dunkel"] .vt-treffer button { background: #2c2c2e; color: var(--tinte); }
+html[data-farbe="dunkel"] .vt-vorschlaege { background: #1c1c1e; box-shadow: inset 3px 0 0 #8613a1; }
+html[data-farbe="dunkel"] .vt-vorschlaege h2 span { color: #a1a1a6; }
+html[data-farbe="dunkel"] .vt-vorschlaege > p { color: #a1a1a6; }
+html[data-farbe="dunkel"] .vt-vorschlaege li { background: #2c2c2e; }
+html[data-farbe="dunkel"] .vt-vorschlaege li b { color: var(--tinte); }
+html[data-farbe="dunkel"] .vt-vorschlaege li span { color: #c7c7cc; }
+html[data-farbe="dunkel"] .vt-vorschlaege li small { color: #f2f2f7; }
+html[data-farbe="dunkel"] .vt-v-knoepfe .e-k { border: 1px solid var(--tinte); background: #1c1c1e; color: var(--tinte); }
+html[data-farbe="dunkel"] .vt-v-knoepfe .e-k-voll { background: var(--tinte); color: #fff; color: #1c1c1e; }
+html[data-farbe="dunkel"] .vt-d-kopf a { color: var(--tinte); }
+html[data-farbe="dunkel"] .vt-pers li a { color: var(--tinte); }
+html[data-farbe="dunkel"] .vt-pers li span { color: #a1a1a6; }
+html[data-farbe="dunkel"] .vt-p-weg { background: #2c2c2e; color: #c7c7cc; }
+html[data-farbe="dunkel"] .vt-d-fuss span { color: #c7c7cc; }
 
 /* ---- assets/leasing-fahrzeug.css ---- */
 html[data-farbe="dunkel"] .lf-profil div { border-top: 1px solid var(--linie); }
