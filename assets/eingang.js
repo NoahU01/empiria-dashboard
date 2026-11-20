@@ -1193,6 +1193,8 @@
   var VT = { l: [], marke: (function () { try { return localStorage.getItem("vertrieb-marke") || "alle"; } catch (x) { return "alle"; } })(), wahl: null };
   var VT_STUFEN = [["ansatzpunkt", "Ansatzpunkt", "Aus dem Anlass eine Anfrage oder ein Angebot machen"],
     ["angebot", "Abstimmung und Angebot", "Umfang, Budget und Zusage klären"], ["projekt", "Projekt", "Gut liefern, Folgeauftrag und Empfehlung gewinnen"]];
+  // Ist es zum Projekt gekommen, trägt die Chance den echten Projekttitel (Daniel, 20.11.2026)
+  function vtTitel(c) { return c.stufe === "projekt" && c.projekt_id && P[c.projekt_id] ? P[c.projekt_id].name : c.titel; }
   function vtPersonen(c) { return (c.vertriebschance_personen || []).filter(function (p) { return p.kontakte; }); }
   function vtPName(p) { var k = p.kontakte || {}; return ((k.vorname || "") + " " + (k.nachname || "")).trim(); }
   function vtFirma(c) { return c.organisationen ? c.organisationen.name : ""; }
@@ -1214,7 +1216,7 @@
   }
   function vtKarte(c) {
     var a = vtAchtung(c), pers = vtPersonen(c);
-    return '<li><button type="button" class="vt-karte' + (VT.wahl === c.id ? " an" : "") + '" data-vt="' + c.id + '"><b>' + esc(c.titel) + "</b>" +
+    return '<li><button type="button" class="vt-karte' + (VT.wahl === c.id ? " an" : "") + '" data-vt="' + c.id + '"><b>' + esc(vtTitel(c)) + "</b>" +
       (pers.length ? '<span class="vt-firma">' + esc(pers.map(vtPName).join(", ")) + "</span>" : vtFirma(c) ? '<span class="vt-firma">' + esc(vtFirma(c)) + "</span>" : "") +
       (a === "ohne" ? '<span class="vt-schritt vt-rot">Kein nächster Schritt</span>' :
         '<span class="vt-schritt' + (a === "spaet" ? " vt-rot" : "") + '">' + esc(c.naechster_schritt) + (c.faellig_am ? " · " + (a === "spaet" ? "seit " : "bis ") + datum(c.faellig_am) : "") + "</span>") +
@@ -1226,7 +1228,7 @@
     var passt = function (c) { return VT.marke === "alle" || c.marke === VT.marke; };
     var l = VT.l.filter(function (c) { return c.status === "offen" && passt(c); }), vor = VT.l.filter(function (c) { return c.status === "vorschlag" && passt(c); });
     var ordnen = function (a, b) { var r = function (c) { return vtAchtung(c) === "spaet" ? 0 : vtAchtung(c) === "ohne" ? 1 : 2; };
-      return r(a) - r(b) || String(a.faellig_am || "9").localeCompare(String(b.faellig_am || "9")) || a.titel.localeCompare(b.titel, "de"); };
+      return r(a) - r(b) || String(a.faellig_am || "9").localeCompare(String(b.faellig_am || "9")) || vtTitel(a).localeCompare(vtTitel(b), "de"); };
     var pillen = '<nav class="k7-pillen">' + [["alle", "Alle Marken"]].concat(SG_MARKEN.map(function (m) { return [m, m]; })).map(function (m) {
       return '<button type="button" data-vt-marke="' + esc(m[0]) + '" aria-pressed="' + (m[0] === VT.marke) + '">' + esc(m[1]) + "</button>"; }).join("") + "</nav>";
     el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>Vertrieb</h1><span>Vertriebschancen vom Ansatzpunkt bis zum Projekt</span></div>' + pillen + "</header>" +
@@ -1271,7 +1273,7 @@
     VT.wahl = id;
     el.querySelectorAll(".vt-karte").forEach(function (x) { x.classList.toggle("an", +x.getAttribute("data-vt") === id); });
     var d = el.querySelector(".vt-detail"), pers = vtPersonen(c);
-    d.innerHTML = '<div class="vt-d-kopf"><div><h2>' + esc(c.titel) + "</h2><p>" + esc([vtFirma(c), c.marke].filter(Boolean).join(" · ")) +
+    d.innerHTML = '<div class="vt-d-kopf"><div><h2>' + esc(vtTitel(c)) + "</h2><p>" + esc([vtFirma(c), c.marke].filter(Boolean).join(" · ")) +
       (c.projekt_id && P[c.projekt_id] ? ' · <a href="/strategie/projekt.html#p=' + c.projekt_id + '">Zum Projekt</a>' : "") + '</p></div><button type="button" class="vt-zu" aria-label="Schließen">×</button></div>' +
       '<div class="vt-stufen" role="group" aria-label="Stufe">' + VT_STUFEN.map(function (s) { return '<button type="button" data-vt-stufe="' + s[0] + '" aria-pressed="' + (c.stufe === s[0]) + '">' + s[1] + "</button>"; }).join("") + "</div>" +
       (c.stufe_vorschlag && c.stufe_vorschlag !== c.stufe ? '<p class="vt-d-vorschlag">Claude sieht die Chance bei „' + esc(vtStufeName(c.stufe_vorschlag)) + "“" + (c.begruendung ? ": " + esc(c.begruendung) : ".") +
@@ -1279,7 +1281,7 @@
       (c.hebel ? '<div class="vt-hebel"><h3>So kommt die Chance in die nächste Stufe</h3><p>' + esc(c.hebel) + "</p>" + (c.hebel_stand ? '<small>Marketing- und Vertriebsstratege · ' + datum(c.hebel_stand) + "</small>" : "") + "</div>" : "") +
       '<form class="vt-schritt-form"><h3>Nächster Schritt</h3><input name="schritt" type="text" value="' + esc(c.naechster_schritt || "") + '" placeholder="Was passiert als Nächstes?">' +
       '<div class="vt-zeile"><input name="faellig" type="date" value="' + esc(c.faellig_am || "") + '"><button class="e-k e-k-voll" type="submit">Speichern</button></div>' +
-      '<h3>Titel</h3><input name="titel" type="text" value="' + esc(c.titel) + '"><h3>Vorhaben</h3><textarea name="vorhaben" rows="2" placeholder="Worum geht es?">' + esc(c.vorhaben || "") + "</textarea></form>" +
+      '<h3>Titel</h3><input name="titel" type="text" value="' + esc(vtTitel(c)) + '"' + (vtTitel(c) !== c.titel ? ' readonly title="Titel des Projekts – ändern im Projekt"' : "") + '><h3>Vorhaben</h3><textarea name="vorhaben" rows="2" placeholder="Worum geht es?">' + esc(c.vorhaben || "") + "</textarea></form>" +
       '<div class="vt-pers"><h3>Wer dazugehört</h3><ul>' + pers.map(function (p) { var k = p.kontakte;
         return '<li><a href="/strategie/kontakte.html#k=' + k.id + '">' + esc(vtPName(p)) + "</a><span>" + esc([p.rolle, k.position].filter(Boolean).join(" · ")) + '</span><button type="button" class="vt-p-weg" data-vt-pweg="' + k.id + '" aria-label="Aus der Chance nehmen">×</button></li>'; }).join("") +
       '</ul><div class="vt-p-neu"><input type="search" placeholder="Person hinzufügen" autocomplete="off"><ul class="vt-treffer"></ul></div></div>' +
@@ -1291,9 +1293,9 @@
     d.querySelector(".vt-zu").onclick = vtSchliessen;
     d.querySelectorAll("[data-vt-stufe]").forEach(function (b) { b.onclick = function () {
       var s = b.getAttribute("data-vt-stufe"); if (s === c.stufe) return;
-      vtSpeichern(c, { stufe: s }).then(function (r) { if (!r || !r.error) { toast(c.titel + ": " + vtStufeName(s)); vertriebSeite(); } }); }; });
+      vtSpeichern(c, { stufe: s }).then(function (r) { if (!r || !r.error) { toast(vtTitel(c) + ": " + vtStufeName(s)); vertriebSeite(); } }); }; });
     d.querySelector(".vt-schritt-form").onsubmit = function (ev) { ev.preventDefault(); var f = ev.target;
-      vtSpeichern(c, { naechster_schritt: f.schritt.value.trim() || null, faellig_am: f.faellig.value || null, titel: f.titel.value.trim() || c.titel, vorhaben: f.vorhaben.value.trim() || null }).then(function (r) { if (!r || !r.error) { toast("Gespeichert."); vertriebSeite(); } }); };
+      vtSpeichern(c, { naechster_schritt: f.schritt.value.trim() || null, faellig_am: f.faellig.value || null, titel: vtTitel(c) !== c.titel ? c.titel : f.titel.value.trim() || c.titel, vorhaben: f.vorhaben.value.trim() || null }).then(function (r) { if (!r || !r.error) { toast("Gespeichert."); vertriebSeite(); } }); };
     d.querySelectorAll("[data-vt-pweg]").forEach(function (b) { b.onclick = function () { var kid = +b.getAttribute("data-vt-pweg");
       db.from("vertriebschance_personen").delete().eq("chance_id", c.id).eq("kontakt_id", kid).then(function (r) { if (r && r.error) { toast("Nicht gespeichert: " + r.error.message); return; }
         c.vertriebschance_personen = (c.vertriebschance_personen || []).filter(function (p) { return p.kontakt_id !== kid; }); vtOeffnen(c.id); vertriebSeite(); }); }; });
