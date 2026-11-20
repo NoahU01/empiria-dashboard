@@ -883,18 +883,45 @@
         .map(function (x) { return '<option value="' + x.id + '"' + (x.id === pid ? " selected" : "") + ">" + esc(x.name) + "</option>"; }).join("") + "</optgroup>";
     }).join("") + "</select>";
     if (!p) {
-      el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>Projekte</h1><span>' + PJ.projekte.length + ' laufend</span></div>' + waehler + "</header>" +
+      /* Übersicht als Portfolio (Daniel, 20.11.2026: „wirkt nicht wie meine Übersicht über die Projekte … die hässlichen orangen, grünen Punkte“):
+         Kundenprojekte als Karten mit Stand, nächstem Termin und nächstem Schritt; Status als ruhig getöntes Wort; interne Projekte als Liste. */
+      var STATUS = { kritisch: "Kritisch", achtung: "Achtung", im_plan: "Im Plan", ruht: "Ruht" };
+      var etikett = function (s) { return s && STATUS[s.ampel] ? '<span class="pp-st pp-st-' + s.ampel + '">' + STATUS[s.ampel] + "</span>" : '<span class="pp-st">Kein Stand</span>'; };
+      var jetztMs = Date.now();
+      var naechster = function (x) {
+        var kl = x.name.toLowerCase().replace(/\s*\(.*\)$/, "").split(/ [·–] /)[0];
+        var l = PJ.termine.filter(function (t) { return (t.projekt_id === x.id || String(t.betreff || "").toLowerCase().indexOf(kl) >= 0) && new Date(t.start).getTime() >= jetztMs; })
+          .map(function (t) { return { ts: t.start, titel: t.betreff }; })
+          .concat(PJ.ereignisse.filter(function (e) { return e.projekt_id === x.id && new Date(e.datum).getTime() >= jetztMs; }).map(function (e) { return { ts: e.datum, titel: e.titel }; }));
+        l.sort(function (a, b) { return new Date(a.ts) - new Date(b.ts); });
+        return l[0];
+      };
+      var tag = function (ts) { var d = iso2(ts); return d === HEUTE ? "heute" : d === plus(1) ? "morgen" : new Date(d + "T12:00:00").toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit", timeZone: "Europe/Berlin" }); };
+      var karte = function (x) {
+        var s = PJ.status[x.id], org = x.organisationen ? (x.organisationen.gruppe || x.organisationen.name) : "", n = naechster(x);
+        return '<a class="pp-karte" href="#p=' + x.id + '"><div class="pp-kopf"><b>' + esc(x.name) + "</b>" + etikett(s) + "</div>" +
+          (org ? '<span class="pp-org">' + esc(org) + "</span>" : "") +
+          (s && s.satz ? '<p class="pp-satz">' + esc(s.satz) + "</p>" : '<p class="pp-satz pp-leer">Noch kein Stand vom Stabschef.</p>') +
+          '<dl class="pp-fuss"><div><dt>Nächster Termin</dt><dd>' + (n ? tag(n.ts) + " · " + esc(n.titel) : "keiner geplant") + "</dd></div>" +
+          "<div><dt>Nächster Schritt</dt><dd>" + (s && s.naechster_schritt ? esc(s.naechster_schritt) + (s.bei ? " · " + esc(s.bei) : "") : "nicht festgelegt") + "</dd></div></dl></a>";
+      };
+      var zeile = function (x) {
+        var s = PJ.status[x.id];
+        return '<li><a href="#p=' + x.id + '"><b>' + esc(x.name) + "</b>" + '<span class="pp-z-schritt">' + (s && s.naechster_schritt ? esc(s.naechster_schritt) : "") + "</span>" + etikett(s) + "</a></li>";
+      };
+      PJ.marke = PJ.marke || (function () { try { return localStorage.getItem("projekte-marke") || "alle"; } catch (x) { return "alle"; } })();
+      var pillen = '<nav class="k7-pillen">' + [["alle", "Alle Marken"]].concat(MARKEN.map(function (m) { return [m, m]; })).map(function (m) {
+        return '<button type="button" data-pp-marke="' + esc(m[0]) + '" aria-pressed="' + (m[0] === PJ.marke) + '">' + esc(m[1]) + "</button>"; }).join("") + "</nav>";
+      el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>Projekte</h1><span>' + PJ.projekte.length + ' laufend</span></div>' + pillen + waehler + "</header>" +
         '<section class="k7-band"><div class="pj-uebersicht">' +
-        '<div class="lg-legende"><span><i class="lg-a-kritisch"></i>kritisch</span><span><i class="lg-a-achtung"></i>Achtung</span><span><i class="lg-a-im_plan"></i>im Plan</span><span><i class="lg-a-ruht"></i>ruht</span></div>' +
-        MARKEN.map(function (mk) {
-          // Je Marke: Kundenprojekte und interne Projekte nebeneinander, alphabetisch zum Finden (Daniel, 18.11.2026)
+        MARKEN.filter(function (mk) { return PJ.marke === "alle" || PJ.marke === mk; }).map(function (mk) {
           var l = PJ.projekte.filter(function (x) { return x.marke === mk; }).sort(function (a, b) { return a.name.localeCompare(b.name, "de"); });
-          var gruppe = function (titel, liste) {
-            return '<div class="pj-gruppe"><h3>' + titel + " <span>" + liste.length + "</span></h3>" + (liste.length ? projektZeilen(liste, PJ.status, false) : '<p class="e-leer">Keine.</p>') + "</div>";
-          };
-          return '<section class="pj-marke"><h2>' + esc(mk) + '</h2><div class="pj-zwei">' + gruppe("Kundenprojekte", l.filter(function (x) { return x.typ === "Kunde"; })) +
-            gruppe("Interne Projekte", l.filter(function (x) { return x.typ !== "Kunde"; })) + "</div></section>";
+          var kunden = l.filter(function (x) { return x.typ === "Kunde"; }), intern = l.filter(function (x) { return x.typ !== "Kunde"; });
+          return '<section class="pj-marke"><h2>' + esc(mk) + "</h2>" +
+            (kunden.length ? '<h3 class="pp-gruppe">Kundenprojekte</h3><div class="pp-karten">' + kunden.map(karte).join("") + "</div>" : "") +
+            (intern.length ? '<h3 class="pp-gruppe">Interne Projekte</h3><ul class="pp-liste">' + intern.map(zeile).join("") + "</ul>" : "") + "</section>";
         }).join("") + "</div></section></div>";
+      el.querySelectorAll("[data-pp-marke]").forEach(function (b) { b.onclick = function () { PJ.marke = b.getAttribute("data-pp-marke"); try { localStorage.setItem("projekte-marke", PJ.marke); } catch (x) {} projektSeite(); }; });
     } else {
       var s = PJ.status[pid] || null;
       var auf = PJ.aufgaben.filter(function (a) { return a.projekt_id === pid; });

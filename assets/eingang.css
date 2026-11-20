@@ -867,3 +867,40 @@ html.pj-plan-voll-offen { overflow: hidden; }
 .pj-sb-kopf .e-leer, .pj-sb-auf .e-leer { margin: 0; padding: 0; }
 /* nächster anstehender Termin im Projekt: farbige Klammer links (Daniel, 20.11.2026) */
 .tp-zeile.tp-naechster { box-shadow: inset 3px 0 0 #8613a1; border-radius: 4px 12px 12px 4px; }
+/* Projektübersicht als Portfolio (Daniel, 20.11.2026) */
+.pj-uebersicht .pj-marke { margin: 0 0 36px; }
+.pj-uebersicht .pj-marke > h2 { margin: 0 0 4px; font: 700 20px/1.2 "Inter Tight", "Inter", system-ui, sans-serif; }
+.pp-gruppe { margin: 14px 0 8px; font-size: 13px; font-weight: 600; color: #6e6e73; }
+.pp-karten { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.pp-karte { display: flex; flex-direction: column; gap: 6px; padding: 16px 18px; border-radius: 18px; background: #fff; color: inherit; text-decoration: none; border: 1px solid transparent; transition: border-color .15s; }
+.pp-karte:hover { border-color: #d2d2d7; }
+.pp-kopf { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.pp-kopf b { font-size: 16px; font-weight: 700; line-height: 1.3; color: var(--tinte); }
+.pp-org { font-size: 13px; color: #86868b; margin-top: -4px; }
+.pp-satz { margin: 4px 0 0; font-size: 15px; line-height: 1.5; color: #424245; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.pp-satz.pp-leer { color: #86868b; }
+.pp-fuss { margin: auto 0 0; padding-top: 12px; border-top: 1px solid #f0f0f2; display: grid; gap: 6px; }
+.pp-fuss div { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 8px; }
+.pp-fuss dt { font-size: 13px; color: #86868b; }
+.pp-fuss dd { margin: 0; font-size: 13px; color: var(--tinte); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pp-st { flex: none; display: inline-flex; align-items: center; height: 22px; padding: 0 9px; border-radius: 999px; font-size: 13px; font-weight: 500; white-space: nowrap; background: #f2f2f7; color: #6e6e73; }
+.pp-st-kritisch { background: #fdecec; color: #b3261e; }
+.pp-st-achtung { background: #fbf1df; color: #8a5a00; }
+.pp-st-im_plan { background: #e9f5ee; color: #1f6b43; }
+.pp-st-ruht { background: #f2f2f7; color: #86868b; }
+.pp-liste { list-style: none; margin: 0; padding: 4px 18px !important; border-radius: 18px; background: #fff; }
+.pp-liste li + li { border-top: 1px solid #f0f0f2; }
+.pp-liste a { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr) auto; gap: 16px; align-items: center; padding: 12px 0; color: inherit; text-decoration: none; }
+.pp-liste a:hover b { text-decoration: underline; text-underline-offset: 3px; }
+.pp-liste b { font-size: 15px; font-weight: 600; color: var(--tinte); }
+.pp-z-schritt { font-size: 13px; color: #6e6e73; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 1100px) { .pp-karten { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px) {
+  .pp-karten { grid-template-columns: minmax(0, 1fr); }
+  .pp-liste a { grid-template-columns: minmax(0, 1fr) auto; }
+  .pp-z-schritt { grid-column: 1; grid-row: 2; white-space: normal; }
+  .pp-liste a .pp-st { grid-column: 2; grid-row: 1; }
+}
+.pp-liste a { grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr) 96px; }
+.pp-liste a .pp-st { justify-self: end; }
+@media (max-width: 700px) { .pp-liste a { grid-template-columns: minmax(0, 1fr) auto; } }

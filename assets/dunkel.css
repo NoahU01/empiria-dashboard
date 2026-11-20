@@ -2278,6 +2278,26 @@ html[data-farbe="dunkel"] .pj-steckbrief .pj-sb-details > summary::after { borde
 html[data-farbe="dunkel"] .pj-steckbrief .pj-sb-auf { border-top: 1px solid #38383a; }
 html[data-farbe="dunkel"] .pj-sb-team-titel { color: var(--tinte) !important; }
 html[data-farbe="dunkel"] .tp-zeile.tp-naechster { box-shadow: inset 3px 0 0 #8613a1; }
+html[data-farbe="dunkel"] .pp-gruppe { color: #c7c7cc; }
+html[data-farbe="dunkel"] .pp-karte { background: #1c1c1e; color: inherit; }
+html[data-farbe="dunkel"] .pp-karte:hover { border-color: #636366; }
+html[data-farbe="dunkel"] .pp-kopf b { color: var(--tinte); }
+html[data-farbe="dunkel"] .pp-org { color: #a1a1a6; }
+html[data-farbe="dunkel"] .pp-satz { color: #f2f2f7; }
+html[data-farbe="dunkel"] .pp-satz.pp-leer { color: #a1a1a6; }
+html[data-farbe="dunkel"] .pp-fuss { border-top: 1px solid #38383a; }
+html[data-farbe="dunkel"] .pp-fuss dt { color: #a1a1a6; }
+html[data-farbe="dunkel"] .pp-fuss dd { color: var(--tinte); }
+html[data-farbe="dunkel"] .pp-st { background: #2c2c2e; color: #c7c7cc; }
+html[data-farbe="dunkel"] .pp-st-kritisch { background: #2c2c2e; color: #b3261e; }
+html[data-farbe="dunkel"] .pp-st-achtung { background: #2c2c2e; color: #8a5a00; }
+html[data-farbe="dunkel"] .pp-st-im_plan { background: #2c2c2e; color: #1f6b43; }
+html[data-farbe="dunkel"] .pp-st-ruht { background: #2c2c2e; color: #a1a1a6; }
+html[data-farbe="dunkel"] .pp-liste { background: #1c1c1e; }
+html[data-farbe="dunkel"] .pp-liste li + li { border-top: 1px solid #38383a; }
+html[data-farbe="dunkel"] .pp-liste a { color: inherit; }
+html[data-farbe="dunkel"] .pp-liste b { color: var(--tinte); }
+html[data-farbe="dunkel"] .pp-z-schritt { color: #c7c7cc; }
 
 /* ---- assets/leasing-fahrzeug.css ---- */
 html[data-farbe="dunkel"] .lf-profil div { border-top: 1px solid var(--linie); }
