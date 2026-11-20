@@ -87,7 +87,7 @@
   }
   function projekt(e) { var p = P[e.projekt_id]; return p ? p.name : (e.person && e.quelle === "posting" ? e.person : ""); }
   function schluessel(e) { return e.quelle + ":" + e.qid; }
-  function marke(e) { var t = TYP[e.typ] || ["", "gy"]; return '<span class="e-typ e-' + t[1] + '">' + t[0] + "</span>"; }
+  function marke(e) { var t = TYP[e.typ] || ["", "gy"]; return '<span class="e-typ e-' + t[1] + '">' + t[0] + (nr(e) ? " " + nr(e) : "") + "</span>"; }
 
   /* ---------- Laden ---------- */
   el.innerHTML = '<p class="e-laedt">Lädt …</p>';
@@ -108,10 +108,27 @@
       E.sort(sortieren);
       var m = location.hash.match(/s=([a-z]+:\d+)/);
       if (m) { var z = E.filter(function (e) { return schluessel(e) === m[1]; })[0]; if (z) { gruppe = z.gruppe; auswahl = z; } }
-      zeichnen();
+      kennungen(zeichnen);
     });
   });
   function inGruppe(g) { return E.filter(function (e) { return e.gruppe === g; }); }
+  /* Kurze Kennung je Eintrag (Daniel, 20.11.2026: „Empfehlung 36 … dass du sofort weißt, welche ich meine“): fortlaufende Nummer aus
+     eingang_kennung, eindeutig über alle Arten. Neue Einträge bekommen beim ersten Anzeigen ihre Nummer. */
+  var KN = {};
+  function nr(e) { return KN[e.quelle + ":" + e.qid] || ""; }
+  function kennung(e) { var n = nr(e); return n ? (TYP[e.typ] || ["Eintrag"])[0] + " " + n : ""; }
+  function kennungen(fertig) {
+    var merk = function (l) { (l || []).forEach(function (k) { KN[k.quelle + ":" + k.qid] = k.nr; }); };
+    db.from("eingang_kennung").select("nr, quelle, qid").order("nr", { ascending: false }).limit(5000).then(function (r) {
+      merk(r.data);
+      var fehlt = E.filter(function (e) { return e.qid != null && !nr(e); }).map(function (e) { return { quelle: e.quelle, qid: e.qid }; });
+      var q = db.from("eingang_kennung");
+      if (!fehlt.length || typeof q.upsert !== "function") return fertig();
+      q.upsert(fehlt, { onConflict: "quelle,qid", ignoreDuplicates: true }).then(function () {
+        db.from("eingang_kennung").select("nr, quelle, qid").order("nr", { ascending: false }).limit(5000).then(function (r2) { merk(r2.data); fertig(); });
+      });
+    });
+  }
 
   /* ---------- Detail je Art: genau die angeklickte Sache ---------- */
   function detail(e) {
@@ -166,7 +183,7 @@
     titel = titel || (text.length > 80 ? text.slice(0, 77).replace(/\s+\S*$/, "") + " …" : text);
     if (titel.length > 90) titel = titel.slice(0, 87).replace(/\s+\S*$/, "") + " …";
     return db.from("aufgaben").insert({
-      titel: titel, beschreibung: "Aus dem Eingang (Dashboard), " + new Date().toLocaleString("de-DE") + ", zu „" + e.titel + "“ (" + e.quelle + " " + e.qid + "):\n" + text,
+      titel: titel, beschreibung: "Aus dem Eingang (Dashboard), " + new Date().toLocaleString("de-DE") + ", zu „" + e.titel + "“ (" + e.quelle + " " + e.qid + (kennung(e) ? ", " + kennung(e) : "") + "):\n" + text,
       projekt_id: e.projekt_id || null, status: "offen", spalte: "todo", art: "aufgabe", verantwortlich: "Claude",
       ticket_stand: "bereit", ticket_spur: "sofort", ticket_herkunft: "eingang", ticket_prioritaet: "hoch",
       ticket_ergebnis: text + "\n\nBezug: „" + e.titel + "“ (" + e.quelle + " " + e.qid + ").",
@@ -194,7 +211,7 @@
     else if ((e.quelle === "aufgabe" || e.quelle === "wartet") && a === "erledigt") q = db.from("aufgaben").update({ status: "erledigt", erledigt_am: jetzt() }).eq("id", e.qid);
     else if (e.quelle === "posting" && a === "freigeben") q = db.from("beitraege").update({ status: "freigegeben" }).eq("id", e.qid);
     else if (e.quelle === "briefing" && (a === "ja" || a === "text"))
-      q = ticket(e, a === "ja" ? "Daniel sagt ja zur Empfehlung „" + e.titel + "“ (" + (e.extra.knopf || "umsetzen") + "). Setze sie um. Inhalt: " + (e.kern || "") : "Daniel zur Empfehlung „" + e.titel + "“: " + txt,
+      q = ticket(e, a === "ja" ? "Auftrag von Daniel: Ja zur Empfehlung „" + e.titel + "“ (" + (e.extra.knopf || "umsetzen") + "). Setze sie um. Inhalt: " + (e.kern || "") : "Auftrag von Daniel zur Empfehlung „" + e.titel + "“ – so soll es gemacht werden: " + txt,
         (a === "ja" ? (e.extra.knopf || "Umsetzen") + ": " : "Anders: ") + (a === "ja" ? e.titel : txt)).then(function (r) {
         return r.error ? r : db.from("briefing").update({ entscheidung: a === "ja" ? "ja" : "anders", entscheidung_text: txt || null, entschieden_am: jetzt() }).eq("id", e.qid); });
     else if (e.quelle === "nachbereitung" && a === "text")
@@ -242,7 +259,7 @@
     if (!q) { d.querySelectorAll("button").forEach(function (b) { b.disabled = false; }); return; }
     q.then(function (r) {
       if (r && r.error) { alert("Nicht gespeichert: " + r.error.message); d.querySelectorAll("button").forEach(function (b) { b.disabled = false; }); return; }
-      var ok = d.querySelector(".e-ok"); ok.textContent = (e.quelle === "briefing" ? "Als Ticket bei Claude (Sofort-Spur). Claude setzt es um und meldet sich im Eingang." : MELDUNG[meldung] || "Gespeichert."); ok.hidden = false;
+      var ok = d.querySelector(".e-ok"); ok.textContent = (e.quelle === "briefing" ? "Auftrag an Claude (Sofort-Spur). Claude setzt ihn um und schließt ihn ab, ohne ihn dir noch einmal vorzulegen." : MELDUNG[meldung] || "Gespeichert."); ok.hidden = false;
       E = E.filter(function (x) { return x !== e; });
       toast(ok.textContent);
       setTimeout(function () { weiter(e); }, 900);
@@ -348,7 +365,7 @@
       '<section class="k7-band"><div class="k7-raster' + (auswahl ? " hat-detail" : "") + '"><ul class="k7-liste">' + (l.length ? l.map(function (e) {
         // Zeile (Daniel, 18.11.2026): oben klein Art · Projekt · Frist, darunter der volle Titel – beim Durchscrollen sehen, worum es geht
         var f = k7Farbe(e);
-        return '<li data-s="' + esc(schluessel(e)) + '"' + (e === auswahl ? ' aria-current="true"' : "") + '><div class="k7-z-kopf"><i class="k7-f-' + f + '"></i><span class="k7-art">' + (TYP[e.typ] || [""])[0] + "</span>" +
+        return '<li data-s="' + esc(schluessel(e)) + '"' + (e === auswahl ? ' aria-current="true"' : "") + '><div class="k7-z-kopf"><i class="k7-f-' + f + '"></i><span class="k7-art">' + (TYP[e.typ] || [""])[0] + (nr(e) ? ' <span class="k7-nr">' + nr(e) + "</span>" : "") + "</span>" +
           (projekt(e) ? '<span class="k7-proj">· ' + esc(projekt(e)) + "</span>" : "") + (frist(e) ? '<span class="k7-frist">' + frist(e) + "</span>" : "") + "</div><b>" + esc(e.titel) + "</b></li>";
       }).join("") : '<li class="e-leer">Nichts in dieser Gruppe.</li>') + "</ul>" +
       '<div class="k7-detail">' + (auswahl ? '<button type="button" class="e-zurueck" data-zurueck>‹ Eingang</button>' + detail(auswahl) : '<p class="e-leer">Wähle links einen Eintrag.</p>') + "</div></div></section></div>";
@@ -394,7 +411,7 @@
       E.forEach(function (e) { if (e.quelle === "briefing" && br[e.qid]) { e.begruendung = br[e.qid].begruendung; e.art = br[e.qid].art; e.projekt_id = br[e.qid].projekt_id; e.ebene = br[e.qid].ebene || "operativ"; e.marke = br[e.qid].marke; } });
       L = (r[2].data || [])[0] || null;
       var gesehen = {}; ST = (r[3].data || []).filter(function (s) { if (gesehen[s.projekt_id] || !P[s.projekt_id]) return false; gesehen[s.projekt_id] = 1; return true; });
-      lage();
+      kennungen(lage);
     });
   }
   function liste2(t) { try { var l = typeof t === "string" ? JSON.parse(t) : t; return Array.isArray(l) ? l : []; } catch (x) { return t ? [t] : []; } }
@@ -435,6 +452,7 @@
       '<div class="lg-kern"><h2 class="lg-kern-titel">Was heute zählt</h2>' + (L ? '<ul class="lg-kern-liste">' + saetze(L.text).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "<p>Der Stabschef hat heute noch kein Briefing geschrieben.</p>") + "</div>" +
       '<div class="lg-links"><div class="lg-emp-titel"><h2>Meine Empfehlungen</h2>' + reiter + "</div>" + (emp.length ? emp.map(function (e) {
         return '<article class="e-detail lg-emp" data-s="' + esc(schluessel(e)) + '"><div class="lg-emp-kopf"><span class="lg-art lg-art-' + (ARTE[e.art] ? e.art : "empfehlung") + '">' + (ARTE[e.art] || "Empfehlung") + "</span>" +
+          (nr(e) ? '<span class="lg-nr">Empfehlung ' + nr(e) + "</span>" : "") +
           (P[e.projekt_id] ? '<span class="lg-proj">' + esc(P[e.projekt_id].name) + " · " + esc(P[e.projekt_id].marke) + "</span>" : e.marke ? '<span class="lg-proj">' + esc(e.marke) + "</span>" :
             /^Stoßrichtung: ([^:]{2,40}):/.test(e.begruendung || "") ? '<span class="lg-proj">' + esc(e.begruendung.match(/^Stoßrichtung: ([^:]{2,40}):/)[1]) + "</span>" : "") + "</div><h3>" + esc(e.titel) + "</h3>" + (e.kern ? "<p>" + esc(e.kern) + "</p>" : "") +
           (e.begruendung ? '<details class="lg-warum"><summary>Warum jetzt</summary><p>' + esc(e.begruendung) + "</p></details>" : "") +

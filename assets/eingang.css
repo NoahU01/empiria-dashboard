@@ -683,3 +683,6 @@
 .lg-links { grid-template-columns: minmax(0, 1fr); }
 .lg-emp-titel { min-width: 0; }
 .lg-emp-titel .lg-reiter { min-width: 0; }
+/* Kennung im Eingang und Briefing (Daniel, 20.11.2026) */
+.k7-nr { font-variant-numeric: tabular-nums; }
+.lg-nr { font-size: 12px; font-weight: 600; color: #6e6e73; font-variant-numeric: tabular-nums; }
