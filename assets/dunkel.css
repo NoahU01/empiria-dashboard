@@ -2189,6 +2189,40 @@ html[data-farbe="dunkel"] .tp-vorb summary::after { border-right: 1.5px solid #6
 html[data-farbe="dunkel"] .lg-nr { color: #c7c7cc; }
 html[data-farbe="dunkel"] .lg-summe { color: #a1a1a6; }
 html[data-farbe="dunkel"] .k7-liste .k7-trenn { color: #a1a1a6; background: none !important; }
+html[data-farbe="dunkel"] .vt-hinweis { color: #c7c7cc; }
+html[data-farbe="dunkel"] .vt-spalte { background: #1c1c1e; }
+html[data-farbe="dunkel"] .vt-spalte h2 span { color: #a1a1a6; }
+html[data-farbe="dunkel"] .vt-spalte header p { color: #a1a1a6; }
+html[data-farbe="dunkel"] .vt-karte { background: #2c2c2e; color: inherit; }
+html[data-farbe="dunkel"] .vt-karte:hover { border-color: #636366; }
+html[data-farbe="dunkel"] .vt-karte.an { border-color: var(--tinte); background: #1c1c1e; }
+html[data-farbe="dunkel"] .vt-karte b { color: var(--tinte); }
+html[data-farbe="dunkel"] .vt-firma { color: #c7c7cc; }
+html[data-farbe="dunkel"] .vt-vorhaben { color: #f2f2f7; }
+html[data-farbe="dunkel"] .vt-schritt { color: var(--tinte); }
+html[data-farbe="dunkel"] .vt-rot { color: #e3000f; }
+html[data-farbe="dunkel"] .vt-fuss { color: #a1a1a6; }
+html[data-farbe="dunkel"] .vt-vorschlag { color: #8613a1; }
+html[data-farbe="dunkel"] .vt-neu { border: 1px solid var(--tinte); background: #1c1c1e; color: var(--tinte); }
+html[data-farbe="dunkel"] .vt-schleier { background: rgba(0, 0, 0, .18); }
+html[data-farbe="dunkel"] .vt-detail { background: #1c1c1e; box-shadow: -8px 0 30px rgba(0, 0, 0, .12); }
+html[data-farbe="dunkel"] .vt-d-kopf p { color: #c7c7cc; }
+html[data-farbe="dunkel"] .vt-zu { background: #2c2c2e; color: var(--tinte); }
+html[data-farbe="dunkel"] .vt-stufen { background: #2c2c2e; }
+html[data-farbe="dunkel"] .vt-stufen button { background: none; color: #f2f2f7; }
+html[data-farbe="dunkel"] .vt-stufen button[aria-pressed="true"] { background: #1c1c1e; color: var(--tinte); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+html[data-farbe="dunkel"] .vt-d-vorschlag { background: #2c2c2e; }
+html[data-farbe="dunkel"] .vt-d-vorschlag .e-k { border: 1px solid var(--tinte); background: #1c1c1e; }
+html[data-farbe="dunkel"] .vt-hebel { background: #2c2c2e; box-shadow: inset 3px 0 0 #8613a1; }
+html[data-farbe="dunkel"] .vt-hebel p { color: var(--tinte); }
+html[data-farbe="dunkel"] .vt-hebel small { color: #a1a1a6; }
+html[data-farbe="dunkel"] .vt-detail h3 { color: #c7c7cc; }
+html[data-farbe="dunkel"] .vt-detail input[type=text], html[data-farbe="dunkel"] .vt-detail input[type=search], html[data-farbe="dunkel"] .vt-detail input[type=date], html[data-farbe="dunkel"] .vt-detail textarea, html[data-farbe="dunkel"] .vt-detail select { border: 1px solid #636366; background: #1c1c1e; color: var(--tinte); }
+html[data-farbe="dunkel"] .vt-detail .e-k-voll { background: var(--tinte); color: #fff; color: #1c1c1e; }
+html[data-farbe="dunkel"] .vt-kontakte span { color: #a1a1a6; }
+html[data-farbe="dunkel"] .vt-begr { color: #c7c7cc; }
+html[data-farbe="dunkel"] .vt-d-fuss .e-k { border: 1px solid #636366; background: #1c1c1e; color: var(--tinte); }
+html[data-farbe="dunkel"] .vt-treffer button { background: #2c2c2e; color: var(--tinte); }
 
 /* ---- assets/leasing-fahrzeug.css ---- */
 html[data-farbe="dunkel"] .lf-profil div { border-top: 1px solid var(--linie); }

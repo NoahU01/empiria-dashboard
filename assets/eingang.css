@@ -689,3 +689,63 @@
 /* Eine Zählweise (Daniel, 20.11.2026) */
 .lg-summe { margin-left: 4px; font-weight: 600; color: #86868b; }
 .k7-liste .k7-trenn { padding: 14px 12px 6px; font-size: 12px; font-weight: 600; color: #86868b; cursor: default; background: none !important; }
+/* Vertrieb – Trichter vom Austausch bis zum Projekt (Daniel, 20.11.2026) */
+.vt { max-width: 1240px; margin: 0 auto; }
+.vt-hinweis { margin: 0 0 16px; font-size: 13px; color: #6e6e73; max-width: 760px; }
+.vt-board { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; align-items: start; }
+.vt-spalte { min-width: 0; padding: 14px 12px 12px; border-radius: 20px; background: #fff; }
+.vt-spalte header { padding: 0 4px 10px; }
+.vt-spalte h2 { margin: 0 !important; font-size: 15px !important; }
+.vt-spalte h2 span { margin-left: 4px; font-weight: 500; color: #86868b; }
+.vt-spalte header p { margin: 4px 0 0; min-height: calc(2 * 1.35em); font-size: 12px; color: #86868b; line-height: 1.35; }
+.vt-karten { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.vt-karte { display: grid; gap: 3px; width: 100%; padding: 10px 12px; border: 1px solid transparent; border-radius: 14px; background: #f5f5f7; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+.vt-karte:hover { border-color: #d2d2d7; }
+.vt-karte.an { border-color: var(--tinte); background: #fff; }
+.vt-karte b { font-size: 14px; font-weight: 600; color: var(--tinte); }
+.vt-firma { font-size: 12px; color: #6e6e73; }
+.vt-vorhaben { font-size: 13px; color: #424245; }
+.vt-schritt { margin-top: 4px; font-size: 13px; color: var(--tinte); }
+.vt-rot { color: #e3000f; font-weight: 600; }
+.vt-fuss { font-size: 11px; color: #86868b; }
+.vt-vorschlag { font-size: 11px; font-weight: 600; color: #8613a1; }
+.vt-neu { margin-top: 16px; height: 34px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--tinte); background: #fff; font-size: 13px; font-weight: 600; color: var(--tinte); cursor: pointer; }
+.vt-schleier { position: fixed; inset: 0; z-index: 60; background: rgba(0, 0, 0, .18); }
+.vt-detail { position: fixed; top: 0; right: 0; bottom: 0; z-index: 61; width: min(520px, 100vw); overflow-y: auto; overscroll-behavior: contain; padding: 22px 24px 32px; background: #fff; box-shadow: -8px 0 30px rgba(0, 0, 0, .12); display: grid; gap: 16px; align-content: start; }
+html.vt-offen { overflow: hidden; }
+.vt-d-kopf { display: flex; gap: 12px; align-items: flex-start; justify-content: space-between; }
+.vt-d-kopf h2 { margin: 0 !important; font-size: 22px !important; }
+.vt-d-kopf p { margin: 4px 0 0; font-size: 13px; color: #6e6e73; }
+.vt-zu { flex: none; width: 34px; height: 34px; border: 0; border-radius: 50%; background: #f2f2f7; font-size: 20px; line-height: 1; color: var(--tinte); cursor: pointer; }
+.vt-stufen { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; padding: 3px; border-radius: 12px; background: #f2f2f7; }
+.vt-stufen button { min-height: 34px; padding: 4px 6px; border: 0; border-radius: 9px; background: none; font: 500 12px/1.2 "Inter", system-ui, sans-serif; color: #424245; cursor: pointer; }
+.vt-stufen button[aria-pressed="true"] { background: #fff; color: var(--tinte); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+.vt-d-vorschlag { margin: 0; padding: 10px 12px; border-radius: 12px; background: #f5f5f7; font-size: 13px; }
+.vt-d-vorschlag .e-k { margin-left: 6px; height: 28px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--tinte); background: #fff; font-size: 12px; font-weight: 600; cursor: pointer; }
+.vt-hebel { padding: 12px 14px; border-radius: 14px; background: #f5f5f7; box-shadow: inset 3px 0 0 #8613a1; }
+.vt-hebel p { margin: 0; font-size: 14px; color: var(--tinte); }
+.vt-hebel small { display: block; margin-top: 6px; font-size: 11px; color: #86868b; }
+.vt-detail h3 { margin: 0 0 6px; font-size: 13px; font-weight: 600; color: #6e6e73; }
+.vt-schritt-form, .vt-auftrag, .vt-neu-form { display: grid; gap: 8px; }
+.vt-schritt-form h3:not(:first-child) { margin-top: 6px; }
+.vt-detail input[type=text], .vt-detail input[type=search], .vt-detail input[type=date], .vt-detail textarea, .vt-detail select { width: 100%; box-sizing: border-box; min-height: 38px; padding: 8px 10px; border: 1px solid #d2d2d7; border-radius: 10px; background: #fff; font: 14px/1.4 "Inter", system-ui, sans-serif; color: var(--tinte); }
+.vt-zeile { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+.vt-detail .e-k-voll { height: 38px; padding: 0 16px; border-radius: 999px; border: 0; background: var(--tinte); color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; }
+.vt-detail .vt-auftrag .e-k-voll { justify-self: start; }
+.vt-stand-inhalt { font-size: 14px; }
+.vt-stand-inhalt p { margin: 0 0 6px; }
+.vt-kontakte { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; font-size: 13px; }
+.vt-kontakte li { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 8px; }
+.vt-kontakte span { color: #86868b; }
+.vt-begr { margin: 0; font-size: 13px; color: #6e6e73; }
+.vt-d-fuss { display: flex; gap: 8px; flex-wrap: wrap; }
+.vt-d-fuss .e-k { display: inline-flex; align-items: center; height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid #d2d2d7; background: #fff; font-size: 13px; font-weight: 500; color: var(--tinte); text-decoration: none; cursor: pointer; }
+.vt-treffer { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.vt-treffer button { width: 100%; padding: 8px 10px; border: 0; border-radius: 8px; background: #f5f5f7; text-align: left; font: inherit; font-size: 14px; color: var(--tinte); cursor: pointer; }
+@media (max-width: 1100px) { .vt-board { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px) {
+  .vt-board { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 10px; margin: 0 -16px; padding: 0 16px 8px; }
+  .vt-spalte { flex: 0 0 84%; scroll-snap-align: start; }
+  .vt-detail { padding: 18px 16px 28px; }
+  .vt-stufen { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
