@@ -66,15 +66,20 @@
     aufgabe: ["Aufgabe", "sw"], entscheidung: ["Entscheiden", "gr"], ansehen: ["Ansehen", "gr"], info: ["Info", "gr"], wartet: ["Wartet", "gy"]
   };
   var GRUPPEN = [["heute", "Heute"], ["woche", "Diese Woche"], ["spaeter", "Später"], ["wartet", "Wartet auf andere"]];
+  /* Eine Zählweise überall (Daniel, 20.11.2026: „Die Werte passen nicht zueinander“): „Wartet auf dich“ = was jetzt einen Schritt von
+     Daniel braucht. Dieselbe Zahl am Menüpunkt, im Eingang (Kopf und Knopf „Heute“) und im Briefing. Termine stehen unter „Heute“, zählen nicht. */
+  function wartetAufDich(e) {
+    return e.typ === "impuls" || e.typ === "abnahme" || e.typ === "rueckfrage" || e.typ === "nachbereitung" || e.typ === "entscheidung" ||
+      (e.typ === "freigabe" && !!e.frist && e.frist <= plus(2)) || (e.typ === "aufgabe" && !!e.frist && e.frist <= HEUTE);
+  }
+  function anzahl(g) { return g === "heute" ? E.filter(wartetAufDich).length : inGruppe(g).length; }
   function gruppeVon(e) {
     if (e.typ === "wartet") return "wartet";
-    if (e.typ === "impuls" || e.typ === "abnahme" || e.typ === "rueckfrage" || e.typ === "termin" || e.typ === "nachbereitung") return "heute";
-    if (e.frist && e.frist <= HEUTE) return "heute";
-    if (e.typ === "freigabe" && e.frist && e.frist <= plus(2)) return "heute";
+    if (wartetAufDich(e) || e.typ === "termin") return "heute";
     if (e.frist && e.frist <= plus(7)) return "woche";
     return "spaeter";
   }
-  function rang(e) { var o = { impuls: -1, abnahme: 0, rueckfrage: 0, nachbereitung: 1, freigabe: 1, aufgabe: 2, termin: 3, entscheidung: 4, ansehen: 5, info: 6, wartet: 7 }; return o[e.typ]; }
+  function rang(e) { var o = { impuls: -1, abnahme: 0, rueckfrage: 0, nachbereitung: 1, freigabe: 1, aufgabe: 2, entscheidung: 4, ansehen: 5, info: 6, wartet: 7, termin: 9 }; return o[e.typ]; }
   function sortieren(a, b) {
     if (a.typ === "termin" && b.typ === "termin") return String(a.angelegt).localeCompare(String(b.angelegt));
     return rang(a) - rang(b) || String(a.frist || "9").localeCompare(String(b.frist || "9")) || String(b.angelegt).localeCompare(String(a.angelegt));
@@ -269,7 +274,7 @@
   /* ---------- Gemeinsame Kopfzeile mit Gruppen ---------- */
   function reiter(kl) {
     return '<nav class="' + kl + '">' + GRUPPEN.map(function (g) {
-      var n = inGruppe(g[0]).length;
+      var n = anzahl(g[0]);
       return '<button type="button" data-g="' + g[0] + '" aria-pressed="' + (g[0] === gruppe) + '">' + g[1] + "<span>" + n + "</span></button>";
     }).join("") + "</nav>";
   }
@@ -354,18 +359,18 @@
     var altDetail = el.querySelector(".k7-detail"), detailPos = altDetail && KL.gezeigt === auswahl ? altDetail.scrollTop : 0;
     var l = inGruppe(gruppe);
     if (!auswahl || l.indexOf(auswahl) < 0) auswahl = window.innerWidth > 900 ? l[0] || null : null;
-        var dran = E.filter(function (e) { return e.typ === "impuls" || e.typ === "abnahme" || e.typ === "rueckfrage" || e.typ === "freigabe" || (e.typ === "aufgabe" && e.frist && e.frist <= HEUTE); }).length;
+    var dran = E.filter(wartetAufDich).length;
     var datumLang = new Date().toLocaleDateString("de-DE", { weekday: "long", day: "2-digit", month: "long", timeZone: "Europe/Berlin" });
     el.innerHTML = '<div class="k7"><header class="k7-kopf"><div class="k7-titel"><h1>Eingang</h1><span>' + esc(datumLang) + '</span></div>' +
       '<p class="k7-stand"><b>' + dran + '</b> ' + (dran === 1 ? "Sache wartet" : "Dinge warten") + " auf dich</p>" +
       '<nav class="k7-pillen">' + GRUPPEN.map(function (g) {
-        return '<button type="button" data-g="' + g[0] + '" aria-pressed="' + (g[0] === gruppe) + '">' + g[1] + " <span>" + inGruppe(g[0]).length + "</span></button>";
+        return '<button type="button" data-g="' + g[0] + '" aria-pressed="' + (g[0] === gruppe) + '">' + g[1] + " <span>" + anzahl(g[0]) + "</span></button>";
       }).join("") + "</nav>" +
       '<p class="k7-legende"><i class="k7-f-cl"></i>Claude braucht dich<i class="k7-f-ma"></i>geht nach außen<i class="k7-f-tinte"></i>deine Aufgabe<i class="k7-f-cy"></i>Termin<i class="k7-f-grau"></i>ansehen oder warten<i class="k7-f-rot"></i>überfällig</p></header>' +
-      '<section class="k7-band"><div class="k7-raster' + (auswahl ? " hat-detail" : "") + '"><ul class="k7-liste">' + (l.length ? l.map(function (e) {
+      '<section class="k7-band"><div class="k7-raster' + (auswahl ? " hat-detail" : "") + '"><ul class="k7-liste">' + (l.length ? l.map(function (e, i) {
         // Zeile (Daniel, 18.11.2026): oben klein Art · Projekt · Frist, darunter der volle Titel – beim Durchscrollen sehen, worum es geht
-        var f = k7Farbe(e);
-        return '<li data-s="' + esc(schluessel(e)) + '"' + (e === auswahl ? ' aria-current="true"' : "") + '><div class="k7-z-kopf"><i class="k7-f-' + f + '"></i><span class="k7-art">' + (TYP[e.typ] || [""])[0] + (nr(e) ? ' <span class="k7-nr">' + nr(e) + "</span>" : "") + "</span>" +
+        var f = k7Farbe(e), trenn = gruppe === "heute" && e.typ === "termin" && (i === 0 || l[i - 1].typ !== "termin") ? '<li class="k7-trenn">Heute im Kalender · zählt nicht mit</li>' : "";
+        return trenn + '<li data-s="' + esc(schluessel(e)) + '"' + (e === auswahl ? ' aria-current="true"' : "") + '><div class="k7-z-kopf"><i class="k7-f-' + f + '"></i><span class="k7-art">' + (TYP[e.typ] || [""])[0] + (nr(e) ? ' <span class="k7-nr">' + nr(e) + "</span>" : "") + "</span>" +
           (projekt(e) ? '<span class="k7-proj">· ' + esc(projekt(e)) + "</span>" : "") + (frist(e) ? '<span class="k7-frist">' + frist(e) + "</span>" : "") + "</div><b>" + esc(e.titel) + "</b></li>";
       }).join("") : '<li class="e-leer">Nichts in dieser Gruppe.</li>') + "</ul>" +
       '<div class="k7-detail">' + (auswahl ? '<button type="button" class="e-zurueck" data-zurueck>‹ Eingang</button>' + detail(auswahl) : '<p class="e-leer">Wähle links einen Eintrag.</p>') + "</div></div></section></div>";
@@ -387,7 +392,7 @@
 
   /* Zahl dessen, was auf Daniel wartet, am Menüpunkt „Eingang“ */
   function zahlImMenue() {
-    var n = E.filter(function (e) { return e.typ === "impuls" || e.typ === "abnahme" || e.typ === "rueckfrage" || e.typ === "freigabe" || (e.typ === "aufgabe" && e.frist && e.frist <= HEUTE); }).length;
+    var n = E.filter(wartetAufDich).length;
     document.querySelectorAll('.hn a[href*="eingang-klar"]').forEach(function (a) {
       var z = a.querySelector(".d3-zahl"); if (!z) { z = document.createElement("span"); z.className = "d3-zahl"; a.appendChild(z); }
       z.textContent = n; z.hidden = !n;
@@ -440,11 +445,14 @@
       var n = alleEmp.filter(function (e) { return reiterVon(e) === r[0]; }).length;
       return '<button type="button" role="tab" data-ebene="' + r[0] + '" aria-selected="' + (r[0] === EBENE) + '">' + r[1] + " <span>" + n + "</span></button>"; }).join("") + "</div>";
     var zaehl = function (f) { return E.filter(f).length; };
+    var w = function (f) { return zaehl(function (e) { return wartetAufDich(e) && f(e); }); };
     var wartet = [
-      ["Abnahmen", zaehl(function (e) { return e.typ === "abnahme"; }), "cl"], ["Rückfragen", zaehl(function (e) { return e.typ === "rueckfrage"; }), "cl"],
-      ["Freigaben", zaehl(function (e) { return e.typ === "freigabe"; }), "ma"], ["überfällige Aufgaben", zaehl(function (e) { return e.typ === "aufgabe" && e.frist && e.frist < HEUTE; }), "rot"],
-      ["Entscheidungen auf der Steuerung", zaehl(function (e) { return e.quelle === "vorlage"; }), "grau"]
+      ["Empfehlungen", w(function (e) { return e.typ === "impuls"; }), "cl"], ["Abnahmen", w(function (e) { return e.typ === "abnahme"; }), "cl"],
+      ["Rückfragen", w(function (e) { return e.typ === "rueckfrage"; }), "cl"], ["„Wie lief es?“", w(function (e) { return e.typ === "nachbereitung"; }), "cy"],
+      ["Freigaben bis übermorgen", w(function (e) { return e.typ === "freigabe"; }), "ma"], ["Aufgaben fällig bis heute", w(function (e) { return e.typ === "aufgabe"; }), "rot"],
+      ["Entscheidungen", w(function (e) { return e.typ === "entscheidung"; }), "grau"]
     ].filter(function (x) { return x[1]; });
+    var wartetSumme = zaehl(wartetAufDich);
     var stand = L && L.gilt_fuer ? (L.gilt_fuer === HEUTE ? "Briefing von heute" : "Briefing vom " + datum(L.gilt_fuer) + ", das heutige fehlt noch") : "Noch kein Briefing";
     var st = ST.slice().sort(function (a, b) { return AMPEL[a.ampel][1] - AMPEL[b.ampel][1] || String(P[a.projekt_id].name).localeCompare(P[b.projekt_id].name); });
     el.innerHTML = '<div class="k7 lage lage-start"><header class="k7-kopf"><div class="k7-titel"><h1>Briefing</h1><span>' + esc(datumLang) + '</span></div><p class="k7-stand">' + esc(stand) + "</p></header>" +
@@ -459,7 +467,7 @@
           '<div class="e-knoepfe"><button class="e-k e-k-voll" data-a="ja">' + esc(e.extra.knopf || "Passt, umsetzen") + '</button><button class="e-k" data-a="text" data-modus="anders">Anders</button></div>' +
           '<form class="e-text" hidden><textarea rows="3" placeholder="Was soll ich stattdessen tun?"></textarea><button class="e-k e-k-voll" type="submit">Senden</button></form><p class="e-ok" hidden></p></article>';
       }).join("") : '<p class="e-leer lg-alle-ent">Alle Empfehlungen ' + reiterText(EBENE, "in") + ' sind entschieden.</p>') + nachschubHtml() + "</div>" +
-      '<aside class="lg-rechts"><div class="lg-kasten"><h2>Wartet auf dich</h2>' + (wartet.length ? '<ul class="lg-wartet">' + wartet.map(function (w) {
+      '<aside class="lg-rechts"><div class="lg-kasten"><h2>Wartet auf dich <span class="lg-summe">' + wartetSumme + "</span></h2>" + (wartet.length ? '<ul class="lg-wartet">' + wartet.map(function (w) {
         return '<li><i class="k7-f-' + w[2] + '"></i><b>' + w[1] + "</b> " + w[0] + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Nichts.</p>') +
       '<a class="e-k e-k-voll lg-zum-eingang" href="/strategie/eingang-klar.html">Zum Eingang</a></div>' +
       '<div class="lg-kasten"><h2>Seit gestern</h2>' + (L && liste2(L.fortschritt).length ? "<ul>" + liste2(L.fortschritt).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Keine Angaben.</p>') + "</div>" +

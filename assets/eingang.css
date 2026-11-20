@@ -686,3 +686,6 @@
 /* Kennung im Eingang und Briefing (Daniel, 20.11.2026) */
 .k7-nr { font-variant-numeric: tabular-nums; }
 .lg-nr { font-size: 12px; font-weight: 600; color: #6e6e73; font-variant-numeric: tabular-nums; }
+/* Eine Zählweise (Daniel, 20.11.2026) */
+.lg-summe { margin-left: 4px; font-weight: 600; color: #86868b; }
+.k7-liste .k7-trenn { padding: 14px 12px 6px; font-size: 12px; font-weight: 600; color: #86868b; cursor: default; background: none !important; }

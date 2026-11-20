@@ -2187,6 +2187,8 @@ html[data-farbe="dunkel"] .pj-erledigt summary span { color: #a1a1a6; }
 html[data-farbe="dunkel"] .pj-erledigt summary::after { border-right: 1.5px solid #636366; border-bottom: 1.5px solid #636366; }
 html[data-farbe="dunkel"] .tp-vorb summary::after { border-right: 1.5px solid #636366; border-bottom: 1.5px solid #636366; }
 html[data-farbe="dunkel"] .lg-nr { color: #c7c7cc; }
+html[data-farbe="dunkel"] .lg-summe { color: #a1a1a6; }
+html[data-farbe="dunkel"] .k7-liste .k7-trenn { color: #a1a1a6; background: none !important; }
 
 /* ---- assets/leasing-fahrzeug.css ---- */
 html[data-farbe="dunkel"] .lf-profil div { border-top: 1px solid var(--linie); }
