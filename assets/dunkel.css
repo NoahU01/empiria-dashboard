@@ -2270,6 +2270,9 @@ html[data-farbe="dunkel"] .pj-sb-details > summary::after { border-right: 1.5px 
 html[data-farbe="dunkel"] .pj-sb-auf h4 { color: var(--tinte); }
 html[data-farbe="dunkel"] .pj-sb-auf p { color: #f2f2f7; }
 html[data-farbe="dunkel"] .pj-sb-auf ul { color: #f2f2f7; }
+html[data-farbe="dunkel"] .lg-kern p, html[data-farbe="dunkel"] .lg-kern-liste li { color: var(--tinte); }
+html[data-farbe="dunkel"] .pj-sb-ziel { color: var(--tinte); }
+html[data-farbe="dunkel"] .lage .pj-stand .pj-ampel { color: #c7c7cc !important; }
 
 /* ---- assets/leasing-fahrzeug.css ---- */
 html[data-farbe="dunkel"] .lf-profil div { border-top: 1px solid var(--linie); }

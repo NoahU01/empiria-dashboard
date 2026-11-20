@@ -895,9 +895,9 @@
       var gates = auf.filter(function (a) { return a.status === "offen" && istGate2(a); }).sort(function (a, b) { return String(a.faellig_am || "9").localeCompare(String(b.faellig_am || "9")); });
       var erledigt = auf.filter(function (a) { return a.status !== "offen"; }).sort(function (a, b) { return String(b.erledigt_am).localeCompare(String(a.erledigt_am)); });
       // je Spalte zuerst vier Einträge, der Rest auf Klick (Daniel, 20.11.2026: „bei anderen … dadurch wird es extrem hoch“)
-      var spalte = function (titel, kl, l) { return '<div class="pj-spalte"><h3><i class="k7-f-' + kl + '"></i>' + titel + " <span>" + l.length + "</span></h3>" +
+      var spalte = function (titel, kl, l) { return '<div class="pj-spalte' + (l.length ? "" : " pj-spalte-leer") + '"><h3><i class="k7-f-' + kl + '"></i>' + titel + " <span>" + l.length + "</span></h3>" +
         (l.length ? '<ul class="pj-liste">' + l.map(function (a, i) { return i < 4 ? aZeile(a) : aZeile(a).replace('<li class="pj-a"', '<li class="pj-a pj-mehr" hidden'); }).join("") + "</ul>" +
-          (l.length > 4 ? '<button type="button" class="pj-alle" data-pj-alle>Alle ' + l.length + " zeigen</button>" : "") : '<p class="e-leer">Nichts offen.</p>') + "</div>"; };
+          (l.length > 4 ? '<button type="button" class="pj-alle" data-pj-alle>Alle ' + l.length + " zeigen</button>" : "") : "") + "</div>"; };
       var ent = PJ.vorlagen.filter(function (v) { return v.projekt_id === pid; });
       var nameKlein = p.name.toLowerCase().replace(/\s*\(.*\)$/, "");
       var ter = PJ.termine.filter(function (t) { return t.projekt_id === pid || String(t.betreff || "").toLowerCase().indexOf(nameKlein) >= 0; });
@@ -933,7 +933,8 @@
             return '<li><details><summary><b>' + esc(v.titel) + "</b><small>" + datum(String(v.datum).slice(0, 10)) + "</small></summary>" + (i.text ? "<p>" + esc(i.text) + "</p>" : "") +
               (i.link ? '<a class="e-link" href="' + esc(i.link) + '" target="_blank" rel="noopener">Öffnen</a>' : "") + (i.ablage ? '<p class="pj-ablage">' + esc(i.ablage) + "</p>" : "") + "</details></li>"; }).join("") + "</ul>" : '<p class="e-leer">Noch keine Arbeitsstände.</p>') + "</div>";
         })() +
-          '<div class="lg-kasten"><h2>Meilensteine</h2>' + (gates.length ? '<ul class="pj-zeit">' + gates.slice(0, 6).map(function (a) { return "<li><span>" + (a.faellig_am ? datum(a.faellig_am) + a.faellig_am.slice(2, 4) : "offen") + "</span>" + esc(a.titel) + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Keine hinterlegt.</p>') + "</div>" +
+          // Meilensteine nur, wenn es keinen Fahrplan gibt – sonst stehen sie dort als Ergebnisstufen (Daniel, 20.11.2026)
+          (!(p.name === "Operative Aufgaben" || p.workshop || p.fahrplan === false) ? "" : '<div class="lg-kasten"><h2>Meilensteine</h2>' + (gates.length ? '<ul class="pj-zeit">' + gates.slice(0, 6).map(function (a) { return "<li><span>" + (a.faellig_am ? datum(a.faellig_am) + a.faellig_am.slice(2, 4) : "offen") + "</span>" + esc(a.titel) + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Keine hinterlegt.</p>') + "</div>") +
 
           '<a class="e-k lage-alt" href="/strategie/projekte.html#p=' + pid + '">Bisherige Projektseite (Plan, Protokolle)</a></aside>' +
         "</div></section></div>";
