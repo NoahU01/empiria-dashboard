@@ -817,11 +817,12 @@
     var l = TP.l, heute0 = new Date(HEUTE + "T00:00:00").getTime();
     // durchgängige Zeitachse (Daniel, 20.11.2026): ganz oben der Termin, der am weitesten in der Zukunft liegt, ganz unten der älteste;
     // der nächste anstehende Termin trägt die farbige Klammer links
-    var kommend = l.map(function (x, i) { return i; }).filter(function (i) { return new Date(l[i].ts).getTime() >= heute0; });
+    var jetzt = Date.now();
+    var kommend = l.map(function (x, i) { return i; }).filter(function (i) { return new Date(l[i].ts).getTime() >= jetzt; });
     TP.naechster = kommend.length ? kommend[kommend.length - 1] : null;
-    var bisher = l.map(function (x, i) { return i; }).filter(function (i) { return new Date(l[i].ts).getTime() < heute0; });
-    if (TP.wahl == null) { var nah = kommend.filter(function (i) { return new Date(l[i].ts).getTime() < Date.now() + 3 * 864e5; }).pop();
-      TP.wahl = nah != null ? nah : bisher.length ? bisher[0] : kommend.length ? TP.naechster : null; }
+    var bisher = l.map(function (x, i) { return i; }).filter(function (i) { return new Date(l[i].ts).getTime() < jetzt; });
+    // geöffnet ist immer der nächste anstehende Termin (Daniel, 20.11.2026); nur ohne künftigen Termin der letzte vergangene
+    if (TP.wahl == null) TP.wahl = TP.naechster != null ? TP.naechster : bisher.length ? bisher[0] : null;
     if (!l.length) { ziel.innerHTML = '<p class="e-leer">Noch keine Termine im Projekt.</p>'; return; }
     ziel.innerHTML = '<div class="tp-liste">' + (kommend.length ? '<h3>Kommend</h3><ul>' + kommend.map(function (i) { return tpZeile(l[i], i); }).join("") + "</ul>" : "") +
       (bisher.length ? '<h3>Bisher</h3><ul>' + bisher.map(function (i) { return tpZeile(l[i], i); }).join("") + "</ul>" : "") + '</div><div class="tp-detail">' + tpDetail(l[TP.wahl]) + "</div>";
@@ -905,7 +906,8 @@
         (l.length ? '<ul class="pj-liste">' + l.map(function (a, i) { return i < 4 ? aZeile(a) : aZeile(a).replace('<li class="pj-a"', '<li class="pj-a pj-mehr" hidden'); }).join("") + "</ul>" +
           (l.length > 4 ? '<button type="button" class="pj-alle" data-pj-alle>Alle ' + l.length + " zeigen</button>" : "") : "") + "</div>"; };
       var ent = PJ.vorlagen.filter(function (v) { return v.projekt_id === pid; });
-      var nameKlein = p.name.toLowerCase().replace(/\s*\(.*\)$/, "");
+      // Kalendertermine über den Namen zuordnen; Zusätze nach „ · “ oder „ – “ gehören nicht in den Betreff (z. B. „SV Akademie · Strategie“)
+      var nameKlein = p.name.toLowerCase().replace(/\s*\(.*\)$/, "").split(/ [·–] /)[0];
       var ter = PJ.termine.filter(function (t) { return t.projekt_id === pid || String(t.betreff || "").toLowerCase().indexOf(nameKlein) >= 0; });
       el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>' + esc(p.name) + "</h1><span>" + esc(p.marke) + " · " + (p.typ === "Kunde" ? "Kundenprojekt" : "internes Projekt") + (p.phase ? " · " + esc(p.phase) : "") + "</span></div>" +
         // Absprung zur Kundenprojektseite und Methodenkoffer (Daniel, 20.11.2026)
