@@ -757,6 +757,13 @@
       host.innerHTML = ""; host.appendChild(weg); ubw.dispatchEvent(new CustomEvent("ub-zeigen"));
       var melden = function () { try { parent.postMessage({ fahrplanHoehe: host.scrollHeight + 4 }, location.origin); } catch (x) {} };
       melden(); if (window.ResizeObserver) new ResizeObserver(melden).observe(host); setTimeout(melden, 600);
+      // Volle Breite (Daniel, 20.11.2026: „ging wirklich über die gesamte Breite des Fensters auf“): die einbettende Seite legt den
+      // Rahmen über das ganze Fenster; Escape auf der einbettenden Seite schließt sie wieder
+      var warWeit = false;
+      new MutationObserver(function () { var w = document.documentElement.classList.contains("ub-weit-offen"); if (w === warWeit) return; warWeit = w;
+        try { parent.postMessage({ fahrplanWeit: w }, location.origin); } catch (x) {} }).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+      window.addEventListener("message", function (ev) { if (ev.origin !== location.origin || !ev.data || !ev.data.fahrplanWeitZu || !warWeit) return;
+        var k = document.querySelector("[data-weit]"); if (k) k.click(); });
     }
   }
 

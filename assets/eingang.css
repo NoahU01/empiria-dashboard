@@ -776,3 +776,7 @@ html.vt-offen { overflow: hidden; }
 @media (max-width: 1100px) { .vt-board { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 900px) { .vt-board { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 700px) { .vt-board { display: grid; overflow: visible; margin: 0; padding: 0; } .vt-spalte { flex: none; } .vt-vorschlaege li { grid-template-columns: minmax(0, 1fr); } .vt-detail .vt-stufen { grid-template-columns: minmax(0, 1fr); } }
+/* Fahrplan in voller Breite: der eingebettete Plan legt sich über das ganze Fenster (Daniel, 20.11.2026) */
+.pj-plan-wisch.pj-plan-voll { position: fixed; inset: 0; z-index: 2000; margin: 0; padding: 0; overflow: hidden; background: #fff; }
+.pj-plan-wisch.pj-plan-voll .pj-plan-rahmen { width: 100% !important; max-width: none; height: 100% !important; margin: 0; }
+html.pj-plan-voll-offen { overflow: hidden; }

@@ -2237,6 +2237,7 @@ html[data-farbe="dunkel"] .vt-pers li a { color: var(--tinte); }
 html[data-farbe="dunkel"] .vt-pers li span { color: #a1a1a6; }
 html[data-farbe="dunkel"] .vt-p-weg { background: #2c2c2e; color: #c7c7cc; }
 html[data-farbe="dunkel"] .vt-d-fuss span { color: #c7c7cc; }
+html[data-farbe="dunkel"] .pj-plan-wisch.pj-plan-voll { background: #1c1c1e; }
 
 /* ---- assets/leasing-fahrzeug.css ---- */
 html[data-farbe="dunkel"] .lf-profil div { border-top: 1px solid var(--linie); }

@@ -839,8 +839,16 @@
   window.addEventListener("resize", function () { if (el.querySelector(".tp")) tpPlatz(); });
   // Höhe des eingebetteten Fahrplans
   window.addEventListener("message", function (ev) {
-    if (ev.origin !== location.origin || !ev.data || !ev.data.fahrplanHoehe) return;
+    if (ev.origin !== location.origin || !ev.data) return;
+    var w = el.querySelector(".pj-plan-wisch");
+    // Volle Breite im eingebetteten Plan: Rahmen über das ganze Fenster (Daniel, 20.11.2026)
+    if (typeof ev.data.fahrplanWeit === "boolean" && w) { w.classList.toggle("pj-plan-voll", ev.data.fahrplanWeit); document.documentElement.classList.toggle("pj-plan-voll-offen", ev.data.fahrplanWeit); return; }
+    if (!ev.data.fahrplanHoehe) return;
     var f = el.querySelector(".pj-plan-rahmen"); if (f) f.style.height = Math.max(200, ev.data.fahrplanHoehe) + "px";
+  });
+  document.addEventListener("keydown", function (ev) {
+    var w = el.querySelector(".pj-plan-wisch.pj-plan-voll"); if (ev.key !== "Escape" || !w) return;
+    var f = w.querySelector("iframe"); try { f.contentWindow.postMessage({ fahrplanWeitZu: true }, location.origin); } catch (x) {}
   });
   function projektSeite() {
     zahlImMenue();
