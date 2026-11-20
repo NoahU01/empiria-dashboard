@@ -851,3 +851,17 @@ html.pj-plan-voll-offen { overflow: hidden; }
 .pj-spalte.pj-spalte-leer { padding-top: 12px; padding-bottom: 12px; }
 .pj-spalte.pj-spalte-leer h3 { margin: 0; }
 .lage .pj-stand .pj-ampel { font: 400 13px/1.4 "Inter", system-ui, sans-serif !important; color: #6e6e73 !important; }
+/* „Worum es geht“ als Aufklapper wie der Fahrplan (Daniel, 20.11.2026) */
+.pj-steckbrief { display: block !important; }
+.pj-steckbrief .pj-sb-details { border-top: 0; padding-top: 0; }
+.pj-steckbrief .pj-sb-details > summary { display: flex; align-items: flex-start; gap: 12px; width: 100%; font: inherit; color: inherit; }
+.pj-steckbrief .pj-sb-details > summary::after { flex: none; margin: 6px 4px 0 auto; width: 8px; height: 8px; border-right: 1.5px solid #86868b; border-bottom: 1.5px solid #86868b; transform: rotate(45deg); }
+.pj-steckbrief .pj-sb-details[open] > summary::after { transform: rotate(225deg); margin-top: 10px; }
+.pj-sb-kopf { min-width: 0; }
+.pj-sb-kopf h2 { margin: 0 0 6px !important; }
+.pj-sb-kopf .pj-sb-ziel { margin: 0; }
+.pj-steckbrief .pj-sb-auf { margin-top: 16px; padding-top: 16px; border-top: 1px solid #e8e8ed; }
+.pj-sb-team-titel { margin: 0 0 10px !important; font: 700 16px/1.3 "Inter Tight", "Inter", system-ui, sans-serif !important; color: var(--tinte) !important; }
+/* Eingang: Titel in der Liste in normaler Schriftstärke (Daniel, 20.11.2026) */
+.k7-liste li > b { font-weight: 400 !important; }
+.pj-sb-kopf .e-leer, .pj-sb-auf .e-leer { margin: 0; padding: 0; }

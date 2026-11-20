@@ -988,16 +988,12 @@
       // Grundinfo sofort, Details auf Klick (Daniel, 20.11.2026: „oben so eine Grundinfo, worum geht's … dann kann ich weiter aufklappen“);
       // Stoßrichtungen stehen im Fahrplan, nicht hier
       var kunde = bet.filter(function (b) { return b.seite === "Kunde"; }), eigen = bet.filter(function (b) { return b.seite !== "Kunde"; });
-      var kurz = function (titel, l) { if (!l.length) return ""; var n = l.slice(0, 3).map(name).join(", ");
-        return '<p class="pj-sb-kurz"><span>' + titel + "</span>" + esc(n) + (l.length > 3 ? " <em>+ " + (l.length - 3) + " weitere</em>" : "") + "</p>"; };
-      var teamKurz = p.typ === "Kunde" ? kurz("Beim Kunden", kunde) + kurz("empiria und Partner", eigen) : kurz("Beteiligte", bet);
-      z.innerHTML = '<div class="pj-sb-links"><h2>Worum es geht</h2>' +
-        (pr.ziel ? '<p class="pj-sb-ziel">' + esc(pr.ziel) + "</p>" : '<p class="e-leer">Noch kein Projektziel hinterlegt. Diktiere es mir, dann trage ich es ein.</p>') + "</div>" +
-        '<div class="pj-sb-rechts"><h2>Projektteam</h2>' + (teamKurz || '<p class="e-leer">Noch niemand eingetragen.</p>') + "</div>" +
-        '<details class="pj-sb-details"' + (PJ.sbOffen ? " open" : "") + "><summary>" + (zd.length ? "Mehr zum Ziel und zum Team" : "Team bearbeiten") + "</summary>" +
+      // Aufklapper wie der Fahrplan: Überschrift, darunter der Ziel-Satz, rechts der Pfeil; Details und Team erst aufgeklappt (Daniel, 20.11.2026)
+      z.innerHTML = '<details class="pj-sb-details"' + (PJ.sbOffen ? " open" : "") + '><summary><div class="pj-sb-kopf"><h2>Worum es geht</h2>' +
+        (pr.ziel ? '<p class="pj-sb-ziel">' + esc(pr.ziel) + "</p>" : '<p class="e-leer">Noch kein Projektziel hinterlegt. Diktiere es mir, dann trage ich es ein.</p>') + "</div></summary>" +
         '<div class="pj-sb-auf"><div>' + (zd.length ? zd.map(function (d) { return "<h4>" + esc(d.titel || "") + "</h4>" + (d.text ? "<p>" + esc(d.text) + "</p>" : "") +
-          ((d.punkte || []).length ? "<ul>" + d.punkte.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : ""); }).join("") : "") + "</div>" +
-        "<div>" + (p.typ === "Kunde" ? seite("Beim Kunden", kunde) + seite("empiria und Partner", eigen) : seite("Beteiligte", bet)) +
+          ((d.punkte || []).length ? "<ul>" + d.punkte.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : ""); }).join("") : '<p class="e-leer">Keine weiteren Details zum Ziel.</p>') + "</div>" +
+        '<div class="pj-sb-team"><h3 class="pj-sb-team-titel">Projektteam</h3>' + (p.typ === "Kunde" ? seite("Beim Kunden", kunde) + seite("empiria und Partner", eigen) : seite("Beteiligte", bet)) +
         '<div class="vt-p-neu pj-team-neu"><input type="search" placeholder="Person hinzufügen" autocomplete="off"><select aria-label="Seite">' +
           (p.typ === "Kunde" ? '<option value="Kunde">beim Kunden</option><option value="empiria">empiria</option><option value="Partner">Partner</option>' : '<option value="Partner">Partner</option><option value="empiria">empiria</option><option value="Kunde">extern</option>') +
           '</select><ul class="vt-treffer"></ul></div></div></div></details>';
