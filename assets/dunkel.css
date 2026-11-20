@@ -2168,6 +2168,24 @@ html[data-farbe="dunkel"] .pj-stand-liste .pj-ablage { color: #a1a1a6 !important
 html[data-farbe="dunkel"] .pj-ereignis summary::after { color: #a1a1a6; }
 html[data-farbe="dunkel"] .pj-termin { color: var(--tinte); }
 html[data-farbe="dunkel"] .pj-zeit > li:has(> details[open]) > span { color: #a1a1a6; }
+html[data-farbe="dunkel"] .tp-liste h3 { color: #a1a1a6; }
+html[data-farbe="dunkel"] .tp-zeile { background: none; color: inherit; }
+html[data-farbe="dunkel"] .tp-zeile:hover { background: #2c2c2e; }
+html[data-farbe="dunkel"] .tp-zeile.an { background: #2c2c2e; }
+html[data-farbe="dunkel"] .tp-zeile .tp-d { color: #c7c7cc; }
+html[data-farbe="dunkel"] .tp-zeile b { color: var(--tinte); }
+html[data-farbe="dunkel"] .tp-zeile small { color: #a1a1a6; }
+html[data-farbe="dunkel"] .tp-detail { background: #2c2c2e; }
+html[data-farbe="dunkel"] .tp-detail > .tp-d { color: #c7c7cc; }
+html[data-farbe="dunkel"] .tp-detail h3 { color: var(--tinte); }
+html[data-farbe="dunkel"] .tp-meta { color: #c7c7cc; }
+html[data-farbe="dunkel"] .tp-detail .tp-termin { border: 1px solid var(--tinte); background: #1c1c1e; color: var(--tinte); }
+html[data-farbe="dunkel"] .tp-detail .e-block { background: #1c1c1e; }
+html[data-farbe="dunkel"] .tp-detail .e-block h4 { color: #c7c7cc; }
+html[data-farbe="dunkel"] .tp-wer { color: #a1a1a6; }
+html[data-farbe="dunkel"] .pj-erledigt summary span { color: #a1a1a6; }
+html[data-farbe="dunkel"] .pj-erledigt summary::after { border-right: 1.5px solid #636366; border-bottom: 1.5px solid #636366; }
+html[data-farbe="dunkel"] .tp-vorb summary::after { border-right: 1.5px solid #636366; border-bottom: 1.5px solid #636366; }
 
 /* ---- assets/leasing-fahrzeug.css ---- */
 html[data-farbe="dunkel"] .lf-profil div { border-top: 1px solid var(--linie); }

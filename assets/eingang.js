@@ -708,30 +708,93 @@
       '<button class="e-k" data-pa="hinweis">' + (wer2(a) === "andere" ? "Nachhaken lassen" : "Hinweis an Claude") + "</button></div>" +
       '<form class="e-text" hidden><textarea rows="3" placeholder="Was soll Claude tun?"></textarea><button class="e-k e-k-voll" type="submit">Senden</button></form><p class="e-ok" hidden></p></div></li>';
   }
-  // Termine im Projekt: innerhalb der nächsten 7 Tage direkt in die Seite Termine, sonst aufklappbar mit Vorbereitung, Protokoll und Entscheidungen
-  function pjTerminLink(titel, gid, start) {
-    var nah = start && new Date(start).getTime() < Date.now() + 7 * 864e5 && new Date(start).getTime() > Date.now() - 864e5;
-    return gid && nah ? '<a class="pj-termin" href="/strategie/termine-tag.html#g=' + encodeURIComponent(gid) + '">' + esc(titel) + " →</a>" : esc(titel);
-  }
-  function pjEreignis(e, zeit) {
-    var gid = e.aktivitaet_extern && e.aktivitaet_extern.indexOf("kalender:") === 0 ? e.aktivitaet_extern.slice(9) : null, d = String(e.datum).slice(0, 10);
-    var nah = new Date(e.datum).getTime() < Date.now() + 7 * 864e5 && new Date(e.datum).getTime() > Date.now() - 864e5;
-    return "<li><span>" + (typeof zeit === "string" ? zeit : datum(d)) + '</span><details class="pj-ereignis" data-ereignis="' + e.id + '"><summary>' + esc(e.titel) + "</summary>" +
-      '<div class="pj-ereignis-inhalt"><p class="e-leer">Lädt …</p></div>' + (gid && nah ? '<a class="pj-termin" href="/strategie/termine-tag.html#g=' + encodeURIComponent(gid) + '">Im Termin öffnen →</a>' : "") + "</details></li>";
-  }
-  document.addEventListener("toggle", function (ev) {
-    var d = ev.target; if (!d.matches || !d.matches("details.pj-ereignis") || !d.open || d.dataset.geladen) return;
-    d.dataset.geladen = "1";
-    db.from("projekt_punkte").select("id, ereignis_id, art, text, angelegt_am").eq("ereignis_id", +d.getAttribute("data-ereignis")).order("angelegt_am").order("id").then(function (r) {
-      var eid = +d.getAttribute("data-ereignis"), l = (r.data || []).filter(function (p) { return p.art !== "Ersetzt" && (p.ereignis_id == null || +p.ereignis_id === eid); }), ziel = d.querySelector(".pj-ereignis-inhalt");
-      if (!l.length) { ziel.innerHTML = '<p class="e-leer">Noch nichts festgehalten.</p>'; return; }
-      ziel.innerHTML = [["Vorbereitung", "Gesprächsvorbereitung"], ["Protokoll", "Protokoll"], ["Entscheidung", "Entscheidungen"]].map(function (a) {
-        var x = l.filter(function (p) { return p.art === a[0]; }); if (!x.length) return "";
-        return '<div class="e-block"><h3>' + a[1] + '</h3><ul class="tm-pp">' + x.map(function (p) { var m = String(p.text).match(/^([^:]{2,40}):\s*([\s\S]*)$/);
-          return "<li>" + (m ? "<b>" + esc(m[1]) + "</b>" + gegliedert(m[2]) : gegliedert(p.text)) + "</li>"; }).join("") + "</ul></div>";
-      }).join("");
+  /* Termine und Protokolle (Daniel, 20.11.2026: „manche Sachen sind anklickbar, manche nicht … ich komme an meine Infos nicht ran“):
+     eine Liste mit allen Terminen, Workshops und Meilensteinen des Projekts – kommend und bisher, ohne Zeitgrenze. Jeder Eintrag öffnet
+     daneben (am Telefon darunter) Vorbereitung, Protokoll, Entscheidungen und Aufgaben, wie in der bisherigen Projektansicht. */
+  var TP = {};
+  function tpZeit(ts) { var u = uhr(ts); return u && u !== "00:00" ? u : ""; }
+  function tpTag(ts) { var d = iso2(ts); return new Date(d + "T12:00:00").toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit", year: d.slice(0, 4) === HEUTE.slice(0, 4) ? undefined : "2-digit", timeZone: "Europe/Berlin" }); }
+  function tpLaden(pid, ter) {
+    TP = { pid: pid, l: null, punkte: [], aufgaben: [], wahl: null };
+    db.from("projekt_ereignisse").select("id, projekt_id, datum, art, titel, aktivitaet_extern, format, ort, teilnehmer").eq("projekt_id", pid).order("datum", { ascending: false }).then(function (r) {
+      if (TP.pid !== pid) return;
+      var ere = (r.data || []).filter(function (e) { return e.projekt_id === pid; });
+      var l = ere.map(function (e) { var g = e.aktivitaet_extern && e.aktivitaet_extern.indexOf("kalender:") === 0 ? e.aktivitaet_extern.slice(9) : null;
+        return { e: e, ts: e.datum, titel: e.titel, art: e.art, gid: g, t: g && ter.filter(function (t) { return t.graph_id === g; })[0] }; });
+      ter.forEach(function (t) { if (!l.some(function (x) { return x.gid && x.gid === t.graph_id; })) l.push({ t: t, ts: t.start, titel: t.betreff, art: "Termin", gid: t.graph_id }); });
+      l.sort(function (x, y) { return new Date(y.ts) - new Date(x.ts); });
+      TP.l = l;
+      var ids = ere.map(function (e) { return e.id; });
+      if (!ids.length) return tpZeichnen();
+      Promise.all([
+        db.from("projekt_punkte").select("id, ereignis_id, art, text, angelegt_am").in("ereignis_id", ids).order("angelegt_am").order("id"),
+        db.from("aufgaben").select("id, ereignis_id, titel, verantwortlich, faellig_am, status").in("ereignis_id", ids)
+      ]).then(function (q) {
+        if (TP.pid !== pid) return;
+        TP.punkte = (q[0].data || []).filter(function (x) { return x.art !== "Ersetzt" && ids.indexOf(x.ereignis_id) >= 0; });
+        TP.aufgaben = (q[1].data || []).filter(function (x) { return ids.indexOf(x.ereignis_id) >= 0; });
+        tpZeichnen();
+      });
     });
-  }, true);
+  }
+  function tpInhalt(x) {
+    var id = x.e && x.e.id, pk = TP.punkte.filter(function (p) { return p.ereignis_id === id; }), au = TP.aufgaben.filter(function (a) { return a.ereignis_id === id; });
+    return { vorb: pk.filter(function (p) { return p.art === "Vorbereitung"; }), prot: pk.filter(function (p) { return p.art === "Protokoll"; }),
+      ent: pk.filter(function (p) { return p.art === "Entscheidung"; }), auf: au };
+  }
+  function tpZeile(x, i) {
+    var c = tpInhalt(x), was = [c.vorb.length ? "Vorbereitung" : "", c.prot.length ? "Protokoll" : "", c.ent.length ? "Entscheidungen" : "", c.auf.length ? "Aufgaben" : ""].filter(Boolean);
+    return '<li><button type="button" class="tp-zeile' + (TP.wahl === i ? " an" : "") + '" data-tp="' + i + '"><span class="tp-d">' + tpTag(x.ts) + (tpZeit(x.ts) && x.art !== "Meilenstein" ? " · " + tpZeit(x.ts) : "") + "</span>" +
+      "<b>" + esc(x.titel) + "</b><small>" + esc(x.art || "Termin") + (was.length ? " · " + was.join(", ") : " · noch nichts festgehalten") + "</small></button></li>";
+  }
+  function tpPunkte(l) {
+    return '<ul class="tm-pp">' + l.map(function (p) { var m = String(p.text).match(/^([^:]{2,40}):\s*([\s\S]*)$/);
+      return "<li>" + (m ? "<b>" + esc(m[1]) + "</b>" + gegliedert(m[2]) : gegliedert(p.text)) + "</li>"; }).join("") + "</ul>";
+  }
+  function tpDetail(x) {
+    if (!x) return '<p class="e-leer">Wähle links einen Eintrag.</p>';
+    var c = tpInhalt(x), e = x.e || {}, ms = new Date(x.ts).getTime();
+    var imTermin = x.gid && ms >= new Date(HEUTE + "T00:00:00").getTime() && ms < Date.now() + 7 * 864e5, vorbei = ms < new Date(HEUTE + "T00:00:00").getTime();
+    var meta = [esc(x.art || "Termin"), e.format === "vor Ort" ? "vor Ort" + (e.ort ? ": " + esc(e.ort) : "") : e.format ? esc(e.format) : ""].filter(Boolean).join(" · ");
+    var teil = (e.teilnehmer || []).join(", ");
+    var h = '<p class="tp-d">' + tmTagName(iso2(x.ts), true) + (tmTagName(iso2(x.ts)) === "heute" || tmTagName(iso2(x.ts)) === "morgen" ? ", " + datum(iso2(x.ts)) : "") + (tpZeit(x.ts) && x.art !== "Meilenstein" ? " · " + tpZeit(x.ts) : "") + "</p>" +
+      "<h3>" + esc(x.titel) + '</h3><p class="tp-meta">' + meta + (teil ? "<br>" + esc(teil) : "") + "</p>" +
+      (imTermin ? '<a class="e-k tp-termin" href="/strategie/termine-tag.html#g=' + encodeURIComponent(x.gid) + '">In Termine öffnen →</a>' : "");
+    var block = function (titel, inhalt) { return inhalt ? '<div class="e-block"><h4>' + titel + "</h4>" + inhalt + "</div>" : ""; };
+    var vorb = c.vorb.length ? tpPunkte(c.vorb) : x.t && x.t.vorbereitung ? zeilenText(x.t.vorbereitung) : "";
+    // Vorbei: erst Protokoll, Entscheidungen und Aufgaben, die Vorbereitung zugeklappt am Ende; kommend: Vorbereitung zuerst
+    var teile = (vorbei ? "" : block("Vorbereitung", vorb)) +
+      block("Protokoll", c.prot.length ? tpPunkte(c.prot) : "") + block("Entscheidungen", c.ent.length ? tpPunkte(c.ent) : "") +
+      block("Aufgaben", c.auf.length ? '<ul class="tm-pp">' + c.auf.map(function (a) { return "<li>" + esc(a.titel) + ' <span class="tp-wer">· ' + esc(a.verantwortlich || "offen") +
+        (a.faellig_am ? ", bis " + datum(a.faellig_am) : "") + (a.status === "erledigt" ? " · erledigt" : "") + "</span></li>"; }).join("") + "</ul>" : "") +
+      (vorbei && vorb ? (c.prot.length || c.ent.length || c.auf.length ? '<details class="e-block tp-vorb"><summary><h4>Vorbereitung</h4></summary>' + vorb + "</details>" : block("Vorbereitung", vorb)) : "");
+    return h + (teile || '<p class="e-leer">Noch nichts festgehalten. Diktiere mir, was vorbereitet oder besprochen wurde.</p>');
+  }
+  function tpZeichnen() {
+    var ziel = el.querySelector(".tp"); if (!ziel || !TP.l) return;
+    var l = TP.l, heute0 = new Date(HEUTE + "T00:00:00").getTime();
+    var kommend = l.map(function (x, i) { return i; }).filter(function (i) { return new Date(l[i].ts).getTime() >= heute0; }).reverse();
+    var bisher = l.map(function (x, i) { return i; }).filter(function (i) { return new Date(l[i].ts).getTime() < heute0; });
+    if (TP.wahl == null) { var nah = kommend.filter(function (i) { return new Date(l[i].ts).getTime() < Date.now() + 3 * 864e5; })[0];
+      TP.wahl = nah != null ? nah : bisher.length ? bisher[0] : kommend.length ? kommend[0] : null; }
+    if (!l.length) { ziel.innerHTML = '<p class="e-leer">Noch keine Termine im Projekt.</p>'; return; }
+    ziel.innerHTML = '<div class="tp-liste">' + (kommend.length ? '<h3>Kommend</h3><ul>' + kommend.map(function (i) { return tpZeile(l[i], i); }).join("") + "</ul>" : "") +
+      (bisher.length ? '<h3>Bisher</h3><ul>' + bisher.map(function (i) { return tpZeile(l[i], i); }).join("") + "</ul>" : "") + '</div><div class="tp-detail">' + tpDetail(l[TP.wahl]) + "</div>";
+    tpPlatz();
+    ziel.querySelectorAll("[data-tp]").forEach(function (b) { b.onclick = function () {
+      TP.wahl = +b.getAttribute("data-tp");
+      ziel.querySelectorAll(".tp-zeile.an").forEach(function (x) { x.classList.remove("an"); }); b.classList.add("an");
+      var d = ziel.querySelector(".tp-detail"); d.innerHTML = tpDetail(l[TP.wahl]); d.scrollTop = 0; tpPlatz();
+      if (window.innerWidth <= 900) d.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }; });
+  }
+  // Am Telefon und iPad mini steht die Ansicht direkt unter dem gewählten Eintrag, sonst daneben
+  function tpPlatz() {
+    var ziel = el.querySelector(".tp"); if (!ziel) return;
+    var d = ziel.querySelector(".tp-detail"), b = ziel.querySelector(".tp-zeile.an");
+    if (window.innerWidth <= 900 && b) b.parentNode.appendChild(d); else if (d.parentNode !== ziel) ziel.appendChild(d);
+  }
+  window.addEventListener("resize", function () { if (el.querySelector(".tp")) tpPlatz(); });
   // Höhe des eingebetteten Fahrplans
   window.addEventListener("message", function (ev) {
     if (ev.origin !== location.origin || !ev.data || !ev.data.fahrplanHoehe) return;
@@ -767,9 +830,7 @@
       var spalte = function (titel, kl, l) { return '<div class="pj-spalte"><h3><i class="k7-f-' + kl + '"></i>' + titel + " <span>" + l.length + "</span></h3>" + (l.length ? '<ul class="pj-liste">' + l.map(aZeile).join("") + "</ul>" : '<p class="e-leer">Nichts offen.</p>') + "</div>"; };
       var ent = PJ.vorlagen.filter(function (v) { return v.projekt_id === pid; });
       var nameKlein = p.name.toLowerCase().replace(/\s*\(.*\)$/, "");
-      var ter = PJ.termine.filter(function (t) { return t.projekt_id === pid || String(t.betreff || "").toLowerCase().indexOf(nameKlein) >= 0; }).slice(0, 6);
-      var ere = PJ.ereignisse.filter(function (e) { return e.projekt_id === pid; });
-      var kommend = ere.filter(function (e) { return String(e.datum).slice(0, 10) >= HEUTE; }).slice(0, 6), vergangen = ere.filter(function (e) { return String(e.datum).slice(0, 10) < HEUTE; }).reverse().slice(0, 6);
+      var ter = PJ.termine.filter(function (t) { return t.projekt_id === pid || String(t.betreff || "").toLowerCase().indexOf(nameKlein) >= 0; });
       el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>' + esc(p.name) + "</h1><span>" + esc(p.marke) + " · " + (p.typ === "Kunde" ? "Kundenprojekt" : "internes Projekt") + (p.phase ? " · " + esc(p.phase) : "") + "</span></div>" +
         // Absprung zur Kundenprojektseite und Methodenkoffer (Daniel, 20.11.2026)
         '<nav class="pj-wege">' + (p.projektseite && p.projektseite.url ? '<a class="e-k" href="' + esc(p.projektseite.url) + '"' + (p.projektseite.url.charAt(0) === "/" ? "" : ' target="_blank" rel="noopener"') + ">" + esc(p.projektseite.titel || "Projektseite") + " ↗</a>" : "") +
@@ -781,8 +842,11 @@
         // Fahrplan (Daniel, 20.11.2026: „eine der wichtigsten Informationen im Projekt“) – derselbe Linienplan wie auf der bisherigen Projektseite
         (p.name === "Operative Aufgaben" || p.workshop ? "" : '<details class="lg-kasten pj-fahrplan"><summary><h2>Fahrplan</h2><span>Linienplan mit Stoßrichtungen, Arbeitspaketen und Meilensteinen</span></summary>' +
           '<div class="pj-plan-wisch"><iframe class="pj-plan-rahmen" src="' + (location.pathname.indexOf("/.pruefung/") === 0 ? "/.pruefung/" : "/strategie/") + 'projekte.html?nurplan#p=' + pid + '" title="Fahrplan" loading="lazy"></iframe></div></details>') +
+        '<section class="lg-kasten pj-tp"><h2>Termine und Protokolle</h2><div class="tp"><p class="e-leer">Lädt …</p></div></section>' +
         '<div class="lg-links"><div class="pj-spalten">' + spalte("Bei dir", "tinte", offen.filter(function (a) { return wer2(a) === "du"; })) +
           spalte("Bei Claude", "cl", offen.filter(function (a) { return wer2(a) === "claude"; })) + spalte("Bei anderen", "grau", offen.filter(function (a) { return wer2(a) === "andere"; })) + "</div>" +
+          (erledigt.length ? '<details class="lg-kasten pj-erledigt"><summary><h2>Zuletzt erledigt</h2><span>' + erledigt.length + "</span></summary><ul class=\"pj-zeit\">" + erledigt.map(function (a) {
+            return "<li><span>" + datum(String(a.erledigt_am).slice(0, 10)) + "</span>" + esc(a.titel) + "</li>"; }).join("") + "</ul></details>" : "") +
           (ent.length ? '<div class="lg-kasten"><h2>Offene Entscheidungen</h2><ul class="pj-einfach">' + ent.map(function (v) { return '<li><a href="/strategie/eingang-klar.html#s=vorlage:' + v.id + '">' + esc(v.titel) + "</a></li>"; }).join("") + "</ul></div>" : "") + "</div>" +
         '<aside class="lg-rechts">' + (function () {
           var as = (PJ.arbeitsstaende || []).filter(function (v) { return v.projekt_id === pid; }).slice(0, 5);
@@ -793,15 +857,12 @@
               (i.link ? '<a class="e-link" href="' + esc(i.link) + '" target="_blank" rel="noopener">Öffnen</a>' : "") + (i.ablage ? '<p class="pj-ablage">' + esc(i.ablage) + "</p>" : "") + "</details></li>"; }).join("") + "</ul>" : '<p class="e-leer">Noch keine Arbeitsstände.</p>') + "</div>";
         })() +
           '<div class="lg-kasten"><h2>Meilensteine</h2>' + (gates.length ? '<ul class="pj-zeit">' + gates.slice(0, 6).map(function (a) { return "<li><span>" + (a.faellig_am ? datum(a.faellig_am) + a.faellig_am.slice(2, 4) : "offen") + "</span>" + esc(a.titel) + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Keine hinterlegt.</p>') + "</div>" +
-          '<div class="lg-kasten"><h2>Was kommt</h2>' + (ter.length || kommend.length ? '<ul class="pj-zeit">' + ter.map(function (t) { var e = t.graph_id && PJ.ereignisse.filter(function (x) { return x.aktivitaet_extern === "kalender:" + t.graph_id; })[0];
-              return e ? pjEreignis(e, datum(iso2(t.start)) + " " + uhr(t.start)) : "<li><span>" + datum(iso2(t.start)) + " " + uhr(t.start) + "</span>" + pjTerminLink(t.betreff, t.graph_id, t.start) + "</li>"; }).join("") +
-            kommend.filter(function (e) { return !ter.some(function (t) { return t.betreff === e.titel; }); }).map(pjEreignis).join("") + "</ul>" : '<p class="e-leer">Nichts geplant.</p>') + "</div>" +
-          '<div class="lg-kasten"><h2>Zuletzt</h2>' + (erledigt.length || vergangen.length ? '<ul class="pj-zeit">' + erledigt.slice(0, 5).map(function (a) { return "<li><span>" + datum(String(a.erledigt_am).slice(0, 10)) + "</span>erledigt: " + esc(a.titel) + "</li>"; }).join("") +
-            vergangen.map(pjEreignis).join("") + "</ul>" : '<p class="e-leer">Keine Einträge in den letzten Wochen.</p>') + "</div>" +
+
           '<a class="e-k lage-alt" href="/strategie/projekte.html#p=' + pid + '">Bisherige Projektseite (Plan, Protokolle)</a></aside>' +
         "</div></section></div>";
     }
     var w = el.querySelector(".pj-waehler"); if (w) w.onchange = function () { location.hash = w.value ? "p=" + w.value : ""; };
+    if (p) tpLaden(pid, ter);
     el.querySelectorAll(".pj-a-zeile").forEach(function (z) { z.onclick = function () { var a = z.nextElementSibling; a.hidden = !a.hidden; z.parentNode.classList.toggle("ist-offen", !a.hidden); }; });
     el.querySelectorAll("[data-pa]").forEach(function (b) {
       b.onclick = function () {
