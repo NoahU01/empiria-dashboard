@@ -36,7 +36,7 @@
     return sprit ? { betrag: km * l * sprit, text: fz(l, 0) + " l/100 km × " + fz(sprit, 2) + " € netto" } : null;
   }
   function rechne(a, antrieb, verbrauch) {
-    var ueb = (a.ueberfuehrung_netto || 0) / (a.laufzeit || A.monate);
+    var ueb = ((a.ueberfuehrung_netto || 0) + (a.schlusszahlung_netto || 0)) / (a.laufzeit || A.monate);
     var en = energie(antrieb, verbrauch);
     var firma = a.rate_netto + ueb + (en ? en.betrag : 0);
     var blp = Math.floor(a.blp_brutto / 100) * 100, gwv = blp * satz(antrieb);
@@ -49,8 +49,8 @@
     var mo = A.monate;
     return '<details class="lf-kalk"><summary>Kalkulation ansehen</summary><table>' +
       '<tr class="lf-kalk-kopf"><th colspan="2">Firma, netto je Monat</th></tr>' +
-      "<tr><td>Leasingrate</td><td>" + euro2(a.rate_netto) + "</td></tr>" +
-      "<tr><td>Überführung " + euro(a.ueberfuehrung_netto || 0) + " ÷ " + (a.laufzeit || mo) + " Monate</td><td>" + euro2(r.ueb) + "</td></tr>" +
+      "<tr><td>" + (a.art === "3-Wege-Finanzierung" ? "Finanzierung bei Rückgabe" : "Leasingrate") + (a.rate_hinweis ? "<small>" + esc(a.rate_hinweis) + "</small>" : "") + "</td><td>" + euro2(a.rate_netto) + "</td></tr>" +
+      ((a.ueberfuehrung_netto || a.schlusszahlung_netto) ? "<tr><td>" + (a.ueberfuehrung_text ? esc(a.ueberfuehrung_text) : "Überführung " + euro(a.ueberfuehrung_netto || 0)) + (a.schlusszahlung_netto ? " + Schlusszahlung " + euro(a.schlusszahlung_netto) : "") + " ÷ " + (a.laufzeit || mo) + " Monate</td><td>" + euro2(r.ueb) + "</td></tr>" : "") +
       "<tr><td>Energie, " + fz(A.km_jahr, 0) + " km im Jahr" + (r.en ? "<small>" + r.en.text + "</small>" : "<small>Verbrauch fehlt noch</small>") + "</td><td>" + (r.en ? euro2(r.en.betrag) : "–") + "</td></tr>" +
       '<tr class="lf-kalk-summe"><td>Firmenkosten</td><td>' + euro2(r.firma) + "</td></tr>" +
       '<tr class="lf-kalk-kopf"><th colspan="2">Privat je Monat</th></tr>' +
@@ -89,7 +89,7 @@
       '<a class="lf-link" href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.anbieter) + " ↗</a></article>";
   }
 
-  fetch("/assets/leasing-fahrzeug.json?v=202610251200").then(function (r) { return r.json(); }).then(function (d) {
+  fetch("/assets/leasing-fahrzeug.json?v=202611212000").then(function (r) { return r.json(); }).then(function (d) {
     A = d.annahmen || {};
     var vergleich = document.querySelector("[data-lf-vergleich]");
     if (vergleich) {
@@ -103,10 +103,15 @@
         if (gesehen[x.url]) return;
         zeilen.push({ name: x.marke + " " + x.kurzname, ziel: "#lf-deal-" + i, a: x, antrieb: x.antrieb, r: rechne(x, x.antrieb, x.verbrauch), deal: true });
       });
+      (d.gebraucht || []).forEach(function (g, i) {
+        zeilen.push({ name: g.marke + " " + g.modell, ziel: "#lf-gw-" + i, a: g, antrieb: g.antrieb, r: rechne(g, g.antrieb, g.verbrauch), gw: g.art === "Leasing" ? "gebraucht, Leasing" : "gebraucht, 3-Wege" });
+      });
       zeilen.sort(function (p, q) { return p.r.privat - q.r.privat; });
-      vergleich.innerHTML = '<table class="lf-vgl"><thead><tr><th>Modell</th><th>Privat im Monat</th><th>Leasing netto</th><th class="lf-vgl-mehr">Faktor</th><th class="lf-vgl-mehr">Versteuerung</th><th class="lf-vgl-mehr">Lieferung</th></tr></thead><tbody>' +
+      var topGesetzt = false;
+      vergleich.innerHTML = '<table class="lf-vgl"><thead><tr><th>Modell</th><th>Privat im Monat</th><th>Rate netto</th><th class="lf-vgl-mehr">Faktor</th><th class="lf-vgl-mehr">Versteuerung</th><th class="lf-vgl-mehr">Lieferung</th></tr></thead><tbody>' +
         zeilen.map(function (z) {
-          return '<tr><td><a href="' + z.ziel + '">' + esc(z.name) + "</a>" + (z.deal ? " <small>Deal</small>" : "") + (z.r.en ? "" : " <small>ohne Energie</small>") + "</td>" +
+          var top = z.a.dezember === "ja" && !topGesetzt; if (top) topGesetzt = true;
+          return '<tr' + (z.a.dezember === "ja" ? (top ? ' class="lf-vgl-top"' : "") : ' class="lf-vgl-spaet"') + '><td><a href="' + z.ziel + '">' + esc(z.name) + "</a>" + (z.deal ? " <small>Deal</small>" : "") + (z.gw ? " <small>" + z.gw + "</small>" : "") + (z.r.en ? "" : " <small>ohne Energie</small>") + "</td>" +
             "<td><b>" + euro(z.r.privat) + "</b></td><td>" + euro(z.a.rate_netto) + "</td>" +
             '<td class="lf-vgl-mehr">' + fak(z.a.leasingfaktor) + '</td><td class="lf-vgl-mehr">' + pz(satz(z.antrieb)) + "</td>" +
             '<td class="lf-vgl-mehr lf-vgl-liefer' + (z.a.dezember === "ja" ? " lf-vgl-liefer--ja" : "") + '">' + (z.a.dezember === "ja" ? "✓ " : "") + esc(z.a.lieferung) + "</td></tr>";
@@ -123,8 +128,29 @@
     if (dealsZiel && d.deals) {
       var mk = d.markt || {};
       dealsZiel.innerHTML = '<p class="lf-unter">Marktniveau im Gewerbeleasing heute: Elektro Faktor ' + fak(mk.ev_median) + ", Plug-in-Hybrid " + fak(mk.phev_median) +
-        " (Median, Stichprobe von rund 180 Angeboten auf leasingmarkt.de, Stand " + esc(mk.stand || d.stand) + "). Hier steht nur, was klar darunter liegt. Bei Elektro und Plug-in-Hybrid gibt es im Suchprofil gerade keinen Ausreißer um 0,3, bei Benzinern schon. Wegen der 1-%-Versteuerung kosten sie privat aber nicht weniger als die günstigen Elektroautos.</p>" +
+        " (Median, Stand " + esc(mk.stand || d.stand) + "). " + esc(mk.text) + " Hier steht nur, was klar darunter liegt.</p>" +
         '<div class="lf-deals">' + d.deals.map(function (x, i) { return deal(x, i); }).join("") + "</div>";
+    }
+    var gwZiel = document.querySelector("[data-lf-gebraucht]");
+    if (gwZiel && d.gebraucht) {
+      var gl = d.gebraucht.map(function (g, i) { return { g: g, i: i, r: rechne(g, g.antrieb, g.verbrauch) }; });
+      gl.sort(function (p, q) { return p.r.privat - q.r.privat; });
+      gwZiel.innerHTML = '<div class="lf-deals">' + gl.map(function (x) {
+        var g = x.g, r = x.r;
+        return '<article class="lf-deal" id="lf-gw-' + x.i + '">' +
+          '<p class="lf-deal-kopf">' + esc(g.art) + " · " + esc(ANTRIEB[g.antrieb] || g.antrieb) + " · EZ " + esc(g.ez) + " · " + fz(g.km_stand, 0) + "\u00a0km</p>" +
+          "<h3>" + esc(g.marke + " " + g.modell) + "</h3>" +
+          '<p class="lf-deal-rate"><b>' + euro(r.privat) + "</b> im Monat privat</p>" +
+          '<p class="lf-deal-faktor">' + (g.art === "Leasing" ? "Leasing " : "Finanzierung ") + euro(g.rate_netto) + " netto · Versteuerung " + pz(satz(g.antrieb)) + " · " + g.laufzeit + "\u00a0Monate · Liste " + euro(g.blp_brutto) + (/geschätzt/.test(g.blp_hinweis || "") ? " (geschätzt)" : "") + "</p>" +
+          "<dl><div><dt>Wo</dt><dd>" + esc(g.haendler) + ", " + esc(g.fahrzeit) + " ab Crailsheim · Bewertung " + esc(g.bewertung_haendler) + "</dd></div>" +
+          "<div><dt>Ausstattung</dt><dd>" + esc(g.ausstattung) + " · " + g.reichweite_km + " km " + (g.antrieb === "PHEV" ? "elektrisch" : "WLTP") + "</dd></div>" +
+          "<div><dt>Einordnung</dt><dd>" + esc(g.einordnung) + "</dd></div></dl>" +
+          kalkulation(g, g.antrieb, r) +
+          '<a class="lf-link" href="' + esc(g.url) + '" target="_blank" rel="noopener">Inserat bei AutoScout24 ↗</a></article>';
+      }).join("") + "</div>" +
+        (d.gebraucht_steuer ? '<details class="lf-annahmen"><summary>Steuer bei Gebrauchten und beim Kauf</summary><ul>' + d.gebraucht_steuer.map(function (x) {
+          return "<li>" + esc(x.t) + ' <a href="' + esc(x.q) + '" target="_blank" rel="noopener">' + esc(x.qt) + " ↗</a></li>";
+        }).join("") + "</ul></details>" : "");
     }
     // Karten nach Kosten aus privater Sicht aufsteigend (Daniel, 15.10.2026); Modelle ohne Angebot ans Ende
     var privat = function (m) { return m.angebot ? rechne(m.angebot, m.antrieb, m.verbrauch).privat : Infinity; };
