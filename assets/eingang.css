@@ -914,3 +914,10 @@ html.pj-plan-voll-offen { overflow: hidden; }
    Claude braucht dich = violett · geht nach außen = cyan · deine Aufgabe = schwarz · Termin = grauer Ring · ansehen oder warten = hellgrau · überfällig = rot */
 .k7-f-ma { background: #0b9fbd !important; }
 .k7-f-cy { background: transparent !important; box-shadow: inset 0 0 0 2px #86868b; }
+/* Projektseite als beschriftete Leiste unter dem Kopf (Daniel, 21.11.2026) */
+.pj-seite { max-width: calc(1240px + 2 * clamp(16px, 3vw, 40px)); margin: 0 auto; padding: 10px clamp(16px, 3vw, 40px) 14px; box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; background: #fff; border-bottom: 1px solid #e8e8ed; }
+.pj-seite span { font-size: 13px; font-weight: 600; color: #86868b; }
+.pj-seite a { font-size: 15px; color: var(--tinte); text-decoration: none; }
+.pj-seite a b { font-weight: 600; }
+.pj-seite a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.pj-seite { border-bottom: 0; background: transparent; padding-top: 0; }

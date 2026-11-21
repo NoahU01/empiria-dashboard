@@ -953,8 +953,13 @@
       var ter = PJ.termine.filter(function (t) { return t.projekt_id === pid || String(t.betreff || "").toLowerCase().indexOf(nameKlein) >= 0; });
       el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>' + esc(p.name) + "</h1><span>" + esc(p.marke) + " · " + (p.typ === "Kunde" ? "Kundenprojekt" : "internes Projekt") + (p.phase ? " · " + esc(p.phase) : "") + "</span></div>" +
         // Absprung zur Kundenprojektseite und Methodenkoffer (Daniel, 20.11.2026)
-        '<nav class="pj-wege">' + (p.projektseite && p.projektseite.url ? '<a class="e-k" href="' + esc(p.projektseite.url) + '"' + (p.projektseite.url.charAt(0) === "/" ? "" : ' target="_blank" rel="noopener"') + ">" + esc(p.projektseite.titel || "Projektseite") + " ↗</a>" : "") +
-        '<a class="e-k" href="/strategie/methoden.html">Methodenkoffer</a></nav>' + waehler + "</header>" +
+        '<nav class="pj-wege"><a class="e-k" href="/strategie/methoden.html">Methodenkoffer</a></nav>' + waehler + "</header>" +
+        // Projektseite mit allen Verknüpfungen wie im alten Dashboard: Seite, Teile (z. B. „Live“), Repository (Daniel, 21.11.2026: „Die Links brauche ich unbedingt“)
+        (function (s) { if (!s || !s.url) return ""; var raus = function (u) { return u.charAt(0) === "/" ? "" : ' target="_blank" rel="noopener"'; };
+          return '<nav class="pj-seite" aria-label="Projektseite"><span>Projektseite</span><a href="' + esc(s.url) + '"' + raus(s.url) + "><b>" + esc(s.titel || "Website") + "</b> " + (s.url.charAt(0) === "/" ? "→" : "↗") + "</a>" +
+            (s.teile || []).map(function (x) { return '<a href="' + esc(x.url) + '"' + raus(x.url) + ">" + esc(x.titel) + " ↗</a>"; }).join("") +
+            (s.repo ? '<a href="https://github.com/' + esc(s.repo) + (s.zweig ? "/tree/" + esc(s.zweig) : "") + '" target="_blank" rel="noopener">Repository ' + esc(s.repo.split("/").pop()) + (s.zweig ? " · " + esc(s.zweig) : "") + " ↗</a>" : "") + "</nav>";
+        })(p.projektseite) +
         '<section class="k7-band"><div class="lg-raster">' +
         '<div class="lg-kern pj-stand">' + (s ? '<p class="pj-ampel"><i class="lg-a-' + s.ampel + '"></i>' + AMPEL[s.ampel][0] + " · Stand " + datum(s.gilt_fuer) + "</p><p>" + esc(s.satz) + "</p>" +
           (s.naechster_schritt ? '<p class="pj-naechst">Nächster Schritt: <b>' + esc(s.naechster_schritt) + "</b>" + (s.bei ? " · " + esc(s.bei) : "") + (s.faellig ? " · bis " + datum(s.faellig) : "") + "</p>" : "") : "<p>Für dieses Projekt hat der Stabschef noch keinen Stand geschrieben.</p>") +
