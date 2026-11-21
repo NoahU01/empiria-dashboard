@@ -1,111 +1,255 @@
 {
  "seiten": [
   {
-   "datei": "analyse.html",
-   "titel": "Strategie",
+   "datei": "lage.html",
+   "titel": "Briefing",
    "gruppe": "Dashboard",
-   "eltern": null,
-   "kurz": "Status, Strategie, Sparring",
-   "pos": 0,
-   "im_diagramm": true
-  },
-  {
-   "datei": "steuerung.html",
-   "titel": "Steuerung",
-   "gruppe": "Dashboard",
-   "eltern": null,
-   "kurz": "Entscheiden und Termine",
+   "eltern": "lage.html",
+   "kurz": "Stabschef: Empfehlungen, Projektstände",
    "pos": 1,
-   "im_diagramm": true
+   "im_diagramm": false
   },
   {
-   "datei": "marketing.html",
-   "titel": "Marketing",
+   "datei": "termine-tag.html",
+   "titel": "Termine",
    "gruppe": "Dashboard",
-   "eltern": null,
-   "kurz": "Zielgruppen, Außenwirkung, Kennzahlen, Aktionen",
+   "eltern": "lage.html",
+   "kurz": "Die nächsten 7 Tage mit Vorbereitung",
+   "pos": 1,
+   "im_diagramm": false
+  },
+  {
+   "datei": "eingang-klar.html",
+   "titel": "Eingang",
+   "gruppe": "Dashboard",
+   "eltern": "lage.html",
+   "kurz": "Alles, was auf dich wartet",
    "pos": 2,
    "im_diagramm": true
   },
   {
-   "datei": "kampagne.html",
-   "titel": "Kampagne",
-   "gruppe": "Dashboard",
-   "eltern": "marketing.html",
-   "kurz": "",
-   "im_diagramm": true,
-   "pos": 2.5
-  },
-  {
-   "datei": "medienkonzept.html",
-   "titel": "Medienkonzept",
-   "gruppe": "Dashboard",
-   "eltern": "marketing.html",
-   "kurz": "",
-   "im_diagramm": true,
-   "pos": 2.5
-  },
-  {
-   "datei": "projekte.html",
+   "datei": "projekt.html",
    "titel": "Projekte",
    "gruppe": "Dashboard",
-   "eltern": null,
-   "kurz": "Steckbrief, Timeline, Protokoll",
+   "eltern": "lage.html",
+   "kurz": "Je Marke, Fahrplan, Termine und Protokolle",
    "pos": 3,
-   "im_diagramm": true
-  },
-  {
-   "datei": "treffen.html",
-   "titel": "Treffen vor Ort",
-   "gruppe": "Dashboard",
-   "eltern": "projekte.html",
-   "kurz": "",
-   "im_diagramm": true,
-   "pos": 3.5
-  },
-  {
-   "datei": "aufgaben.html",
-   "titel": "Aufgaben",
-   "gruppe": "Dashboard",
-   "eltern": null,
-   "kurz": "Kanban über alle Projekte",
-   "pos": 4,
-   "im_diagramm": true
-  },
-  {
-   "datei": "korrespondenz-beta.html",
-   "titel": "Korrespondenz",
-   "gruppe": "Dashboard",
-   "eltern": null,
-   "kurz": "Alle Konten, nach Handlungsbedarf",
-   "pos": 5,
-   "im_diagramm": true
-  },
-  {
-   "datei": "korrespondenz-variante-c.html",
-   "titel": "Variante C: Entscheidungs-Sprint",
-   "gruppe": "Dashboard",
-   "eltern": "korrespondenz-beta.html",
-   "kurz": "Eine Mail nach der anderen – fürs iPhone",
-   "pos": 6,
-   "im_diagramm": true
-  },
-  {
-   "datei": "korrespondenz-variante-e.html",
-   "titel": "Variante E: Liste und Detail",
-   "gruppe": "Dashboard",
-   "eltern": "korrespondenz-beta.html",
-   "kurz": "Zwei Spalten – für MacBook und iPad",
-   "pos": 7,
-   "im_diagramm": true
+   "im_diagramm": false
   },
   {
    "datei": "kontakte.html",
    "titel": "Kontakte",
    "gruppe": "Dashboard",
+   "eltern": "lage.html",
+   "kurz": "Kontaktdatenbank mit Diskussionsstand",
+   "pos": 4,
+   "im_diagramm": true
+  },
+  {
+   "datei": "marketing-stratege.html",
+   "titel": "Marketing",
+   "gruppe": "Dashboard",
+   "eltern": "lage.html",
+   "kurz": "Empfehlungen, Wirkung, Signale",
+   "pos": 5,
+   "im_diagramm": false
+  },
+  {
+   "datei": "vertrieb.html",
+   "titel": "Vertrieb",
+   "gruppe": "Dashboard",
+   "eltern": "lage.html",
+   "kurz": "Vertriebschancen bis zum Projekt",
+   "pos": 6,
+   "im_diagramm": false
+  },
+  {
+   "datei": "strategie-marken.html",
+   "titel": "Strategie",
+   "gruppe": "Dashboard",
+   "eltern": "lage.html",
+   "kurz": "Je Marke: Zielbild, Stoßrichtungen, Notizen",
+   "pos": 7,
+   "im_diagramm": false
+  },
+  {
+   "datei": "dashboard-2-0.html",
+   "titel": "Entwürfe und Maßstab",
+   "gruppe": "Entwürfe 2.0",
    "eltern": null,
-   "kurz": "Kontaktdatenbank (CRM)",
+   "kurz": "Eingang in drei Varianten, ältere Entwürfe",
    "pos": 8,
+   "im_diagramm": true
+  },
+  {
+   "datei": "eingang-plan.html",
+   "titel": "Eingang 3: Plan",
+   "gruppe": "Entwürfe 2.0",
+   "eltern": null,
+   "kurz": "Spalten nach Zeit",
+   "pos": 9,
+   "im_diagramm": true
+  },
+  {
+   "datei": "aufraeumen.html",
+   "titel": "Aufräumen",
+   "gruppe": "Entwürfe 2.0",
+   "eltern": null,
+   "kurz": "Vorschlag zu den alten Steuerungs-Karten",
+   "pos": 10,
+   "im_diagramm": true
+  },
+  {
+   "datei": "d2-tagesblatt.html",
+   "titel": "Entwurf A: Tagesblatt",
+   "gruppe": "Entwürfe 2.0",
+   "eltern": null,
+   "kurz": "Eine Spalte, von oben nach unten",
+   "pos": 11,
+   "im_diagramm": true
+  },
+  {
+   "datei": "d2-lagezentrum.html",
+   "titel": "Entwurf B: Lagezentrum",
+   "gruppe": "Entwürfe 2.0",
+   "eltern": null,
+   "kurz": "Briefing und Projektlage auf einen Blick",
+   "pos": 12,
+   "im_diagramm": true
+  },
+  {
+   "datei": "d2-projektraum.html",
+   "titel": "Entwurf C: Projektraum",
+   "gruppe": "Entwürfe 2.0",
+   "eltern": null,
+   "kurz": "Arbeiten im Projekt, Seitenleiste mit allen Projekten",
+   "pos": 13,
+   "im_diagramm": true
+  },
+  {
+   "datei": "d2-widgets.html",
+   "titel": "Entwurf D: Widgets",
+   "gruppe": "Entwürfe 2.0",
+   "eltern": null,
+   "kurz": "Kacheln im Apple-Stil, 14 Tage, Suche",
+   "pos": 14,
+   "im_diagramm": true
+  },
+  {
+   "datei": "d2-zeitachse.html",
+   "titel": "Entwurf E: Zeitachse",
+   "gruppe": "Entwürfe 2.0",
+   "eltern": null,
+   "kurz": "Alle Projekte auf einer Zeitleiste",
+   "pos": 15,
+   "im_diagramm": true
+  },
+  {
+   "datei": "analyse.html",
+   "titel": "Strategie",
+   "gruppe": "Entwürfe 2.0",
+   "eltern": "analyse.html",
+   "kurz": "Status, Strategie, Sparring",
+   "pos": 17,
+   "im_diagramm": true
+  },
+  {
+   "datei": "steuerung.html",
+   "titel": "Steuerung",
+   "gruppe": "Entwürfe 2.0",
+   "eltern": "analyse.html",
+   "kurz": "Entscheiden und Termine",
+   "pos": 17,
+   "im_diagramm": true
+  },
+  {
+   "datei": "marketing.html",
+   "titel": "Marketing",
+   "gruppe": "Entwürfe 2.0",
+   "eltern": "analyse.html",
+   "kurz": "Zielgruppen, Außenwirkung, Kennzahlen, Aktionen",
+   "pos": 18,
+   "im_diagramm": true
+  },
+  {
+   "datei": "kampagne.html",
+   "titel": "Kampagne",
+   "gruppe": "Entwürfe 2.0",
+   "eltern": "marketing.html",
+   "kurz": "",
+   "im_diagramm": true,
+   "pos": 18.5
+  },
+  {
+   "datei": "medienkonzept.html",
+   "titel": "Medienkonzept",
+   "gruppe": "Entwürfe 2.0",
+   "eltern": "marketing.html",
+   "kurz": "",
+   "im_diagramm": true,
+   "pos": 18.5
+  },
+  {
+   "datei": "projekte.html",
+   "titel": "Projekte",
+   "gruppe": "Entwürfe 2.0",
+   "eltern": "analyse.html",
+   "kurz": "Steckbrief, Timeline, Protokoll",
+   "pos": 19,
+   "im_diagramm": true
+  },
+  {
+   "datei": "treffen.html",
+   "titel": "Treffen vor Ort",
+   "gruppe": "Entwürfe 2.0",
+   "eltern": "projekte.html",
+   "kurz": "",
+   "im_diagramm": true,
+   "pos": 19.5
+  },
+  {
+   "datei": "aufgaben.html",
+   "titel": "Aufgaben",
+   "gruppe": "Entwürfe 2.0",
+   "eltern": "analyse.html",
+   "kurz": "Kanban über alle Projekte",
+   "pos": 20,
+   "im_diagramm": true
+  },
+  {
+   "datei": "korrespondenz-beta.html",
+   "titel": "Korrespondenz",
+   "gruppe": "Entwürfe 2.0",
+   "eltern": "analyse.html",
+   "kurz": "Alle Konten, nach Handlungsbedarf",
+   "pos": 21,
+   "im_diagramm": true
+  },
+  {
+   "datei": "korrespondenz-variante-c.html",
+   "titel": "Korrespondenz: Entscheidungs-Sprint",
+   "gruppe": "Entwürfe 2.0",
+   "eltern": "analyse.html",
+   "kurz": "Eine Mail nach der anderen – fürs iPhone",
+   "pos": 22,
+   "im_diagramm": true
+  },
+  {
+   "datei": "korrespondenz-variante-e.html",
+   "titel": "Korrespondenz: Liste und Detail",
+   "gruppe": "Entwürfe 2.0",
+   "eltern": "analyse.html",
+   "kurz": "Zwei Spalten – für MacBook und iPad",
+   "pos": 23,
+   "im_diagramm": true
+  },
+  {
+   "datei": "cockpit.html",
+   "titel": "Gesamtdashboard",
+   "gruppe": "Entwürfe 2.0",
+   "eltern": "analyse.html",
+   "kurz": "Die erste Gesamtübersicht",
+   "pos": 24,
    "im_diagramm": true
   },
   {
@@ -114,7 +258,7 @@
    "gruppe": "Überblick",
    "eltern": null,
    "kurz": "Schaltplan der Steuerungszentrale",
-   "pos": 9,
+   "pos": 25,
    "im_diagramm": true
   },
   {
@@ -123,7 +267,7 @@
    "gruppe": "Überblick",
    "eltern": null,
    "kurz": "Wie die Seiten zusammenhängen",
-   "pos": 10,
+   "pos": 26,
    "im_diagramm": true
   },
   {
@@ -132,116 +276,8 @@
    "gruppe": "Überblick",
    "eltern": null,
    "kurz": "Visualisierung: wie aus Strategie Tickets werden",
-   "pos": 11,
+   "pos": 27,
    "im_diagramm": true
-  },
-  {
-   "datei": "dashboard-2-0.html",
-   "titel": "Entwürfe und Maßstab",
-   "gruppe": "Dashboard 2.0",
-   "eltern": null,
-   "kurz": "Eingang in drei Varianten, ältere Entwürfe",
-   "pos": 12,
-   "im_diagramm": true
-  },
-  {
-   "datei": "lage.html",
-   "titel": "Lage",
-   "gruppe": "Dashboard 2.0",
-   "eltern": "dashboard-2-0.html",
-   "kurz": "Briefing des Stabschefs: Empfehlungen, Projektstände",
-   "pos": 13,
-   "im_diagramm": false
-  },
-  {
-   "datei": "termine-tag.html",
-   "titel": "Termine",
-   "gruppe": "Dashboard 2.0",
-   "eltern": "dashboard-2-0.html",
-   "kurz": "Management-Blick auf den Tag",
-   "pos": 14,
-   "im_diagramm": false
-  },
-  {
-   "datei": "eingang-plan.html",
-   "titel": "Eingang 3: Plan",
-   "gruppe": "Dashboard 2.0",
-   "eltern": "dashboard-2-0.html",
-   "kurz": "Spalten nach Zeit",
-   "pos": 15,
-   "im_diagramm": true
-  },
-  {
-   "datei": "eingang-klar.html",
-   "titel": "Eingang",
-   "gruppe": "Dashboard 2.0",
-   "eltern": "dashboard-2-0.html",
-   "kurz": "Alles, was auf dich wartet",
-   "pos": 16,
-   "im_diagramm": true
-  },
-  {
-   "datei": "aufraeumen.html",
-   "titel": "Aufräumen",
-   "gruppe": "Dashboard 2.0",
-   "eltern": "dashboard-2-0.html",
-   "kurz": "Vorschlag zu den alten Steuerungs-Karten",
-   "pos": 17,
-   "im_diagramm": true
-  },
-  {
-   "datei": "d2-tagesblatt.html",
-   "titel": "Entwurf A: Tagesblatt",
-   "gruppe": "Dashboard 2.0",
-   "eltern": "dashboard-2-0.html",
-   "kurz": "Eine Spalte, von oben nach unten",
-   "pos": 18,
-   "im_diagramm": true
-  },
-  {
-   "datei": "d2-lagezentrum.html",
-   "titel": "Entwurf B: Lagezentrum",
-   "gruppe": "Dashboard 2.0",
-   "eltern": "dashboard-2-0.html",
-   "kurz": "Briefing und Projektlage auf einen Blick",
-   "pos": 19,
-   "im_diagramm": true
-  },
-  {
-   "datei": "d2-projektraum.html",
-   "titel": "Entwurf C: Projektraum",
-   "gruppe": "Dashboard 2.0",
-   "eltern": "dashboard-2-0.html",
-   "kurz": "Arbeiten im Projekt, Seitenleiste mit allen Projekten",
-   "pos": 20,
-   "im_diagramm": true
-  },
-  {
-   "datei": "d2-widgets.html",
-   "titel": "Entwurf D: Widgets",
-   "gruppe": "Dashboard 2.0",
-   "eltern": "dashboard-2-0.html",
-   "kurz": "Kacheln im Apple-Stil, 14 Tage, Suche",
-   "pos": 21,
-   "im_diagramm": true
-  },
-  {
-   "datei": "d2-zeitachse.html",
-   "titel": "Entwurf E: Zeitachse",
-   "gruppe": "Dashboard 2.0",
-   "eltern": "dashboard-2-0.html",
-   "kurz": "Alle Projekte auf einer Zeitleiste",
-   "pos": 22,
-   "im_diagramm": true
-  },
-  {
-   "datei": "cockpit.html",
-   "titel": "Gesamtdashboard",
-   "gruppe": "ohne Menü",
-   "eltern": null,
-   "kurz": "",
-   "im_diagramm": true,
-   "pos": 999
   },
   {
    "datei": "dashboard-korrespondenz.html",
@@ -280,15 +316,6 @@
    "pos": 999
   },
   {
-   "datei": "marketing-stratege.html",
-   "titel": "Marketing",
-   "gruppe": "ohne Menü",
-   "eltern": null,
-   "kurz": "",
-   "im_diagramm": false,
-   "pos": 999
-  },
-  {
    "datei": "meilensteine.html",
    "titel": "Meilensteine",
    "gruppe": "ohne Menü",
@@ -307,24 +334,6 @@
    "pos": 999
   },
   {
-   "datei": "projekt.html",
-   "titel": "Projekte",
-   "gruppe": "ohne Menü",
-   "eltern": null,
-   "kurz": "",
-   "im_diagramm": false,
-   "pos": 999
-  },
-  {
-   "datei": "strategie-marken.html",
-   "titel": "Strategie",
-   "gruppe": "ohne Menü",
-   "eltern": null,
-   "kurz": "",
-   "im_diagramm": false,
-   "pos": 999
-  },
-  {
    "datei": "zielbild.html",
    "titel": "Strategie und Zielbild",
    "gruppe": "ohne Menü",
@@ -334,5 +343,5 @@
    "pos": 999
   }
  ],
- "stand": "19.11.2026, 06:30 Uhr"
+ "stand": "21.11.2026, 06:30 Uhr"
 }
