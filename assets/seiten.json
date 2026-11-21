@@ -7,7 +7,7 @@
    "eltern": "lage.html",
    "kurz": "Stabschef: Empfehlungen, Projektstände",
    "pos": 1,
-   "im_diagramm": false
+   "im_diagramm": true
   },
   {
    "datei": "termine-tag.html",
@@ -16,7 +16,7 @@
    "eltern": "lage.html",
    "kurz": "Die nächsten 7 Tage mit Vorbereitung",
    "pos": 1,
-   "im_diagramm": false
+   "im_diagramm": true
   },
   {
    "datei": "eingang-klar.html",
@@ -34,7 +34,7 @@
    "eltern": "lage.html",
    "kurz": "Je Marke, Fahrplan, Termine und Protokolle",
    "pos": 3,
-   "im_diagramm": false
+   "im_diagramm": true
   },
   {
    "datei": "kontakte.html",
@@ -52,7 +52,7 @@
    "eltern": "lage.html",
    "kurz": "Empfehlungen, Wirkung, Signale",
    "pos": 5,
-   "im_diagramm": false
+   "im_diagramm": true
   },
   {
    "datei": "vertrieb.html",
@@ -61,7 +61,7 @@
    "eltern": "lage.html",
    "kurz": "Vertriebschancen bis zum Projekt",
    "pos": 6,
-   "im_diagramm": false
+   "im_diagramm": true
   },
   {
    "datei": "strategie-marken.html",
@@ -70,7 +70,7 @@
    "eltern": "lage.html",
    "kurz": "Je Marke: Zielbild, Stoßrichtungen, Notizen",
    "pos": 7,
-   "im_diagramm": false
+   "im_diagramm": true
   },
   {
    "datei": "dashboard-2-0.html",
@@ -343,5 +343,5 @@
    "pos": 999
   }
  ],
- "stand": "21.11.2026, 06:30 Uhr"
+ "stand": "21.11.2026, 07:12 Uhr"
 }
