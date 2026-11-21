@@ -90,6 +90,11 @@
     if (e.frist < HEUTE) return '<span class="e-spaet">seit ' + datum(e.frist) + "</span>";
     if (e.frist === HEUTE) return "heute"; if (e.frist === plus(1)) return "morgen"; return "bis " + datum(e.frist);
   }
+  // im Detail: Rot nur bei echter Frist (Aufgabe, Freigabe), sonst das Datum grau (Daniel, 21.11.2026)
+  function detailFrist(e) {
+    if (e.typ === "termin" || e.typ === "aufgabe" || e.typ === "freigabe" || e.typ === "wartet" || !e.frist) return frist(e);
+    return e.frist < HEUTE ? "seit " + datum(e.frist) : frist(e);
+  }
   function projekt(e) { var p = P[e.projekt_id]; return p ? p.name : (e.person && e.quelle === "posting" ? e.person : ""); }
   function schluessel(e) { return e.quelle + ":" + e.qid; }
   function marke(e) { var t = TYP[e.typ] || ["", "gy"]; return '<span class="e-typ e-' + t[1] + '">' + t[0] + (nr(e) ? " " + nr(e) : "") + "</span>"; }
@@ -138,7 +143,7 @@
 
   /* ---------- Detail je Art: genau die angeklickte Sache ---------- */
   function detail(e) {
-    var x = e.extra, kopf = '<div class="e-d-kopf">' + marke(e) + '<span class="e-d-meta">' + esc(projekt(e)) + (frist(e) ? " · " + frist(e) : "") + "</span></div><h2>" + esc(e.titel) + "</h2>";
+    var x = e.extra, kopf = '<div class="e-d-kopf">' + marke(e) + '<span class="e-d-meta">' + esc(projekt(e)) + (detailFrist(e) ? " · " + detailFrist(e) : "") + "</span></div><h2>" + esc(e.titel) + "</h2>";
     var inhalt = "", knoepfe = "";
     if (e.typ === "impuls") {
       inhalt = '<div class="e-block e-vorschlag"><h3>Empfehlung von Claude als Stabschef</h3>' + absaetze(e.kern) + "</div>" +
@@ -349,7 +354,17 @@
 
 
   /* =============== Variante 4 · Klar (Stil sofortsichtbar Story 7: Apple-Basis, Verlauf Cyan → Violett nur als Akzent) =============== */
-  function k7Farbe(e) { return { impuls: "cl", abnahme: "cl", rueckfrage: "cl", freigabe: "ma", aufgabe: "tinte", termin: "cy", nachbereitung: "cy" }[e.typ] || "grau"; }
+  // Legende und Punkte stimmen überein (Daniel, 21.11.2026): rot nur, wenn eine echte Frist (Aufgabe, Freigabe) überschritten ist
+  function k7Farbe(e) {
+    if ((e.typ === "aufgabe" || e.typ === "freigabe") && e.frist && e.frist < HEUTE) return "rot";
+    return { impuls: "cl", abnahme: "cl", rueckfrage: "cl", freigabe: "ma", aufgabe: "tinte", termin: "cy", nachbereitung: "cy" }[e.typ] || "grau";
+  }
+  // Datum in der Liste nur bei echten Fristen und Terminen, ohne Alarmfarbe; „seit …“ steht nur rechts im Detail
+  function listenFrist(e) {
+    if (e.typ === "termin") return frist(e);
+    if (!(e.typ === "aufgabe" || e.typ === "freigabe" || e.typ === "wartet") || !e.frist) return "";
+    return e.frist < HEUTE ? "fällig " + datum(e.frist) : frist(e);
+  }
   function k7Etikett(e) {
     var t = TYP[e.typ] || ["", ""];
     return '<span class="k7-etikett k7-e-' + k7Farbe(e) + '">' + t[0] + "</span>";
@@ -372,7 +387,7 @@
         // Zeile (Daniel, 18.11.2026): oben klein Art · Projekt · Frist, darunter der volle Titel – beim Durchscrollen sehen, worum es geht
         var f = k7Farbe(e), trenn = gruppe === "heute" && e.typ === "termin" && (i === 0 || l[i - 1].typ !== "termin") ? '<li class="k7-trenn">Heute im Kalender · zählt nicht mit</li>' : "";
         return trenn + '<li data-s="' + esc(schluessel(e)) + '"' + (e === auswahl ? ' aria-current="true"' : "") + '><div class="k7-z-kopf"><i class="k7-f-' + f + '"></i><span class="k7-art">' + (TYP[e.typ] || [""])[0] + (nr(e) ? ' <span class="k7-nr">' + nr(e) + "</span>" : "") + "</span>" +
-          (projekt(e) ? '<span class="k7-proj">· ' + esc(projekt(e)) + "</span>" : "") + (frist(e) ? '<span class="k7-frist">' + frist(e) + "</span>" : "") + "</div><b>" + esc(e.titel) + "</b></li>";
+          (projekt(e) ? '<span class="k7-proj">· ' + esc(projekt(e)) + "</span>" : "") + (listenFrist(e) ? '<span class="k7-frist">' + listenFrist(e) + "</span>" : "") + "</div><b>" + esc(e.titel) + "</b></li>";
       }).join("") : '<li class="e-leer">Nichts in dieser Gruppe.</li>') + "</ul>" +
       '<div class="k7-detail">' + (auswahl ? '<button type="button" class="e-zurueck" data-zurueck>‹ Eingang</button>' + detail(auswahl) : '<p class="e-leer">Wähle links einen Eintrag.</p>') + "</div></div></section></div>";
     reiterVerdrahten(klar);

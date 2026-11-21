@@ -2298,6 +2298,8 @@ html[data-farbe="dunkel"] .pp-liste li + li { border-top: 1px solid #38383a; }
 html[data-farbe="dunkel"] .pp-liste a { color: inherit; }
 html[data-farbe="dunkel"] .pp-liste b { color: var(--tinte); }
 html[data-farbe="dunkel"] .pp-z-schritt { color: #c7c7cc; }
+html[data-farbe="dunkel"] .k7-f-ma { background: #0b9fbd !important; }
+html[data-farbe="dunkel"] .k7-f-cy { background: transparent !important; box-shadow: inset 0 0 0 2px #86868b; }
 
 /* ---- assets/leasing-fahrzeug.css ---- */
 html[data-farbe="dunkel"] .lf-profil div { border-top: 1px solid var(--linie); }
