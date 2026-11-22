@@ -988,7 +988,9 @@
             var i = v.inhalt || {};
             // zugeklappt: Titel und Datum; aufgeklappt Text und Ablageort (Daniel, 20.11.2026: „Arbeitsstände sind hier viel zu viel“)
             return '<li><details><summary><b>' + esc(v.titel) + "</b><small>" + datum(String(v.datum).slice(0, 10)) + "</small></summary>" + (i.text ? "<p>" + esc(i.text) + "</p>" : "") +
-              (i.link ? '<a class="e-link" href="' + esc(i.link) + '" target="_blank" rel="noopener">Öffnen</a>' : "") + (i.ablage ? '<p class="pj-ablage">' + esc(i.ablage) + "</p>" : "") + "</details></li>"; }).join("") + "</ul>" : '<p class="e-leer">Noch keine Arbeitsstände.</p>') + "</div>";
+              (i.link && /^https?:/.test(i.link) ? '<a class="e-link" href="' + esc(i.link) + '" target="_blank" rel="noopener">Öffnen</a>' : "") +
+              (finderPfad(i.ablage || i.link) ? '<a class="e-link" href="empiria-finder://zeigen?pfad=' + encodeURIComponent(finderPfad(i.ablage || i.link)) + '">Im Finder zeigen</a>' : "") +
+              (i.ablage ? '<p class="pj-ablage">' + esc(i.ablage) + "</p>" : "") + "</details></li>"; }).join("") + "</ul>" : '<p class="e-leer">Noch keine Arbeitsstände.</p>') + "</div>";
         })() +
           // Meilensteine nur, wenn es keinen Fahrplan gibt – sonst stehen sie dort als Ergebnisstufen (Daniel, 20.11.2026)
           (!(p.name === "Operative Aufgaben" || p.workshop || p.fahrplan === false) ? "" : '<div class="lg-kasten"><h2>Meilensteine</h2>' + (gates.length ? '<ul class="pj-zeit">' + gates.slice(0, 6).map(function (a) { return "<li><span>" + (a.faellig_am ? datum(a.faellig_am) + a.faellig_am.slice(2, 4) : "offen") + "</span>" + esc(a.titel) + "</li>"; }).join("") + "</ul>" : '<p class="e-leer">Keine hinterlegt.</p>') + "</div>") +
@@ -1068,6 +1070,14 @@
 
   /* Inhalte aus der bisherigen Projektansicht (Daniel, 22.11.2026, Eskalation: „Ich brauche diese Ausarbeitungen aus der alten Sicht
      bei allen Projekten in der neuen Sicht“): Ausarbeitung (Workshop), Lagebericht, Überlegungen, Verlauf – je als Aufklapper. */
+  // Ablage im Finder zeigen: Ordner öffnen, Dokument markiert (Daniel, 22.11.2026). Hilfsprogramm „empiria Finder“ auf dem Mac nimmt den Link an.
+  function finderPfad(a) {
+    a = String(a || "").trim();
+    if (a.indexOf("/Users/danielstroebel/nextcloud_EMP/") === 0) return a.slice(36);
+    if (/^claude\//.test(a)) return "empiria GmbH - Intern/" + a;
+    if (/^empiria GmbH - [^/]+\//.test(a)) return a;
+    return "";
+  }
   function klappKasten(kl, titel, unter, inhalt, offen) {
     return '<details class="lg-kasten pj-fahrplan pj-klapp ' + kl + '"' + (offen ? " open" : "") + '><summary><h2>' + titel + "</h2>" + (unter ? "<span>" + esc(unter) + "</span>" : "") + '</summary><div class="pj-klapp-inhalt">' + inhalt + "</div></details>";
   }
