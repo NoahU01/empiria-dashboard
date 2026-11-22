@@ -54,6 +54,12 @@
     });
     return b;
   }
+  function klein(u) {
+    if (!u) return null;
+    if (/autoscout24\.net/.test(u)) return u.replace(/\/\d+x\d+\.jpg$/, "/250x188.jpg");
+    if (/vtpimages\.audi\.com/.test(u)) return u.replace(/\?im=.*$/, "") + "?im=Resize,width=240,height=180";
+    return u;
+  }
   function pflichtFehlt(z) { return Object.keys(z.pflicht || {}).filter(function (k) { return z.pflicht[k] !== "ja"; }); }
   function tageSeit(d) { return Math.floor((Date.now() - new Date(d).getTime()) / 86400000); }
   function werktageSeit(d) {
@@ -108,17 +114,17 @@
       var ang = b ? "<b>" + euro(b.a.rate_netto != null ? b.a.rate_netto : b.a.monatskosten_netto) + "</b><small>" + esc(b.a.art === "Leasing" ? "Leasing" : "3-Wege") + " · " + (b.a.laufzeit || "?") + " Mon." + (b.a.quelle === "Händlerangebot" ? "" : " · laut Inserat") + "</small>" : '<span class="la-leer">offen</span>';
       var privat = b && b.r.privat != null ? "<b>" + euro(b.r.privat) + "</b>" : '<span class="la-leer">' + (b ? "Liste fehlt" : "offen") + "</span>";
       return '<tr class="la-z la-z--' + esc(z.auswahl) + '">' +
-        '<td><a href="/strategie/leasing-anfrage.html?id=' + z.id + '">' + esc(z.titel) + '</a><small class="la-unter">EZ ' + esc(z.ez) + " · " + fz(z.km_stand) + " km" + (z.preis_inserat ? " · " + euro(z.preis_inserat) : "") + '</small><small class="la-unter la-nur-mobil">' + esc(z.haendler) + ", " + esc(z.ort) + "</small></td>" +
+        '<td>' + (z.bild_url ? '<img class="la-nur-mobil la-daumen" src="' + esc(klein(z.bild_url)) + '" alt="" loading="lazy">' : "") + '<a href="/strategie/leasing-anfrage.html?id=' + z.id + '">' + esc(z.titel) + '</a><small class="la-unter">EZ ' + esc(z.ez) + " · " + fz(z.km_stand) + " km" + (z.preis_inserat ? " · " + euro(z.preis_inserat) : "") + '</small><small class="la-unter la-nur-mobil">' + esc(z.haendler) + ", " + esc(z.ort) + "</small></td>" +
+        '<td class="la-bildzelle">' + (z.bild_url ? '<a href="/strategie/leasing-anfrage.html?id=' + z.id + '" tabindex="-1"><img src="' + esc(klein(z.bild_url)) + '" alt="" loading="lazy"></a>' : "") + "</td>" +
         '<td class="la-mehr">' + esc(z.haendler) + '<small class="la-unter">' + esc(z.ort) + (z.fahrzeit ? " · " + esc(z.fahrzeit) : "") + "</small></td>" +
         "<td>" + standChip(z) + '<span class="la-nur-mobil">' + auswahlChip(z) + "</span></td>" +
         '<td class="la-mittel">' + ang + "</td>" +
-        '<td class="la-mehr">' + (z.blp_brutto ? euro(z.blp_brutto) + (/geschätzt/.test(z.blp_quelle || "") ? "<small>geschätzt</small>" : "") : '<span class="la-leer">offen</span>') + "</td>" +
         "<td>" + privat + '<small class="la-unter">' + esc(z.antrieb === "E" ? "0,25 %" : z.versteuerung && /Bescheinigung/.test(z.versteuerung) ? "0,5 % mit Bescheinigung" : "0,5 %") + "</small></td>" +
         '<td class="la-mehr">' + (fehlt.length ? '<span class="la-fehlt">' + esc(fehlt.join(", ")) + " nicht aufgeführt</span>" : "✓ alle") + "</td>" +
         '<td class="la-mehr">' + auswahlChip(z) + "</td></tr>";
     }).join("");
     uebersicht.innerHTML = kopf +
-      '<div class="la-tabelle"><table class="lf-vgl la-vgl"><thead><tr><th>Fahrzeug</th><th class="la-mehr">Händler</th><th>Stand</th><th class="la-mittel">Rate netto</th><th class="la-mehr">Liste</th><th>Privat im Monat</th><th class="la-mehr">Pflichtausstattung</th><th class="la-mehr">Auswahl</th></tr></thead><tbody>' +
+      '<div class="la-tabelle"><table class="lf-vgl la-vgl la-ueb"><thead><tr><th>Fahrzeug</th><th class="la-bildzelle"><span class="la-sr">Bild</span></th><th class="la-mehr">Händler</th><th>Stand</th><th class="la-mittel">Rate netto</th><th>Privat im Monat</th><th class="la-mehr">Pflichtausstattung</th><th class="la-mehr">Auswahl</th></tr></thead><tbody>' +
       zeilen + "</tbody></table></div>" +
       '<details class="lf-annahmen"><summary>So läuft es weiter</summary><ul>' +
       "<li><b>Überwachung:</b> Jede Stunde prüfe ich das empiria-Postfach auf Antworten in diesen Mailverläufen und von den Händler-Adressen. Eingangsbestätigungen werden nur vermerkt.</li>" +
