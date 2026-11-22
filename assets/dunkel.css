@@ -2304,6 +2304,20 @@ html[data-farbe="dunkel"] .pj-seite { background: #1c1c1e; border-bottom: 1px so
 html[data-farbe="dunkel"] .pj-seite span { color: #a1a1a6; }
 html[data-farbe="dunkel"] .pj-seite a { color: var(--tinte); }
 html[data-farbe="dunkel"] .pj-seite { background: transparent; }
+html[data-farbe="dunkel"] .pj-klapp-inhalt { border-top: 1px solid #38383a; color: #f2f2f7; }
+html[data-farbe="dunkel"] .pj-klapp-inhalt h3 { color: var(--tinte); }
+html[data-farbe="dunkel"] .pj-ws-stand { color: #a1a1a6; }
+html[data-farbe="dunkel"] .pj-ws-tabelle th, html[data-farbe="dunkel"] .pj-ws-tabelle td { border-bottom: 1px solid #38383a; }
+html[data-farbe="dunkel"] .pj-ag-block { background: #2c2c2e; }
+html[data-farbe="dunkel"] .pj-ag-block.pj-ag-pause { background: transparent; border: 1px dashed #636366; color: #a1a1a6; }
+html[data-farbe="dunkel"] .pj-ag-zeit { color: var(--tinte); }
+html[data-farbe="dunkel"] .pj-ag-titel { color: var(--tinte); }
+html[data-farbe="dunkel"] .pj-ag-methode { color: #a1a1a6; }
+html[data-farbe="dunkel"] .pj-ag-methode-link { color: var(--tinte); }
+html[data-farbe="dunkel"] .pj-verlauf-liste li > span { color: #a1a1a6; }
+html[data-farbe="dunkel"] .pj-verlauf-liste b { color: var(--tinte); }
+html[data-farbe="dunkel"] .pj-verlauf-liste small { color: #a1a1a6; }
+html[data-farbe="dunkel"] .pj-verlauf-liste p { color: #c7c7cc; }
 
 /* ---- assets/leasing-fahrzeug.css ---- */
 html[data-farbe="dunkel"] .lf-profil div { border-top: 1px solid var(--linie); }

@@ -921,3 +921,33 @@ html.pj-plan-voll-offen { overflow: hidden; }
 .pj-seite a b { font-weight: 600; }
 .pj-seite a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .pj-seite { border-bottom: 0; background: transparent; padding-top: 0; }
+/* Inhalte aus der bisherigen Projektansicht (Daniel, 22.11.2026) */
+.pj-mehr { display: contents; }
+.pj-klapp-inhalt { margin-top: 16px; padding-top: 16px; border-top: 1px solid #e8e8ed; font-size: 15px; line-height: 1.55; color: #424245; }
+.pj-klapp-inhalt h3 { margin: 18px 0 6px; font: 600 15px/1.4 "Inter", system-ui, sans-serif; color: var(--tinte); }
+.pj-klapp-inhalt h3:first-child { margin-top: 0; }
+.pj-klapp-inhalt p { margin: 0 0 8px; }
+.pj-klapp-inhalt .ws-liste { margin: 0 0 8px; padding-left: 20px; display: grid; gap: 4px; }
+.pj-ws-stand { font-size: 13px !important; color: #86868b; }
+.pj-ws-teil + .pj-ws-teil { margin-top: 22px; }
+.pj-ws-tabelle { border-collapse: collapse; width: 100%; font-size: 13px; }
+.pj-ws-tabelle th, .pj-ws-tabelle td { border-bottom: 1px solid #e8e8ed; padding: 6px 8px; text-align: left; vertical-align: top; }
+.pj-ag { display: grid; gap: 10px; margin-top: 8px; }
+.pj-ag-block { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 14px; padding: 14px 16px; border-radius: 14px; background: #f5f5f7; }
+.pj-ag-block.pj-ag-pause { padding: 8px 16px; background: transparent; border: 1px dashed #d2d2d7; color: #86868b; font-size: 13px; }
+.pj-ag-block.pj-ag-pause p { margin: 0; }
+.pj-ag-zeit { margin: 0 !important; font-size: 13px; font-weight: 600; color: var(--tinte); }
+.pj-ag-titel { margin: 0 0 2px !important; font-weight: 600; color: var(--tinte); }
+.pj-ag-methode { font-size: 13px; color: #86868b; }
+.pj-ag-koerper { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: start; }
+.pj-ag-bild svg { width: 140px; height: auto; display: block; }
+.pj-ag-links { margin-top: 6px !important; }
+.pj-ag-methode-link { font-size: 13px; font-weight: 600; color: var(--tinte); text-decoration: none; }
+.pj-ag-methode-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+.pj-verlauf-liste { list-style: none; margin: 0; padding: 0 !important; display: grid; gap: 10px; }
+.pj-verlauf-liste li { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 12px; }
+.pj-verlauf-liste li > span { font-size: 13px; color: #86868b; }
+.pj-verlauf-liste b { font-weight: 600; color: var(--tinte); }
+.pj-verlauf-liste small { margin-left: 8px; font-size: 13px; color: #86868b; }
+.pj-verlauf-liste p { margin: 2px 0 0 !important; font-size: 13px; color: #6e6e73; }
+@media (max-width: 700px) { .pj-ag-block { grid-template-columns: minmax(0, 1fr); gap: 4px; } .pj-ag-koerper { grid-template-columns: minmax(0, 1fr); } .pj-ag-bild svg { width: 120px; } }

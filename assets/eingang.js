@@ -966,6 +966,7 @@
           "</div>" +
         // Worum es geht (Daniel, 20.11.2026: „ich muss sagen können, um was es bei dem Projekt geht … wer sind die Projektteilnehmer?“)
         '<section class="lg-kasten pj-steckbrief" data-steckbrief><p class="e-leer">Lädt …</p></section>' +
+        '<div class="pj-mehr" data-pj-mehr></div>' +
         // Fahrplan (Daniel, 20.11.2026: „eine der wichtigsten Informationen im Projekt“) – derselbe Linienplan wie auf der bisherigen Projektseite
         (p.name === "Operative Aufgaben" || p.workshop || p.fahrplan === false ? "" : '<details class="lg-kasten pj-fahrplan pj-fp"><summary><h2>Fahrplan</h2><span>Linienplan mit Stoßrichtungen, Arbeitspaketen und Meilensteinen</span>' +
           // Größe, volle Breite und Legende schon im zugeklappten Zustand (Daniel, 20.11.2026); volle Breite öffnet sofort das große Fenster
@@ -975,6 +976,7 @@
           '<div class="pj-plan-wisch"><iframe class="pj-plan-rahmen" src="' + (location.pathname.indexOf("/.pruefung/") === 0 ? "/.pruefung/" : "/strategie/") + 'projekte.html?nurplan#p=' + pid + '" title="Fahrplan" loading="lazy"></iframe></div></details>') +
         // zugeklappt wie der Fahrplan (Daniel, 20.11.2026)
         '<details class="lg-kasten pj-fahrplan pj-tp"><summary><h2>Termine und Protokolle</h2><span>Alle Termine mit Vorbereitung, Protokoll, Entscheidungen und Aufgaben</span></summary><div class="tp"><p class="e-leer">Lädt …</p></div></details>' +
+        '<div class="pj-mehr" data-pj-verlauf></div>' +
         '<div class="lg-links"><div class="pj-spalten">' + spalte("Bei dir", "tinte", offen.filter(function (a) { return wer2(a) === "du"; })) +
           spalte("Bei Claude", "cl", offen.filter(function (a) { return wer2(a) === "claude"; })) + spalte("Bei anderen", "grau", offen.filter(function (a) { return wer2(a) === "andere"; })) + "</div>" +
           (erledigt.length ? '<details class="lg-kasten pj-erledigt"><summary><h2>Zuletzt erledigt</h2><span>' + erledigt.length + "</span></summary><ul class=\"pj-zeit\">" + erledigt.map(function (a) {
@@ -1027,9 +1029,10 @@
   function steckbriefLaden(p) {
     var pid = p.id;
     Promise.all([
-      db.from("projekte").select("id, ziel, ziel_details, thema").eq("id", pid),
+      db.from("projekte").select("id, ziel, ziel_details, thema, workshop, statusbericht, ueberlegungen").eq("id", pid),
       db.from("projekt_straenge").select("id, projekt_id, titel, erklaerung, eltern_id, reihenfolge").eq("projekt_id", pid).order("reihenfolge"),
-      db.from("projekt_beteiligte").select("id, projekt_id, kontakt_id, name, seite, rolle, kontakte(id, vorname, nachname, position, organisationen(name))").eq("projekt_id", pid)
+      db.from("projekt_beteiligte").select("id, projekt_id, kontakt_id, name, seite, rolle, kontakte(id, vorname, nachname, position, organisationen(name))").eq("projekt_id", pid),
+      db.from("projekt_verlauf").select("projekt_id, datum, art, titel, inhalt").eq("projekt_id", pid).neq("art", "arbeitsstand").order("datum", { ascending: false }).limit(200)
     ]).then(function (r) {
       var z = el.querySelector("[data-steckbrief]"); if (!z || (location.hash.match(/p=(\d+)/) || [])[1] != pid) return;
       var pr = (r[0].data || []).filter(function (x) { return x.id === pid; })[0] || p;
@@ -1045,14 +1048,15 @@
       var kunde = bet.filter(function (b) { return b.seite === "Kunde"; }), eigen = bet.filter(function (b) { return b.seite !== "Kunde"; });
       // Aufklapper wie der Fahrplan: Überschrift, darunter der Ziel-Satz, rechts der Pfeil; Details und Team erst aufgeklappt (Daniel, 20.11.2026)
       z.innerHTML = '<details class="pj-sb-details"' + (PJ.sbOffen ? " open" : "") + '><summary><div class="pj-sb-kopf"><h2>Worum es geht</h2>' +
-        (pr.ziel ? '<p class="pj-sb-ziel">' + esc(pr.ziel) + "</p>" : '<p class="e-leer">Noch kein Projektziel hinterlegt. Diktiere es mir, dann trage ich es ein.</p>') + "</div></summary>" +
-        '<div class="pj-sb-auf"><div>' + (zd.length ? zd.map(function (d) { return "<h4>" + esc(d.titel || "") + "</h4>" + (d.text ? "<p>" + esc(d.text) + "</p>" : "") +
+        (pr.ziel ? '<p class="pj-sb-ziel">' + esc(pr.ziel) + "</p>" : pr.thema ? '<p class="pj-sb-ziel">' + esc(pr.thema) + "</p>" : '<p class="e-leer">Noch kein Projektziel hinterlegt. Diktiere es mir, dann trage ich es ein.</p>') + "</div></summary>" +
+        '<div class="pj-sb-auf"><div>' + (pr.ziel && pr.thema ? "<h4>Thema</h4><p>" + esc(pr.thema) + "</p>" : "") + (zd.length ? zd.map(function (d) { return "<h4>" + esc(d.titel || "") + "</h4>" + (d.text ? "<p>" + esc(d.text) + "</p>" : "") +
           ((d.punkte || []).length ? "<ul>" + d.punkte.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : ""); }).join("") : '<p class="e-leer">Keine weiteren Details zum Ziel.</p>') + "</div>" +
         '<div class="pj-sb-team"><h3 class="pj-sb-team-titel">Projektteam</h3>' + (p.typ === "Kunde" ? seite("Beim Kunden", kunde) + seite("empiria und Partner", eigen) : seite("Beteiligte", bet)) +
         '<div class="vt-p-neu pj-team-neu"><input type="search" placeholder="Person hinzufügen" autocomplete="off"><select aria-label="Seite">' +
           (p.typ === "Kunde" ? '<option value="Kunde">beim Kunden</option><option value="empiria">empiria</option><option value="Partner">Partner</option>' : '<option value="Partner">Partner</option><option value="empiria">empiria</option><option value="Kunde">extern</option>') +
           '</select><ul class="vt-treffer"></ul></div></div></div></details>';
       z.querySelector(".pj-sb-details").addEventListener("toggle", function (ev) { PJ.sbOffen = ev.target.open; });
+      inhalteZeichnen(p, pr, (r[3].data || []).filter(function (v) { return v.projekt_id === pid; }));
       z.querySelectorAll("[data-bet-weg]").forEach(function (b) { b.onclick = function () {
         db.from("projekt_beteiligte").delete().eq("id", +b.getAttribute("data-bet-weg")).then(function (x) { if (x && x.error) { toast("Nicht gespeichert: " + x.error.message); return; } steckbriefLaden(p); }); }; });
       var such = z.querySelector(".pj-team-neu input"), wahl = z.querySelector(".pj-team-neu select"), warte;
@@ -1060,6 +1064,57 @@
         warte = setTimeout(function () { vtSuche(s, ziel, function (k) {
           db.from("projekt_beteiligte").insert({ projekt_id: pid, kontakt_id: k.id, seite: wahl.value }).then(function (x) { if (x && x.error) { toast("Nicht gespeichert: " + x.error.message); return; } toast("Im Team."); steckbriefLaden(p); }); }); }, 250); };
     });
+  }
+
+  /* Inhalte aus der bisherigen Projektansicht (Daniel, 22.11.2026, Eskalation: „Ich brauche diese Ausarbeitungen aus der alten Sicht
+     bei allen Projekten in der neuen Sicht“): Ausarbeitung (Workshop), Lagebericht, Überlegungen, Verlauf – je als Aufklapper. */
+  function klappKasten(kl, titel, unter, inhalt, offen) {
+    return '<details class="lg-kasten pj-fahrplan pj-klapp ' + kl + '"' + (offen ? " open" : "") + '><summary><h2>' + titel + "</h2>" + (unter ? "<span>" + esc(unter) + "</span>" : "") + '</summary><div class="pj-klapp-inhalt">' + inhalt + "</div></details>";
+  }
+  function wsText(t) { return esc(t).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>"); }
+  function wsListe(l, tag) { return "<" + tag + ' class="ws-liste">' + l.map(function (y) { return "<li>" + wsText(y) + "</li>"; }).join("") + "</" + tag + ">"; }
+  function ausarbeitungHtml(w) {
+    return (w.stand ? '<p class="pj-ws-stand">' + esc(w.stand) + "</p>" : "") + (w.abschnitte || []).map(function (a) {
+      return '<section class="pj-ws-teil"><h3>' + esc(a.titel) + "</h3>" + (a.inhalt || []).map(function (x) {
+        if (x.p) return "<p>" + wsText(x.p) + "</p>";
+        if (x.liste) return wsListe(x.liste, "ul");
+        if (x.nummern) return wsListe(x.nummern, "ol");
+        if (x.tabelle) return '<table class="pj-ws-tabelle"><thead><tr>' + x.tabelle.kopf.map(function (k) { return "<th>" + esc(k) + "</th>"; }).join("") + "</tr></thead><tbody>" +
+          x.tabelle.zeilen.map(function (z) { return "<tr>" + z.map(function (c) { return "<td>" + esc(c) + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table>";
+        if (x.agenda) return '<div class="pj-ag">' + x.agenda.map(function (b) {
+          var zeit = '<p class="pj-ag-zeit">' + esc(b.von) + "–" + esc(b.bis) + "</p>";
+          if (b.pause) return '<div class="pj-ag-block pj-ag-pause">' + zeit + "<p>" + esc(b.block) + "</p></div>";
+          var text = [].concat(b.text || []).map(function (s) { return s && s.liste ? wsListe(s.liste, "ul") : "<p>" + wsText(s) + "</p>"; }).join("");
+          var mk = (b.methoden || []).map(function (id) { var m = (window.METHODEN || []).filter(function (y) { return y.id === id; })[0];
+            return '<a class="pj-ag-methode-link" href="/strategie/methoden.html#' + esc(id) + '">Methode ' + esc(m ? m.titel : id) + " →</a>"; }).join("");
+          var bild = b.bild && window.WorkshopBilder && window.WorkshopBilder[b.bild] ? '<div class="pj-ag-bild">' + window.WorkshopBilder[b.bild] + "</div>" : "";
+          return '<div class="pj-ag-block">' + zeit + '<div class="pj-ag-inhalt"><p class="pj-ag-titel">' + esc(b.block) + "</p>" +
+            (b.methode && b.methode !== "–" ? '<p class="pj-ag-methode">' + esc(b.methode) + "</p>" : "") +
+            '<div class="pj-ag-koerper"><div>' + text + (mk ? '<p class="pj-ag-links">' + mk + "</p>" : "") + "</div>" + bild + "</div></div></div>";
+        }).join("") + "</div>";
+        return "";
+      }).join("") + "</section>";
+    }).join("");
+  }
+  function inhalteZeichnen(p, pr, verlauf) {
+    var oben = el.querySelector("[data-pj-mehr]"), unten = el.querySelector("[data-pj-verlauf]"); if (!oben || !unten) return;
+    var h = "";
+    var w = pr.workshop;
+    if (w && (w.abschnitte || []).length) h += klappKasten("pj-ausarbeitung", "Ausarbeitung", w.titel || (w.abschnitte || []).map(function (a) { return String(a.titel).replace(/^\d+\.\s*/, ""); }).join(" · "), ausarbeitungHtml(w));
+    var s = pr.statusbericht, bl = s && s.bloecke ? s.bloecke : [];
+    if (bl.length) h += klappKasten("pj-lagebericht", "Lagebericht", s.stand ? "Stand " + datum(s.stand) + s.stand.slice(2, 4) : "", bl.map(function (x) {
+      return "<h3>" + esc(x.titel) + "</h3>" + wsListe(x.punkte || [], "ul"); }).join(""));
+    var ueb = String(pr.ueberlegungen || "").split("\n").map(function (x) { return x.replace(/^[•\-–]\s*/, "").trim(); }).filter(Boolean);
+    if (ueb.length) h += klappKasten("pj-ueberlegungen", "Überlegungen", ueb.length + (ueb.length === 1 ? " Punkt" : " Punkte"), wsListe(ueb, "ul"));
+    oben.innerHTML = h;
+    var ART = { aufgabe: "Aufgabe", gate: "Meilenstein", projektgate: "Meilenstein", notiz: "Notiz", status: "Status" };
+    unten.innerHTML = verlauf.length ? klappKasten("pj-verlauf", "Verlauf", verlauf.length + " Einträge – was im Projekt passiert ist", '<ul class="pj-verlauf-liste">' + verlauf.map(function (v, i) {
+      var tx = v.inhalt && typeof v.inhalt === "object" ? v.inhalt.text : typeof v.inhalt === "string" ? v.inhalt : "";
+      return "<li" + (i >= 25 ? ' class="pj-mehr-verlauf" hidden' : "") + "><span>" + datum(String(v.datum).slice(0, 10)) + String(v.datum).slice(2, 4) + "</span><div><b>" + esc(v.titel || "") + "</b>" +
+        '<small>' + esc(ART[v.art] || v.art || "") + "</small>" + (tx ? "<p>" + esc(String(tx).slice(0, 600)) + "</p>" : "") + "</div></li>"; }).join("") + "</ul>" +
+      (verlauf.length > 25 ? '<button type="button" class="pj-alle" data-verlauf-alle>Alle ' + verlauf.length + " zeigen</button>" : "")) : "";
+    var va = unten.querySelector("[data-verlauf-alle]");
+    if (va) va.onclick = function () { unten.querySelectorAll(".pj-mehr-verlauf").forEach(function (x) { x.hidden = false; }); va.remove(); };
   }
   function iso2(ts) { return new Date(ts).toLocaleDateString("sv-SE", { timeZone: "Europe/Berlin" }); }
 
