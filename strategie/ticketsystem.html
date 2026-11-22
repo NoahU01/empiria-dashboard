@@ -185,6 +185,7 @@
   .ts-wahl div b { display: block; font-size: var(--fs-s); }
   .ts-zurueck { margin-top: 6px; font-size: var(--fs-s); color: var(--ink); }
   .ts-rand { display: grid; gap: 10px; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 8px; }
+  .ts-rand--drei { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .ts-rand-tag { font-size: var(--fs-s); color: var(--grey-50); margin: 18px 0 0; }
   .ts-k ul { margin: 2px 0 0; padding-left: 1.05em; font-size: var(--fs-s); color: var(--grey-50); line-height: 1.5; }
 
@@ -214,10 +215,12 @@
     .ts-aufgaben { grid-template-columns: 1fr 1fr; }
     .ts-aufgabe:last-child { grid-column: 1 / -1; }
     .ts-rand { grid-template-columns: 1fr 1fr; }
+    .ts-rand--drei { grid-template-columns: 1fr; }
   }
   /* iPhone: Bahnen werden zu einer Spalte, wer handelt, steht am Kasten */
   @media (max-width: 600px) {
     .ts-ausgaenge, .ts-aufgaben, .ts-merksatz, .ts-rand { grid-template-columns: 1fr; }
+    .ts-wahl { grid-template-columns: 1fr; }
     .ts-aufgabe:last-child { grid-column: auto; }
     .ts-bahnen { grid-template-columns: 30px minmax(0, 1fr); }
     .ts-bahn-kopf { display: none; }
@@ -351,7 +354,7 @@
       <!-- ============ 3 Ablauf ============ -->
       <div class="ts-plan">
         <h2>3 &middot; So läuft ein Ticket: wer handelt wann</h2>
-        <p>Links handelt Daniel, rechts Claude. Sprint und Hintergrund-Spur arbeiten am selben Ticket, deshalb geht nichts verloren, wenn ein Chat endet. Die Hintergrund-Spur läuft, sobald ein Ticket bereit ist, auch wenn Daniel nicht am Rechner sitzt, nicht erst nachts.</p>
+        <p>Links handelt Daniel, rechts Claude. Die Liste der Sofortspur wird gespeichert, deshalb geht nichts verloren, wenn ein Chat endet. Die Hintergrundspur läuft, sobald ein Ticket bereit ist, auch wenn Daniel nicht am Rechner sitzt, nicht erst nachts. Welcher Weg gilt, sagt Daniel im Chat (Stand 22.11.2026, siehe unten).</p>
 
         <div class="ts-flaeche">
           <div class="ts-bahnen">
@@ -372,10 +375,10 @@
             </div>
             <div class="ts-schritt ts-schritt--claude">
               <div class="ts-achse"><i>4</i></div>
-              <div class="ts-k ts-k--gelb ts-k--geplant" data-wer="Claude"><b>Setzt um und prüft selbst</b><span>Erst wenn Ergebnis, Maßstab, Ablage und Grenzen feststehen. In einer von zwei Spuren:</span>
+              <div class="ts-k ts-k--gelb ts-k--geplant" data-wer="Claude"><b>Setzt um und prüft selbst</b><span>In einer von zwei Spuren:</span>
                 <div class="ts-wahl">
-                  <div><b>Sofort-Spur</b>Vorfahrt: live im Chat oder ohne Daniel innerhalb einer Minute</div>
-                  <div><b>Hintergrund-Spur</b>ohne Daniel, sobald bereit, nach Priorität</div>
+                  <div><b>Sofortspur</b>im laufenden Chat, Punkt für Punkt aus einer Liste, mit dem Wissen des Chats</div>
+                  <div><b>Hintergrundspur</b>ohne Daniel und ohne Chat, nach Priorität, sobald Ergebnis, Maßstab, Ablage und Grenzen feststehen</div>
                 </div>
               </div>
             </div>
@@ -387,10 +390,17 @@
             </div>
           </div>
 
+          <p class="ts-rand-tag">Im Chat sagt Daniel, welcher Weg gilt</p>
+          <div class="ts-rand ts-rand--drei">
+            <div class="ts-k"><b>Normal chatten</b><span>Was Daniel sagt, erledigt der Chat direkt.</span></div>
+            <div class="ts-k ts-k--geplant"><b>„Sofortspur“</b><span>Für viel Feedback auf einmal. Der Chat legt eine sichtbare Liste an und arbeitet sie Punkt für Punkt selbst ab, mit Prüfung je Punkt. Ein kurzer Vermerk genügt, der Chat kennt das Gespräch.</span></div>
+            <div class="ts-k ts-k--gelb"><b>„Ticket“</b><span>Hintergrundspur. Der Mac arbeitet ohne den Chat, deshalb muss das Ticket alle Infos enthalten: was, wo, Ergebnis, Maßstab, Ablage, Grenzen.</span></div>
+          </div>
+
           <p class="ts-rand-tag">Gilt in jedem Schritt</p>
           <div class="ts-rand">
-            <div class="ts-k ts-k--dunkel"><b>Stopp</b><span>Alles hält an, auch die Hintergrund-Spur, bis Daniel freigibt.</span></div>
-            <div class="ts-k"><b>Vorziehen</b><span>Ein Ticket springt aus der Hintergrund-Spur in die Sofort-Spur.</span></div>
+            <div class="ts-k ts-k--dunkel"><b>Stopp</b><span>Alles hält an, auch die Hintergrundspur, bis Daniel freigibt.</span></div>
+            <div class="ts-k ts-k--geplant"><b>„Vorrang:“</b><span>Überholt die Sofortspur. Nach dem laufenden Punkt kommt sofort das Neue, dann prüft der Chat die übrigen Punkte und wartet auf Daniels Bestätigung. Brennt es: erst Stopp in der Claude-App.</span></div>
             <div class="ts-k ts-k--geplant"><b>Überschreiben</b><span>Punkte ändern oder streichen, Priorität neu setzen.</span></div>
             <div class="ts-k"><b>Nie ohne Abnahme</b><span>Mails senden, etwas auf main bringen außer im Dashboard, löschen, Geld ausgeben</span></div>
           </div>
@@ -437,10 +447,11 @@
       <div class="ts-offen">
         <h2>Offen zur Diskussion</h2>
         <ol>
-          <li>Name für die Sofort-Spur. <span>„Vorfahrtsstraße“ passt noch nicht.</span></li>
+          <li>Sofortspur als Liste im Chat bauen. <span>Geklärt am 22.11.2026: Sofortspur ist die Weiche im laufenden Chat, Kommando „Vorrang:“. Heute startet die Sofortspur noch eine eigene Sitzung ohne Chatverlauf; das wird umgebaut.</span></li>
           <li>Ansicht der Tickets. <span>Erste Fassung steht auf der Seite Aufgaben: Eingang, Gruppen nach Stand, Abnahme, Vorziehen, Stopp.</span></li>
           <li>Wer setzt die Prioritäten? <span>Vorschlag: Claude schlägt vor, Daniel verschiebt.</span></li>
-          <li>Überschreiben. <span>Stopp gibt es als Knopf auf der Seite Aufgaben; Punkte ändern und Prioritäten verschieben fehlt noch.</span></li>
+          <li>Überschreiben. <span>Stopp gibt es als Knopf auf der Seite Aufgaben; Punkte ändern und Prioritäten verschieben fehlt noch. Der Knopf „Vorziehen“ auf der Seite Aufgaben wird an „Vorrang“ angepasst.</span></li>
+          <li>Probelauf der Hintergrundspur beenden. <span>Bisher startet der Mac nur freigegebene Ticketnummern und Tickets aus dem Eingang.</span></li>
         </ol>
       </div>
 
