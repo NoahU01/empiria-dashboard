@@ -1,0 +1,66 @@
+/* Angefragte Fahrzeuge – Übersicht und Einzelseite (22.11.2026) */
+.la-lage { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s2) var(--s5); margin: 0 0 var(--s5); padding: var(--s4) var(--s5); border-radius: 14px; background: var(--linie-leicht); }
+.la-lage p { margin: 0; font-size: var(--fs-s); color: var(--grey-70); }
+.la-lage b { font-size: var(--fs-l); font-weight: 700; color: var(--ink); margin-right: 4px; }
+.la-lage .la-geprueft { margin-left: auto; }
+.la-geprueft { font-size: var(--fs-xs); color: var(--grey-50); }
+.la-tabelle { overflow-x: auto; }
+.la-vgl td { vertical-align: top; }
+.la-vgl td small, .la-unter { display: block; margin: 2px 0 0 !important; font-size: var(--fs-xs); color: var(--grey-50); white-space: normal; }
+.la-vgl td:nth-child(2) { white-space: normal; min-width: 10em; color: var(--ink); }
+.la-leer { color: var(--grey-50); }
+.la-fehlt { font-size: var(--fs-s); color: var(--grey-70); white-space: normal; }
+.la-vgl td:nth-child(7) { white-space: normal; min-width: 9em; }
+.la-z--raus td, .la-z--raus td a, .la-z--raus td b { color: #8a8780; }
+.la-chip, .la-wahl { display: inline-block; padding: 2px 9px; border-radius: 999px; border: 1px solid var(--linie); font-size: var(--fs-xs); font-weight: 500; white-space: nowrap; color: var(--grey-70); }
+.la-chip--neu { background: var(--hl); border-color: var(--hl); color: #1a1817; }
+.la-chip--gut { background: var(--ink); border-color: var(--ink); color: var(--white); }
+.la-chip--warn { border-color: var(--ink); color: var(--ink); }
+.la-wahl--weiter { background: var(--ink); border-color: var(--ink); color: var(--white); }
+.la-wahl--raus { text-decoration: line-through; }
+.la-nur-mobil { display: none !important; }
+@media (max-width: 760px) {
+  .la-mehr { display: none; } .la-lage .la-geprueft { margin-left: 0; width: 100%; }
+  .la-nur-mobil { display: block !important; } span.la-nur-mobil { margin-top: 6px; }
+  .la-vgl td:nth-child(2) { min-width: 0; }
+}
+
+/* Einzelseite */
+.la-zurueck { margin: 0 0 var(--s4); font-size: var(--fs-s); }
+.la-zurueck a { color: var(--grey-70); text-decoration: none; }
+.la-zurueck a:hover { color: var(--ink); }
+.la-status { display: flex; flex-wrap: wrap; gap: var(--s2); margin-top: var(--s3); }
+.la-wahlknoepfe { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); margin-top: var(--s5); font-size: var(--fs-s); color: var(--grey-70); }
+.la-wahlknoepfe button { padding: 7px 16px; border: 1px solid var(--linie); border-radius: 999px; background: transparent; color: var(--ink); font: inherit; font-weight: 500; cursor: pointer; }
+.la-wahlknoepfe button:hover { border-color: var(--ink); }
+.la-wahlknoepfe button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--white); }
+.la-meldung { font-size: var(--fs-s); color: var(--ink); }
+.la-raster { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s5); margin-top: var(--s6); }
+.lf-h2 + .la-raster { margin-top: var(--s2); }
+@media (max-width: 860px) { .la-raster { grid-template-columns: minmax(0, 1fr); } }
+.la-box { min-width: 0; padding: var(--s5); border-radius: 14px; background: var(--linie-leicht); overflow-wrap: anywhere; }
+.la-h3 { margin: 0 0 var(--s3); font-family: var(--font-sans); font-size: var(--fs-xs); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--grey-50); }
+.la-dl { margin: 0; }
+.la-dl div { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: var(--s3); padding: var(--s2) 0; border-top: 1px solid var(--linie); }
+.la-dl div:first-child { border-top: 0; }
+.la-dl dt { font-size: var(--fs-s); color: var(--grey-50); }
+.la-dl dd { margin: 0; font-size: var(--fs-s); color: var(--ink); }
+.la-dl dd small { display: block; font-size: var(--fs-xs); color: var(--grey-50); }
+.la-dl a { color: inherit; text-underline-offset: 3px; }
+@media (max-width: 480px) { .la-dl div { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
+.la-bild { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 10px; margin-bottom: var(--s3); background: var(--linie); }
+.la-pflicht { margin: 0; padding: 0; list-style: none; font-size: var(--fs-s); }
+.la-pflicht li { padding: 6px 0; border-top: 1px solid var(--linie); }
+.la-pflicht li:first-child { border-top: 0; }
+.la-ok { color: var(--ink); }
+.la-offen { color: var(--grey-70); }
+.la-klein { margin: var(--s2) 0 0; font-size: var(--fs-xs); color: var(--grey-50); }
+.la-gruppe { margin: var(--s3) 0 2px; font-size: var(--fs-xs); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--grey-50); }
+.la-verlauf { margin: 0; padding: 0; list-style: none; max-width: 80ch; }
+.la-v { display: grid; grid-template-columns: 11rem 9rem minmax(0, 1fr); gap: var(--s3); padding: var(--s3) 0; border-top: 1px solid var(--linie); font-size: var(--fs-s); }
+.la-v span { color: var(--grey-50); }
+.la-v b { font-weight: 600; color: var(--ink); }
+.la-v p { margin: 0; color: var(--grey-70); overflow-wrap: anywhere; }
+@media (max-width: 760px) { .la-v { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
+.la-fehler { color: var(--ink); }
+@media (max-width: 600px) { .la-mittel { display: none; } }
