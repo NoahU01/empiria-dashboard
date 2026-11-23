@@ -303,7 +303,7 @@
    "gruppe": "ohne Menü",
    "eltern": null,
    "kurz": "",
-   "im_diagramm": false,
+   "im_diagramm": true,
    "pos": 999
   },
   {
@@ -352,5 +352,5 @@
    "pos": 999
   }
  ],
- "stand": "23.11.2026, 06:30 Uhr"
+ "stand": "23.11.2026, 08:10 Uhr"
 }
