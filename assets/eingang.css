@@ -602,6 +602,10 @@
 .pj-wege .e-k { display: inline-flex; align-items: center; height: 30px; padding: 0 14px; border-radius: 999px; border: 1px solid #d2d2d7; background: #fff; font-size: 13px; font-weight: 500; color: var(--tinte); text-decoration: none; }
 .pj-wege .e-k:hover { border-color: var(--tinte); }
 .pj-wege + .pj-waehler { margin-left: 0; }
+/* Projekt-Übersicht: Marken-Pills links neben der Überschrift, Methodenkoffer und Auswahl rechts (Daniel, 23.11.2026) */
+.k7-kopf .pp-pillen { margin-left: 0; }
+.pp-wege { align-items: center; } .pp-wege .pj-waehler { margin-left: 0; }
+@media (max-width: 600px) { .pp-wege { margin-left: 0; width: 100%; flex-wrap: nowrap; } .pp-wege .pj-waehler { flex: 1; width: auto; min-width: 0; } }
 .pj-fahrplan { grid-column: 1 / -1; padding: 18px 20px; }
 .pj-fahrplan summary { display: flex; align-items: baseline; gap: 12px; cursor: pointer; list-style: none; }
 .pj-fahrplan summary::-webkit-details-marker { display: none; }

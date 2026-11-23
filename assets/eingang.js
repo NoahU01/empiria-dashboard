@@ -925,9 +925,11 @@
         return '<li><a href="#p=' + x.id + '"><b>' + esc(x.name) + "</b>" + '<span class="pp-z-schritt">' + (s && s.naechster_schritt ? esc(s.naechster_schritt) : "") + "</span>" + etikett(s) + "</a></li>";
       };
       PJ.marke = PJ.marke || (function () { try { return localStorage.getItem("projekte-marke") || "alle"; } catch (x) { return "alle"; } })();
-      var pillen = '<nav class="k7-pillen">' + [["alle", "Alle Marken"]].concat(MARKEN.map(function (m) { return [m, m]; })).map(function (m) {
+      var pillen = '<nav class="k7-pillen pp-pillen">' + [["alle", "Alle Marken"]].concat(MARKEN.map(function (m) { return [m, m]; })).map(function (m) {
         return '<button type="button" data-pp-marke="' + esc(m[0]) + '" aria-pressed="' + (m[0] === PJ.marke) + '">' + esc(m[1]) + "</button>"; }).join("") + "</nav>";
-      el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>Projekte</h1><span>' + PJ.projekte.length + ' laufend</span></div>' + pillen + waehler + "</header>" +
+      el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>Projekte</h1><span>' + PJ.projekte.length + ' laufend</span></div>' + pillen +
+        // Methodenkoffer als eigene Pill neben den Marken (Daniel, 23.11.2026: „Ich komme an meine Methoden nicht mehr ran“)
+        '<div class="pj-wege pp-wege"><a class="e-k" href="/strategie/methoden.html">Methodenkoffer</a>' + waehler + "</div></header>" +
         '<section class="k7-band"><div class="pj-uebersicht">' +
         MARKEN.filter(function (mk) { return PJ.marke === "alle" || PJ.marke === mk; }).map(function (mk) {
           var l = PJ.projekte.filter(function (x) { return x.marke === mk; }).sort(function (a, b) { return a.name.localeCompare(b.name, "de"); });
