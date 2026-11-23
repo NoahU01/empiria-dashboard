@@ -111,7 +111,17 @@
       '<p class="la-geprueft">Postfach zuletzt geprüft: ' + esc(datum(geprueft, true)) + " · stündlich</p></div>";
     var zeilen = liste.map(function (z) {
       var b = bestes(z), fehlt = pflichtFehlt(z);
-      var ang = b ? "<b>" + euro(b.a.rate_netto != null ? b.a.rate_netto : b.a.monatskosten_netto) + "</b><small>" + esc(b.a.art === "Leasing" ? "Leasing" : "3-Wege") + " · " + (b.a.laufzeit || "?") + " Mon." + (b.a.quelle === "Händlerangebot" ? "" : " · laut Inserat") + "</small>" : '<span class="la-leer">offen</span>';
+      // je Art (Leasing, 3-Wege) das günstigste Angebot: Kosten der GmbH je Monat (bei 3-Wege inkl. Anzahlung, Vorsteuer, Umsatzsteuer auf die Schlussrate)
+      var jeArt = {};
+      (z.angebote || []).forEach(function (a) {
+        var k = a.art === "Leasing" ? "Leasing" : "3-Wege", w = firmaMonat(a);
+        if (w == null) return;
+        if (!jeArt[k] || w < jeArt[k].w || (jeArt[k].a.quelle === "Inserat" && a.quelle !== "Inserat")) jeArt[k] = { a: a, w: w };
+      });
+      var ang = ["Leasing", "3-Wege"].filter(function (k) { return jeArt[k]; }).map(function (k) {
+        var x = jeArt[k];
+        return '<span class="la-angebot"><b>' + euro(x.w) + "</b> " + k + " · " + (x.a.laufzeit || "?") + "\u00a0Mon." + (x.a.quelle === "Händlerangebot" ? "" : " · laut Inserat") + "</span>";
+      }).join("") || '<span class="la-leer">offen</span>';
       var privat = b && b.r.privat != null ? "<b>" + euro(b.r.privat) + "</b>" : '<span class="la-leer">' + (b ? "Liste fehlt" : "offen") + "</span>";
       return '<tr class="la-z la-z--' + esc(z.auswahl) + '">' +
         '<td>' + (z.bild_url ? '<img class="la-nur-mobil la-daumen" src="' + esc(klein(z.bild_url)) + '" alt="" loading="lazy">' : "") + '<a href="/strategie/leasing-anfrage.html?id=' + z.id + '">' + esc(z.titel) + '</a><small class="la-unter">EZ ' + esc(z.ez) + " · " + fz(z.km_stand) + " km" + (z.preis_inserat ? " · " + euro(z.preis_inserat) : "") + '</small><small class="la-unter la-nur-mobil">' + esc(z.haendler) + ", " + esc(z.ort) + "</small></td>" +
@@ -119,12 +129,12 @@
         '<td class="la-mehr">' + esc(z.haendler) + '<small class="la-unter">' + esc(z.ort) + (z.fahrzeit ? " · " + esc(z.fahrzeit) : "") + "</small></td>" +
         "<td>" + standChip(z) + '<span class="la-nur-mobil">' + auswahlChip(z) + "</span></td>" +
         '<td class="la-mittel">' + ang + "</td>" +
-        "<td>" + privat + '<small class="la-unter">' + esc(z.antrieb === "E" ? "0,25 %" : z.versteuerung && /Bescheinigung/.test(z.versteuerung) ? "0,5 % mit Bescheinigung" : "0,5 %") + "</small></td>" +
+        "<td>" + privat + '<small class="la-unter">' + (b && b.r.privat != null ? esc(b.a.art === "Leasing" ? "mit Leasing" : "mit 3-Wege") + " · " : "") + esc(z.antrieb === "E" ? "0,25\u00a0%" : z.versteuerung && /Bescheinigung/.test(z.versteuerung) ? "0,5\u00a0% mit Bescheinigung" : "0,5\u00a0%") + "</small></td>" +
         '<td class="la-mehr">' + (fehlt.length ? '<span class="la-fehlt">' + esc(fehlt.join(", ")) + " nicht aufgeführt</span>" : "✓ alle") + "</td>" +
         '<td class="la-mehr">' + auswahlChip(z) + "</td></tr>";
     }).join("");
     uebersicht.innerHTML = kopf +
-      '<div class="la-tabelle"><table class="lf-vgl la-vgl la-ueb"><thead><tr><th>Fahrzeug</th><th class="la-bildzelle"><span class="la-sr">Bild</span></th><th class="la-mehr">Händler</th><th>Stand</th><th class="la-mittel">Rate netto</th><th>Privat im Monat</th><th class="la-mehr">Pflichtausstattung</th><th class="la-mehr">Auswahl</th></tr></thead><tbody>' +
+      '<div class="la-tabelle"><table class="lf-vgl la-vgl la-ueb"><thead><tr><th>Fahrzeug</th><th class="la-bildzelle"><span class="la-sr">Bild</span></th><th class="la-mehr">Händler</th><th>Stand</th><th class="la-mittel">Monatlich netto</th><th>Privat im Monat</th><th class="la-mehr">Pflichtausstattung</th><th class="la-mehr">Auswahl</th></tr></thead><tbody>' +
       zeilen + "</tbody></table></div>" +
       '<details class="lf-annahmen"><summary>So läuft es weiter</summary><ul>' +
       "<li><b>Überwachung:</b> Jede Stunde prüfe ich das empiria-Postfach auf Antworten in diesen Mailverläufen und von den Händler-Adressen. Eingangsbestätigungen werden nur vermerkt.</li>" +

@@ -69,3 +69,6 @@
 @media (max-width: 760px) { .la-v { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
 .la-fehler { color: var(--ink); }
 @media (max-width: 600px) { .la-mittel { display: none; } }
+.la-angebot { display: block; font-size: var(--fs-s); color: var(--grey-70); white-space: nowrap; }
+.la-angebot + .la-angebot { margin-top: 4px; }
+.la-angebot b { font-size: var(--fs-m); }
