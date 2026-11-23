@@ -96,7 +96,10 @@
   }
 
   /* ---------- Übersicht ---------- */
-  function zeichneUebersicht(liste) {
+  function zeichneUebersicht(alle) {
+    // Vergleichszeile „Unser ID.3 heute“ (art 'bestand') steht getrennt oben und zählt nicht zu den Anfragen
+    var bestand = alle.filter(function (z) { return z.art === "bestand"; });
+    var liste = alle.filter(function (z) { return z.art !== "bestand"; });
     if (!liste.length) { uebersicht.innerHTML = '<p class="lf-unter">Noch keine Anfragen.</p>'; return; }
     var n = function (f) { return liste.filter(f).length; };
     var geprueft = liste.reduce(function (m, z) { return z.geprueft_am && (!m || z.geprueft_am > m) ? z.geprueft_am : m; }, null);
@@ -135,13 +138,26 @@
     }).join("");
     uebersicht.innerHTML = kopf +
       '<div class="la-tabelle"><table class="lf-vgl la-vgl la-ueb"><thead><tr><th>Fahrzeug</th><th class="la-bildzelle"><span class="la-sr">Bild</span></th><th class="la-mehr">Händler</th><th>Stand</th><th class="la-mittel">Monatlich netto</th><th>Privat im Monat</th><th class="la-mehr">Pflichtausstattung</th><th class="la-mehr">Auswahl</th></tr></thead><tbody>' +
-      zeilen + "</tbody></table></div>" +
+      bestand.map(vergleichszeile).join("") + zeilen + "</tbody></table></div>" +
       '<details class="lf-annahmen"><summary>So läuft es weiter</summary><ul>' +
       "<li><b>Überwachung:</b> Jede Stunde prüfe ich das empiria-Postfach auf Antworten in diesen Mailverläufen und von den Händler-Adressen. Eingangsbestätigungen werden nur vermerkt.</li>" +
       "<li><b>Antwort mit Konditionen:</b> Ich trage Leasing- und Finanzierungsangebote, den Bruttolistenpreis und das Exposé ein; die Einzelseite rechnet dann die Kosten aus privater Sicht.</li>" +
       "<li><b>Nachfassen:</b> Nach zwei Werktagen ohne echte Antwort steht „nachfassen“ beim Fahrzeug.</li>" +
       "<li><b>Deine Auswahl:</b> Auf der Einzelseite „Weiter interessant“ oder „Raus“ wählen. Für jeden Plug-in-Hybrid, der weiter interessant ist, schreiben wir den Händler an: Er bestätigt die 0,5-%-Versteuerung mit der Übereinstimmungsbescheinigung (CO₂ höchstens 50 g/km oder mindestens 80 km elektrisch).</li>" +
       "<li><b>Rechnung:</b> wie in der Rangliste unten, aber mit eurer echten Laufleistung von 7.500 km für die Energie. Raten laut Inserat gelten für 10.000 km und sind vom Händler noch nicht bestätigt.</li></ul></details>";
+  }
+
+  function vergleichszeile(z) {
+    var a = (z.angebote || [])[0], r = a ? rechne(z, a) : null;
+    return '<tr class="la-heute">' +
+      "<td><b>" + esc(z.titel) + '</b><small class="la-unter">' + esc(z.modell) + " · EZ " + esc(z.ez) + '</small><small class="la-unter la-nur-klein">' + (a ? euro(a.monatskosten_netto) + " netto im Monat" : "") + "</small></td>" +
+      '<td class="la-bildzelle"></td>' +
+      '<td class="la-mehr">' + esc(z.haendler) + '<small class="la-unter">Vertrag bis 18.12.2026</small></td>' +
+      '<td><span class="la-chip la-chip--heute">Zum Vergleich</span></td>' +
+      '<td class="la-mittel">' + (a ? '<span class="la-angebot"><b>' + euro(a.monatskosten_netto) + "</b> Leasing · inkl. Wartung</span><small class=\"la-unter\">laut Buchhaltung</small>" : "–") + "</td>" +
+      "<td>" + (r && r.privat != null ? "<b>" + euro(r.privat) + "</b>" : "–") + '<small class="la-unter">0,25\u00a0% · Liste geschätzt</small></td>' +
+      '<td class="la-mehr"></td>' +
+      '<td class="la-mehr"></td></tr>';
   }
 
   /* ---------- Einzelseite ---------- */
