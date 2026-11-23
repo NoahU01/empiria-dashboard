@@ -78,3 +78,5 @@
 .la-chip--heute { border-color: var(--grey-50); color: var(--ink); }
 .la-nur-klein { display: none !important; }
 @media (max-width: 600px) { .la-nur-klein { display: block !important; } }
+.la-vgl td .la-pv b { font-weight: 400; color: var(--grey-70); }
+.la-vgl td .la-pv.la-best b, .la-vgl td .la-pv:only-child b { font-weight: 700; color: var(--ink); }
