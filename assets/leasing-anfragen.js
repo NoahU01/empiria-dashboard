@@ -131,7 +131,7 @@
       var pw = arten.map(function (k) { var r = rechne(z, jeArt[k].a); return { k: k, p: r && r.privat != null ? r.privat : null }; });
       var min = pw.reduce(function (m, x) { return x.p != null && (m == null || x.p < m) ? x.p : m; }, null);
       var privat = !pw.length ? '<span class="la-leer">offen</span>' : pw.map(function (x) {
-        return '<span class="la-angebot la-pv' + (pw.length > 1 && x.p === min ? " la-best" : "") + '">' + (x.p != null ? "<b>" + euro(x.p) + "</b> " : '<span class="la-leer">Liste fehlt</span> ') + x.k + "</span>";
+        return '<span class="la-angebot la-pv' + (x.p != null && x.p === min ? " la-best" : "") + '">' + (x.p != null ? "<b>" + euro(x.p) + "</b> " : '<span class="la-leer">Liste fehlt</span> ') + x.k + "</span>";
       }).join("");
       return '<tr class="la-z la-z--' + esc(z.auswahl) + '">' +
         '<td>' + (z.bild_url ? '<img class="la-nur-mobil la-daumen" src="' + esc(klein(z.bild_url)) + '" alt="" loading="lazy">' : "") + '<a href="/strategie/leasing-anfrage.html?id=' + z.id + '">' + esc(z.titel) + '</a><small class="la-unter">EZ ' + esc(z.ez) + " · " + fz(z.km_stand) + " km" + (z.preis_inserat ? " · " + euro(z.preis_inserat) : "") + '</small><small class="la-unter la-nur-mittel">' + esc(z.haendler) + ", " + esc(z.ort) + '</small><span class="la-nur-klein la-chips">' + standChip(z) + auswahlChip(z) + "</span></td>" +
@@ -139,7 +139,7 @@
         '<td class="la-mehr la-breit">' + esc(z.haendler) + '<small class="la-unter">' + esc(z.ort) + (z.fahrzeit ? " · " + esc(z.fahrzeit) : "") + "</small></td>" +
         '<td class="la-stand">' + standChip(z) + '<span class="la-nur-mobil">' + auswahlChip(z) + "</span></td>" +
         '<td class="la-mittel">' + ang + "</td>" +
-        "<td>" + privat + '<small class="la-unter">' + esc(z.antrieb === "E" ? "0,25\u00a0%" : z.versteuerung && /Bescheinigung/.test(z.versteuerung) ? "0,5\u00a0% mit Bescheinigung" : "0,5\u00a0%") + "</small></td>" +
+        "<td>" + privat + '<small class="la-unter">' + esc(z.antrieb === "E" ? "0,25\u00a0%" : z.versteuerung && /Bescheinigung/.test(z.versteuerung) ? "0,5\u00a0% mit Bescheinigung" : "0,5\u00a0%") + (z.blp_brutto && /geschätzt/.test(z.blp_quelle || "") ? " · Liste geschätzt" : "") + "</small></td>" +
         '<td class="la-mehr la-breit">' + (fehlt.length ? '<span class="la-fehlt">' + esc(fehlt.join(", ")) + " nicht aufgeführt</span>" : "✓ alle") + "</td>" +
         '<td class="la-mehr">' + auswahlChip(z) + "</td></tr>";
     }).join("");
