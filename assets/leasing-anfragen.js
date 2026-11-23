@@ -122,12 +122,14 @@
         if (w == null) return;
         if (!jeArt[k] || w < jeArt[k].w || (jeArt[k].a.quelle === "Inserat" && a.quelle !== "Inserat")) jeArt[k] = { a: a, w: w };
       });
-      var ang = ["Leasing", "3-Wege"].filter(function (k) { return jeArt[k]; }).map(function (k) {
+      var wert = function (k) { var r = rechne(z, jeArt[k].a); return r ? (r.privat != null ? r.privat : r.firma) : Infinity; };
+      var reihe = ["Leasing", "3-Wege"].filter(function (k) { return jeArt[k]; }).sort(function (p, q) { return wert(p) - wert(q); });
+      var ang = reihe.map(function (k) {
         var x = jeArt[k];
         return '<span class="la-angebot"><b>' + euro(x.w) + "</b> " + k + " · " + (x.a.laufzeit || "?") + "\u00a0Mon." + (x.a.quelle === "Händlerangebot" ? "" : " · laut Inserat") + "</span>";
       }).join("") || '<span class="la-leer">offen</span>';
       // je Variante die Kosten aus privater Sicht – auf gleicher Höhe wie „Monatlich netto“; die günstigere fett
-      var arten = ["Leasing", "3-Wege"].filter(function (k) { return jeArt[k]; });
+      var arten = reihe;
       var pw = arten.map(function (k) { var r = rechne(z, jeArt[k].a); return { k: k, p: r && r.privat != null ? r.privat : null }; });
       var min = pw.reduce(function (m, x) { return x.p != null && (m == null || x.p < m) ? x.p : m; }, null);
       var privat = !pw.length ? '<span class="la-leer">offen</span>' : pw.map(function (x) {
@@ -151,7 +153,10 @@
       "<li><b>Antwort mit Konditionen:</b> Ich trage Leasing- und Finanzierungsangebote, den Bruttolistenpreis und das Exposé ein; die Einzelseite rechnet dann die Kosten aus privater Sicht.</li>" +
       "<li><b>Nachfassen:</b> Nach zwei Werktagen ohne echte Antwort steht „nachfassen“ beim Fahrzeug.</li>" +
       "<li><b>Deine Auswahl:</b> Auf der Einzelseite „Weiter interessant“ oder „Raus“ wählen. Für jeden Plug-in-Hybrid, der weiter interessant ist, schreiben wir den Händler an: Er bestätigt die 0,5-%-Versteuerung mit der Übereinstimmungsbescheinigung (CO₂ höchstens 50 g/km oder mindestens 80 km elektrisch).</li>" +
-      "<li><b>Rechnung:</b> wie in der Rangliste unten, aber mit eurer echten Laufleistung von 7.500 km für die Energie. Raten laut Inserat gelten für 10.000 km und sind vom Händler noch nicht bestätigt.</li></ul></details>";
+      "<li><b>Monatlich netto</b> = nur das Fahrzeug, ohne Energie: Leasing = Rate netto + Überführung und Sonderzahlung ÷ Laufzeit; 3-Wege-Finanzierung = (Anzahlung + alle Raten − Vorsteuer aus dem Kaufpreis + Umsatzsteuer auf die Schlussrate bei Rückgabe) ÷ Laufzeit. Beim ID.3 heute ist die Wartung enthalten.</li>" +
+      "<li><b>Privat im Monat</b> = 50\u00a0% von (Monatlich netto + Energie) + Bruttolistenpreis × 0,25\u00a0% (Elektro) bzw. 0,5\u00a0% (Plug-in-Hybrid) × 35\u00a0% Einkommensteuer.</li>" +
+      "<li><b>Energie</b> für alle gleich bei " + fz(KM) + "\u00a0km im Jahr: Elektro mit dem Verbrauch des Modells (ADAC bzw. WLTP) plus " + Math.round((A.e_aufschlag - 1) * 100) + "\u00a0% zu " + fz(A.strom_kwh * 100) + "\u00a0ct/kWh; Plug-in-Hybrid " + Math.round(A.phev_anteil_elektrisch * 100) + "\u00a0% der Strecke elektrisch mit " + fz(A.phev_kwh_100) + "\u00a0kWh/100\u00a0km und " + Math.round((1 - A.phev_anteil_elektrisch) * 100) + "\u00a0% mit " + fz(A.verbrenner_l_100) + "\u00a0l Benzin zu " + fz(A.benzin_brutto, 2) + "\u00a0€ brutto (in der Firma netto). Die Händlerangebote selbst gelten für 10.000\u00a0km, weniger bieten VW und Škoda nicht an; Raten laut Inserat sind vom Händler noch nicht bestätigt.</li>" +
+      "<li><b>Nicht enthalten:</b> Versicherung, Kfz-Steuer, Reparaturen, Wartung, Zulassungskosten, Sozialversicherung und Umsatzsteuer auf die Privatnutzung.</li></ul></details>";
   }
 
   function vergleichszeile(z) {
@@ -179,7 +184,12 @@
       '<span class="la-meldung" data-la-meldung></span></div>';
 
     // Angebote
-    var ang = (z.angebote || []).map(function (a) {
+    var sortiert = (z.angebote || []).slice().sort(function (p, q) {
+      var a = rechne(z, p), b = rechne(z, q);
+      var w = function (r) { return r ? (r.privat != null ? r.privat : r.firma) : Infinity; };
+      return w(a) - w(b);
+    });
+    var ang = sortiert.map(function (a) {
       var r = rechne(z, a);
       var details = [a.anzahlung != null ? "Anzahlung " + euro(a.anzahlung) : "", a.schlussrate ? "Schlussrate " + euro(a.schlussrate) : "", a.zins ? "Zins " + fz(a.zins, 2) + " %" : "", a.ueberfuehrung_netto ? "Überführung " + euro(a.ueberfuehrung_netto) + " netto" : ""].filter(Boolean).join(" · ");
       return "<tr><td>" + esc(a.art) + "<small class=\"la-unter\">" + esc(a.quelle || "") + (a.datum ? ", " + esc(datum(a.datum)) : "") + '</small><small class="la-unter la-nur-mobil">' + (a.laufzeit || "–") + "\u00a0Mon." + (a.km_jahr ? " · " + fz(a.km_jahr) + "\u00a0km/Jahr" : "") + "</small></td>" +
