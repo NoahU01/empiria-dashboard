@@ -21,7 +21,7 @@
   var KM = 7500, A = { strom_kwh: 0.3, e_aufschlag: 1.18, phev_kwh_100: 17, phev_anteil_elektrisch: 0.8, verbrenner_l_100: 7, benzin_brutto: 1.938, anteil_privat_firmenkosten: 0.5, steuersatz: 0.35 };
   var STAND = {
     angefragt: ["Angefragt", "offen"], bestaetigt: ["Eingang bestätigt", "offen"], antwort: ["Antwort da – wird ausgewertet", "neu"],
-    angebot: ["Angebot liegt vor", "gut"], rueckfrage: ["Rückfrage an dich", "neu"], reserviert: ["Anderweitig reserviert", "offen"]
+    angebot: ["Angebot liegt vor", "gut"], rueckfrage: ["Rückfrage an dich", "neu"], reserviert: ["Anderweitig reserviert", "offen"], entwurf: ["Entwurf – bitte senden", "warn"]
   };
   var AUSWAHL = { offen: "noch offen", weiter: "Weiter interessant", raus: "Raus" };
 
@@ -103,17 +103,24 @@
     if (!liste.length) { uebersicht.innerHTML = '<p class="lf-unter">Noch keine Anfragen.</p>'; return; }
     var n = function (f) { return liste.filter(f).length; };
     var geprueft = liste.reduce(function (m, z) { return z.geprueft_am && (!m || z.geprueft_am > m) ? z.geprueft_am : m; }, null);
-    var RANG = { weiter: 0, offen: 1, raus: 2 }, SR = { rueckfrage: 0, angebot: 1, antwort: 2, reserviert: 3, bestaetigt: 4, angefragt: 5 };
-    liste.sort(function (a, b) { return (RANG[a.auswahl] - RANG[b.auswahl]) || ((SR[a.stand] || 9) - (SR[b.stand] || 9)) || (a.reihenfolge - b.reihenfolge); });
+    var RANG = { weiter: 0, offen: 1, raus: 2 }, SR = { rueckfrage: 0, angebot: 1, antwort: 2, reserviert: 3, bestaetigt: 4, angefragt: 5, entwurf: 6 };
+    // Reihenfolge (Daniel, 23.11.2026): Golf-Hybride zuerst, dann alle anderen; je Gruppe die günstigste Variante (privat) oben, „Raus“ ans Ende
+    var golf = function (z) { return /golf/i.test(z.modell || z.titel) && z.antrieb === "PHEV"; };
+    var guenstig = function (z) { var b = bestes(z); return b ? (b.r.privat != null ? b.r.privat : b.r.firma) : Infinity; };
+    liste.sort(function (a, b) { return ((a.auswahl === "raus") - (b.auswahl === "raus")) || (golf(b) - golf(a)) || (guenstig(a) - guenstig(b)) || (a.reihenfolge - b.reihenfolge); });
     var kopf = '<div class="la-lage">' +
-      '<p><b>' + liste.length + "</b> angefragt</p>" +
+      '<p><b>' + n(function (z) { return z.stand !== "entwurf"; }) + "</b> angefragt</p>" +
+      (n(function (z) { return z.stand === "entwurf"; }) ? "<p><b>" + n(function (z) { return z.stand === "entwurf"; }) + "</b> als Entwurf, noch senden</p>" : "") +
       "<p><b>" + n(function (z) { return z.stand === "angebot"; }) + "</b> mit Angebot</p>" +
       "<p><b>" + n(function (z) { return z.stand === "antwort" || z.stand === "rueckfrage"; }) + "</b> Antwort in Arbeit</p>" +
       "<p><b>" + n(function (z) { return z.stand === "bestaetigt"; }) + "</b> nur Eingangsbestätigung</p>" +
       (n(function (z) { return z.stand === "reserviert"; }) ? "<p><b>" + n(function (z) { return z.stand === "reserviert"; }) + "</b> anderweitig reserviert</p>" : "") +
       "<p><b>" + n(function (z) { return z.stand === "angefragt"; }) + "</b> ohne Rückmeldung</p>" +
       '<p class="la-geprueft">Postfach zuletzt geprüft: ' + esc(datum(geprueft, true)) + " · stündlich</p></div>";
+    var gruppe = null;
     var zeilen = liste.map(function (z) {
+      var g = z.auswahl === "raus" ? "Aussortiert" : golf(z) ? "Golf-Hybride" : "Weitere Fahrzeuge", kopfzeile = "";
+      if (g !== gruppe) { gruppe = g; kopfzeile = '<tr class="la-gruppe-zeile"><td colspan="8">' + esc(g) + "</td></tr>"; }
       var b = bestes(z), fehlt = pflichtFehlt(z);
       // je Art (Leasing, 3-Wege) das günstigste Angebot: Kosten der GmbH je Monat (bei 3-Wege inkl. Anzahlung, Vorsteuer, Umsatzsteuer auf die Schlussrate)
       var jeArt = {};
@@ -135,7 +142,7 @@
       var privat = !pw.length ? '<span class="la-leer">offen</span>' : pw.map(function (x) {
         return '<span class="la-angebot la-pv' + (x.p != null && x.p === min ? " la-best" : "") + '">' + (x.p != null ? "<b>" + euro(x.p) + "</b> " : '<span class="la-leer">Liste fehlt</span> ') + x.k + "</span>";
       }).join("");
-      return '<tr class="la-z la-z--' + esc(z.auswahl) + '">' +
+      return kopfzeile + '<tr class="la-z la-z--' + esc(z.auswahl) + '">' +
         '<td>' + (z.bild_url ? '<img class="la-nur-mobil la-daumen" src="' + esc(klein(z.bild_url)) + '" alt="" loading="lazy">' : "") + '<a href="/strategie/leasing-anfrage.html?id=' + z.id + '">' + esc(z.titel) + '</a><small class="la-unter">EZ ' + esc(z.ez) + " · " + fz(z.km_stand) + " km" + (z.preis_inserat ? " · " + euro(z.preis_inserat) : "") + '</small><small class="la-unter la-nur-mittel">' + esc(z.haendler) + ", " + esc(z.ort) + '</small><span class="la-nur-klein la-chips">' + standChip(z) + auswahlChip(z) + "</span></td>" +
         '<td class="la-bildzelle">' + (z.bild_url ? '<a href="/strategie/leasing-anfrage.html?id=' + z.id + '" tabindex="-1"><img src="' + esc(klein(z.bild_url)) + '" alt="" loading="lazy"></a>' : "") + "</td>" +
         '<td class="la-mehr la-breit">' + esc(z.haendler) + '<small class="la-unter">' + esc(z.ort) + (z.fahrzeit ? " · " + esc(z.fahrzeit) : "") + "</small></td>" +

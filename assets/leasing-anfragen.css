@@ -89,3 +89,4 @@
 }
 .la-nur-mittel { display: none !important; }
 @media (max-width: 1100px) { .la-breit { display: none; } .la-nur-mittel { display: block !important; } }
+.la-ueb tr.la-gruppe-zeile td { padding: var(--s5) 0 var(--s2); border-bottom: 1px solid var(--ink); font-size: var(--fs-xs); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--grey-50); }
