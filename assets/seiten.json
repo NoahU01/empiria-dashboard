@@ -298,6 +298,15 @@
    "pos": 999
   },
   {
+   "datei": "leasing-anfrage.html",
+   "titel": "Angefragtes Fahrzeug",
+   "gruppe": "ohne Menü",
+   "eltern": null,
+   "kurz": "",
+   "im_diagramm": false,
+   "pos": 999
+  },
+  {
    "datei": "leasing-fahrzeug.html",
    "titel": "Leasing Fahrzeug",
    "gruppe": "ohne Menü",
@@ -343,5 +352,5 @@
    "pos": 999
   }
  ],
- "stand": "21.11.2026, 07:12 Uhr"
+ "stand": "23.11.2026, 06:30 Uhr"
 }
