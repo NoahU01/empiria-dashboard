@@ -21,7 +21,7 @@
   var KM = 7500, A = { strom_kwh: 0.3, e_aufschlag: 1.18, phev_kwh_100: 17, phev_anteil_elektrisch: 0.8, verbrenner_l_100: 7, benzin_brutto: 1.938, anteil_privat_firmenkosten: 0.5, steuersatz: 0.35 };
   var STAND = {
     angefragt: ["Angefragt", "offen"], bestaetigt: ["Eingang bestätigt", "offen"], antwort: ["Antwort da – wird ausgewertet", "neu"],
-    angebot: ["Angebot liegt vor", "gut"], rueckfrage: ["Rückfrage an dich", "neu"]
+    angebot: ["Angebot liegt vor", "gut"], rueckfrage: ["Rückfrage an dich", "neu"], reserviert: ["Anderweitig reserviert", "offen"]
   };
   var AUSWAHL = { offen: "noch offen", weiter: "Weiter interessant", raus: "Raus" };
 
@@ -103,13 +103,14 @@
     if (!liste.length) { uebersicht.innerHTML = '<p class="lf-unter">Noch keine Anfragen.</p>'; return; }
     var n = function (f) { return liste.filter(f).length; };
     var geprueft = liste.reduce(function (m, z) { return z.geprueft_am && (!m || z.geprueft_am > m) ? z.geprueft_am : m; }, null);
-    var RANG = { weiter: 0, offen: 1, raus: 2 }, SR = { rueckfrage: 0, angebot: 1, antwort: 2, bestaetigt: 3, angefragt: 4 };
+    var RANG = { weiter: 0, offen: 1, raus: 2 }, SR = { rueckfrage: 0, angebot: 1, antwort: 2, reserviert: 3, bestaetigt: 4, angefragt: 5 };
     liste.sort(function (a, b) { return (RANG[a.auswahl] - RANG[b.auswahl]) || ((SR[a.stand] || 9) - (SR[b.stand] || 9)) || (a.reihenfolge - b.reihenfolge); });
     var kopf = '<div class="la-lage">' +
       '<p><b>' + liste.length + "</b> angefragt</p>" +
       "<p><b>" + n(function (z) { return z.stand === "angebot"; }) + "</b> mit Angebot</p>" +
       "<p><b>" + n(function (z) { return z.stand === "antwort" || z.stand === "rueckfrage"; }) + "</b> Antwort in Arbeit</p>" +
       "<p><b>" + n(function (z) { return z.stand === "bestaetigt"; }) + "</b> nur Eingangsbestätigung</p>" +
+      (n(function (z) { return z.stand === "reserviert"; }) ? "<p><b>" + n(function (z) { return z.stand === "reserviert"; }) + "</b> anderweitig reserviert</p>" : "") +
       "<p><b>" + n(function (z) { return z.stand === "angefragt"; }) + "</b> ohne Rückmeldung</p>" +
       '<p class="la-geprueft">Postfach zuletzt geprüft: ' + esc(datum(geprueft, true)) + " · stündlich</p></div>";
     var zeilen = liste.map(function (z) {
@@ -133,17 +134,17 @@
         return '<span class="la-angebot la-pv' + (pw.length > 1 && x.p === min ? " la-best" : "") + '">' + (x.p != null ? "<b>" + euro(x.p) + "</b> " : '<span class="la-leer">Liste fehlt</span> ') + x.k + "</span>";
       }).join("");
       return '<tr class="la-z la-z--' + esc(z.auswahl) + '">' +
-        '<td>' + (z.bild_url ? '<img class="la-nur-mobil la-daumen" src="' + esc(klein(z.bild_url)) + '" alt="" loading="lazy">' : "") + '<a href="/strategie/leasing-anfrage.html?id=' + z.id + '">' + esc(z.titel) + '</a><small class="la-unter">EZ ' + esc(z.ez) + " · " + fz(z.km_stand) + " km" + (z.preis_inserat ? " · " + euro(z.preis_inserat) : "") + '</small><small class="la-unter la-nur-mobil">' + esc(z.haendler) + ", " + esc(z.ort) + "</small></td>" +
+        '<td>' + (z.bild_url ? '<img class="la-nur-mobil la-daumen" src="' + esc(klein(z.bild_url)) + '" alt="" loading="lazy">' : "") + '<a href="/strategie/leasing-anfrage.html?id=' + z.id + '">' + esc(z.titel) + '</a><small class="la-unter">EZ ' + esc(z.ez) + " · " + fz(z.km_stand) + " km" + (z.preis_inserat ? " · " + euro(z.preis_inserat) : "") + '</small><small class="la-unter la-nur-mittel">' + esc(z.haendler) + ", " + esc(z.ort) + '</small><span class="la-nur-klein la-chips">' + standChip(z) + auswahlChip(z) + "</span></td>" +
         '<td class="la-bildzelle">' + (z.bild_url ? '<a href="/strategie/leasing-anfrage.html?id=' + z.id + '" tabindex="-1"><img src="' + esc(klein(z.bild_url)) + '" alt="" loading="lazy"></a>' : "") + "</td>" +
-        '<td class="la-mehr">' + esc(z.haendler) + '<small class="la-unter">' + esc(z.ort) + (z.fahrzeit ? " · " + esc(z.fahrzeit) : "") + "</small></td>" +
-        "<td>" + standChip(z) + '<span class="la-nur-mobil">' + auswahlChip(z) + "</span></td>" +
+        '<td class="la-mehr la-breit">' + esc(z.haendler) + '<small class="la-unter">' + esc(z.ort) + (z.fahrzeit ? " · " + esc(z.fahrzeit) : "") + "</small></td>" +
+        '<td class="la-stand">' + standChip(z) + '<span class="la-nur-mobil">' + auswahlChip(z) + "</span></td>" +
         '<td class="la-mittel">' + ang + "</td>" +
         "<td>" + privat + '<small class="la-unter">' + esc(z.antrieb === "E" ? "0,25\u00a0%" : z.versteuerung && /Bescheinigung/.test(z.versteuerung) ? "0,5\u00a0% mit Bescheinigung" : "0,5\u00a0%") + "</small></td>" +
-        '<td class="la-mehr">' + (fehlt.length ? '<span class="la-fehlt">' + esc(fehlt.join(", ")) + " nicht aufgeführt</span>" : "✓ alle") + "</td>" +
+        '<td class="la-mehr la-breit">' + (fehlt.length ? '<span class="la-fehlt">' + esc(fehlt.join(", ")) + " nicht aufgeführt</span>" : "✓ alle") + "</td>" +
         '<td class="la-mehr">' + auswahlChip(z) + "</td></tr>";
     }).join("");
     uebersicht.innerHTML = kopf +
-      '<div class="la-tabelle"><table class="lf-vgl la-vgl la-ueb"><thead><tr><th>Fahrzeug</th><th class="la-bildzelle"><span class="la-sr">Bild</span></th><th class="la-mehr">Händler</th><th>Stand</th><th class="la-mittel">Monatlich netto</th><th>Privat im Monat</th><th class="la-mehr">Pflichtausstattung</th><th class="la-mehr">Auswahl</th></tr></thead><tbody>' +
+      '<div class="la-tabelle"><table class="lf-vgl la-vgl la-ueb"><thead><tr><th>Fahrzeug</th><th class="la-bildzelle"><span class="la-sr">Bild</span></th><th class="la-mehr la-breit">Händler</th><th class="la-stand">Stand</th><th class="la-mittel">Monatlich netto</th><th>Privat im Monat</th><th class="la-mehr la-breit">Pflichtausstattung</th><th class="la-mehr">Auswahl</th></tr></thead><tbody>' +
       bestand.map(vergleichszeile).join("") + zeilen + "</tbody></table></div>" +
       '<details class="lf-annahmen"><summary>So läuft es weiter</summary><ul>' +
       "<li><b>Überwachung:</b> Jede Stunde prüfe ich das empiria-Postfach auf Antworten in diesen Mailverläufen und von den Händler-Adressen. Eingangsbestätigungen werden nur vermerkt.</li>" +
@@ -158,11 +159,11 @@
     return '<tr class="la-heute">' +
       "<td><b>" + esc(z.titel) + '</b><small class="la-unter">' + esc(z.modell) + " · EZ " + esc(z.ez) + '</small><small class="la-unter la-nur-klein">' + (a ? euro(a.monatskosten_netto) + " netto im Monat" : "") + "</small></td>" +
       '<td class="la-bildzelle"></td>' +
-      '<td class="la-mehr">' + esc(z.haendler) + '<small class="la-unter">Vertrag bis 18.12.2026</small></td>' +
-      '<td><span class="la-chip la-chip--heute">Zum Vergleich</span></td>' +
+      '<td class="la-mehr la-breit">' + esc(z.haendler) + '<small class="la-unter">Vertrag bis 18.12.2026</small></td>' +
+      '<td class="la-stand"><span class="la-chip la-chip--heute">Zum Vergleich</span></td>' +
       '<td class="la-mittel">' + (a ? '<span class="la-angebot"><b>' + euro(a.monatskosten_netto) + "</b> Leasing · inkl. Wartung</span><small class=\"la-unter\">laut Buchhaltung</small>" : "–") + "</td>" +
       "<td>" + (r && r.privat != null ? "<b>" + euro(r.privat) + "</b>" : "–") + '<small class="la-unter">0,25\u00a0% · Liste geschätzt</small></td>' +
-      '<td class="la-mehr"></td>' +
+      '<td class="la-mehr la-breit"></td>' +
       '<td class="la-mehr"></td></tr>';
   }
 

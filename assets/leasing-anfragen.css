@@ -11,7 +11,8 @@
 .la-leer { color: var(--grey-50); }
 .la-fehlt { font-size: var(--fs-s); color: var(--grey-70); white-space: normal; }
 .la-ueb td:nth-child(7) { white-space: normal; min-width: 9em; }
-.la-vgl td.la-bildzelle { width: 112px; padding-right: var(--s4); }
+.la-vgl td.la-bildzelle { width: 104px; min-width: 96px; padding-right: var(--s3); }
+.la-bildzelle img { min-width: 88px; }
 .la-bildzelle img { display: block; width: 96px; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 8px; background: var(--linie-leicht); }
 .la-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 .la-z--raus td, .la-z--raus td a, .la-z--raus td b { color: #8a8780; }
@@ -69,7 +70,8 @@
 @media (max-width: 760px) { .la-v { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
 .la-fehler { color: var(--ink); }
 @media (max-width: 600px) { .la-mittel { display: none; } }
-.la-angebot { display: block; font-size: var(--fs-s); color: var(--grey-70); white-space: nowrap; }
+.la-angebot { display: block; font-size: var(--fs-s); color: var(--grey-70); white-space: normal; }
+.la-angebot b { white-space: nowrap; }
 .la-angebot + .la-angebot { margin-top: 4px; }
 .la-angebot b { font-size: var(--fs-m); }
 .la-heute td { background: var(--linie-leicht); border-bottom: 2px solid var(--ink); }
@@ -80,3 +82,10 @@
 @media (max-width: 600px) { .la-nur-klein { display: block !important; } }
 .la-vgl td .la-pv b { font-weight: 400; color: var(--grey-70); }
 .la-vgl td .la-pv.la-best b, .la-vgl td .la-pv:only-child b { font-weight: 700; color: var(--ink); }
+@media (max-width: 600px) {
+  .la-ueb .la-stand { display: none; }
+  .la-chips { display: flex !important; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .la-chips .la-chip, .la-chips .la-wahl { white-space: normal; }
+}
+.la-nur-mittel { display: none !important; }
+@media (max-width: 1100px) { .la-breit { display: none; } .la-nur-mittel { display: block !important; } }
