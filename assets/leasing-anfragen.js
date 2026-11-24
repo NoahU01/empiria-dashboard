@@ -60,6 +60,7 @@
     if (/vtpimages\.audi\.com/.test(u)) return u.replace(/\?im=.*$/, "") + "?im=Resize,width=240,height=180";
     return u;
   }
+  function ezText(z) { return /^\d/.test(z.ez || "") ? "EZ " + esc(z.ez) : esc(z.ez || ""); }
   function pflichtFehlt(z) { return Object.keys(z.pflicht || {}).filter(function (k) { return z.pflicht[k] !== "ja"; }); }
   function tageSeit(d) { return Math.floor((Date.now() - new Date(d).getTime()) / 86400000); }
   function werktageSeit(d) {
@@ -105,7 +106,7 @@
     var geprueft = liste.reduce(function (m, z) { return z.geprueft_am && (!m || z.geprueft_am > m) ? z.geprueft_am : m; }, null);
     var RANG = { weiter: 0, offen: 1, raus: 2 }, SR = { rueckfrage: 0, angebot: 1, antwort: 2, reserviert: 3, bestaetigt: 4, angefragt: 5, entwurf: 6 };
     // Reihenfolge (Daniel, 23.11.2026): Golf-Hybride zuerst, dann alle anderen; je Gruppe die günstigste Variante (privat) oben, „Raus“ ans Ende
-    var golf = function (z) { return /golf/i.test(z.modell || z.titel) && z.antrieb === "PHEV"; };
+    var golf = function (z) { return /golf|leon/i.test(z.modell || z.titel) && z.antrieb === "PHEV"; };  // Golf und Cupra Leon e-Hybrid (gleiche Technik)
     var guenstig = function (z) { var b = bestes(z); return b ? (b.r.privat != null ? b.r.privat : b.r.firma) : Infinity; };
     liste.sort(function (a, b) { return ((a.auswahl === "raus") - (b.auswahl === "raus")) || (golf(b) - golf(a)) || (guenstig(a) - guenstig(b)) || (a.reihenfolge - b.reihenfolge); });
     var kopf = '<div class="la-lage">' +
@@ -119,7 +120,7 @@
       '<p class="la-geprueft">Postfach zuletzt geprüft: ' + esc(datum(geprueft, true)) + " · stündlich</p></div>";
     var gruppe = null;
     var zeilen = liste.map(function (z) {
-      var g = z.auswahl === "raus" ? "Aussortiert" : golf(z) ? "Golf-Hybride" : "Weitere Fahrzeuge", kopfzeile = "";
+      var g = z.auswahl === "raus" ? "Aussortiert" : golf(z) ? "Golf-Hybride und Cupra Leon" : "Weitere Fahrzeuge", kopfzeile = "";
       if (g !== gruppe) { gruppe = g; kopfzeile = '<tr class="la-gruppe-zeile"><td colspan="8">' + esc(g) + "</td></tr>"; }
       var b = bestes(z), fehlt = pflichtFehlt(z);
       // je Art (Leasing, 3-Wege) das günstigste Angebot: Kosten der GmbH je Monat (bei 3-Wege inkl. Anzahlung, Vorsteuer, Umsatzsteuer auf die Schlussrate)
@@ -143,7 +144,7 @@
         return '<span class="la-angebot la-pv' + (x.p != null && x.p === min ? " la-best" : "") + '">' + (x.p != null ? "<b>" + euro(x.p) + "</b> " : '<span class="la-leer">Liste fehlt</span> ') + x.k + "</span>";
       }).join("");
       return kopfzeile + '<tr class="la-z la-z--' + esc(z.auswahl) + '">' +
-        '<td>' + (z.bild_url ? '<img class="la-nur-mobil la-daumen" src="' + esc(klein(z.bild_url)) + '" alt="" loading="lazy">' : "") + '<a href="/strategie/leasing-anfrage.html?id=' + z.id + '">' + esc(z.titel) + '</a><small class="la-unter">EZ ' + esc(z.ez) + " · " + fz(z.km_stand) + " km" + (z.preis_inserat ? " · " + euro(z.preis_inserat) : "") + '</small><small class="la-unter la-nur-mittel">' + esc(z.haendler) + ", " + esc(z.ort) + '</small><span class="la-nur-klein la-chips">' + standChip(z) + auswahlChip(z) + "</span></td>" +
+        '<td>' + (z.bild_url ? '<img class="la-nur-mobil la-daumen" src="' + esc(klein(z.bild_url)) + '" alt="" loading="lazy">' : "") + '<a href="/strategie/leasing-anfrage.html?id=' + z.id + '">' + esc(z.titel) + '</a><small class="la-unter">' + ezText(z) + " · " + fz(z.km_stand) + " km" + (z.preis_inserat ? " · " + euro(z.preis_inserat) : "") + '</small><small class="la-unter la-nur-mittel">' + esc(z.haendler) + ", " + esc(z.ort) + '</small><span class="la-nur-klein la-chips">' + standChip(z) + auswahlChip(z) + "</span></td>" +
         '<td class="la-bildzelle">' + (z.bild_url ? '<a href="/strategie/leasing-anfrage.html?id=' + z.id + '" tabindex="-1"><img src="' + esc(klein(z.bild_url)) + '" alt="" loading="lazy"></a>' : "") + "</td>" +
         '<td class="la-mehr la-breit">' + esc(z.haendler) + '<small class="la-unter">' + esc(z.ort) + (z.fahrzeit ? " · " + esc(z.fahrzeit) : "") + "</small></td>" +
         '<td class="la-stand">' + standChip(z) + '<span class="la-nur-mobil">' + auswahlChip(z) + "</span></td>" +
@@ -169,7 +170,7 @@
   function vergleichszeile(z) {
     var a = (z.angebote || [])[0], r = a ? rechne(z, a) : null;
     return '<tr class="la-heute">' +
-      "<td><b>" + esc(z.titel) + '</b><small class="la-unter">' + esc(z.modell) + " · EZ " + esc(z.ez) + '</small><small class="la-unter la-nur-klein">' + (a ? euro(a.monatskosten_netto) + " netto im Monat" : "") + "</small></td>" +
+      "<td><b>" + esc(z.titel) + '</b><small class="la-unter">' + esc(z.modell) + " · " + ezText(z) + '</small><small class="la-unter la-nur-klein">' + (a ? euro(a.monatskosten_netto) + " netto im Monat" : "") + "</small></td>" +
       '<td class="la-bildzelle"></td>' +
       '<td class="la-mehr la-breit">' + esc(z.haendler) + '<small class="la-unter">Vertrag bis 18.12.2026</small></td>' +
       '<td class="la-stand"><span class="la-chip la-chip--heute">Zum Vergleich</span></td>' +
