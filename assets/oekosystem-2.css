@@ -1,0 +1,50 @@
+/* Ökosystem 2.0 (Daniel, 24.11.2026): gleiche Mechanik wie oekosystem.css, dazu
+   elf Quellen, Rollen in der Intelligenzschicht, Fehler in Rot und Ebene 2 als Fenster in der Mitte. */
+
+.oe2-unter { max-width: 70ch; margin: .6rem 0 0; font-size: var(--fs-m); line-height: 1.6; color: var(--grey-70); }
+
+/* Elf Quellen statt zehn */
+.oe2-quellen { grid-template-columns: repeat(11, minmax(0, 1fr)); }
+
+/* Die Bereiche der Datenbank als Kürzel im Kasten */
+.oe-knoten--speicher .oe-werkzeuge { flex-wrap: wrap; }
+.oe-knoten--speicher .oe-werkzeug { letter-spacing: 0; font-weight: 500; }
+
+/* Rollen im schwarzen Kasten: hell auf Schwarz, einzeln anklickbar */
+.oe2-rollen { flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+.oe2-rolle { cursor: pointer; background: rgba(255,255,255,.08); color: #fff;
+             box-shadow: inset 0 0 0 1px rgba(255,255,255,.28); letter-spacing: 0; font-weight: 500; padding: 2px 8px; }
+.oe2-rolle:hover { background: var(--hl); color: var(--ink); box-shadow: none; }
+.oe-knoten--gross.is-offen .oe2-rolle { color: var(--ink); background: rgba(0,0,0,.06); box-shadow: inset 0 0 0 1px rgba(26,24,23,.3); }
+.oe-knotenplatz .oe-knoten--gross { width: 360px; max-width: 360px; }
+
+/* Fehler: Kasten hellrot mit rotem Rahmen und Infozeichen, Leitung rot durchgezogen (Daniel, 06.10.2026) */
+.oe-knoten.ist-fehler:not(.is-offen) { border: 1.5px solid #f0495a; background: #fff3f4; }
+.oe-knoten.ist-fehler { position: relative; padding-right: 30px; }
+.oe-knoten.ist-fehler::after { content: "i"; position: absolute; top: 8px; right: 8px; width: 17px; height: 17px;
+  display: grid; place-items: center; border-radius: 50%; background: #f0495a; color: #fff;
+  font: 700 11px/1 Georgia, serif; }
+.oe-draht.oe-draht--fehler { stroke: #f0495a; stroke-dasharray: none; stroke-width: 2; }
+.oe-draehte.ist-gefiltert .oe-draht--fehler.ist-hell { stroke: #f0495a; }
+
+/* Ebene 2 als ruhiges Fenster in der Mitte statt als Tafel am Rand */
+.oe2 .oe-raum:has(.oe-plan--verdrahtung) .oe-feld {
+  top: 50%; left: 50%; right: auto; transform: translate(-50%, -50%);
+  width: min(620px, calc(100vw - 32px)); max-height: calc(100vh - 64px); overflow-y: auto;
+  border: 1px solid #e4e1dd; border-radius: 16px; padding: 32px 32px 30px;
+  box-shadow: 0 0 0 100vmax rgba(26,24,23,.28), 0 24px 60px rgba(0,0,0,.18); z-index: 50; }
+.oe2 .oe-feld-titel { margin-top: .5rem; }
+.oe2 .oe-feld-satz { font-size: var(--fs-m); line-height: 1.7; margin-top: 1rem; }
+.oe2 .oe-feld-spalten { gap: 22px; margin-top: 24px; }
+.oe-marke--laeuft { background: #eceae6; color: var(--grey-70); }
+.oe-marke--fehler { background: #f0495a; color: #fff; }
+.oe2-fehler .oe-feld-tag { color: #d6283a; }
+.oe2-fehler .oe-feld-liste li { color: var(--ink); }
+.oe2-fehler .oe-feld-liste li::before { background: #f0495a; }
+
+@media (max-width: 600px) {
+  .oe2 .oe-raum:has(.oe-plan--verdrahtung) .oe-feld { padding: 26px 20px 24px; }
+}
+
+/* Dunkel: Fehlerkasten getönt statt hellrosa, damit die helle Schrift lesbar bleibt */
+html[data-farbe="dunkel"] .oe-knoten.ist-fehler:not(.is-offen) { background: rgba(240,73,90,.14); }
