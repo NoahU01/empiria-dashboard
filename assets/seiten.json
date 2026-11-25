@@ -262,12 +262,21 @@
    "im_diagramm": true
   },
   {
+   "datei": "oekosystem-2.html",
+   "titel": "Ökosystem 2.0",
+   "gruppe": "Überblick",
+   "eltern": null,
+   "kurz": "Was angebunden ist und was funktioniert",
+   "pos": 26,
+   "im_diagramm": false
+  },
+  {
    "datei": "sitemap-dashboard.html",
    "titel": "Sitemap Dashboard",
    "gruppe": "Überblick",
    "eltern": null,
    "kurz": "Wie die Seiten zusammenhängen",
-   "pos": 26,
+   "pos": 27,
    "im_diagramm": true
   },
   {
@@ -276,7 +285,7 @@
    "gruppe": "Überblick",
    "eltern": null,
    "kurz": "Visualisierung: wie aus Strategie Tickets werden",
-   "pos": 27,
+   "pos": 28,
    "im_diagramm": true
   },
   {
@@ -352,5 +361,5 @@
    "pos": 999
   }
  ],
- "stand": "23.11.2026, 08:10 Uhr"
+ "stand": "25.11.2026, 06:30 Uhr"
 }
