@@ -956,23 +956,24 @@ html.pj-plan-voll-offen { overflow: hidden; }
 .pj-verlauf-liste p { margin: 2px 0 0 !important; font-size: 13px; color: #6e6e73; }
 @media (max-width: 700px) { .pj-ag-block { grid-template-columns: minmax(0, 1fr); gap: 4px; } .pj-ag-koerper { grid-template-columns: minmax(0, 1fr); } .pj-ag-bild svg { width: 120px; } }
 .tp-detail .tp-zw { margin: 16px 0 6px; font-weight: 600; }
-/* Projekt: drei Bereiche Stand · Weg · Aufgaben und Entscheidungen (Daniel, 26.11.2026) – Kopf als Leiste, Inhalt darunter, kein Kasten im Kasten */
-.pj-drei { max-width: 1240px; margin: 0 auto; display: grid; gap: 14px; }
-.pj-bereich > summary { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 16px 22px; border-radius: 20px; background: #fff; cursor: pointer; list-style: none; }
-.pj-bereich > summary::-webkit-details-marker { display: none; }
-.pj-bereich > summary::after { content: ""; width: 9px; height: 9px; border-right: 1.8px solid #86868b; border-bottom: 1.8px solid #86868b; transform: rotate(45deg); margin: 0 4px 4px 0; }
-.pj-bereich[open] > summary::after { transform: rotate(225deg); margin: 4px 4px 0 0; }
-.pj-b-nr { width: 30px; height: 30px; border-radius: 50%; background: var(--tinte); color: #fff; display: grid; place-items: center; font: 600 14px/1 "Inter", system-ui, sans-serif; }
-.pj-bereich > summary h2 { margin: 0; font: 700 20px/1.2 "Inter Tight", "Inter", system-ui, sans-serif; color: var(--tinte); }
-.pj-bereich > summary p { margin: 3px 0 0; font-size: 14px; line-height: 1.4; color: #6e6e73; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pj-bereich[open] > summary p { display: none; }
-.pj-b-inhalt { display: grid; gap: 12px; margin: 12px 0 18px 0; min-width: 0; }
-.pj-b-inhalt > .pj-seite { padding: 0 6px; }
-.pj-b-inhalt > .lage-alt { justify-self: start; }
-.pj-b-inhalt .pj-fahrplan { grid-column: auto; }
-@media (max-width: 600px) { .pj-bereich > summary { padding: 14px 16px; gap: 10px; } .pj-bereich > summary h2 { font-size: 18px; } }
-html[data-farbe="dunkel"] .pj-bereich > summary { background: #1c1c1e; }
-html[data-farbe="dunkel"] .pj-b-nr { background: #f5f5f7; color: #1c1c1e; }
-.pj-b-inhalt > .pj-seite { justify-content: flex-start; }
 .pj-wege .e-k[aria-pressed="true"] { background: var(--tinte); border-color: var(--tinte); color: #fff; }
 html[data-farbe="dunkel"] .pj-wege .e-k[aria-pressed="true"] { background: #f5f5f7; color: #1c1c1e; }
+/* Projekt: neue Ansicht (Daniel, 26.11.2026) – zwei Spalten wie eine Projektübersicht */
+.pb { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; align-items: start; }
+.pb-haupt, .pb-seite { display: grid; gap: 12px; min-width: 0; }
+.pb .pj-fahrplan, .pb .pj-sb-details { grid-column: auto; }
+.pb-seite .pj-spalten { grid-template-columns: minmax(0, 1fr) !important; }
+.pb-liste { list-style: none; margin: 4px 0 0; padding: 0 !important; display: grid; gap: 0 !important; }
+.pb-liste li { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 14px; padding: 10px 0; border-top: 1px solid #f0f0f2; }
+.pb-liste li:first-child { border-top: 0; }
+.pb-d { font: 600 14px/1.3 "Inter", system-ui, sans-serif; color: var(--tinte); }
+.pb-d small, .pb-liste li div small { display: block; font: 400 13px/1.4 "Inter", system-ui, sans-serif; color: #86868b; }
+.pb-liste li div b { font: 500 15px/1.4 "Inter", system-ui, sans-serif; color: var(--tinte); }
+.pb-ueber .pb-d, .pb-ueber div small { color: #c62828; }
+.pb-mehr { margin: 10px 0 0; font-size: 13px; color: #86868b; }
+.pb-lagebericht { margin-top: 14px; padding: 12px 0 0 !important; border-top: 1px solid #f0f0f2; border-radius: 0 !important; background: none !important; box-shadow: none !important; }
+.pb-lagebericht summary h2 { font-size: 14px !important; font-weight: 600 !important; color: #6e6e73 !important; }
+.pb-seite .pj-seite { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 12px; padding: 12px 0 0; border-top: 1px solid #f0f0f2; }
+.pb-seite .lage-alt { margin-top: 12px; }
+@media (max-width: 1000px) { .pb { grid-template-columns: minmax(0, 1fr); } }
+html[data-farbe="dunkel"] .pb-liste li, html[data-farbe="dunkel"] .pb-lagebericht, html[data-farbe="dunkel"] .pb-seite .pj-seite { border-color: #2c2c2e; }
