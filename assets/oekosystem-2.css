@@ -52,6 +52,13 @@ html[data-farbe="dunkel"] .oe-knoten.ist-fehler:not(.is-offen) { background: rgb
 /* Weiche zwischen Intelligenzschicht/Dashboard und Aktionen (Daniel, 26.11.2026): kleiner Kasten,
    Inhalt im Fenster; „Ticket“ gestrichelt, solange das Ticketsystem nicht läuft */
 .oe2-weicheplatz { display: flex; justify-content: center; margin: 48px 0 20px; position: relative; z-index: 1; }
-.oe2-weiche { width: 170px; }
-.oe2-weiche .oe-werkzeuge { gap: 5px; }
-.oe2-spur-geplant { box-shadow: none; outline: 1px dashed #b8b2ab; outline-offset: -1px; color: var(--grey-50); }
+/* Die Weiche als Segmentschalter wie auf dem iPhone (Daniel, 26.11.2026): jeder Auftrag geht entweder
+   sofort oder als Ticket; „Ticket“ gestrichelt, solange das Ticketsystem nicht läuft. Alles mittig. */
+.oe2-weiche { width: 190px; justify-items: center; text-align: center; gap: 8px; padding: 10px 10px 12px; }
+.oe2-regler { display: inline-flex; padding: 2px; border-radius: 999px; background: #e9e6e2; }
+.oe2-regler-teil { padding: 3px 14px; border-radius: 999px; font-size: var(--fs-xs); font-weight: 600; line-height: 1.5; color: var(--grey-50); }
+.oe2-regler-teil.ist-an { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.16); }
+.oe2-regler-teil--geplant { outline: 1px dashed #b8b2ab; outline-offset: -3px; }
+.oe2-weiche.is-offen .oe2-regler { background: rgba(26,24,23,.1); }
+html[data-farbe="dunkel"] .oe2-regler { background: #1c1c1e; }
+html[data-farbe="dunkel"] .oe2-regler-teil.ist-an { background: #48484a; color: #fff; box-shadow: none; }
