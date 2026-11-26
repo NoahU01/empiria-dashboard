@@ -965,7 +965,7 @@
       var ter = PJ.termine.filter(function (t) { return t.projekt_id === pid || String(t.betreff || "").toLowerCase().indexOf(nameKlein) >= 0; });
       el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>' + esc(p.name) + "</h1><span>" + esc(p.marke) + " · " + (p.typ === "Kunde" ? "Kundenprojekt" : "internes Projekt") + (p.phase ? " · " + esc(p.phase) : "") + "</span></div>" +
         // Absprung zur Kundenprojektseite und Methodenkoffer (Daniel, 20.11.2026)
-        '<nav class="pj-wege"><button type="button" class="e-k" data-pj-ansicht aria-pressed="' + (pjAnsicht() === "brief") + '">Neue Ansicht</button><a class="e-k" href="/strategie/methoden.html">Methodenkoffer</a></nav>' + waehler + "</header>" +
+        '<nav class="pj-wege"><button type="button" class="e-k" data-pj-ansicht>' + (pjAnsicht() === "brief" ? "Bisherige Ansicht" : "Neue Ansicht") + '</button><a class="e-k" href="/strategie/methoden.html">Methodenkoffer</a></nav>' + waehler + "</header>" +
         // Projektseite mit allen Verknüpfungen wie im alten Dashboard: Seite, Teile (z. B. „Live“), Repository (Daniel, 21.11.2026: „Die Links brauche ich unbedingt“)
         (function (s) { if (!s || !s.url) return ""; var raus = function (u) { return u.charAt(0) === "/" ? "" : ' target="_blank" rel="noopener"'; };
           return '<nav class="pj-seite" aria-label="Projektseite"><span>Projektseite</span><a href="' + esc(s.url) + '"' + raus(s.url) + "><b>" + esc(s.titel || "Website") + "</b> " + (s.url.charAt(0) === "/" ? "→" : "↗") + "</a>" +
@@ -1011,7 +1011,7 @@
         "</div></section></div>";
       if (pjAnsicht() === "brief") projektBrief(offen, ter);
       var ab = el.querySelector("[data-pj-ansicht]");
-      if (ab) ab.onclick = function () { try { localStorage.setItem("projekt-ansicht", pjAnsicht() === "brief" ? "bisher" : "brief"); } catch (x) {} projektSeite(); };
+      if (ab) ab.onclick = function () { try { localStorage.setItem("projekt-ansicht-2", pjAnsicht() === "brief" ? "bisher" : "brief"); } catch (x) {} projektSeite(); };
     }
     var w = el.querySelector(".pj-waehler"); if (w) w.onchange = function () { location.hash = w.value ? "p=" + w.value : ""; };
     if (p) { tpLaden(pid, ter); steckbriefLaden(p); }
@@ -1146,7 +1146,8 @@
      Aufgebaut wie die Projektübersicht in Projektwerkzeugen (Linear, Asana, Basecamp): Worum es geht → wie es steht → was als Nächstes passiert
      (Termine und fällige Aufgaben auf einer Zeitachse) → Termine mit Protokollen → Fahrplan; rechts Aufgaben, Entscheidungen, Unterlagen.
      Der Lagebericht steht im Stand statt daneben; Verlauf und „Zuletzt erledigt“ entfallen in dieser Ansicht. Umschaltbar, bisherige Anordnung bleibt Standard. */
-  function pjAnsicht() { try { return localStorage.getItem("projekt-ansicht") || "bisher"; } catch (x) { return "bisher"; } }
+  // Seit 26.11.2026 Startansicht (Daniel: „wir machen die neue Ansicht bitte“); die bisherige bleibt über den Knopf oben erreichbar
+  function pjAnsicht() { try { return localStorage.getItem("projekt-ansicht-2") || "brief"; } catch (x) { return "brief"; } }
   function projektBrief(offen, ter) {
     var raster = el.querySelector(".lg-raster"); if (!raster) return;
     var q = function (sel) { return el.querySelector(sel); };
