@@ -2245,7 +2245,7 @@ main.kt-main .kt-kopf-art { color: var(--grey-50); }
 @media (max-width: 760px) { body.kt3-detail main.kt-main .db-konto { display: none; } }
 main.kt-main .kt-kopf-zurueck { color: inherit; text-decoration: none; }
 main.kt-main .kt-kopf-zurueck:hover { text-decoration: underline; text-underline-offset: 3px; }
-main.kt-main .kt-info { margin: 0 0 4px; }
+main.kt-main .kt-info { margin: 0 0 14px; }   /* gleicher Abstand wie zwischen allen Kästen (Daniel, 26.11.2026) */
 main.kt-main .kt-info-sub { margin: 0; font-size: var(--fs-l); font-weight: 300; color: var(--ink-2); }
 main.kt-main .kt-info-sub a { color: var(--ink); }
 main.kt-main .kt-info-tags { margin: 6px 0 0; font-size: var(--fs-s); color: var(--grey-50); }
