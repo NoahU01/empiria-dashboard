@@ -51,7 +51,7 @@ html[data-farbe="dunkel"] .oe-knoten.ist-fehler:not(.is-offen) { background: rgb
 
 /* Weiche zwischen Intelligenzschicht/Dashboard und Aktionen (Daniel, 26.11.2026): kleiner Kasten,
    Inhalt im Fenster; „Ticket“ gestrichelt, solange das Ticketsystem nicht läuft */
-.oe2-weicheplatz { display: flex; justify-content: center; margin: 48px 0 20px; position: relative; z-index: 1; }
+.oe2-weicheplatz { display: flex; justify-content: center; margin: -20px 0 8px; position: relative; z-index: 1; }
 /* Die Weiche als Kippschalter wie in den iPhone-Einstellungen (Daniel, 26.11.2026): Bahn mit rundem Knopf,
    links „Sofort“, rechts „Ticket“. Der Knopf steht auf Sofort; „Ticket“ grau und gestrichelt unterstrichen,
    solange das Ticketsystem nicht läuft. Alles mittig. */
@@ -65,3 +65,18 @@ html[data-farbe="dunkel"] .oe-knoten.ist-fehler:not(.is-offen) { background: rgb
 html[data-farbe="dunkel"] .oe2-schalter { background: #48484a; }
 html[data-farbe="dunkel"] .oe2-regler-wort { color: #fff; }
 html[data-farbe="dunkel"] .oe2-regler-wort--geplant { color: #8e8e93; }
+
+/* Dunkel ohne Blendung (Daniel, 26.11.2026): Intelligenzschicht und Dashboard als dunkle, leicht
+   abgehobene Flächen statt hellweiß; Gelb nur als Schrift auf leichtem Gelbschimmer; geöffnete Kästen
+   mit gelbem Rand statt gelber Fläche. Höhere Spezifität, weil dunkel.css danach geladen wird. */
+html[data-farbe="dunkel"] .oe2 .oe-knoten--gross { background: #2c2c2e; border-color: #545456; color: #fff; }
+html[data-farbe="dunkel"] .oe2 .oe-knoten--gross:hover { background: #3a3a3c; border-color: #8e8e93; }
+html[data-farbe="dunkel"] .oe2 .oe-knoten--gross .oe-knoten-unter { color: rgba(255,255,255,.62); }
+html[data-farbe="dunkel"] .oe2 .oe-marke--ausfuehrung,
+html[data-farbe="dunkel"] .oe2 .oe-marke--ansicht { background: rgba(255,244,0,.13); color: #fff400; }
+html[data-farbe="dunkel"] .oe2 .oe-knoten.is-offen,
+html[data-farbe="dunkel"] .oe2 .oe-knoten--gross.is-offen { background: #3a3a3c; border-color: #fff400; color: #fff; }
+html[data-farbe="dunkel"] .oe2 .oe-knoten.is-offen .oe-knoten-unter,
+html[data-farbe="dunkel"] .oe2 .oe-knoten--gross.is-offen .oe-knoten-unter { color: rgba(255,255,255,.62); }
+html[data-farbe="dunkel"] .oe2 .oe-knoten--gross.is-offen .oe-marke--ausfuehrung,
+html[data-farbe="dunkel"] .oe2 .oe-knoten--gross.is-offen .oe-marke--ansicht { background: rgba(255,244,0,.13); color: #fff400; }
