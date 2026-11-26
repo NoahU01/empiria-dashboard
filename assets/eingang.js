@@ -963,7 +963,7 @@
       var ter = PJ.termine.filter(function (t) { return t.projekt_id === pid || String(t.betreff || "").toLowerCase().indexOf(nameKlein) >= 0; });
       el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>' + esc(p.name) + "</h1><span>" + esc(p.marke) + " · " + (p.typ === "Kunde" ? "Kundenprojekt" : "internes Projekt") + (p.phase ? " · " + esc(p.phase) : "") + "</span></div>" +
         // Absprung zur Kundenprojektseite und Methodenkoffer (Daniel, 20.11.2026)
-        '<nav class="pj-wege"><a class="e-k" href="/strategie/methoden.html">Methodenkoffer</a></nav>' + waehler + "</header>" +
+        '<nav class="pj-wege"><button type="button" class="e-k" data-pj-ansicht aria-pressed="' + (pjAnsicht() === "drei") + '">Drei Bereiche</button><a class="e-k" href="/strategie/methoden.html">Methodenkoffer</a></nav>' + waehler + "</header>" +
         // Projektseite mit allen Verknüpfungen wie im alten Dashboard: Seite, Teile (z. B. „Live“), Repository (Daniel, 21.11.2026: „Die Links brauche ich unbedingt“)
         (function (s) { if (!s || !s.url) return ""; var raus = function (u) { return u.charAt(0) === "/" ? "" : ' target="_blank" rel="noopener"'; };
           return '<nav class="pj-seite" aria-label="Projektseite"><span>Projektseite</span><a href="' + esc(s.url) + '"' + raus(s.url) + "><b>" + esc(s.titel || "Website") + "</b> " + (s.url.charAt(0) === "/" ? "→" : "↗") + "</a>" +
@@ -1007,6 +1007,9 @@
 
           '<a class="e-k lage-alt" href="/strategie/projekte.html#p=' + pid + '">Bisherige Projektseite (Plan, Protokolle)</a></aside>' +
         "</div></section></div>";
+      if (pjAnsicht() === "drei") dreiBereiche(s, offen, ter);
+      var ab = el.querySelector("[data-pj-ansicht]");
+      if (ab) ab.onclick = function () { try { localStorage.setItem("projekt-ansicht", pjAnsicht() === "drei" ? "bisher" : "drei"); } catch (x) {} projektSeite(); };
     }
     var w = el.querySelector(".pj-waehler"); if (w) w.onchange = function () { location.hash = w.value ? "p=" + w.value : ""; };
     if (p) { tpLaden(pid, ter); steckbriefLaden(p); }
@@ -1135,6 +1138,28 @@
       (verlauf.length > 25 ? '<button type="button" class="pj-alle" data-verlauf-alle>Alle ' + verlauf.length + " zeigen</button>" : "")) : "";
     var va = unten.querySelector("[data-verlauf-alle]");
     if (va) va.onclick = function () { unten.querySelectorAll(".pj-mehr-verlauf").forEach(function (x) { x.hidden = false; }); va.remove(); };
+  }
+  /* Drei Bereiche (Daniel, 26.11.2026: „Information Overkill … früher hatte ich eher drei Hauptbereiche, in die ich reingehen konnte und dann tiefer“):
+     dieselben Inhalte wie bisher, nichts entfällt – nur neu geordnet in Stand · Weg · Aufgaben und Entscheidungen, jeder Bereich aufklappbar.
+     Umschaltbar über „Drei Bereiche“ oben; die bisherige Anordnung bleibt Standard, bis Daniel entscheidet. */
+  function pjAnsicht() { try { return localStorage.getItem("projekt-ansicht") || "bisher"; } catch (x) { return "bisher"; } }
+  function dreiBereiche(s, offen, ter) {
+    var raster = el.querySelector(".lg-raster"); if (!raster) return;
+    var q = function (sel) { return el.querySelector(sel); };
+    var kasten = function (titel) { return [].slice.call(el.querySelectorAll(".lg-rechts > .lg-kasten, .lg-links > .lg-kasten")).filter(function (k) { var h = k.querySelector("h2"); return h && h.textContent === titel; })[0]; };
+    var jetzt = Date.now(), nt = ter.filter(function (t) { return new Date(t.start).getTime() >= jetzt; }).sort(function (a, b) { return new Date(a.start) - new Date(b.start); })[0];
+    var du = offen.filter(function (a) { return wer2(a) === "du"; })[0];
+    var bereich = function (nr, titel, kurz, auf) {
+      var d = document.createElement("details"); d.className = "pj-bereich"; d.open = !!auf;
+      d.innerHTML = '<summary><span class="pj-b-nr">' + nr + '</span><div><h2>' + titel + "</h2><p>" + kurz + '</p></div></summary><div class="pj-b-inhalt"></div>'; return d; };
+    var b1 = bereich(1, "Stand", s ? esc(AMPEL[s.ampel][0]) + " · Stand " + datum(s.gilt_fuer) + (s.naechster_schritt ? " · Nächster Schritt: " + esc(s.naechster_schritt) : "") : "Worum es geht, Lagebericht, Überlegungen, Arbeitsstände", true);
+    var b2 = bereich(2, "Weg", nt ? "Nächster Termin: " + tpTag(nt.start) + (tpZeit(nt.start) ? " · " + tpZeit(nt.start) : "") + " · " + esc(nt.betreff) : "Fahrplan, Termine mit Vorbereitung und Protokoll, Verlauf", false);
+    var b3 = bereich(3, "Aufgaben und Entscheidungen", du ? "Als Nächstes bei dir: " + esc(du.titel) : "Was bei dir, bei Claude und bei anderen liegt", false);
+    var rein = function (b, x) { if (x) b.querySelector(".pj-b-inhalt").appendChild(x); };
+    [q(".pj-stand"), q(".pj-steckbrief"), q("[data-pj-mehr]"), kasten("Arbeitsstände"), q(".pj-seite"), q(".lage-alt")].forEach(function (x) { rein(b1, x); });
+    [q(".pj-fp"), kasten("Meilensteine"), q(".pj-tp"), q("[data-pj-verlauf]")].forEach(function (x) { rein(b2, x); });
+    [q(".pj-spalten"), kasten("Offene Entscheidungen"), q(".pj-erledigt")].forEach(function (x) { rein(b3, x); });
+    raster.innerHTML = ""; raster.className = "pj-drei"; [b1, b2, b3].forEach(function (b) { raster.appendChild(b); });
   }
   function iso2(ts) { return new Date(ts).toLocaleDateString("sv-SE", { timeZone: "Europe/Berlin" }); }
 
