@@ -736,7 +736,7 @@
       db.from("aufgaben").select("id, projekt_id, titel, beschreibung, verantwortlich, faellig_am, ticket_stand, ticket_rueckmeldung, spalte, art, status, erledigt_am, warten_auf, hinweis")
         .or("status.eq.offen,erledigt_am.gte." + plus(-14)),
       db.from("vorlagen").select("id, projekt_id, titel, kern, art").eq("status", "offen"),
-      db.from("termine").select("start, ende, betreff, kalender, postfach, projekt_id, vorbereitung, graph_id").eq("im_kalender", true).gte("start", new Date().toISOString()).order("start"),
+      db.from("termine").select("id, ical_uid, start, ende, betreff, kalender, postfach, projekt_id, vorbereitung, graph_id").eq("im_kalender", true).gte("start", plus(-365)).order("start"),
       db.from("projekt_ereignisse").select("id, projekt_id, datum, art, titel, aktivitaet_extern").gte("datum", plus(-30)).lte("datum", plus(120)).order("datum"),
       db.from("eingang").select("typ, frist"),
       db.from("projekt_verlauf").select("projekt_id, datum, titel, inhalt").eq("art", "arbeitsstand").order("datum", { ascending: false }).limit(200)
@@ -772,7 +772,11 @@
   function tpZeit(ts) { var u = uhr(ts); return u && u !== "00:00" ? u : ""; }
   function tpTag(ts) { var d = iso2(ts); return new Date(d + "T12:00:00").toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit", year: d.slice(0, 4) === HEUTE.slice(0, 4) ? undefined : "2-digit", timeZone: "Europe/Berlin" }); }
   function tpLaden(pid, ter) {
-    TP = { pid: pid, l: null, punkte: [], aufgaben: [], wahl: null };
+    TP = { pid: pid, l: null, punkte: [], aufgaben: [], wahl: null, br: {} };
+    // Briefings der Termine (Stabschef oder von Daniel vorgegeben) gehören als Vorbereitung an den Termin (Daniel, 26.11.2026)
+    var uids = ter.map(function (t) { return t.ical_uid; }).filter(Boolean);
+    var brLaden = uids.length ? db.from("termin_briefing").select("ical_uid, zusammenfassung, ziel, punkte, fragen").in("ical_uid", uids) : Promise.resolve({ data: [] });
+    brLaden.then(function (rb) { if (TP.pid !== pid) return; (rb.data || []).forEach(function (b) { if (uids.indexOf(b.ical_uid) >= 0) TP.br[b.ical_uid] = b; }); if (TP.l) tpZeichnen(); });
     db.from("projekt_ereignisse").select("id, projekt_id, datum, art, titel, aktivitaet_extern, format, ort, teilnehmer").eq("projekt_id", pid).order("datum", { ascending: false }).then(function (r) {
       if (TP.pid !== pid) return;
       var ere = (r.data || []).filter(function (e) { return e.projekt_id === pid; });
@@ -797,10 +801,10 @@
   function tpInhalt(x) {
     var id = x.e && x.e.id, pk = TP.punkte.filter(function (p) { return p.ereignis_id === id; }), au = TP.aufgaben.filter(function (a) { return a.ereignis_id === id; });
     return { vorb: pk.filter(function (p) { return p.art === "Vorbereitung"; }), prot: pk.filter(function (p) { return p.art === "Protokoll"; }),
-      ent: pk.filter(function (p) { return p.art === "Entscheidung"; }), auf: au };
+      ent: pk.filter(function (p) { return p.art === "Entscheidung"; }), auf: au, br: x.t && TP.br[x.t.ical_uid] || null };
   }
   function tpZeile(x, i) {
-    var c = tpInhalt(x), was = [c.vorb.length ? "Vorbereitung" : "", c.prot.length ? "Protokoll" : "", c.ent.length ? "Entscheidungen" : "", c.auf.length ? "Aufgaben" : ""].filter(Boolean);
+    var c = tpInhalt(x), was = [c.vorb.length || c.br ? "Vorbereitung" : "", c.prot.length ? "Protokoll" : "", c.ent.length ? "Entscheidungen" : "", c.auf.length ? "Aufgaben" : ""].filter(Boolean);
     return '<li><button type="button" class="tp-zeile' + (TP.wahl === i ? " an" : "") + (TP.naechster === i ? " tp-naechster" : "") + '" data-tp="' + i + '"><span class="tp-d">' + tpTag(x.ts) + (tpZeit(x.ts) && x.art !== "Meilenstein" ? " · " + tpZeit(x.ts) : "") + "</span>" +
       "<b>" + esc(x.titel) + "</b><small>" + esc(x.art || "Termin") + (was.length ? " · " + was.join(", ") : " · noch nichts festgehalten") + "</small></button></li>";
   }
@@ -818,7 +822,11 @@
       "<h3>" + esc(x.titel) + '</h3><p class="tp-meta">' + meta + (teil ? "<br>" + esc(teil) : "") + "</p>" +
       (imTermin ? '<a class="e-k tp-termin" href="/strategie/termine-tag.html#g=' + encodeURIComponent(x.gid) + '">In Termine öffnen →</a>' : "");
     var block = function (titel, inhalt) { return inhalt ? '<div class="e-block"><h4>' + titel + "</h4>" + inhalt + "</div>" : ""; };
-    var vorb = c.vorb.length ? tpPunkte(c.vorb) : x.t && x.t.vorbereitung ? zeilenText(x.t.vorbereitung) : "";
+    var liste = function (v) { return (Array.isArray(v) ? v : []).length ? '<ul class="tm-liste-f">' + v.map(function (z) { return "<li>" + esc(z) + "</li>"; }).join("") + "</ul>" : ""; };
+    var zw = function (t) { return '<p class="tp-zw">' + t + "</p>"; };
+    var br = c.br ? (c.br.zusammenfassung ? themenText(c.br.zusammenfassung, false) : "") + (c.br.ziel ? zw("Was du herausholen solltest") + themenText(c.br.ziel, true) : "") +
+      (liste(c.br.punkte) ? zw("Worauf du achtest") + liste(c.br.punkte) : "") + (liste(c.br.fragen) ? zw("Leitfragen") + liste(c.br.fragen) : "") : "";
+    var vorb = (c.vorb.length ? tpPunkte(c.vorb) : "") + br;
     // Vorbei: erst Protokoll, Entscheidungen und Aufgaben, die Vorbereitung zugeklappt am Ende; kommend: Vorbereitung zuerst
     var teile = (vorbei ? "" : block("Vorbereitung", vorb)) +
       block("Protokoll", c.prot.length ? tpPunkte(c.prot) : "") + block("Entscheidungen", c.ent.length ? tpPunkte(c.ent) : "") +

@@ -955,3 +955,4 @@ html.pj-plan-voll-offen { overflow: hidden; }
 .pj-verlauf-liste small { margin-left: 8px; font-size: 13px; color: #86868b; }
 .pj-verlauf-liste p { margin: 2px 0 0 !important; font-size: 13px; color: #6e6e73; }
 @media (max-width: 700px) { .pj-ag-block { grid-template-columns: minmax(0, 1fr); gap: 4px; } .pj-ag-koerper { grid-template-columns: minmax(0, 1fr); } .pj-ag-bild svg { width: 120px; } }
+.tp-detail .tp-zw { margin: 16px 0 6px; font-weight: 600; }
