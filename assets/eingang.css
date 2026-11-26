@@ -977,44 +977,52 @@ html[data-farbe="dunkel"] .pj-wege .e-k[aria-pressed="true"] { background: #f5f5
 .pb-seite .lage-alt { margin-top: 12px; }
 @media (max-width: 1000px) { .pb { grid-template-columns: minmax(0, 1fr); } }
 html[data-farbe="dunkel"] .pb-liste li, html[data-farbe="dunkel"] .pb-lagebericht, html[data-farbe="dunkel"] .pb-seite .pj-seite { border-color: #2c2c2e; }
-/* Projekt: neue Ansicht, Fassung 2 (Daniel, 26.11.2026) – volle Breite, Blick von oben nach unten: Kopf · Fahrplan · Termine · Aufgaben · Unterlagen */
+/* Projekt: neue Ansicht, Fassung 3 (Daniel, 26.11.2026: „kein cooler Einstieg“, „kitschig“, „lauter einzelne Kästen“) –
+   ruhig und knapp: ein Lage-Kasten, Fahrplan zu, Termine als knappe Zeilen mit breitem Detail, Aufgaben und Unterlagen je ein gestalteter Raum */
 .pb.pb2 { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
 .pb2 > * { min-width: 0; }
-.pb-kopf { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: stretch; }
-.pb-kopf > * { min-width: 0; grid-column: auto !important; margin: 0 !important; }
-.pb-kopf .pj-steckbrief { margin: 0; }
-.pb2 .pj-stand { box-shadow: none; }
-.pb2 .pj-ampel { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px 5px 10px; border-radius: 999px; background: #f2f2f7; font-weight: 600 !important; font-size: 13px !important; margin-bottom: 12px !important; }
-.pb2 .pj-ampel:has(.lg-a-achtung) { background: #fff3dc; color: #8a5300; }
-.pb2 .pj-ampel:has(.lg-a-kritisch) { background: #fde8e8; color: #b42318; }
-.pb2 .pj-ampel:has(.lg-a-im_plan) { background: #e6f4ea; color: #1e6b34; }
-.pb2 .pj-naechst { margin-top: 12px !important; padding-top: 12px; border-top: 1px solid #f0f0f2; }
-/* Termine als Kalenderblätter, der nächste dunkel */
-.pb2 .tp { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px; }
-.pb2 .tp-liste ul { gap: 6px; }
-.tp-blatt { grid-template-columns: 52px minmax(0, 1fr) !important; column-gap: 14px; align-items: center; padding: 8px 10px !important; }
-.tp-kal { display: grid; justify-items: center; width: 52px; height: 56px; border-radius: 12px; background: #fff; border: 1px solid #e5e5ea; overflow: hidden; }
-.tp-kal i { display: block; width: 100%; padding: 3px 0; background: #e5e5ea; font: 600 10px/1.2 "Inter", system-ui, sans-serif; font-style: normal; text-transform: uppercase; letter-spacing: .06em; color: #6e6e73; text-align: center; }
-.tp-kal b { font: 700 22px/1.35 "Inter Tight", "Inter", system-ui, sans-serif !important; color: var(--tinte); }
-.tp-txt { display: grid; gap: 1px; min-width: 0; }
-.tp-txt small:first-child { font-size: 12px; font-weight: 600; color: #6e6e73; text-transform: none; }
-.tp-blatt.tp-naechster .tp-kal { background: var(--tinte); border-color: var(--tinte); }
-.tp-blatt.tp-naechster .tp-kal i { background: #3a3a3c; color: #fff; }
-.tp-blatt.tp-naechster .tp-kal b { color: #fff; }
-.tp-blatt.tp-naechster .tp-txt small:first-child { color: var(--tinte); }
-.tp-blatt.tp-heute .tp-kal { border-color: #8613a1; }
-.tp-blatt.tp-heute .tp-kal i { background: #8613a1; color: #fff; }
-.pb2 .tp-zeile.tp-naechster { box-shadow: none; }
-/* Aufgaben in drei Spalten nebeneinander */
-.pb2 .pj-spalten { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; align-items: start; }
-/* Unterlagen-Reihe */
-.pb-unten { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: start; }
-.pb-unten > * { min-width: 0; }
-.pb-mehr-spalte { display: grid; gap: 14px; }
+.pb-raum { padding: 22px 26px; }
+.pb-raum > .lg-kasten, .pb-raum .pj-steckbrief, .pb-raum .pj-stand, .pb-raum .pj-spalte, .pb-raum .pj-klapp { margin: 0; padding: 0 !important; border-radius: 0; background: none !important; box-shadow: none !important; }
+.pb-raum-titel { margin: 0 0 14px !important; font: 700 16px/1.2 "Inter Tight", "Inter", system-ui, sans-serif; color: var(--tinte); }
+/* Lage: Ziel als Satz, darunter Stand – ein Kasten */
+.pb-lage { display: grid; gap: 18px; }
+.pb-lage .pj-steckbrief { display: block; }
+.pb-lage .pj-sb-details > summary h2 { font: 600 13px/1.3 "Inter", system-ui, sans-serif !important; color: #86868b !important; margin: 0 0 4px !important; }
+.pb-lage .pj-sb-ziel { font: 600 clamp(17px, 1.6vw, 20px)/1.4 "Inter Tight", "Inter", system-ui, sans-serif !important; color: var(--tinte); max-width: 60em; }
+.pb-lage .pj-stand { padding-top: 16px !important; border-top: 1px solid #f0f0f2; }
+.pb-lage .pj-stand p:not(.pj-ampel) { font-size: 15px !important; }
+.pb-lage .pj-ampel { font-size: 13px !important; font-weight: 600 !important; color: #6e6e73; margin-bottom: 6px !important; }
+.pb-lage .pj-naechst { margin-top: 8px !important; }
+.pb-lage .pb-lagebericht { margin-top: 10px; padding-top: 0 !important; border-top: 0; }
+/* Termine: knappe Zeilen, Details bekommen die Breite */
+.pb2 .tp { grid-template-columns: minmax(250px, 1fr) minmax(0, 2.6fr); gap: 20px; }
+.pb2 .tp-zeile { grid-template-columns: 78px minmax(0, 1fr); column-gap: 10px; padding: 7px 10px; }
+.pb2 .tp-zeile .tp-d { font-size: 12px; }
+.pb2 .tp-zeile b { font-size: 14px; line-height: 1.35; }
+.pb2 .tp-zeile small { font-size: 12px; }
+/* Aufgaben: ein Raum, drei Spalten, Einträge als Zeilen */
+.pb-aufgaben .pj-spalten { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 0 32px; align-items: start; }
+.pb-aufgaben .pj-spalte h3 { font-size: 14px; margin: 0 0 6px; }
+.pb-aufgaben .pj-liste { gap: 0; }
+.pb-aufgaben .pj-a { border-radius: 0; background: none; border-top: 1px solid #f0f0f2; }
+.pb-aufgaben .pj-a.ist-offen { box-shadow: none; }
+.pb-aufgaben .pj-a-zeile { padding: 9px 0; }
+.pb-aufgaben .pj-a-zeile b { font-size: 14px; font-weight: 500; }
+.pb-aufgaben .pj-a-auf { padding: 0 0 12px; }
+.pb-aufgaben .pj-spalte-leer::after { content: "Nichts offen."; display: block; padding: 9px 0; border-top: 1px solid #f0f0f2; font-size: 14px; color: #86868b; }
+/* Unten: Entscheidungen, Unterlagen, Überlegungen in einem Raum */
+.pb-unten { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 32px; align-items: start; }
+.pb-unten h2 { font-size: 14px !important; margin: 0 0 8px !important; }
+.pb-mehr-spalte { display: grid; gap: 12px; }
 .pb-mehr-spalte:empty { display: none; }
-@media (max-width: 1100px) { .pb-unten { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
-@media (max-width: 900px) { .pb-kopf, .pb-unten, .pb2 .pj-spalten { grid-template-columns: minmax(0, 1fr) !important; } }
-html[data-farbe="dunkel"] .tp-kal { background: #1c1c1e; border-color: #3a3a3c; }
-html[data-farbe="dunkel"] .tp-kal i { background: #3a3a3c; color: #c7c7cc; }
-html[data-farbe="dunkel"] .tp-blatt.tp-naechster .tp-kal { background: #f5f5f7; }
-html[data-farbe="dunkel"] .tp-blatt.tp-naechster .tp-kal b { color: #1c1c1e; }
+.pb-unten .pj-klapp summary { padding: 0; }
+@media (max-width: 900px) { .pb-aufgaben .pj-spalten, .pb-unten { grid-template-columns: minmax(0, 1fr) !important; gap: 18px; } .pb-raum { padding: 18px 18px; } }
+html[data-farbe="dunkel"] .pb-lage .pj-stand, html[data-farbe="dunkel"] .pb-aufgaben .pj-a, html[data-farbe="dunkel"] .pb-aufgaben .pj-spalte-leer::after { border-color: #2c2c2e; }
+.pb-aufgaben .pj-liste, .pb-unten ul { padding-left: 0 !important; }
+.pb-unten .lg-kasten ul:not(.pj-stand-liste) { padding-left: 18px !important; }
+.pb2 .tp-zeile { grid-template-columns: 52px minmax(0, 1fr); }
+.pb2 .tp-zeile .tp-d { line-height: 1.45; }
+.pb-unten .pj-seite { padding-left: 0; }
+.pb2 .tp-zeile .tp-d { grid-row: 1 / 3; grid-column: 1; }
+.pb2 .tp-zeile b, .pb2 .tp-zeile small { grid-column: 2; }
+@media (max-width: 900px) { .pb2 .tp { grid-template-columns: minmax(0, 1fr); } }

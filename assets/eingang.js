@@ -805,14 +805,9 @@
   }
   function tpZeile(x, i) {
     var c = tpInhalt(x), was = [c.vorb.length || c.br ? "Vorbereitung" : "", c.prot.length ? "Protokoll" : "", c.ent.length ? "Entscheidungen" : "", c.auf.length ? "Aufgaben" : ""].filter(Boolean);
-    if (pjAnsicht() === "brief") {
-      var dd = new Date(iso2(x.ts) + "T12:00:00"), heute = iso2(x.ts) === HEUTE;
-      return '<li><button type="button" class="tp-zeile tp-blatt' + (TP.wahl === i ? " an" : "") + (TP.naechster === i ? " tp-naechster" : "") + (heute ? " tp-heute" : "") + '" data-tp="' + i + '">' +
-        '<span class="tp-kal"><i>' + dd.toLocaleDateString("de-DE", { month: "short" }).replace(".", "") + "</i><b>" + dd.getDate() + "</b></span>" +
-        '<span class="tp-txt"><small>' + (heute ? "heute" : dd.toLocaleDateString("de-DE", { weekday: "long" })) + (tpZeit(x.ts) && x.art !== "Meilenstein" ? " · " + tpZeit(x.ts) : "") + (TP.naechster === i ? " · als Nächstes" : "") + "</small>" +
-        "<b>" + esc(x.titel) + "</b><small>" + (was.length ? was.join(" · ") : "noch nichts festgehalten") + "</small></span></button></li>";
-    }
-    return '<li><button type="button" class="tp-zeile' + (TP.wahl === i ? " an" : "") + (TP.naechster === i ? " tp-naechster" : "") + '" data-tp="' + i + '"><span class="tp-d">' + tpTag(x.ts) + (tpZeit(x.ts) && x.art !== "Meilenstein" ? " · " + tpZeit(x.ts) : "") + "</span>" +
+    // neue Ansicht: Datum und Uhrzeit in zwei festen Zeilen statt freiem Umbruch
+    var datumTeil = pjAnsicht() === "brief" ? datum(iso2(x.ts)) + (tpZeit(x.ts) && x.art !== "Meilenstein" ? "<br>" + tpZeit(x.ts) : "") : tpTag(x.ts) + (tpZeit(x.ts) && x.art !== "Meilenstein" ? " · " + tpZeit(x.ts) : "");
+    return '<li><button type="button" class="tp-zeile' + (TP.wahl === i ? " an" : "") + (TP.naechster === i ? " tp-naechster" : "") + '" data-tp="' + i + '"><span class="tp-d">' + datumTeil + "</span>" +
       "<b>" + esc(x.titel) + "</b><small>" + esc(x.art || "Termin") + (was.length ? " · " + was.join(", ") : " · noch nichts festgehalten") + "</small></button></li>";
   }
   function tpPunkte(l) {
@@ -1159,13 +1154,15 @@
     var reihe = function (kl, teile) { var d = document.createElement("div"); d.className = kl; teile.forEach(function (x) { if (x) d.appendChild(x); }); return d; };
     // Reihenfolge nach Daniel (26.11.2026): oben Worum es geht und Stand, dann Fahrplan, dann Termine und Protokolle in voller Breite,
     // darunter Aufgaben in drei Spalten, ganz unten Entscheidungen, Unterlagen, Überlegungen. „Als Nächstes“ entfällt (doppelt zu den Terminen).
-    var fp = q(".pj-fp"); if (fp) fp.open = true;
+    var fp = q(".pj-fp");   // zugeklappt, öffnet auf Klick (Daniel, 26.11.2026)
     var tp = q(".pj-tp"); if (tp) tp.open = true;
     var unt = kasten("Arbeitsstände"); if (unt) { unt.querySelector("h2").textContent = "Unterlagen"; var ps = q(".pj-seite"); if (ps) unt.appendChild(ps); var alt = q(".lage-alt"); if (alt) unt.appendChild(alt); }
     var mehr = reihe("pb-mehr-spalte", [q("[data-pj-mehr]")]);
+    // Ein gestalteter Raum je Thema statt einzelner Kästen (Daniel, 26.11.2026: „lauter einzelne Kästen … kein Gesamtraum gestaltet“)
+    var raum = function (kl, titel, teile) { var d = reihe("lg-kasten pb-raum " + kl, teile); if (titel) d.insertAdjacentHTML("afterbegin", '<h2 class="pb-raum-titel">' + titel + "</h2>"); return d; };
     var versteckt = reihe("pb-versteckt", [q(".pj-erledigt"), q("[data-pj-verlauf]")]); versteckt.hidden = true;   // im Dokument, für das Nachladen
-    var teile = [reihe("pb-kopf", [q(".pj-steckbrief"), q(".pj-stand")]), fp, kasten("Meilensteine"), tp, q(".pj-spalten"),
-      reihe("pb-unten", [kasten("Offene Entscheidungen"), unt, mehr]), versteckt];
+    var teile = [raum("pb-lage", "", [q(".pj-steckbrief"), q(".pj-stand")]), fp, kasten("Meilensteine"), tp, raum("pb-aufgaben", "Aufgaben", [q(".pj-spalten")]),
+      raum("pb-unten", "", [kasten("Offene Entscheidungen"), unt, mehr]), versteckt];
     raster.innerHTML = ""; raster.className = "pb pb2"; teile.forEach(function (x) { if (x) raster.appendChild(x); });
   }
   // Lagebericht in den Stand holen (er ist der ausführliche Stand, kein eigener Bereich)
