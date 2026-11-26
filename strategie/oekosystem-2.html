@@ -19,7 +19,7 @@
 <link rel="stylesheet" href="/assets/projekte/projekte.css?v=202610082218">
 <link rel="stylesheet" href="/assets/projekte/dashboard.css?v=202610082218">
 <link rel="stylesheet" href="/assets/oekosystem.css?v=202611141900">
-<link rel="stylesheet" href="/assets/oekosystem-2.css?v=202611261845">
+<link rel="stylesheet" href="/assets/oekosystem-2.css?v=202611262000">
 <link rel="stylesheet" href="/assets/dashboard-nav.css?v=202610151100">
 <link rel="stylesheet" href="/assets/d3.css?v=202611182030">
 <link rel="stylesheet" href="/assets/dunkel.css?v=202611201330">
@@ -111,20 +111,20 @@
   <span class="oe-knoten-titel">Homepages</span>
   <span class="oe-knoten-unter">Drei Marken</span>
 </button>
-<button type="button" class="oe-knoten" data-baustein="linkedin" data-ebene="1" aria-expanded="false" style="grid-column: 3; grid-row: 1;">
+<button type="button" class="oe-knoten" data-baustein="linkedin" data-ebene="1" aria-expanded="false" style="grid-column: 6; grid-row: 1;">
   <span class="oe-knoten-titel">LinkedIn</span>
   <span class="oe-knoten-unter">Daniel Ströbel</span>
   <span class="oe-werkzeuge"><span class="oe-werkzeug" data-tipp="Sales Navigator">SN</span><span class="oe-werkzeug" data-tipp="Linked Helper">LH</span></span>
 </button>
-<button type="button" class="oe-knoten" data-baustein="li_marken" data-ebene="1" aria-expanded="false" style="grid-column: 4; grid-row: 1;">
+<button type="button" class="oe-knoten" data-baustein="li_marken" data-ebene="1" aria-expanded="false" style="grid-column: 3; grid-row: 1;">
   <span class="oe-knoten-titel">LinkedIn</span>
   <span class="oe-knoten-unter">Drei Firmen&shy;seiten</span>
 </button>
-<button type="button" class="oe-knoten" data-baustein="instagram" data-ebene="1" aria-expanded="false" style="grid-column: 5; grid-row: 1;">
+<button type="button" class="oe-knoten" data-baustein="instagram" data-ebene="1" aria-expanded="false" style="grid-column: 4; grid-row: 1;">
   <span class="oe-knoten-titel">Instagram</span>
   <span class="oe-knoten-unter">sofort&shy;sichtbar</span>
 </button>
-<button type="button" class="oe-knoten" data-baustein="facebook" data-ebene="1" aria-expanded="false" style="grid-column: 6; grid-row: 1;">
+<button type="button" class="oe-knoten" data-baustein="facebook" data-ebene="1" aria-expanded="false" style="grid-column: 5; grid-row: 1;">
   <span class="oe-knoten-titel">Facebook</span>
   <span class="oe-knoten-unter">sofort&shy;sichtbar</span>
 </button>
@@ -155,6 +155,10 @@
 <button type="button" class="oe-knoten" data-baustein="search" data-ebene="2" aria-expanded="false" style="grid-column: 2; grid-row: 2;">
   <span class="oe-knoten-titel">Search Console</span>
   <span class="oe-knoten-unter"></span>
+</button>
+<button type="button" class="oe-knoten" data-baustein="noah" data-ebene="3" aria-expanded="false" style="grid-column: 1 / 6; grid-row: 3;">
+  <span class="oe-knoten-titel">Noahs Analytics</span>
+  <span class="oe-knoten-unter">analytics.empiria.de &middot; bündelt Web und Social für die drei Marken</span>
 </button>
 <button type="button" class="oe-knoten oe-knoten--speicher" data-baustein="supabase" data-ebene="4" aria-expanded="false" style="grid-column: 1 / 10; grid-row: 4;">
   <span class="oe-knoten-titel">Datenbank</span>
@@ -200,12 +204,8 @@
 
           <div class="oe2-weicheplatz">
 <button type="button" class="oe-knoten oe2-weiche" data-baustein="weiche" data-ebene="1" aria-expanded="false">
-  <span class="oe-knoten-titel">Umsetzung</span>
-  <span class="oe2-spuren">
-    <span class="oe2-spur"><b>Sofort</b>im Chat mit Claude, während du dabei bist</span>
-    <span class="oe2-spur"><b>Ticket</b>aus dem Dashboard, der Umsetzer arbeitet es ab, Abnahme im Eingang</span>
-  </span>
-  <span class="oe-marke oe-marke--ausfuehrung">Weiche</span>
+  <span class="oe-knoten-titel">Weiche</span>
+  <span class="oe-werkzeuge"><span class="oe-werkzeug" data-tipp="Im Chat mit Claude, läuft">Sofort</span><span class="oe-werkzeug oe2-spur-geplant" data-tipp="Über den Umsetzer, funktioniert noch nicht">Ticket</span></span>
 </button>
           </div>
 
@@ -389,22 +389,22 @@
   ]
  },
  "li_marken": {
-  "satz": "Die Firmenseiten von empiria, sofortsichtbar und Müller&amp;Ströbel. Was dort passieren soll, ist noch nicht entschieden.",
+  "satz": "Die Firmenseiten von empiria, sofortsichtbar und Müller&amp;Ströbel. Ihre Zahlen kommen über Noahs Analytics täglich in die Datenbank: Reichweite je Tag, Beiträge und wer die Seiten sieht. Was dort veröffentlicht werden soll, ist noch nicht entschieden.",
   "offen": [
    "Bespielen über Buffer oder von Hand",
    "Beiträge vom persönlichen Profil spiegeln oder nicht"
   ]
  },
  "instagram": {
-  "satz": "Das Konto von sofortsichtbar besteht. Angebunden ist es noch nicht: Keine Zahl und kein Beitrag von dort kommt in die Datenbank, der Abgleich mit Buffer liest bisher nur deinen LinkedIn-Kanal. Deshalb steht die Leitung gestrichelt.",
+  "satz": "Das Konto von sofortsichtbar. Über Noahs Analytics kommt täglich an, wer von dort auf die Homepage kommt. Veröffentlicht wird über Buffer.",
   "offen": [
-   "Den Kanal im Buffer-Abgleich und bei den Kennzahlen ergänzen, dann läuft er wie LinkedIn."
+   "Reichweite und Kennzahlen der Beiträge selbst kommen noch nicht in die Datenbank. In Buffer liegen sie vor."
   ]
  },
  "facebook": {
-  "satz": "Das Konto von sofortsichtbar besteht. Angebunden ist es noch nicht: Keine Zahl und kein Beitrag von dort kommt in die Datenbank, der Abgleich mit Buffer liest bisher nur deinen LinkedIn-Kanal. Deshalb steht die Leitung gestrichelt.",
+  "satz": "Das Konto von sofortsichtbar. Über Noahs Analytics kommt täglich an, wer von dort auf die Homepage kommt. Veröffentlicht wird über Buffer.",
   "offen": [
-   "Den Kanal im Buffer-Abgleich und bei den Kennzahlen ergänzen, dann läuft er wie LinkedIn."
+   "Reichweite und Kennzahlen der Beiträge selbst kommen noch nicht in die Datenbank. In Buffer liegen sie vor."
   ]
  },
  "mail": {
@@ -447,8 +447,18 @@
  "chrome": {
   "satz": "Recherche und der Weg zu Diensten ohne Schnittstelle, mit den vorhandenen Anmeldungen."
  },
+ "noah": {
+  "satz": "Noahs Analytics-Dashboard bündelt die Webdaten aller drei Marken: Google Analytics, Search Console, die LinkedIn-Firmenseiten und dein Profil, dazu die Besuche, die über Instagram und Facebook kommen. Der Mac übernimmt alles täglich in die Datenbank, dort landet es im Bereich Marketing. Noahs Empfehlungen kommen mit, du entscheidest über sie auf der Seite Marketing.",
+  "takt": [
+   "täglich um 9:30 Uhr"
+  ],
+  "tools": [
+   "analytics.empiria.de, gebaut und weiterentwickelt von Noah",
+   "Anmeldung im Chrome des Always-on-Macs, gilt 30 Tage. Läuft sie ab, kommt eine Karte."
+  ]
+ },
  "supabase": {
-  "satz": "Eine Datenbank für alles. Alle Rollen lesen und schreiben hier, das Dashboard zeigt sie an. Eine zweite Datenbank gibt es nicht: Dokumente liegen in der Nextcloud, Code in GitHub, die Buchhaltung in Papierkram.",
+  "satz": "Eine Datenbank für alles. Alle Rollen lesen und schreiben hier, das Dashboard zeigt sie an. Noahs Analytics liefert zu. Dokumente liegen in der Nextcloud, Code in GitHub, die Buchhaltung in Papierkram.",
   "tools": [
    "Kontakte: Personen, Firmen, Kontaktwege, Stand je Kontakt",
    "Projekte: Stränge, Arbeitspakete, Status, Protokolle, Beteiligte",
@@ -498,7 +508,7 @@
   ]
  },
  "dashboard": {
-  "satz": "Hier kommt an, was dich braucht, und hier entscheidest du. Jedes Ja, jedes Anders und jede Freigabe wird ein Ticket und geht über die Umsetzung in die Aktionen.",
+  "satz": "Hier kommt an, was dich braucht, und hier entscheidest du. Jedes Ja, jedes Anders und jede Freigabe soll als Ticket über die Weiche in die Aktionen gehen. Dieser Weg funktioniert noch nicht, deshalb ist die Leitung gestrichelt.",
   "tools": [
    "Briefing: was heute zählt",
    "Termine mit Vorbereitung",
@@ -592,10 +602,10 @@
   "satz": "Sieben Beiträge pro Woche auf deinem Profil. Gemessen wird jeder Beitrag gegen deinen bisherigen Mittelwert."
  },
  "aus_instagram": {
-  "satz": "Im Redaktionsplan stehen bisher nur Beiträge für LinkedIn. Für diesen Kanal wird noch nichts über Buffer geplant und veröffentlicht."
+  "satz": "Die Beiträge von sofortsichtbar gehen über Buffer auf diesen Kanal."
  },
  "aus_facebook": {
-  "satz": "Im Redaktionsplan stehen bisher nur Beiträge für LinkedIn. Für diesen Kanal wird noch nichts über Buffer geplant und veröffentlicht."
+  "satz": "Die Beiträge von sofortsichtbar gehen über Buffer auf diesen Kanal."
  },
  "aus_redaktion": {
   "satz": "Die Seite mit Redaktionsplan und Kennzahlen im empiria-Repo. Sie wird nach jedem Abgleich neu gebaut und hochgeladen.",
@@ -657,18 +667,13 @@
   ]
  },
  "weiche": {
-  "satz": "Hier entscheidet sich, wie ein Auftrag umgesetzt wird. Was du im Chat mit Claude besprichst, wird sofort erledigt, während du dabei bist. Was du im Dashboard entscheidest – jedes Ja, jedes Anders, jeder Auftrag aus dem Eingang – wird ein Ticket. Der Umsetzer arbeitet die Tickets nacheinander ab und legt dir das Ergebnis zur Abnahme in den Eingang.",
+  "satz": "Hier entscheidet sich, wie ein Auftrag umgesetzt wird. Sofort: Was du im Chat mit Claude besprichst, wird erledigt, während du dabei bist. Das läuft. Ticket: Was du im Dashboard entscheidest – jedes Ja, jedes Anders, jeder Auftrag aus dem Eingang – soll ein Ticket werden, das der Umsetzer abarbeitet und dir zur Abnahme in den Eingang legt. Dieser Weg funktioniert noch nicht.",
   "takt": [
    "Sofort: im Chat, ohne Wartezeit",
-   "Ticket: alle 20 Minuten das nächste, Aufträge aus dem Eingang zuerst",
-   "Ein Ticket nach dem anderen. Hängt eins länger als drei Stunden, kommt es als Rückfrage zurück."
-  ],
-  "liefert": [
-   "Ergebnis zur Abnahme im Eingang",
-   "Rückfrage, wenn etwas fehlt"
+   "Ticket, sobald es läuft: alle 20 Minuten das nächste, Aufträge aus dem Eingang zuerst"
   ],
   "offen": [
-   "Die Hintergrund-Spur läuft im Probelauf: Außer den Aufträgen aus dem Eingang nimmt der Umsetzer nur freigegebene Tickets.",
+   "Das Ticketsystem funktioniert noch nicht. Bis dahin läuft die Umsetzung sofort im Chat.",
    "Der Stopp-Schalter steht nur auf der bisherigen Aufgaben-Seite."
   ]
  },
@@ -713,19 +718,19 @@
  "li_marken": {
   "titel": "LinkedIn",
   "unter": "Drei Firmenseiten",
-  "art": "geplant",
+  "art": "laeuft",
   "band": "Datenquellen"
  },
  "instagram": {
   "titel": "Instagram",
   "unter": "sofortsichtbar",
-  "art": "geplant",
+  "art": "laeuft",
   "band": "Datenquellen"
  },
  "facebook": {
   "titel": "Facebook",
   "unter": "sofortsichtbar",
-  "art": "geplant",
+  "art": "laeuft",
   "band": "Datenquellen"
  },
  "mail": {
@@ -755,6 +760,12 @@
  "chrome": {
   "titel": "Chrome",
   "unter": "Recherche im Netz",
+  "art": "laeuft",
+  "band": "Datenquellen"
+ },
+ "noah": {
+  "titel": "Noahs Analytics",
+  "unter": "analytics.empiria.de",
   "art": "laeuft",
   "band": "Datenquellen"
  },
@@ -851,13 +862,13 @@
  "aus_instagram": {
   "titel": "Instagram",
   "unter": "sofortsichtbar",
-  "art": "geplant",
+  "art": "laeuft",
   "band": "Aktionen"
  },
  "aus_facebook": {
   "titel": "Facebook",
   "unter": "sofortsichtbar",
-  "art": "geplant",
+  "art": "laeuft",
   "band": "Aktionen"
  },
  "aus_redaktion": {
@@ -939,10 +950,10 @@
   "band": "Aktionen"
  },
  "weiche": {
-  "titel": "Umsetzung",
+  "titel": "Weiche",
   "unter": "Sofort oder Ticket",
   "art": "laeuft",
-  "band": "Weiche zwischen Entscheidung und Aktion"
+  "band": "Zwischen Entscheidung und Aktion"
  },
  "assistenz": {
   "titel": "Assistenz",
@@ -1053,9 +1064,9 @@
     if (!plan || !svg) return;
     var knoten = Array.prototype.slice.call(plan.querySelectorAll('.oe-knoten'));
     var richtung = plan.dataset.richtung || 'unten';
-    var LEITUNGEN = [["homepages", "analytics"], ["homepages", "search"], ["analytics", "supabase"], ["search", "supabase"], ["linkedin", "supabase"], ["li_marken", "supabase"], ["instagram", "supabase"], ["facebook", "supabase"], ["mail", "supabase"], ["kalender", "supabase"], ["diktate", "supabase"], ["finder", "schiene"], ["chrome", "schiene"], ["supabase", "schiene"], ["schiene", "knoten"], ["macbook", "knoten"], ["ipad", "knoten"], ["iphone", "knoten"], ["knoten", "dashboard", "beide"], ["knoten", "weiche"], ["dashboard", "weiche"], ["weiche", "postings"], ["weiche", "korrespondenz"], ["weiche", "webdev"], ["weiche", "buchhaltung"], ["weiche", "assistenz"], ["postings", "buffer"], ["buffer", "aus_redaktion", "baum"], ["buffer", "aus_linkedin", "baum"], ["buffer", "aus_instagram", "baum"], ["buffer", "aus_facebook", "baum"], ["korrespondenz", "aus_mail", "baum"], ["korrespondenz", "aus_komm", "baum"], ["korrespondenz", "aus_whats", "baum"], ["korrespondenz", "aus_dm", "baum"], ["webdev", "github"], ["github", "vercel"], ["vercel", "kundenseiten"], ["buchhaltung", "belegfreigabe"], ["belegfreigabe", "papierkram"], ["assistenz", "aus_kalender", "baum"], ["assistenz", "aus_push", "baum"]];
-    var ZUSTAND = {"homepages>analytics": "eingerichtet", "homepages>search": "eingerichtet", "analytics>supabase": "eingerichtet", "search>supabase": "eingerichtet", "linkedin>supabase": "eingerichtet", "li_marken>supabase": "geplant", "instagram>supabase": "geplant", "facebook>supabase": "geplant", "mail>supabase": "eingerichtet", "kalender>supabase": "eingerichtet", "diktate>supabase": "eingerichtet", "finder>schiene": "eingerichtet", "chrome>schiene": "eingerichtet", "supabase>schiene": "eingerichtet", "schiene>knoten": "eingerichtet", "macbook>knoten": "eingerichtet", "ipad>knoten": "eingerichtet", "iphone>knoten": "eingerichtet", "knoten>dashboard": "eingerichtet", "knoten>weiche": "eingerichtet", "dashboard>weiche": "eingerichtet", "weiche>postings": "eingerichtet", "weiche>korrespondenz": "eingerichtet", "weiche>webdev": "eingerichtet", "weiche>buchhaltung": "eingerichtet", "weiche>assistenz": "eingerichtet", "postings>buffer": "eingerichtet", "buffer>aus_redaktion": "eingerichtet", "buffer>aus_linkedin": "eingerichtet", "buffer>aus_instagram": "geplant", "buffer>aus_facebook": "geplant", "korrespondenz>aus_mail": "eingerichtet", "korrespondenz>aus_komm": "eingerichtet", "korrespondenz>aus_whats": "geplant", "korrespondenz>aus_dm": "geplant", "webdev>github": "eingerichtet", "github>vercel": "eingerichtet", "vercel>kundenseiten": "eingerichtet", "buchhaltung>belegfreigabe": "eingerichtet", "belegfreigabe>papierkram": "eingerichtet", "assistenz>aus_kalender": "eingerichtet", "assistenz>aus_push": "eingerichtet"};
-    var AMPEL = {"homepages>analytics": "gruen", "homepages>search": "gruen", "analytics>supabase": "gruen", "search>supabase": "gruen", "linkedin>supabase": "gruen", "li_marken>supabase": "rot", "instagram>supabase": "rot", "facebook>supabase": "rot", "mail>supabase": "gruen", "kalender>supabase": "gruen", "diktate>supabase": "gruen", "finder>schiene": "gruen", "chrome>schiene": "gruen", "supabase>schiene": "gruen", "schiene>knoten": "gruen", "macbook>knoten": "gruen", "ipad>knoten": "gruen", "iphone>knoten": "gruen", "knoten>dashboard": "gruen", "knoten>weiche": "gruen", "dashboard>weiche": "gruen", "weiche>postings": "gruen", "weiche>korrespondenz": "gruen", "weiche>webdev": "gruen", "weiche>buchhaltung": "gruen", "weiche>assistenz": "gruen", "postings>buffer": "gruen", "buffer>aus_redaktion": "gruen", "buffer>aus_linkedin": "gruen", "buffer>aus_instagram": "rot", "buffer>aus_facebook": "rot", "korrespondenz>aus_mail": "gruen", "korrespondenz>aus_komm": "gruen", "korrespondenz>aus_whats": "rot", "korrespondenz>aus_dm": "rot", "webdev>github": "gruen", "github>vercel": "gruen", "vercel>kundenseiten": "gruen", "buchhaltung>belegfreigabe": "gruen", "belegfreigabe>papierkram": "gruen", "assistenz>aus_kalender": "gruen", "assistenz>aus_push": "gruen"};
+    var LEITUNGEN = [["homepages", "analytics"], ["homepages", "search"], ["analytics", "noah"], ["search", "noah"], ["linkedin", "supabase"], ["li_marken", "noah"], ["instagram", "noah"], ["facebook", "noah"], ["noah", "supabase"], ["mail", "supabase"], ["kalender", "supabase"], ["diktate", "supabase"], ["finder", "schiene"], ["chrome", "schiene"], ["supabase", "schiene"], ["schiene", "knoten"], ["macbook", "knoten"], ["ipad", "knoten"], ["iphone", "knoten"], ["knoten", "dashboard", "beide"], ["knoten", "weiche"], ["dashboard", "weiche"], ["weiche", "postings"], ["weiche", "korrespondenz"], ["weiche", "webdev"], ["weiche", "buchhaltung"], ["weiche", "assistenz"], ["postings", "buffer"], ["buffer", "aus_redaktion", "baum"], ["buffer", "aus_linkedin", "baum"], ["buffer", "aus_instagram", "baum"], ["buffer", "aus_facebook", "baum"], ["korrespondenz", "aus_mail", "baum"], ["korrespondenz", "aus_komm", "baum"], ["korrespondenz", "aus_whats", "baum"], ["korrespondenz", "aus_dm", "baum"], ["webdev", "github"], ["github", "vercel"], ["vercel", "kundenseiten"], ["buchhaltung", "belegfreigabe"], ["belegfreigabe", "papierkram"], ["assistenz", "aus_kalender", "baum"], ["assistenz", "aus_push", "baum"]];
+    var ZUSTAND = {"homepages>analytics": "eingerichtet", "homepages>search": "eingerichtet", "analytics>noah": "eingerichtet", "search>noah": "eingerichtet", "linkedin>supabase": "eingerichtet", "li_marken>noah": "eingerichtet", "instagram>noah": "eingerichtet", "facebook>noah": "eingerichtet", "noah>supabase": "eingerichtet", "mail>supabase": "eingerichtet", "kalender>supabase": "eingerichtet", "diktate>supabase": "eingerichtet", "finder>schiene": "eingerichtet", "chrome>schiene": "eingerichtet", "supabase>schiene": "eingerichtet", "schiene>knoten": "eingerichtet", "macbook>knoten": "eingerichtet", "ipad>knoten": "eingerichtet", "iphone>knoten": "eingerichtet", "knoten>dashboard": "eingerichtet", "knoten>weiche": "eingerichtet", "dashboard>weiche": "geplant", "weiche>postings": "eingerichtet", "weiche>korrespondenz": "eingerichtet", "weiche>webdev": "eingerichtet", "weiche>buchhaltung": "eingerichtet", "weiche>assistenz": "eingerichtet", "postings>buffer": "eingerichtet", "buffer>aus_redaktion": "eingerichtet", "buffer>aus_linkedin": "eingerichtet", "buffer>aus_instagram": "eingerichtet", "buffer>aus_facebook": "eingerichtet", "korrespondenz>aus_mail": "eingerichtet", "korrespondenz>aus_komm": "eingerichtet", "korrespondenz>aus_whats": "geplant", "korrespondenz>aus_dm": "geplant", "webdev>github": "eingerichtet", "github>vercel": "eingerichtet", "vercel>kundenseiten": "eingerichtet", "buchhaltung>belegfreigabe": "eingerichtet", "belegfreigabe>papierkram": "eingerichtet", "assistenz>aus_kalender": "eingerichtet", "assistenz>aus_push": "eingerichtet"};
+    var AMPEL = {"homepages>analytics": "gruen", "homepages>search": "gruen", "analytics>noah": "gruen", "search>noah": "gruen", "linkedin>supabase": "gruen", "li_marken>noah": "gruen", "instagram>noah": "gruen", "facebook>noah": "gruen", "noah>supabase": "gruen", "mail>supabase": "gruen", "kalender>supabase": "gruen", "diktate>supabase": "gruen", "finder>schiene": "gruen", "chrome>schiene": "gruen", "supabase>schiene": "gruen", "schiene>knoten": "gruen", "macbook>knoten": "gruen", "ipad>knoten": "gruen", "iphone>knoten": "gruen", "knoten>dashboard": "gruen", "knoten>weiche": "gruen", "dashboard>weiche": "rot", "weiche>postings": "gruen", "weiche>korrespondenz": "gruen", "weiche>webdev": "gruen", "weiche>buchhaltung": "gruen", "weiche>assistenz": "gruen", "postings>buffer": "gruen", "buffer>aus_redaktion": "gruen", "buffer>aus_linkedin": "gruen", "buffer>aus_instagram": "gruen", "buffer>aus_facebook": "gruen", "korrespondenz>aus_mail": "gruen", "korrespondenz>aus_komm": "gruen", "korrespondenz>aus_whats": "rot", "korrespondenz>aus_dm": "rot", "webdev>github": "gruen", "github>vercel": "gruen", "vercel>kundenseiten": "gruen", "buchhaltung>belegfreigabe": "gruen", "belegfreigabe>papierkram": "gruen", "assistenz>aus_kalender": "gruen", "assistenz>aus_push": "gruen"};
     var FEHLER = {"buffer>aus_redaktion": 1, "buchhaltung>belegfreigabe": 1, "belegfreigabe>papierkram": 1};
 
     /* Die Klasse einer Leitung: ihr Zustand, nicht der Stand des Kastens
@@ -1353,7 +1364,7 @@
        Gegenseite und die Linie selbst mit. */
     /* Die Datenbank bei Supabase ist ebenfalls ein Durchgang: Was in sie
        hineinlaeuft, geht ueber ihre Leitung zur Schiene weiter. */
-    var DURCHGAENGE = ['supabase'];
+    var DURCHGAENGE = ['noah', 'supabase'];
     function wegeFuer(id) {
       var direkt = LEITUNGEN.filter(function (l) {
         return l[0] === id || l[1] === id; });
@@ -1421,7 +1432,7 @@
 
     /* Der Stand je Kasten. Was noch nicht gruen ist, ist nicht eingerichtet
        und steht gestrichelt - wie die geplanten Leitungen. */
-    var AMPEL_KNOTEN = {"homepages": "gruen", "analytics": "gruen", "search": "gruen", "linkedin": "gruen", "li_marken": "geplant", "instagram": "geplant", "facebook": "geplant", "mail": "gruen", "kalender": "gruen", "diktate": "gruen", "finder": "gruen", "chrome": "gruen", "supabase": "gruen", "macbook": "gruen", "ipad": "gruen", "iphone": "gruen", "knoten": "gruen", "dashboard": "gruen", "weiche": "gruen", "postings": "gruen", "buffer": "gruen", "aus_linkedin": "gruen", "aus_instagram": "geplant", "aus_facebook": "geplant", "aus_redaktion": "fehler", "korrespondenz": "gruen", "aus_mail": "gruen", "aus_komm": "gruen", "aus_whats": "geplant", "aus_dm": "geplant", "webdev": "gruen", "github": "gruen", "vercel": "gruen", "kundenseiten": "gruen", "buchhaltung": "gruen", "belegfreigabe": "fehler", "papierkram": "gruen", "assistenz": "gruen", "aus_kalender": "gruen", "aus_push": "gruen"};
+    var AMPEL_KNOTEN = {"homepages": "gruen", "analytics": "gruen", "search": "gruen", "linkedin": "gruen", "li_marken": "gruen", "instagram": "gruen", "facebook": "gruen", "noah": "gruen", "mail": "gruen", "kalender": "gruen", "diktate": "gruen", "finder": "gruen", "chrome": "gruen", "supabase": "gruen", "macbook": "gruen", "ipad": "gruen", "iphone": "gruen", "knoten": "gruen", "dashboard": "gruen", "weiche": "gruen", "postings": "gruen", "buffer": "gruen", "aus_linkedin": "gruen", "aus_instagram": "gruen", "aus_facebook": "gruen", "aus_redaktion": "fehler", "korrespondenz": "gruen", "aus_mail": "gruen", "aus_komm": "gruen", "aus_whats": "geplant", "aus_dm": "geplant", "webdev": "gruen", "github": "gruen", "vercel": "gruen", "kundenseiten": "gruen", "buchhaltung": "gruen", "belegfreigabe": "fehler", "papierkram": "gruen", "assistenz": "gruen", "aus_kalender": "gruen", "aus_push": "gruen"};
     knoten.forEach(function (b) {
       var stand = AMPEL_KNOTEN[b.dataset.baustein];
       b.classList.toggle('ist-geplant', stand === 'geplant');

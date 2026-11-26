@@ -805,6 +805,13 @@
   }
   function tpZeile(x, i) {
     var c = tpInhalt(x), was = [c.vorb.length || c.br ? "Vorbereitung" : "", c.prot.length ? "Protokoll" : "", c.ent.length ? "Entscheidungen" : "", c.auf.length ? "Aufgaben" : ""].filter(Boolean);
+    if (pjAnsicht() === "brief") {
+      var dd = new Date(iso2(x.ts) + "T12:00:00"), heute = iso2(x.ts) === HEUTE;
+      return '<li><button type="button" class="tp-zeile tp-blatt' + (TP.wahl === i ? " an" : "") + (TP.naechster === i ? " tp-naechster" : "") + (heute ? " tp-heute" : "") + '" data-tp="' + i + '">' +
+        '<span class="tp-kal"><i>' + dd.toLocaleDateString("de-DE", { month: "short" }).replace(".", "") + "</i><b>" + dd.getDate() + "</b></span>" +
+        '<span class="tp-txt"><small>' + (heute ? "heute" : dd.toLocaleDateString("de-DE", { weekday: "long" })) + (tpZeit(x.ts) && x.art !== "Meilenstein" ? " · " + tpZeit(x.ts) : "") + (TP.naechster === i ? " · als Nächstes" : "") + "</small>" +
+        "<b>" + esc(x.titel) + "</b><small>" + (was.length ? was.join(" · ") : "noch nichts festgehalten") + "</small></span></button></li>";
+    }
     return '<li><button type="button" class="tp-zeile' + (TP.wahl === i ? " an" : "") + (TP.naechster === i ? " tp-naechster" : "") + '" data-tp="' + i + '"><span class="tp-d">' + tpTag(x.ts) + (tpZeit(x.ts) && x.art !== "Meilenstein" ? " · " + tpZeit(x.ts) : "") + "</span>" +
       "<b>" + esc(x.titel) + "</b><small>" + esc(x.art || "Termin") + (was.length ? " · " + was.join(", ") : " · noch nichts festgehalten") + "</small></button></li>";
   }
@@ -1149,28 +1156,17 @@
     var raster = el.querySelector(".lg-raster"); if (!raster) return;
     var q = function (sel) { return el.querySelector(sel); };
     var kasten = function (titel) { return [].slice.call(el.querySelectorAll(".lg-rechts > .lg-kasten, .lg-links > .lg-kasten")).filter(function (k) { var h = k.querySelector("h2"); return h && h.textContent === titel; })[0]; };
-    // Als Nächstes: Termine der nächsten vier Wochen und Aufgaben mit Frist (auch überfällige), nach Datum
-    var jetzt = Date.now(), grenze = jetzt + 28 * 864e5;
-    var VB = { offen: "Vorbereitung offen", laeuft: "Vorbereitung läuft", vorbereitet: "vorbereitet" };
-    var l = ter.filter(function (t) { var ms = new Date(t.ende || t.start).getTime(); return ms >= jetzt && new Date(t.start).getTime() <= grenze; })
-      .map(function (t) { return { ts: t.start, titel: t.betreff, zeit: tpZeit(t.start), was: "Termin" + (VB[t.vorbereitung] ? " · " + VB[t.vorbereitung] : "") }; })
-      .concat(offen.filter(function (a) { return a.faellig_am && new Date(a.faellig_am + "T12:00:00").getTime() <= grenze && (a.faellig_am >= HEUTE || wer2(a) !== "andere"); }).map(function (a) {
-        var w = wer2(a), ueber = a.faellig_am < HEUTE;
-        return { ts: a.faellig_am + "T12:00:00", titel: a.titel, zeit: "", ueber: ueber, was: "Aufgabe · " + (w === "du" ? "bei dir" : w === "claude" ? "bei Claude" : esc(a.verantwortlich || "offen")) + (ueber ? " · überfällig" : "") }; }))
-      .sort(function (x, y) { return new Date(x.ts) - new Date(y.ts); });
-    var naechstes = document.createElement("section"); naechstes.className = "lg-kasten pb-naechstes";
-    naechstes.innerHTML = "<h2>Als Nächstes</h2>" + (l.length ? '<ul class="pb-liste">' + l.slice(0, 8).map(function (x) {
-      return '<li' + (x.ueber ? ' class="pb-ueber"' : "") + '><span class="pb-d">' + tpTag(x.ts) + (x.zeit ? "<small>" + x.zeit + "</small>" : "") + "</span><div><b>" + esc(x.titel) + "</b><small>" + x.was + "</small></div></li>"; }).join("") + "</ul>" +
-      (l.length > 8 ? '<p class="pb-mehr">Weitere ' + (l.length - 8) + " in den nächsten vier Wochen – alle Aufgaben rechts, alle Termine unten.</p>" : "") : '<p class="e-leer">In den nächsten vier Wochen steht nichts an.</p>');
-    var haupt = document.createElement("div"); haupt.className = "pb-haupt";
-    var seite = document.createElement("aside"); seite.className = "pb-seite";
+    var reihe = function (kl, teile) { var d = document.createElement("div"); d.className = kl; teile.forEach(function (x) { if (x) d.appendChild(x); }); return d; };
+    // Reihenfolge nach Daniel (26.11.2026): oben Worum es geht und Stand, dann Fahrplan, dann Termine und Protokolle in voller Breite,
+    // darunter Aufgaben in drei Spalten, ganz unten Entscheidungen, Unterlagen, Überlegungen. „Als Nächstes“ entfällt (doppelt zu den Terminen).
+    var fp = q(".pj-fp"); if (fp) fp.open = true;
     var tp = q(".pj-tp"); if (tp) tp.open = true;
-    [q(".pj-steckbrief"), q(".pj-stand"), naechstes, kasten("Meilensteine"), tp, q(".pj-fp")].forEach(function (x) { if (x) haupt.appendChild(x); });
     var unt = kasten("Arbeitsstände"); if (unt) { unt.querySelector("h2").textContent = "Unterlagen"; var ps = q(".pj-seite"); if (ps) unt.appendChild(ps); var alt = q(".lage-alt"); if (alt) unt.appendChild(alt); }
-    [q(".pj-spalten"), kasten("Offene Entscheidungen"), unt, q("[data-pj-mehr]")].forEach(function (x) { if (x) seite.appendChild(x); });
-    // ausgeblendet, aber im Dokument: der Verlauf-Platzhalter wird beim Nachladen noch gebraucht
-    [q(".pj-erledigt"), q("[data-pj-verlauf]")].forEach(function (x) { if (x) { x.hidden = true; x.style.display = "none"; seite.appendChild(x); } });
-    raster.innerHTML = ""; raster.className = "pb"; raster.appendChild(haupt); raster.appendChild(seite);
+    var mehr = reihe("pb-mehr-spalte", [q("[data-pj-mehr]")]);
+    var versteckt = reihe("pb-versteckt", [q(".pj-erledigt"), q("[data-pj-verlauf]")]); versteckt.hidden = true;   // im Dokument, für das Nachladen
+    var teile = [reihe("pb-kopf", [q(".pj-steckbrief"), q(".pj-stand")]), fp, kasten("Meilensteine"), tp, q(".pj-spalten"),
+      reihe("pb-unten", [kasten("Offene Entscheidungen"), unt, mehr]), versteckt];
+    raster.innerHTML = ""; raster.className = "pb pb2"; teile.forEach(function (x) { if (x) raster.appendChild(x); });
   }
   // Lagebericht in den Stand holen (er ist der ausführliche Stand, kein eigener Bereich)
   function briefNachladen() {
