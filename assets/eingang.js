@@ -806,7 +806,7 @@
   function tpZeile(x, i) {
     var c = tpInhalt(x), was = [c.vorb.length || c.br ? "Vorbereitung" : "", c.prot.length ? "Protokoll" : "", c.ent.length ? "Entscheidungen" : "", c.auf.length ? "Aufgaben" : ""].filter(Boolean);
     // neue Ansicht: Datum und Uhrzeit in zwei festen Zeilen statt freiem Umbruch
-    var datumTeil = pjAnsicht() === "brief" ? datum(iso2(x.ts)) + (tpZeit(x.ts) && x.art !== "Meilenstein" ? "<br>" + tpZeit(x.ts) : "") : tpTag(x.ts) + (tpZeit(x.ts) && x.art !== "Meilenstein" ? " · " + tpZeit(x.ts) : "");
+    var datumTeil = datum(iso2(x.ts)) + (tpZeit(x.ts) && x.art !== "Meilenstein" ? "<br>" + tpZeit(x.ts) : "");
     return '<li><button type="button" class="tp-zeile' + (TP.wahl === i ? " an" : "") + (TP.naechster === i ? " tp-naechster" : "") + '" data-tp="' + i + '"><span class="tp-d">' + datumTeil + "</span>" +
       "<b>" + esc(x.titel) + "</b><small>" + esc(x.art || "Termin") + (was.length ? " · " + was.join(", ") : " · noch nichts festgehalten") + "</small></button></li>";
   }
@@ -954,7 +954,6 @@
       var auf = PJ.aufgaben.filter(function (a) { return a.projekt_id === pid; });
       var offen = auf.filter(function (a) { return a.status === "offen" && !istGate2(a); }).sort(function (a, b) { return (a.spalte === "backlog") - (b.spalte === "backlog") || String(a.faellig_am || "9").localeCompare(String(b.faellig_am || "9")); });
       var gates = auf.filter(function (a) { return a.status === "offen" && istGate2(a); }).sort(function (a, b) { return String(a.faellig_am || "9").localeCompare(String(b.faellig_am || "9")); });
-      var erledigt = auf.filter(function (a) { return a.status !== "offen"; }).sort(function (a, b) { return String(b.erledigt_am).localeCompare(String(a.erledigt_am)); });
       // je Spalte zuerst vier Einträge, der Rest auf Klick (Daniel, 20.11.2026: „bei anderen … dadurch wird es extrem hoch“)
       var spalte = function (titel, kl, l) { return '<div class="pj-spalte' + (l.length ? "" : " pj-spalte-leer") + '"><h3><i class="k7-f-' + kl + '"></i>' + titel + " <span>" + l.length + "</span></h3>" +
         (l.length ? '<ul class="pj-liste">' + l.map(function (a, i) { return i < 4 ? aZeile(a) : aZeile(a).replace('<li class="pj-a"', '<li class="pj-a pj-mehr" hidden'); }).join("") + "</ul>" +
@@ -965,7 +964,7 @@
       var ter = PJ.termine.filter(function (t) { return t.projekt_id === pid || String(t.betreff || "").toLowerCase().indexOf(nameKlein) >= 0; });
       el.innerHTML = '<div class="k7 lage"><header class="k7-kopf"><div class="k7-titel"><h1>' + esc(p.name) + "</h1><span>" + esc(p.marke) + " · " + (p.typ === "Kunde" ? "Kundenprojekt" : "internes Projekt") + (p.phase ? " · " + esc(p.phase) : "") + "</span></div>" +
         // Absprung zur Kundenprojektseite und Methodenkoffer (Daniel, 20.11.2026)
-        '<nav class="pj-wege"><button type="button" class="e-k" data-pj-ansicht>' + (pjAnsicht() === "brief" ? "Bisherige Ansicht" : "Neue Ansicht") + '</button><a class="e-k" href="/strategie/methoden.html">Methodenkoffer</a></nav>' + waehler + "</header>" +
+        '<nav class="pj-wege"><a class="e-k" href="/strategie/methoden.html">Methodenkoffer</a></nav>' + waehler + "</header>" +
         // Projektseite mit allen Verknüpfungen wie im alten Dashboard: Seite, Teile (z. B. „Live“), Repository (Daniel, 21.11.2026: „Die Links brauche ich unbedingt“)
         (function (s) { if (!s || !s.url) return ""; var raus = function (u) { return u.charAt(0) === "/" ? "" : ' target="_blank" rel="noopener"'; };
           return '<nav class="pj-seite" aria-label="Projektseite"><span>Projektseite</span><a href="' + esc(s.url) + '"' + raus(s.url) + "><b>" + esc(s.titel || "Website") + "</b> " + (s.url.charAt(0) === "/" ? "→" : "↗") + "</a>" +
@@ -988,11 +987,8 @@
           '<div class="pj-plan-wisch"><iframe class="pj-plan-rahmen" src="' + (location.pathname.indexOf("/.pruefung/") === 0 ? "/.pruefung/" : "/strategie/") + 'projekte.html?nurplan#p=' + pid + '" title="Fahrplan" loading="lazy"></iframe></div></details>') +
         // zugeklappt wie der Fahrplan (Daniel, 20.11.2026)
         '<details class="lg-kasten pj-fahrplan pj-tp"><summary><h2>Termine und Protokolle</h2><span>Alle Termine mit Vorbereitung, Protokoll, Entscheidungen und Aufgaben</span></summary><div class="tp"><p class="e-leer">Lädt …</p></div></details>' +
-        '<div class="pj-mehr" data-pj-verlauf></div>' +
         '<div class="lg-links"><div class="pj-spalten">' + spalte("Bei dir", "tinte", offen.filter(function (a) { return wer2(a) === "du"; })) +
           spalte("Bei Claude", "cl", offen.filter(function (a) { return wer2(a) === "claude"; })) + spalte("Bei anderen", "grau", offen.filter(function (a) { return wer2(a) === "andere"; })) + "</div>" +
-          (erledigt.length ? '<details class="lg-kasten pj-erledigt"><summary><h2>Zuletzt erledigt</h2><span>' + erledigt.length + "</span></summary><ul class=\"pj-zeit\">" + erledigt.map(function (a) {
-            return "<li><span>" + datum(String(a.erledigt_am).slice(0, 10)) + "</span>" + esc(a.titel) + "</li>"; }).join("") + "</ul></details>" : "") +
           (ent.length ? '<div class="lg-kasten"><h2>Offene Entscheidungen</h2><ul class="pj-einfach">' + ent.map(function (v) { return '<li><a href="/strategie/eingang-klar.html#s=vorlage:' + v.id + '">' + esc(v.titel) + "</a></li>"; }).join("") + "</ul></div>" : "") + "</div>" +
         '<aside class="lg-rechts">' + (function () {
           var as = (PJ.arbeitsstaende || []).filter(function (v) { return v.projekt_id === pid; }).slice(0, 5);
@@ -1009,9 +1005,7 @@
 
           '<a class="e-k lage-alt" href="/strategie/projekte.html#p=' + pid + '">Bisherige Projektseite (Plan, Protokolle)</a></aside>' +
         "</div></section></div>";
-      if (pjAnsicht() === "brief") projektBrief(offen, ter);
-      var ab = el.querySelector("[data-pj-ansicht]");
-      if (ab) ab.onclick = function () { try { localStorage.setItem("projekt-ansicht-2", pjAnsicht() === "brief" ? "bisher" : "brief"); } catch (x) {} projektSeite(); };
+      projektBrief(offen, ter);
     }
     var w = el.querySelector(".pj-waehler"); if (w) w.onchange = function () { location.hash = w.value ? "p=" + w.value : ""; };
     if (p) { tpLaden(pid, ter); steckbriefLaden(p); }
@@ -1048,8 +1042,7 @@
     Promise.all([
       db.from("projekte").select("id, ziel, ziel_details, thema, workshop, statusbericht, ueberlegungen").eq("id", pid),
       db.from("projekt_straenge").select("id, projekt_id, titel, erklaerung, eltern_id, reihenfolge").eq("projekt_id", pid).order("reihenfolge"),
-      db.from("projekt_beteiligte").select("id, projekt_id, kontakt_id, name, seite, rolle, kontakte(id, vorname, nachname, position, organisationen(name))").eq("projekt_id", pid),
-      db.from("projekt_verlauf").select("projekt_id, datum, art, titel, inhalt").eq("projekt_id", pid).neq("art", "arbeitsstand").order("datum", { ascending: false }).limit(200)
+      db.from("projekt_beteiligte").select("id, projekt_id, kontakt_id, name, seite, rolle, kontakte(id, vorname, nachname, position, organisationen(name))").eq("projekt_id", pid)
     ]).then(function (r) {
       var z = el.querySelector("[data-steckbrief]"); if (!z || (location.hash.match(/p=(\d+)/) || [])[1] != pid) return;
       var pr = (r[0].data || []).filter(function (x) { return x.id === pid; })[0] || p;
@@ -1073,7 +1066,7 @@
           (p.typ === "Kunde" ? '<option value="Kunde">beim Kunden</option><option value="empiria">empiria</option><option value="Partner">Partner</option>' : '<option value="Partner">Partner</option><option value="empiria">empiria</option><option value="Kunde">extern</option>') +
           '</select><ul class="vt-treffer"></ul></div></div></div></details>';
       z.querySelector(".pj-sb-details").addEventListener("toggle", function (ev) { PJ.sbOffen = ev.target.open; });
-      inhalteZeichnen(p, pr, (r[3].data || []).filter(function (v) { return v.projekt_id === pid; }));
+      inhalteZeichnen(p, pr);
       z.querySelectorAll("[data-bet-weg]").forEach(function (b) { b.onclick = function () {
         db.from("projekt_beteiligte").delete().eq("id", +b.getAttribute("data-bet-weg")).then(function (x) { if (x && x.error) { toast("Nicht gespeichert: " + x.error.message); return; } steckbriefLaden(p); }); }; });
       var such = z.querySelector(".pj-team-neu input"), wahl = z.querySelector(".pj-team-neu select"), warte;
@@ -1121,8 +1114,8 @@
       }).join("") + "</section>";
     }).join("");
   }
-  function inhalteZeichnen(p, pr, verlauf) {
-    var oben = el.querySelector("[data-pj-mehr]"), unten = el.querySelector("[data-pj-verlauf]"); if (!oben || !unten) return;
+  function inhalteZeichnen(p, pr) {
+    var oben = el.querySelector("[data-pj-mehr]"); if (!oben) return;
     var h = "";
     var w = pr.workshop;
     if (w && (w.abschnitte || []).length) h += klappKasten("pj-ausarbeitung", "Ausarbeitung", w.titel || (w.abschnitte || []).map(function (a) { return String(a.titel).replace(/^\d+\.\s*/, ""); }).join(" · "), ausarbeitungHtml(w));
@@ -1132,22 +1125,13 @@
     var ueb = String(pr.ueberlegungen || "").split("\n").map(function (x) { return x.replace(/^[•\-–]\s*/, "").trim(); }).filter(Boolean);
     if (ueb.length) h += klappKasten("pj-ueberlegungen", "Überlegungen", ueb.length + (ueb.length === 1 ? " Punkt" : " Punkte"), wsListe(ueb, "ul"));
     oben.innerHTML = h;
-    var ART = { aufgabe: "Aufgabe", gate: "Meilenstein", projektgate: "Meilenstein", notiz: "Notiz", status: "Status" };
-    unten.innerHTML = verlauf.length ? klappKasten("pj-verlauf", "Verlauf", verlauf.length + " Einträge – was im Projekt passiert ist", '<ul class="pj-verlauf-liste">' + verlauf.map(function (v, i) {
-      var tx = v.inhalt && typeof v.inhalt === "object" ? v.inhalt.text : typeof v.inhalt === "string" ? v.inhalt : "";
-      return "<li" + (i >= 25 ? ' class="pj-mehr-verlauf" hidden' : "") + "><span>" + datum(String(v.datum).slice(0, 10)) + String(v.datum).slice(2, 4) + "</span><div><b>" + esc(v.titel || "") + "</b>" +
-        '<small>' + esc(ART[v.art] || v.art || "") + "</small>" + (tx ? "<p>" + esc(String(tx).slice(0, 600)) + "</p>" : "") + "</div></li>"; }).join("") + "</ul>" +
-      (verlauf.length > 25 ? '<button type="button" class="pj-alle" data-verlauf-alle>Alle ' + verlauf.length + " zeigen</button>" : "")) : "";
+    // Verlauf und „Zuletzt erledigt“ werden nicht mehr gezeigt (Daniel, 26.11.2026) – die Daten bleiben in der Datenbank, Rückblick als Bericht auf Abruf
     briefNachladen();
-    var va = unten.querySelector("[data-verlauf-alle]");
-    if (va) va.onclick = function () { unten.querySelectorAll(".pj-mehr-verlauf").forEach(function (x) { x.hidden = false; }); va.remove(); };
   }
   /* Neue Ansicht der Projektseite (Daniel, 26.11.2026: „Information Overkill … ich sehe nicht das, was mich schlau macht zum Projekt“).
      Aufgebaut wie die Projektübersicht in Projektwerkzeugen (Linear, Asana, Basecamp): Worum es geht → wie es steht → was als Nächstes passiert
      (Termine und fällige Aufgaben auf einer Zeitachse) → Termine mit Protokollen → Fahrplan; rechts Aufgaben, Entscheidungen, Unterlagen.
-     Der Lagebericht steht im Stand statt daneben; Verlauf und „Zuletzt erledigt“ entfallen in dieser Ansicht. Umschaltbar, bisherige Anordnung bleibt Standard. */
-  // Seit 26.11.2026 Startansicht (Daniel: „wir machen die neue Ansicht bitte“); die bisherige bleibt über den Knopf oben erreichbar
-  function pjAnsicht() { try { return localStorage.getItem("projekt-ansicht-2") || "brief"; } catch (x) { return "brief"; } }
+     Der Lagebericht steht im Stand statt daneben. Seit 26.11.2026 die einzige Projektansicht (Daniel: „die bisherige rausnehmen“). */
   function projektBrief(offen, ter) {
     var raster = el.querySelector(".lg-raster"); if (!raster) return;
     var q = function (sel) { return el.querySelector(sel); };
@@ -1161,14 +1145,16 @@
     var mehr = reihe("pb-mehr-spalte", [q("[data-pj-mehr]")]);
     // Ein gestalteter Raum je Thema statt einzelner Kästen (Daniel, 26.11.2026: „lauter einzelne Kästen … kein Gesamtraum gestaltet“)
     var raum = function (kl, titel, teile) { var d = reihe("lg-kasten pb-raum " + kl, teile); if (titel) d.insertAdjacentHTML("afterbegin", '<h2 class="pb-raum-titel">' + titel + "</h2>"); return d; };
-    var versteckt = reihe("pb-versteckt", [q(".pj-erledigt"), q("[data-pj-verlauf]")]); versteckt.hidden = true;   // im Dokument, für das Nachladen
-    var teile = [raum("pb-lage", "", [q(".pj-steckbrief"), q(".pj-stand")]), fp, kasten("Meilensteine"), tp, raum("pb-aufgaben", "Aufgaben", [q(".pj-spalten")]),
-      raum("pb-unten", "", [kasten("Offene Entscheidungen"), unt, mehr]), versteckt];
+    var ms = kasten("Meilensteine"); if (ms && ms.querySelector(".e-leer")) ms = null;   // leerer Kasten ohne Nutzen entfällt
+    var teile = [raum("pb-lage", "", [q(".pj-steckbrief"), q(".pj-stand")]), fp, ms, tp, raum("pb-aufgaben", "Aufgaben", [q(".pj-spalten")]),
+      raum("pb-unten", "", [kasten("Offene Entscheidungen"), unt, mehr])];
     raster.innerHTML = ""; raster.className = "pb pb2"; teile.forEach(function (x) { if (x) raster.appendChild(x); });
   }
   // Lagebericht in den Stand holen (er ist der ausführliche Stand, kein eigener Bereich)
   function briefNachladen() {
-    if (pjAnsicht() !== "brief") return;
+    // Die Ausarbeitung ist bei Workshop-Projekten die Arbeitsgrundlage (Daniel, 22.11.2026) – volle Breite direkt unter der Lage
+    var aus = el.querySelector(".pj-ausarbeitung"), lage = el.querySelector(".pb-lage");
+    if (aus && lage) lage.parentNode.insertBefore(aus, lage.nextSibling);
     var lb = el.querySelector(".pj-lagebericht"), st = el.querySelector(".pb .pj-stand");
     if (lb && st) { lb.classList.add("pb-lagebericht"); lb.classList.remove("lg-kasten"); var h = lb.querySelector("summary h2"); if (h) h.textContent = "Ausführlicher Lagebericht"; st.appendChild(lb); }
   }
