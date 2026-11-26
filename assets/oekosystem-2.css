@@ -48,3 +48,13 @@
 
 /* Dunkel: Fehlerkasten getönt statt hellrosa, damit die helle Schrift lesbar bleibt */
 html[data-farbe="dunkel"] .oe-knoten.ist-fehler:not(.is-offen) { background: rgba(240,73,90,.14); }
+
+/* Weiche zwischen Intelligenzschicht/Dashboard und Aktionen: sofort im Chat oder als Ticket (Daniel, 26.11.2026) */
+.oe2-weicheplatz { display: flex; justify-content: center; margin: 64px 0 24px; position: relative; z-index: 1; }
+.oe2-weiche { width: 500px; max-width: 100%; padding: 16px 18px 18px; }
+.oe2-weiche > .oe-knoten-titel { font-family: var(--font-serif); font-weight: 600; font-size: var(--fs-l); }
+.oe2-weiche .oe-marke { margin-top: 14px; }
+.oe2-spuren { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 12px; }
+.oe2-spur { font-size: var(--fs-xs); line-height: 1.4; color: var(--grey-50); }
+.oe2-spur b { display: block; margin-bottom: 2px; font-size: var(--fs-s); font-weight: 600; color: var(--ink); }
+.oe2-weiche.is-offen .oe2-spur { color: rgba(26,24,23,.66); }
